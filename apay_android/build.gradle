@@ -1,6 +1,9 @@
 plugins {
     id 'com.android.library'
     id 'org.jetbrains.kotlin.android'
+
+    id 'maven-publish'
+    id 'signing'
 }
 
 android {
@@ -35,10 +38,90 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'com.google.android.material:material:1.8.0'
 
-    debugImplementation 'kz.airbapay.apay:flutter_debug:1.0'
-    releaseImplementation 'kz.airbapay.apay:flutter_release:1.0'
+//    debugImplementation 'kz.airbapay.apay:flutter_debug:1.0'
+//    releaseImplementation 'kz.airbapay.apay:flutter_release:1.0'
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+}
+
+group 'kz.airbapay' // this is your groupId
+version '0.0.14' // this is your version
+
+ext { // this are variables
+    pomGroupId = group
+    pomVersion = version
+    pomArtifactId = "apay_android"
+    pomArtifactName = "apay_android"
+
+    jdkCompileVersion = 17
+}
+
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+    options.release = 17
+}
+
+
+afterEvaluate {
+    publishing {
+
+        publications {
+            mavenJava(MavenPublication) {
+                groupId = "${pomGroupId}"
+                artifactId = "${pomArtifactId}"
+                version = "${pomVersion}"
+                from components.release
+
+                pom {
+                    name = "${pomArtifactName}"
+                    description = "AirbaPay sdk android"
+                    url = "https://airbapay.kz"
+                    inceptionYear = '2023'
+
+                    licenses {
+                        license {
+                            name = 'Apache License, Version 2.0' // the name of your license
+                            url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                            // url to your license
+                        }
+                    }
+                    developers { // put the developers here
+                        developer {
+                            id = 'developerslicense'
+                            name = 'AirbaPay'
+                            email = 'developers.license@technodom.kz'
+                        }
+                    }
+                    scm { // GIT data of your project
+                        url = "scm:git:https://github.com/developerslicense/apay.git"
+                        developerConnection = 'scm:git:ssh://github.com/developerslicense/apay.git'
+                    }
+
+                }
+            }
+        }
+        Properties properties = new Properties()
+        properties.load(project.rootProject.file("local.properties").newDataInputStream())
+
+        repositories {
+            maven {
+                name = "OSSRH"
+//                url = "https://s01.oss.sonatype.org/content/repositories/snapshots/" // this is the repo for snapshots
+                url = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
+                // this is deploys to the stating repo in nexus
+                credentials {
+                    username = "developers.license@technodom.kz"
+                    password = properties.osshrPass
+                }
+            }
+        }
+    }
+    signing {
+        // By default the Signing Plugin uses a Java-based implementation of PGP for signing. This implementation cannot use the gpg-agent program for managing private keys, though. If you want to use the gpg-agent, you can change the signatory implementation used by the Signing Plugin:
+        useGpgCmd() // YOU NEED THIS. Without this method, gradle will not work with GnuPG keys.
+        sign publishing.publications.mavenJava
+    }
 }
