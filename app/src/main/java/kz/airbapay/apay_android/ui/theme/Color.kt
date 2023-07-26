@@ -1,4 +1,4 @@
-package kz.airbapay.app_apay_android.ui.theme
+package kz.airbapay.apay_android.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

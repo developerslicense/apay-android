@@ -1,4 +1,4 @@
-package kz.airbapay.app_apay_android
+package kz.airbapay.apay_android
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -10,13 +10,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import kz.airbapay.app_apay_android.ui.theme.ApayandroidTheme
+import kz.airbapay.apay_android.ui.theme.Apay_androidTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        AirbaPay
         setContent {
-            ApayandroidTheme {
+            Apay_androidTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
@@ -40,7 +41,7 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
 @Preview(showBackground = true)
 @Composable
 fun GreetingPreview() {
-    ApayandroidTheme {
+    Apay_androidTheme {
         Greeting("Android")
     }
 }

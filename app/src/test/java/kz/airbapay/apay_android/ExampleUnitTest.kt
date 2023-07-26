@@ -1,4 +1,4 @@
-package kz.airbapay.app_apay_android
+package kz.airbapay.apay_android
 
 import org.junit.Test
 

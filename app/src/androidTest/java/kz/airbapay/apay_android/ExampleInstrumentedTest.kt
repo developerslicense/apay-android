@@ -1,4 +1,4 @@
-package kz.airbapay.app_apay_android
+package kz.airbapay.apay_android
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -19,6 +19,6 @@ class ExampleInstrumentedTest {
     fun useAppContext() {
         // Context of the app under test.
         val appContext = InstrumentationRegistry.getInstrumentation().targetContext
-        assertEquals("kz.airbapay.app_apay_android", appContext.packageName)
+        assertEquals("kz.airbapay.apay_android", appContext.packageName)
     }
 }

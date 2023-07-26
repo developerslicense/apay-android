@@ -10,9 +10,11 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        maven { url '/Users/mikhail.belikov/AndroidStudioProjects/apay/build/host/outputs/repo' }
+        maven { url 'https://storage.googleapis.com/download.flutter.io' }
     }
 }
 
-rootProject.name = "apay-android"
-include(":app")
-include(":apay-android")
+rootProject.name = "apay_android"
+include ':app'
+include ':apay_android'

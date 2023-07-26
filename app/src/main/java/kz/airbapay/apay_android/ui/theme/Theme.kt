@@ -1,4 +1,4 @@
-package kz.airbapay.app_apay_android.ui.theme
+package kz.airbapay.apay_android.ui.theme
 
 import android.app.Activity
 import android.os.Build
@@ -38,7 +38,7 @@ private val LightColorScheme = lightColorScheme(
 )
 
 @Composable
-fun ApayandroidTheme(
+fun Apay_androidTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     // Dynamic color is available on Android 12+
     dynamicColor: Boolean = true,
