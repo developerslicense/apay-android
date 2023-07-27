@@ -1,5 +1,6 @@
 package kz.airbapay.apay_android.ui.pages.success
 
+import android.app.Activity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Spacer
@@ -11,6 +12,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -20,10 +22,14 @@ import kz.airbapay.apay_android.ui.resources.ColorsSdk
 import kz.airbapay.apay_android.ui.resources.LocalFonts
 import kz.airbapay.apay_android.ui.resources.goToMarker
 import kz.airbapay.apay_android.ui.resources.paySuccess
+import kz.airbapay.apay_android.ui.resources.timeForPayExpired
 import kz.airbapay.apay_android.ui.ui_components.ViewButton
 
 @Composable
-fun SuccessPage() {
+fun ErrorPage(
+    description: String?
+) {
+    val context = LocalContext.current
     ConstraintLayout(
         modifier = Modifier
             .background(ColorsSdk.bgMain)
@@ -31,7 +37,7 @@ fun SuccessPage() {
             .fillMaxSize()
     ) {
 
-        val (spaceRef, iconRef, textRef, buttonRef) = createRefs()
+        val (spaceRef, iconRef, textRef, text2Ref, buttonRef) = createRefs()
         Spacer(
             modifier = Modifier
                 .fillMaxHeight(0.25f)
@@ -40,7 +46,7 @@ fun SuccessPage() {
                 }
         )
         Image(
-            painter = painterResource(R.drawable.pay_success),
+            painter = painterResource(R.drawable.pay_failed),
             contentDescription = "",
             modifier = Modifier
                 .fillMaxWidth(0.5f)
@@ -63,10 +69,23 @@ fun SuccessPage() {
                 }
         )
 
+        if (description != null)
+            Text(
+                text = description,
+                style = LocalFonts.current.regular,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .constrainAs(text2Ref) {
+                        top.linkTo(textRef.bottom, margin = 8.dp)
+                        start.linkTo(parent.start)
+                        end.linkTo(parent.end)
+                    }
+            )
+
         ViewButton(
             title = goToMarker(),
             actionClick = {
-
+                (context as Activity).finish()
             },
             modifierRoot = Modifier
                 .padding(horizontal = 16.dp)
