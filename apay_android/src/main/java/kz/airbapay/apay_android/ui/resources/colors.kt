@@ -1,5 +1,6 @@
 package kz.airbapay.apay_android.ui.resources
 
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.graphics.Color
 
 object ColorsSdk {// todo надо предоставить внешнему пользователю возможность изменить некоторые цвета
@@ -14,10 +15,11 @@ object ColorsSdk {// todo надо предоставить внешнему п�
 
   // text
     val textMain = Color(0xFF10142D)
-    var textButtonMain = Color(0xFF10142D)
+    val textButtonMain = mutableStateOf(Color(0xFF10142D)) //можно будет изменять
     val textLight = Color(0xFF787E9E)
     val textSecondary = Color(0xFF383E61)
     val textInversion = Color(0xFFFCFCFD)
+    val textButtonInversion = mutableStateOf(Color(0xFFFCFCFD)) //можно будет изменять
 
   // icons
     val iconMain = Color(0xFF10142D)
@@ -25,8 +27,8 @@ object ColorsSdk {// todo надо предоставить внешнему п�
     val iconInversion = Color(0xFFFCFCFD)
 
   // buttons
-    val buttonMainBrand = Color(0xFF319CF3)
-    val buttonSecondary = Color(0xFFF3F4FB)
+    val buttonMainBrand = mutableStateOf(Color(0xFF319CF3))//можно будет изменять
+    val buttonSecondary = mutableStateOf(Color(0xFFF3F4FB))//можно будет изменять
     val buttonSecondaryDelete = Color(0xFFFFFBEE)
     val buttonDefault = Color(0xFFFFFFFF)
 

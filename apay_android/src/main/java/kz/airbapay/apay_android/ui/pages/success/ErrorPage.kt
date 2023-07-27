@@ -1,12 +1,13 @@
 package kz.airbapay.apay_android.ui.pages.success
 
-import android.app.Activity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -20,15 +21,20 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import kz.airbapay.apay_android.R
 import kz.airbapay.apay_android.ui.resources.ColorsSdk
 import kz.airbapay.apay_android.ui.resources.LocalFonts
-import kz.airbapay.apay_android.ui.resources.goToMarker
-import kz.airbapay.apay_android.ui.resources.paySuccess
-import kz.airbapay.apay_android.ui.resources.timeForPayExpired
 import kz.airbapay.apay_android.ui.ui_components.ViewButton
 
 @Composable
 fun ErrorPage(
-    description: String?
+    title: String,
+    description: String?,
+    buttonTopText: String,
+    buttonBottomText: String,
+    buttonTopAction: () -> Unit,
+    buttonBottomAction: () -> Unit,
 ) {
+    /*    final Map<String, String?>? args = ModalRoute.of(context)?.settings.arguments as Map<String, String?>?;
+    final ErrorsCode error = ErrorsCode.initByCode(int.parse(args?['errorCode'] ?? '1'));
+*/
     val context = LocalContext.current
     ConstraintLayout(
         modifier = Modifier
@@ -58,7 +64,7 @@ fun ErrorPage(
         )
 
         Text(
-            text = paySuccess(),
+            text = title,
             style = LocalFonts.current.h3,
             textAlign = TextAlign.Center,
             modifier = Modifier
@@ -82,12 +88,8 @@ fun ErrorPage(
                     }
             )
 
-        ViewButton(
-            title = goToMarker(),
-            actionClick = {
-                (context as Activity).finish()
-            },
-            modifierRoot = Modifier
+        Column(
+            modifier = Modifier
                 .padding(horizontal = 16.dp)
                 .padding(vertical = 20.dp)
                 .constrainAs(buttonRef) {
@@ -95,7 +97,26 @@ fun ErrorPage(
                     start.linkTo(parent.start)
                     end.linkTo(parent.end)
                 }
-        )
+        ) {
+
+            ViewButton(
+                title = buttonTopText,
+                actionClick = {
+                    buttonTopAction()
+                }
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            ViewButton(
+                title = buttonBottomText,
+                textColor = ColorsSdk.textButtonMain.value,
+                backgroundColor = ColorsSdk.buttonSecondary.value,
+                actionClick = {
+                    buttonBottomAction()
+                }
+            )
+        }
     }
 
 }
