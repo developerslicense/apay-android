@@ -6,6 +6,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import kz.airbapay.apay_android.ui.pages.success.ErrorFinalPage
 import kz.airbapay.apay_android.ui.pages.success.ErrorPage
+import kz.airbapay.apay_android.ui.pages.success.ErrorSomethingWrongPage
 import kz.airbapay.apay_android.ui.pages.success.SuccessPage
 import kz.airbapay.apay_android.ui.resources.ErrorsCode
 import kz.airbapay.apay_android.ui.resources.initErrorsCodeByCode

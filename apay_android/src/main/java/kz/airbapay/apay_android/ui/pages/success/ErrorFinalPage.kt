@@ -48,7 +48,7 @@ fun ErrorFinalPage() {
 
         Image(
             painter = painterResource(R.drawable.pay_failed),
-            contentDescription = "",
+            contentDescription = "pay_failed",
             modifier = Modifier
                 .fillMaxWidth(0.5f)
                 .constrainAs(iconRef) {

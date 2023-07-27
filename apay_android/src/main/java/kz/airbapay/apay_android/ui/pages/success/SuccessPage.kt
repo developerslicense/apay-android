@@ -41,7 +41,7 @@ fun SuccessPage() {
         )
         Image(
             painter = painterResource(R.drawable.pay_success),
-            contentDescription = "",
+            contentDescription = "pay_success",
             modifier = Modifier
                 .fillMaxWidth(0.5f)
                 .constrainAs(iconRef) {
