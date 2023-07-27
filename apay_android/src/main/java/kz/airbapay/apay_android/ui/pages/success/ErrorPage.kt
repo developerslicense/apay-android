@@ -20,22 +20,23 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import kz.airbapay.apay_android.R
 import kz.airbapay.apay_android.ui.resources.ColorsSdk
+import kz.airbapay.apay_android.ui.resources.ErrorsCode
 import kz.airbapay.apay_android.ui.resources.LocalFonts
+import kz.airbapay.apay_android.ui.resources.buttonBottom
+import kz.airbapay.apay_android.ui.resources.buttonTop
+import kz.airbapay.apay_android.ui.resources.clickOnBottom
+import kz.airbapay.apay_android.ui.resources.clickOnTop
+import kz.airbapay.apay_android.ui.resources.description
+import kz.airbapay.apay_android.ui.resources.message
 import kz.airbapay.apay_android.ui.ui_components.ViewButton
 
 @Composable
 fun ErrorPage(
-    title: String,
-    description: String?,
-    buttonTopText: String,
-    buttonBottomText: String,
-    buttonTopAction: () -> Unit,
-    buttonBottomAction: () -> Unit,
+    errorCode: ErrorsCode
 ) {
-    /*    final Map<String, String?>? args = ModalRoute.of(context)?.settings.arguments as Map<String, String?>?;
-    final ErrorsCode error = ErrorsCode.initByCode(int.parse(args?['errorCode'] ?? '1'));
-*/
+
     val context = LocalContext.current
+
     ConstraintLayout(
         modifier = Modifier
             .background(ColorsSdk.bgMain)
@@ -64,7 +65,7 @@ fun ErrorPage(
         )
 
         Text(
-            text = title,
+            text = errorCode.message(),
             style = LocalFonts.current.h3,
             textAlign = TextAlign.Center,
             modifier = Modifier
@@ -75,9 +76,9 @@ fun ErrorPage(
                 }
         )
 
-        if (description != null)
+        if (errorCode.description().isNotBlank())
             Text(
-                text = description,
+                text = errorCode.description(),
                 style = LocalFonts.current.regular,
                 textAlign = TextAlign.Center,
                 modifier = Modifier
@@ -100,20 +101,20 @@ fun ErrorPage(
         ) {
 
             ViewButton(
-                title = buttonTopText,
+                title = errorCode.buttonTop(),
                 actionClick = {
-                    buttonTopAction()
+                    errorCode.clickOnTop(context)
                 }
             )
 
             Spacer(modifier = Modifier.height(16.dp))
 
             ViewButton(
-                title = buttonBottomText,
+                title = errorCode.buttonBottom(),
                 textColor = ColorsSdk.textButtonMain.value,
                 backgroundColor = ColorsSdk.buttonSecondary.value,
                 actionClick = {
-                    buttonBottomAction()
+                    errorCode.clickOnBottom(context)
                 }
             )
         }

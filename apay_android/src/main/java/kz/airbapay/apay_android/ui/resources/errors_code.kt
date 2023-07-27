@@ -1,5 +1,8 @@
 package kz.airbapay.apay_android.ui.resources
 
+import android.app.Activity
+import android.content.Context
+
 enum class ErrorsCode(
     val code: Int,
     val messageRu: String,
@@ -92,17 +95,15 @@ enum class ErrorsCode(
     )
 }
 
-fun ErrorsCode.initByCode(code: Int) {
-    when (code) {
-        5002 -> ErrorsCode.error_5002
-        5003 -> ErrorsCode.error_5003
-        5006 -> ErrorsCode.error_5006
-        5007 -> ErrorsCode.error_5007
-        5008 -> ErrorsCode.error_5008
-        5009 -> ErrorsCode.error_5009
-        5999 -> ErrorsCode.error_5999
-        else -> ErrorsCode.error_1
-    }
+fun initErrorsCodeByCode(code: Int) = when (code) {
+    5002 -> ErrorsCode.error_5002
+    5003 -> ErrorsCode.error_5003
+    5006 -> ErrorsCode.error_5006
+    5007 -> ErrorsCode.error_5007
+    5008 -> ErrorsCode.error_5008
+    5009 -> ErrorsCode.error_5009
+    5999 -> ErrorsCode.error_5999
+    else -> ErrorsCode.error_1
 }
 
 
@@ -131,7 +132,9 @@ fun ErrorsCode.buttonBottom() = if (StringsBase.currentLang == StringsBase.kz) {
 }
 
 
-fun clickOnTop(code: Int) {
+fun ErrorsCode.clickOnTop(
+    context: Context
+) {
     when (code) {
 //         5002  -> { Navigator.of(context).popUntil((route) => route . isFirst) }
 //         5003  -> { Navigator.of(context).popUntil((route) => route . isFirst) }
@@ -140,17 +143,17 @@ fun clickOnTop(code: Int) {
 //         5008  -> { Navigator.pushNamed(context, routesRepeat) }
 //         5009  -> { Navigator.pushNamed(context, routesRepeat) }
 //         5999  -> { Navigator.pushNamed(context, routesRepeat) }
-        else -> { /*exitSdk()*/
-        }
+        else -> { (context as  Activity).finish() }
     }
 }
 
-fun clickOnBottom(code: Int) {
+fun ErrorsCode.clickOnBottom(
+    context: Context
+) {
     when (code) {
 //         5008 -> { Navigator.of(context).popUntil((route) => route . isFirst) }
 //         5999 ->{ Navigator.of(context).popUntil((route) => route . isFirst) }
-        else -> { /*exitSdk()*/
-        }
+        else -> { (context as  Activity).finish() }
 
     }
 }
