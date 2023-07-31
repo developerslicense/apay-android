@@ -28,7 +28,6 @@ internal fun ViewToolbar(
             modifier = modifier
                 .fillMaxWidth()
                 .defaultMinSize(minHeight = 56.dp)
-                .background(ColorsSdk.bgMain)
                 .padding(
                     top = 8.dp,
                     end = 12.dp,
