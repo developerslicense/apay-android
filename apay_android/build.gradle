@@ -56,7 +56,7 @@ ext {
     espressoCore = '3.5.0'
 
     junit = '4.13.2'
-    jetpackCompose = '2022.12.00'
+    jetpackCompose = '2023.03.00'//'2022.12.00'
     jetpackComposeAccompanist = '0.28.0'
 //    jetpackComposeShimmers = '1.0.3'
 

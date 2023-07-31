@@ -1,6 +1,6 @@
 package kz.airbapay.apay_android.data.utils
 
-fun getValueFromArguments(
+internal fun getValueFromArguments(
     resultArgument: List<String>,
     key: String
 ) : String? {
