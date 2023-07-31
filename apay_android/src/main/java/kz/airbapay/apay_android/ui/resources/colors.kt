@@ -18,7 +18,7 @@ internal object ColorsSdk {// todo надо предоставить внешн�
 
   // text
     val textMain = Color(0xFF10142D)
-    val textButtonMainMS = mutableStateOf(Color(0xFF10142D)) //можно будет изменять
+    val textButtonMainMS = mutableStateOf(Color(0xFF319CF3/*0xFF10142D*/)) //можно будет изменять
     val textLight = Color(0xFF787E9E)
     val textSecondary = Color(0xFF383E61)
     val textInversion = Color(0xFFFCFCFD)

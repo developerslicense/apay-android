@@ -76,7 +76,7 @@ internal fun getMoneyFormatted(amount: String, currency: String = "KZT"): String
         val amountNumberFormatted = format.format(tempAmount.toLong())
         replaceCurrencyIso4217(amountNumberFormatted, currency)
     } catch (e: Exception) {
-        e.printStackTrace()
+//        e.printStackTrace()
         "0 $kzt"
     }
 }

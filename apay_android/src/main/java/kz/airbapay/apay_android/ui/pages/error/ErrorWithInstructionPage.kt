@@ -72,21 +72,16 @@ internal fun ErrorWithInstructionPage(
             .fillMaxSize()
     ) {
 
-        val (spaceRef, iconRef, textRef, text2Ref, buttonRef) = createRefs()
-        Spacer(
-            modifier = Modifier
-                .fillMaxHeight(0.25f)
-                .constrainAs(spaceRef) {
-                    top.linkTo(parent.top)
-                }
-        )
+        val (iconRef, textRef, text2Ref, text3Ref, playerRef, buttonRef) = createRefs()
+
         Image(
             painter = painterResource(R.drawable.pay_failed),
             contentDescription = "pay_failed",
             modifier = Modifier
-                .fillMaxWidth(0.5f)
+                .padding(top = 20.dp)
+                .fillMaxWidth(0.3f)
                 .constrainAs(iconRef) {
-                    top.linkTo(spaceRef.bottom)
+                    top.linkTo(parent.top)
                     start.linkTo(parent.start)
                     end.linkTo(parent.end)
                 }
@@ -109,6 +104,7 @@ internal fun ErrorWithInstructionPage(
             style = LocalFonts.current.regular,
             textAlign = TextAlign.Center,
             modifier = Modifier
+                .padding(horizontal = 16.dp)
                 .constrainAs(text2Ref) {
                     top.linkTo(textRef.bottom, margin = 8.dp)
                     start.linkTo(parent.start)
@@ -121,10 +117,9 @@ internal fun ErrorWithInstructionPage(
             style = LocalFonts.current.semiBold,
             textAlign = TextAlign.Start,
             modifier = Modifier
-                .constrainAs(text2Ref) {
-                    top.linkTo(textRef.bottom, margin = 32.dp)
-                    start.linkTo(parent.start)
-                    end.linkTo(parent.end)
+                .constrainAs(text3Ref) {
+                    top.linkTo(text2Ref.bottom, margin = 32.dp)
+                    start.linkTo(parent.start, margin = 16.dp)
                 }
         )
 
@@ -133,6 +128,11 @@ internal fun ErrorWithInstructionPage(
                 .fillMaxWidth()
                 .height(162.dp)
                 .padding(horizontal = 16.dp)
+                .constrainAs(playerRef) {
+                    top.linkTo(text3Ref.bottom, margin = 16.dp)
+                    start.linkTo(parent.start, margin = 16.dp)
+                    end.linkTo(parent.end, margin = 16.dp)
+                }
         ){
             VideoPlayerPage(faqUrl)
         }
