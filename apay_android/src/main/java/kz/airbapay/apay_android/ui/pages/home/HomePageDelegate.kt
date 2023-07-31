@@ -4,7 +4,7 @@ import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModel
 
-internal class HomeScreenDelegate(
+internal class HomePageDelegate(
 //    val homeViewModel: HomeConstructorViewModel,
 ) : ViewModel(), DefaultLifecycleObserver {
 

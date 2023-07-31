@@ -11,6 +11,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.platform.LocalContext
@@ -28,6 +30,8 @@ import kz.airbapay.apay_android.data.constant.clickOnBottom
 import kz.airbapay.apay_android.data.constant.clickOnTop
 import kz.airbapay.apay_android.data.constant.description
 import kz.airbapay.apay_android.data.constant.message
+import kz.airbapay.apay_android.ui.pages.dialog.InitDialogExit
+import kz.airbapay.apay_android.ui.ui_components.BackHandler
 import kz.airbapay.apay_android.ui.ui_components.ViewButton
 
 @Composable
@@ -36,6 +40,13 @@ internal fun ErrorPage(
 ) {
 
     val context = LocalContext.current
+    val showDialogExit = remember {
+        mutableStateOf(false)
+    }
+
+    BackHandler {
+        showDialogExit.value = true
+    }
 
     ConstraintLayout(
         modifier = Modifier
@@ -120,4 +131,11 @@ internal fun ErrorPage(
         }
     }
 
+    if (showDialogExit.value) {
+        InitDialogExit(
+            onDismissRequest = {
+                showDialogExit.value = false
+            }
+        )
+    }
 }

@@ -18,16 +18,22 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import kz.airbapay.apay_android.R
-import kz.airbapay.apay_android.ui.resources.ColorsSdk
-import kz.airbapay.apay_android.ui.resources.LocalFonts
 import kz.airbapay.apay_android.data.constant.goToMarker
 import kz.airbapay.apay_android.data.constant.timeForPayExpired
 import kz.airbapay.apay_android.data.constant.tryFormedNewCart
+import kz.airbapay.apay_android.ui.resources.ColorsSdk
+import kz.airbapay.apay_android.ui.resources.LocalFonts
+import kz.airbapay.apay_android.ui.ui_components.BackHandler
 import kz.airbapay.apay_android.ui.ui_components.ViewButton
 
 @Composable
 internal fun ErrorFinalPage() {
     val context = LocalContext.current
+
+    BackHandler {
+        (context as Activity).finish()
+    }
+
     ConstraintLayout(
         modifier = Modifier
             .background(ColorsSdk.bgMain)

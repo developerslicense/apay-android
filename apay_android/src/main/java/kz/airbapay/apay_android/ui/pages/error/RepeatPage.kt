@@ -18,9 +18,12 @@ import kz.airbapay.apay_android.data.constant.thisNeedSomeTime
 import kz.airbapay.apay_android.data.constant.weRepeatYourPayment
 import kz.airbapay.apay_android.ui.resources.ColorsSdk
 import kz.airbapay.apay_android.ui.resources.LocalFonts
+import kz.airbapay.apay_android.ui.ui_components.BackHandler
 
 @Composable
 internal fun RepeatPage() {
+
+    BackHandler {}
 
     ConstraintLayout(
         modifier = Modifier

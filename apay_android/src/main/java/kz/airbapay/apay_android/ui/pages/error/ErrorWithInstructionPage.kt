@@ -5,13 +5,14 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.platform.LocalContext
@@ -21,11 +22,8 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import kz.airbapay.apay_android.AirbaPaySdk
 import kz.airbapay.apay_android.R
-import kz.airbapay.apay_android.ui.pages.webview.VideoPlayerPage
 import kz.airbapay.apay_android.data.constant.BanksName
-import kz.airbapay.apay_android.ui.resources.ColorsSdk
 import kz.airbapay.apay_android.data.constant.ErrorsCode
-import kz.airbapay.apay_android.ui.resources.LocalFonts
 import kz.airbapay.apay_android.data.constant.buttonBottom
 import kz.airbapay.apay_android.data.constant.buttonTop
 import kz.airbapay.apay_android.data.constant.clickOnBottom
@@ -34,8 +32,13 @@ import kz.airbapay.apay_android.data.constant.description
 import kz.airbapay.apay_android.data.constant.forChangeLimitInHomebank
 import kz.airbapay.apay_android.data.constant.forChangeLimitInKaspi
 import kz.airbapay.apay_android.data.constant.message
-import kz.airbapay.apay_android.ui.ui_components.ViewButton
 import kz.airbapay.apay_android.data.utils.DataHolder
+import kz.airbapay.apay_android.ui.pages.dialog.InitDialogExit
+import kz.airbapay.apay_android.ui.pages.webview.VideoPlayerPage
+import kz.airbapay.apay_android.ui.resources.ColorsSdk
+import kz.airbapay.apay_android.ui.resources.LocalFonts
+import kz.airbapay.apay_android.ui.ui_components.BackHandler
+import kz.airbapay.apay_android.ui.ui_components.ViewButton
 
 @Composable
 internal fun ErrorWithInstructionPage(
@@ -64,6 +67,14 @@ internal fun ErrorWithInstructionPage(
     }
 
     val context = LocalContext.current
+
+    val showDialogExit = remember {
+        mutableStateOf(false)
+    }
+
+    BackHandler {
+        showDialogExit.value = true
+    }
 
     ConstraintLayout(
         modifier = Modifier
@@ -168,4 +179,11 @@ internal fun ErrorWithInstructionPage(
         }
     }
 
+    if (showDialogExit.value) {
+        InitDialogExit(
+            onDismissRequest = {
+                showDialogExit.value = false
+            }
+        )
+    }
 }

@@ -12,6 +12,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
+import kz.airbapay.apay_android.R
+import kz.airbapay.apay_android.ui.pages.dialog.InitDialogExit
+import kz.airbapay.apay_android.ui.ui_components.BackHandler
 import kz.airbapay.apay_android.ui.ui_components.ViewToolbar
 
 @Composable
@@ -22,12 +25,21 @@ internal fun WebViewPage(
     val isRetry = remember { mutableStateOf(false) }
     val context = LocalContext.current
 
+    val showDialogExit = remember {
+        mutableStateOf(false)
+    }
+
+    BackHandler {
+        showDialogExit.value = true
+    }
+
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
 
         ViewToolbar(
             title = "",
+            backIcon = R.drawable.cancel,
             actionBack = {
 
             }
@@ -61,6 +73,14 @@ internal fun WebViewPage(
             },
             update = {
                 it.loadPage(url)
+            }
+        )
+    }
+
+    if (showDialogExit.value) {
+        InitDialogExit(
+            onDismissRequest = {
+                showDialogExit.value = false
             }
         )
     }
