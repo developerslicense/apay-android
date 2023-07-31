@@ -1,6 +1,5 @@
 package kz.airbapay.apay_android.ui.ui_components
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth

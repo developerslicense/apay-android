@@ -60,4 +60,5 @@ internal object ColorsSdk {// todo надо предоставить внешн�
     val gray20 = Color(0xFF9DA3CC)
     val gray25 = Color(0xFF7D84B2)
     val gray30 = Color(0xFF636B99)
+    val technical = Color(0x808080)
 }
