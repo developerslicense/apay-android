@@ -1,67 +1,47 @@
 package kz.airbapay.apay_android.data.utils
 
-import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.input.OffsetMapping
-import androidx.compose.ui.text.input.TransformedText
-import androidx.compose.ui.text.input.VisualTransformation
+import java.lang.StringBuilder
 
 /// MaskFormatter("XXXXXAAAA").format("S1234567B") // XXXXX567B
 /// MaskFormatter("XX.XXX.AAAA").format("S1234567B") // XX.XXX.567B
 /// MaskFormatter("**.***.AAAA").format("S1234567B") // **.***.567B
 /// MaskFormatter("AA-AAA-AAAA").format("123456789") // 12-345-6789
 
-class MaskFormatter: VisualTransformation {
+class MaskFormatter(
+    private val pattern: String
+) {
 
-    private val separator: String = " "
+    fun format(
+        text: String
+    ): String {
+        val patternArr = mutableListOf<String>()
+        val textArr = mutableListOf<String>()
+        var textI = 0
 
-    override fun filter(text: AnnotatedString): TransformedText {
-        val money = Money.initString(text.text)
-        val formattedText = money.getFormatted()
+        pattern
+            .split("")
+            .forEach { ch -> patternArr.add(ch) }
 
-        return formatTextWithOffset(formattedText)
-    }
+        text
+            .split("")
+            .forEach { ch -> textArr.add(ch) }
 
-    private fun formatTextWithOffset(
-        formattedText: String
-    ): TransformedText {
-        val offsetMapping = object : OffsetMapping {
+        for (patternI in 0 until patternArr.size) {
+            if (patternArr[patternI] == "A" && textI < textArr.size) {
+                textI++
+                patternArr[patternI] = textArr[textI]
 
-            override fun originalToTransformed(offset: Int): Int {
-                val result = calculateOffset(formattedText, offset)
-                return if (result < 0 || formattedText.isBlank()) 0 else result
-            }
-
-            override fun transformedToOriginal(offset: Int): Int {
-                val result = calculateOffset(formattedText, offset)
-                return if (result < 0 || formattedText.isBlank()) 0 else result
+            } else {
+                continue
             }
         }
 
-        return TransformedText(
-            text = AnnotatedString(formattedText),
-            offsetMapping = offsetMapping
-        )
-    }
+        val sb = StringBuilder()
+        patternArr.forEach {
+            sb.append(it.replace("A", ""))
+        }
 
-    private fun calculateOffset(
-        formattedText: String,
-        offset: Int
-    ): Int {
-        val countOfSeparator = formattedText.count { it.toString() == separator }
-        return offset + countOfSeparator + getSpecificOffset(formattedText) - offsetForCyrillicLangSpaceSeparator()
-    }
-
-    private fun offsetForCyrillicLangSpaceSeparator() = 1
-
-    private fun getSpecificOffset(formattedText: String) = when {
-        formattedText.length > 29 -> 7
-        formattedText.length > 25 -> 6
-        formattedText.length > 22 -> 5
-        formattedText.length > 17 -> 4
-        formattedText.length > 13 -> 3
-        formattedText.length > 10 -> 2
-        formattedText.length > 5 -> 1
-        else -> 0
+        return sb.toString()
     }
 }
 

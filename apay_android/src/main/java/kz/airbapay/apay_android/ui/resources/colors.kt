@@ -4,7 +4,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.graphics.Color
 
 internal object ColorsSdk {// todo надо предоставить внешнему пользователю возможность изменить некоторые цвета
-    val mainBrand = Color(0xFF319CF3)
+  /** добавил MS к некоторым на конец для того,
+   * чтоб понятно было, какие цвета редактируются для внешнего пользователя*/
+
+  val mainBrand = Color(0xFF319CF3)
 
   // block
     val bgBlock = Color(0xFFFFFFFF)
@@ -15,11 +18,11 @@ internal object ColorsSdk {// todo надо предоставить внешн�
 
   // text
     val textMain = Color(0xFF10142D)
-    val textButtonMain = mutableStateOf(Color(0xFF10142D)) //можно будет изменять
+    val textButtonMainMS = mutableStateOf(Color(0xFF10142D)) //можно будет изменять
     val textLight = Color(0xFF787E9E)
     val textSecondary = Color(0xFF383E61)
     val textInversion = Color(0xFFFCFCFD)
-    val textButtonInversion = mutableStateOf(Color(0xFFFCFCFD)) //можно будет изменять
+    val textButtonInversionMS = mutableStateOf(Color(0xFFFCFCFD)) //можно будет изменять
 
   // icons
     val iconMain = Color(0xFF10142D)
@@ -27,8 +30,8 @@ internal object ColorsSdk {// todo надо предоставить внешн�
     val iconInversion = Color(0xFFFCFCFD)
 
   // buttons
-    val buttonMainBrand = mutableStateOf(Color(0xFF319CF3))//можно будет изменять
-    val buttonSecondary = mutableStateOf(Color(0xFFF3F4FB))//можно будет изменять
+    val buttonMainBrandMS = mutableStateOf(Color(0xFF319CF3))//можно будет изменять
+    val buttonSecondaryMS = mutableStateOf(Color(0xFFF3F4FB))//можно будет изменять
     val buttonSecondaryDelete = Color(0xFFFFFBEE)
     val buttonDefault = Color(0xFFFFFFFF)
 

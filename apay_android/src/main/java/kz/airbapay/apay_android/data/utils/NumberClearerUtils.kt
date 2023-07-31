@@ -8,7 +8,7 @@ internal fun getNumberCleared(
     isPhoneNumber: Boolean = false
 ): String {
     val amountLocaleCleaned = clearNumberForLocale(amount, isUserEntered, isPhoneNumber)
-    return clearNumberMaxSymbols(amountLocaleCleaned/*, isUserEntered*/)
+    return clearNumberMaxSymbols(amountLocaleCleaned)
 }
 
 internal fun getNumberClearedWithMaxSymbol(

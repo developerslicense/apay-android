@@ -159,8 +159,8 @@ internal fun ErrorWithInstructionPage(
 
             ViewButton(
                 title = errorCode.buttonBottom(),
-                textColor = ColorsSdk.textButtonMain.value,
-                backgroundColor = ColorsSdk.buttonSecondary.value,
+                textColor = ColorsSdk.textButtonMainMS.value,
+                backgroundColor = ColorsSdk.buttonSecondaryMS.value,
                 actionClick = {
                     errorCode.clickOnBottom(context)
                 }
