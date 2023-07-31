@@ -1,12 +1,13 @@
-package kz.airbapay.apay_android.ui.pages.success
+package kz.airbapay.apay_android.ui.pages.error
 
-import android.app.Activity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -19,15 +20,23 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import kz.airbapay.apay_android.R
 import kz.airbapay.apay_android.ui.resources.ColorsSdk
+import kz.airbapay.apay_android.data.constant.ErrorsCode
 import kz.airbapay.apay_android.ui.resources.LocalFonts
-import kz.airbapay.apay_android.ui.resources.goToMarker
-import kz.airbapay.apay_android.ui.resources.somethingWentWrong
-import kz.airbapay.apay_android.ui.resources.somethingWentWrongDescription
+import kz.airbapay.apay_android.data.constant.buttonBottom
+import kz.airbapay.apay_android.data.constant.buttonTop
+import kz.airbapay.apay_android.data.constant.clickOnBottom
+import kz.airbapay.apay_android.data.constant.clickOnTop
+import kz.airbapay.apay_android.data.constant.description
+import kz.airbapay.apay_android.data.constant.message
 import kz.airbapay.apay_android.ui.ui_components.ViewButton
 
 @Composable
-fun ErrorSomethingWrongPage() {
+internal fun ErrorPage(
+    errorCode: ErrorsCode
+) {
+
     val context = LocalContext.current
+
     ConstraintLayout(
         modifier = Modifier
             .background(ColorsSdk.bgMain)
@@ -43,12 +52,11 @@ fun ErrorSomethingWrongPage() {
                     top.linkTo(parent.top)
                 }
         )
-
         Image(
-            painter = painterResource(R.drawable.something_wrong),
-            contentDescription = "something_wrong",
+            painter = painterResource(R.drawable.pay_failed),
+            contentDescription = "pay_failed",
             modifier = Modifier
-                .fillMaxWidth(0.8f)
+                .fillMaxWidth(0.5f)
                 .constrainAs(iconRef) {
                     top.linkTo(spaceRef.bottom)
                     start.linkTo(parent.start)
@@ -57,7 +65,7 @@ fun ErrorSomethingWrongPage() {
         )
 
         Text(
-            text = somethingWentWrong(),
+            text = errorCode.message(),
             style = LocalFonts.current.h3,
             textAlign = TextAlign.Center,
             modifier = Modifier
@@ -68,24 +76,21 @@ fun ErrorSomethingWrongPage() {
                 }
         )
 
-        Text(
-            text = somethingWentWrongDescription(),
-            style = LocalFonts.current.regular,
-            textAlign = TextAlign.Center,
-            modifier = Modifier
-                .constrainAs(text2Ref) {
-                    top.linkTo(textRef.bottom, margin = 8.dp)
-                    start.linkTo(parent.start)
-                    end.linkTo(parent.end)
-                }
-        )
+        if (errorCode.description().isNotBlank())
+            Text(
+                text = errorCode.description(),
+                style = LocalFonts.current.regular,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .constrainAs(text2Ref) {
+                        top.linkTo(textRef.bottom, margin = 8.dp)
+                        start.linkTo(parent.start)
+                        end.linkTo(parent.end)
+                    }
+            )
 
-        ViewButton(
-            title = goToMarker(),
-            actionClick = {
-                (context as Activity).finish()
-            },
-            modifierRoot = Modifier
+        Column(
+            modifier = Modifier
                 .padding(horizontal = 16.dp)
                 .padding(vertical = 20.dp)
                 .constrainAs(buttonRef) {
@@ -93,7 +98,26 @@ fun ErrorSomethingWrongPage() {
                     start.linkTo(parent.start)
                     end.linkTo(parent.end)
                 }
-        )
+        ) {
+
+            ViewButton(
+                title = errorCode.buttonTop(),
+                actionClick = {
+                    errorCode.clickOnTop(context)
+                }
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            ViewButton(
+                title = errorCode.buttonBottom(),
+                textColor = ColorsSdk.textButtonMain.value,
+                backgroundColor = ColorsSdk.buttonSecondary.value,
+                actionClick = {
+                    errorCode.clickOnBottom(context)
+                }
+            )
+        }
     }
 
 }

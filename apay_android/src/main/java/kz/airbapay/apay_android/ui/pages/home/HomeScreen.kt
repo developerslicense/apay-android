@@ -15,7 +15,7 @@ import kotlinx.coroutines.CoroutineScope
 import kz.airbapay.apay_android.ui.resources.ColorsSdk
 
 @Composable
-fun HomeScreen(
+internal fun HomeScreen(
     delegate: HomeScreenDelegate,
     coroutineScope: CoroutineScope = rememberCoroutineScope(),
     scrollState: ScrollState = rememberScrollState()

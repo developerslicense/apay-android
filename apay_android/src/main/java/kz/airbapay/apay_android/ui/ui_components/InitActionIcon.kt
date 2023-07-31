@@ -13,10 +13,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import kz.airbapay.apay_android.ui.resources.ColorsSdk
-import kz.airbapay.apay_android.ui.utils.LoadImageSrc
 
 @Composable
-fun InitActionIcon(
+internal fun InitActionIcon(
     modifier: Modifier = Modifier.size(50.dp),
     action: (() -> Unit)?,
     iconSrc: Int,

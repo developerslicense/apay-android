@@ -1,7 +1,6 @@
-package kz.airbapay.apay_android.ui.pages.success
+package kz.airbapay.apay_android.ui.pages.error
 
 import android.app.Activity
-import android.graphics.Paint.Align
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Spacer
@@ -21,14 +20,13 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import kz.airbapay.apay_android.R
 import kz.airbapay.apay_android.ui.resources.ColorsSdk
 import kz.airbapay.apay_android.ui.resources.LocalFonts
-import kz.airbapay.apay_android.ui.resources.goToMarker
-import kz.airbapay.apay_android.ui.resources.paySuccess
-import kz.airbapay.apay_android.ui.resources.timeForPayExpired
-import kz.airbapay.apay_android.ui.resources.tryFormedNewCart
+import kz.airbapay.apay_android.data.constant.goToMarker
+import kz.airbapay.apay_android.data.constant.somethingWentWrong
+import kz.airbapay.apay_android.data.constant.somethingWentWrongDescription
 import kz.airbapay.apay_android.ui.ui_components.ViewButton
 
 @Composable
-fun ErrorFinalPage() {
+internal fun ErrorSomethingWrongPage() {
     val context = LocalContext.current
     ConstraintLayout(
         modifier = Modifier
@@ -47,10 +45,10 @@ fun ErrorFinalPage() {
         )
 
         Image(
-            painter = painterResource(R.drawable.pay_failed),
-            contentDescription = "pay_failed",
+            painter = painterResource(R.drawable.something_wrong),
+            contentDescription = "something_wrong",
             modifier = Modifier
-                .fillMaxWidth(0.5f)
+                .fillMaxWidth(0.8f)
                 .constrainAs(iconRef) {
                     top.linkTo(spaceRef.bottom)
                     start.linkTo(parent.start)
@@ -59,7 +57,7 @@ fun ErrorFinalPage() {
         )
 
         Text(
-            text = timeForPayExpired(),
+            text = somethingWentWrong(),
             style = LocalFonts.current.h3,
             textAlign = TextAlign.Center,
             modifier = Modifier
@@ -71,7 +69,7 @@ fun ErrorFinalPage() {
         )
 
         Text(
-            text = tryFormedNewCart(),
+            text = somethingWentWrongDescription(),
             style = LocalFonts.current.regular,
             textAlign = TextAlign.Center,
             modifier = Modifier

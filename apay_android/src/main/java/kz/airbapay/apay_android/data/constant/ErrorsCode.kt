@@ -1,9 +1,11 @@
-package kz.airbapay.apay_android.ui.resources
+package kz.airbapay.apay_android.data.constant
 
 import android.app.Activity
 import android.content.Context
+import kz.airbapay.apay_android.AirbaPaySdk
+import kz.airbapay.apay_android.data.utils.DataHolder
 
-enum class ErrorsCode(
+internal enum class ErrorsCode(
     val code: Int,
     val messageRu: String,
     val messageKz: String,
@@ -95,7 +97,7 @@ enum class ErrorsCode(
     )
 }
 
-fun initErrorsCodeByCode(code: Int) = when (code) {
+internal fun initErrorsCodeByCode(code: Int) = when (code) {
     5002 -> ErrorsCode.error_5002
     5003 -> ErrorsCode.error_5003
     5006 -> ErrorsCode.error_5006
@@ -107,32 +109,32 @@ fun initErrorsCodeByCode(code: Int) = when (code) {
 }
 
 
-fun ErrorsCode.message() = if (StringsBase.currentLang == StringsBase.kz) {
+internal fun ErrorsCode.message() = if (DataHolder.currentLang == AirbaPaySdk.Lang.KZ.lang) {
     messageKz
 } else {
     messageRu
 }
 
-fun ErrorsCode.description() = if (StringsBase.currentLang == StringsBase.kz) {
+internal fun ErrorsCode.description() = if (DataHolder.currentLang == AirbaPaySdk.Lang.KZ.lang) {
     descriptionKz
 } else {
     descriptionRu
 }
 
-fun ErrorsCode.buttonTop() = if (StringsBase.currentLang == StringsBase.kz) {
+internal fun ErrorsCode.buttonTop() = if (DataHolder.currentLang == AirbaPaySdk.Lang.KZ.lang) {
     buttonTopKz
 } else {
     buttonTopRu
 }
 
-fun ErrorsCode.buttonBottom() = if (StringsBase.currentLang == StringsBase.kz) {
+internal fun ErrorsCode.buttonBottom() = if (DataHolder.currentLang == AirbaPaySdk.Lang.KZ.lang) {
     buttonBottomKz
 } else {
     buttonBottomRu
 }
 
 
-fun ErrorsCode.clickOnTop(
+internal fun ErrorsCode.clickOnTop(
     context: Context
 ) {
     when (code) {
@@ -147,7 +149,7 @@ fun ErrorsCode.clickOnTop(
     }
 }
 
-fun ErrorsCode.clickOnBottom(
+internal fun ErrorsCode.clickOnBottom(
     context: Context
 ) {
     when (code) {

@@ -1,6 +1,5 @@
 package kz.airbapay.apay_android
 
-import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -18,11 +17,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import kz.airbapay.apay_android.ui.theme.Apay_androidTheme
+import java.util.Date
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        AirbaPay
         setContent {
             Apay_androidTheme {
                 // A surface container using the 'background' color from the theme
@@ -38,7 +37,36 @@ class MainActivity : ComponentActivity() {
                                 .fillMaxWidth()
                                 .padding(vertical = 50.dp, horizontal = 50.dp),
                             onClick = {
-                                startActivity(Intent(this@MainActivity, AirbaPayActivity::class.java))
+                                val timeStamp = Date().time
+
+                                val goods = listOf(
+                                    AirbaPaySdk.Goods(
+                                        model = "Чай Tess Banana Split черный 20 пирамидок",
+                                        brand = "Tess",
+                                        category = "Черный чай",
+                                        quantity = 1,
+                                        price = 1000
+                                    )
+                                )
+
+                                AirbaPaySdk.startProcessing(
+                                    context = this@MainActivity,
+                                    isProd = false,
+                                    purchaseAmount = 50150,
+                                    phone = "77051234567",
+                                    invoiceId = timeStamp.toString(),
+                                    orderNumber = timeStamp.toString(),
+                                    shopId = "test-merchant",
+                                    lang = AirbaPaySdk.Lang.RU,
+                                    password = "123456",
+                                    terminalId = "64216e7ccc4a48db060dd689",
+                                    failureBackUrl = "https://site.kz/failure",
+                                    failureCallback = "https://site.kz/failure-clb",
+                                    successBackUrl = "https://site.kz/success",
+                                    successCallback = "https://site.kz/success-clb",
+                                    userEmail = "test@test.com",
+                                    goods = goods
+                                )
                             }
                         ) {
                             Text("переход на эквайринг")

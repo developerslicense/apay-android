@@ -1,4 +1,4 @@
-package kz.airbapay.apay_android.ui.utils
+package kz.airbapay.apay_android.ui.ui_components
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.shape.RoundedCornerShape

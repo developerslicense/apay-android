@@ -58,7 +58,7 @@ ext {
     junit = '4.13.2'
     jetpackCompose = '2022.12.00'
     jetpackComposeAccompanist = '0.28.0'
-    jetpackComposeShimmers = '1.0.3'
+//    jetpackComposeShimmers = '1.0.3'
 
     lifecycle = '2.5.1'
     lifecycleTesting = '2.1.0'
@@ -88,9 +88,6 @@ dependencies {
 
 //    debugImplementation 'androidx.compose.ui:ui-tooling'
 //    debugImplementation 'androidx.compose.ui:ui-test-manifest'
-
-//    debugImplementation 'kz.airbapay.apay:flutter_debug:1.0'
-//    releaseImplementation 'kz.airbapay.apay:flutter_release:1.0'
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
@@ -166,7 +163,7 @@ dependencies {
     implementation "com.google.accompanist:accompanist-pager:$jetpackComposeAccompanist"
     implementation "com.google.accompanist:accompanist-swiperefresh:$jetpackComposeAccompanist"
     implementation "com.google.accompanist:accompanist-permissions:$jetpackComposeAccompanist"
-    implementation "com.valentinilk.shimmer:compose-shimmer:$jetpackComposeShimmers"
+//    implementation "com.valentinilk.shimmer:compose-shimmer:$jetpackComposeShimmers"
 
 
     // Koin https://insert-koin.io/docs/setup/v3/
@@ -231,7 +228,7 @@ dependencies {
 }
 
 group 'kz.airbapay' // this is your groupId
-version '0.0.14' // this is your version
+version '0.0.0.1' // this is your version
 
 ext { // this are variables
     pomGroupId = group

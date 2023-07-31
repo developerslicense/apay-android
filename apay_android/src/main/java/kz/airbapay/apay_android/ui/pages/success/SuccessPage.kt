@@ -18,12 +18,12 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import kz.airbapay.apay_android.R
 import kz.airbapay.apay_android.ui.resources.ColorsSdk
 import kz.airbapay.apay_android.ui.resources.LocalFonts
-import kz.airbapay.apay_android.ui.resources.goToMarker
-import kz.airbapay.apay_android.ui.resources.paySuccess
+import kz.airbapay.apay_android.data.constant.goToMarker
+import kz.airbapay.apay_android.data.constant.paySuccess
 import kz.airbapay.apay_android.ui.ui_components.ViewButton
 
 @Composable
-fun SuccessPage() {
+internal fun SuccessPage() {
     ConstraintLayout(
         modifier = Modifier
             .background(ColorsSdk.bgMain)

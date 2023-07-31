@@ -15,13 +15,13 @@ import kz.airbapay.apay_android.ui.resources.ColorsSdk
 import kz.airbapay.apay_android.ui.resources.LocalFonts
 
 @Composable
-fun ViewToolbar(
+internal fun ViewToolbar(
     title: String? = null,
     actionBack: (() -> Unit)? = null,
     modifier: Modifier = Modifier
 ) {
 
-    actionBack?.let { content ->
+    actionBack?.let {
         Row(
             modifier = modifier
                 .fillMaxWidth()
