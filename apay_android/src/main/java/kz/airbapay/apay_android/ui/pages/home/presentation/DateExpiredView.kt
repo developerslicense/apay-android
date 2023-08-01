@@ -1,0 +1,99 @@
+package kz.airbapay.apay_android.ui.pages.home.presentation
+
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
+import kz.airbapay.apay_android.data.constant.dateExpired
+import kz.airbapay.apay_android.data.model.EditTextDVO
+import kz.airbapay.apay_android.ui.ui_components.edit_text.core.EditTextViewModel
+import kz.airbapay.apay_android.ui.ui_components.edit_text.core.ViewEditTextSimple
+
+@Composable
+internal fun DateExpiredView(
+    modifier: Modifier
+) {
+    val editTextDVO = EditTextDVO(
+        placeholder = dateExpired(),
+        keyboardActions = KeyboardActions(
+            onNext = {
+
+            }
+        ),
+        keyboardOptions = KeyboardOptions.Default.copy(
+            autoCorrect = false,
+            keyboardType = KeyboardType.Number,
+            imeAction = ImeAction.Next
+        )
+    )
+
+    val viewModelNameHolder = EditTextViewModel(
+        _content = editTextDVO
+    )
+
+    ViewEditTextSimple(
+        viewModel = viewModelNameHolder,
+        modifierRoot = modifier
+    )
+}
+
+/*
+*
+class DateExpiredEditTextWidget extends StatelessWidget {
+  const DateExpiredEditTextWidget({required this.focusNode, required this.focusNodeCvv, super.key});
+
+  final FocusNode focusNode;
+  final FocusNode focusNodeCvv;
+
+  @override
+  Widget build(BuildContext context) {
+    final TextEditingController controller = TextEditingController(text: readState(context).dateExpired);
+
+    return BlocBuilder<HomeBloc, HomeState>(
+      builder: (context, state) {
+        return _initTextContainer(controller, context);
+      },
+    );
+  }
+
+  Container _initTextContainer(TextEditingController controller, BuildContext context) {
+    bool hasError = !isBlank(readState(context).dateExpiredState?.error);
+
+    return Container(
+            padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
+            decoration: initEditTextBoxDecoration(hasError, focusNode),
+            child: TextFormField(
+              focusNode: focusNode,
+              keyboardType: TextInputType.number,
+              controller: controller,
+              inputFormatters: [
+                DateExpiredMaskFormatter()
+              ],
+              onFieldSubmitted: (v) {
+                FocusScope.of(context).requestFocus(focusNodeCvv);
+              },
+              onChanged: (value) {
+
+                addState(context, DateExpiredDataEvent(dateExpired: isBlank(value) ? '' : value));
+
+                if (!isBlank(readState(context).cardNumberState?.error)) {
+                  addState(context, const DateExpiredEvent(errorDateExpired: ''));
+                }
+              },
+              cursorColor: ColorsSdk.colorBrandMain,
+              style: Fonts.regular(),
+              textInputAction: TextInputAction.next,
+              decoration: inputTextFieldDecoration(
+                  text: dateExpired(),
+                  isError: hasError,
+                  isFocused: focusNode.hasFocus,
+                  afterClearText: () => addState(context, const DateExpiredDataEvent(dateExpired: '')),
+                  controller: controller
+              )
+            ));
+  }
+}
+
+*/

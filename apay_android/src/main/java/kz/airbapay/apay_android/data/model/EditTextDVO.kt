@@ -33,7 +33,7 @@ data class EditTextDVO(
     val actionClickIcon: (() -> Unit)? = null,
     val keyboardActions: KeyboardActions,
     val keyboardOptions: KeyboardOptions = KeyboardOptions.Default.copy(
-        capitalization = KeyboardCapitalization.Sentences,
+        capitalization = KeyboardCapitalization.None,
         autoCorrect = false,
         keyboardType = KeyboardType.Text,
         imeAction = ImeAction.Next

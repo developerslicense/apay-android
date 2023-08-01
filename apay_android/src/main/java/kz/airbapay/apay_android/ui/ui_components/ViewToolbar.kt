@@ -37,7 +37,7 @@ internal fun ViewToolbar(
 
             InitActionIcon(
                 action = actionBack,
-                _outlinedButtonColor = ColorsSdk.bgMain,
+                _outlinedButtonColor = ColorsSdk.bgBlock,
                 iconSrc = backIcon,
                 modifier = modifier
             )

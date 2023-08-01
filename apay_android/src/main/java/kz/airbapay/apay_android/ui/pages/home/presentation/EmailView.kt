@@ -2,27 +2,31 @@ package kz.airbapay.apay_android.ui.pages.home.presentation
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import kz.airbapay.apay_android.data.constant.RegexConst
-import kz.airbapay.apay_android.data.constant.holderName
+import kz.airbapay.apay_android.data.constant.email
 import kz.airbapay.apay_android.data.model.EditTextDVO
 import kz.airbapay.apay_android.ui.ui_components.edit_text.core.EditTextViewModel
 import kz.airbapay.apay_android.ui.ui_components.edit_text.core.ViewEditTextSimple
 
 @Composable
-internal fun NameHolder(
-
-) {
+internal fun EmailView() {
     val editTextDVO = EditTextDVO(
-        placeholder = holderName(),
-        regexForClear = Regex(RegexConst.TEXTS),
+        placeholder = email(),
         keyboardActions = KeyboardActions(
             onNext = {
 
             }
         ),
+        keyboardOptions = KeyboardOptions.Default.copy(
+            autoCorrect = false,
+            keyboardType = KeyboardType.Email,
+            imeAction = ImeAction.Next
+        )
     )
 
     val viewModelNameHolder = EditTextViewModel(
@@ -37,63 +41,57 @@ internal fun NameHolder(
     )
 }
 
-/*class NameHolderEditTextWidget extends StatelessWidget {
-  const NameHolderEditTextWidget({required this.focusNode, required this.focusNodeDateExpired, super.key});
+/*
+*
+class EmailEditTextWidget extends StatelessWidget {
+  const EmailEditTextWidget({required this.focusNode, super.key});
 
   final FocusNode focusNode;
-  final FocusNode focusNodeDateExpired;
 
   @override
   Widget build(BuildContext context) {
-    final TextEditingController controller = TextEditingController(text: readState(context).nameHolder);
+    final TextEditingController controller = TextEditingController(text: readState(context).email);
 
     return BlocBuilder<HomeBloc, HomeState>(
       builder: (context, state) {
-        return _initTextContainer(controller, context);
+        return _initTextContainer(controller, state, context);
       },
     );
   }
 
   Container _initTextContainer(
       TextEditingController controller,
+      HomeState state,
       BuildContext context) {
 
-    bool hasError = !isBlank(readState(context).nameHolderState?.error);
+    bool hasError = !isBlank(readState(context).emailState?.error);
 
     return Container(
           padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
           margin: const EdgeInsets.only(right: 16, left: 16),
           decoration: initEditTextBoxDecoration(hasError, focusNode),
-          child: TextFormField(
+          child: TextField(
             focusNode: focusNode,
-            controller: controller,
-            textCapitalization: TextCapitalization.characters,
-            keyboardType: TextInputType.text,
-            inputFormatters: <TextInputFormatter>[
-              FilteringTextInputFormatter.allow(RegExp("[a-zA-Z -]")),
-            ],
-            onFieldSubmitted: (v) {
-              FocusScope.of(context).requestFocus(focusNodeDateExpired);
-            },
+            keyboardType: TextInputType.emailAddress,
             onChanged: (value) {
-
-              addState(context, NameHolderDataEvent(nameHolder: isBlank(value) ? '' : value));
+              addState(context, EmailDataEvent(email: isBlank(value) ? '' : value));
 
               if (!isBlank(readState(context).cardNumberState?.error)) {
-                addState(context, const NameHolderEvent(errorNameHolder: ''));
+                addState(context, const EmailEvent(errorEmail: '', switched: true));
               }
             },
-            cursorColor: ColorsSdk.mainBrand,
+            controller: controller,
+            cursorColor: ColorsSdk.colorBrandMain,
             style: Fonts.regular(),
-            textInputAction: TextInputAction.next,
+            textInputAction: TextInputAction.done,
             decoration: inputTextFieldDecoration(
+                text: email(),
                 isError: hasError,
-                text: holderName(),
                 isFocused: focusNode.hasFocus,
-                afterClearText: () => addState(context, const NameHolderDataEvent(nameHolder: '')),
-                controller: controller),
-          )
-      );
+                afterClearText: () => addState(context, const EmailDataEvent(email: '')),
+                controller: controller
+            )
+          ));
   }
 }
 */
