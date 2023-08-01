@@ -25,7 +25,6 @@ internal class EditTextViewModel(
     val maskUtils = MaskFormatter(_content.mask ?: "")
 
     val content = mutableStateOf(_content)
-    val backgroundColor = mutableStateOf(content.value.editTextFieldBackgroundDefault)
     val borderColor = mutableStateOf(getEditTextStateBorder(content.value))
 
     fun setStateError(isError: Boolean) {

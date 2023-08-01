@@ -105,7 +105,6 @@ internal fun CoreEditTextMask(
 
             Box(
                 modifier = Modifier
-                    .background(backgroundColor.value)
                     .fillMaxWidth()
                     .height(100.dp)
                     .clickable {
@@ -115,7 +114,6 @@ internal fun CoreEditTextMask(
             ) {
                 Row(
                     modifier = Modifier
-                        .background(backgroundColor.value)
                         .fillMaxWidth()
                         .padding(vertical = 14.dp)
                         .padding(start = 10.dp)

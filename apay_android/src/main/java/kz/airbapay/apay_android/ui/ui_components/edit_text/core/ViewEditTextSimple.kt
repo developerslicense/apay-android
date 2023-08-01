@@ -33,7 +33,6 @@ internal fun ViewEditTextSimple(
             shape = RoundedCornerShape(8.dp),
             elevation = 0.dp,
             border = BorderStroke(0.1.dp, viewModel.borderColor.value),
-            backgroundColor = viewModel.backgroundColor.value,
             modifier = modifierChild
                 .wrapContentHeight()
                 .heightIn(min = 48.dp),
@@ -41,16 +40,22 @@ internal fun ViewEditTextSimple(
             onClick = {}
         ) {
             ConstraintLayout {
-                val (iconEndRef) = createRefs()
+                val (clearIconRef, paySystemIconRef) = createRefs()
 
                 CoreEditText(
                     visualTransformation = visualTransformation,
                     viewModel = viewModel
                 )
 
-                InitIconEnd(
+                InitIconPaySystem(
                     viewModel = viewModel,
-                    iconEndRef = iconEndRef
+                    paySystemIconRef = paySystemIconRef,
+                    clearIconRef = clearIconRef
+                )
+
+                InitIconClear(
+                    viewModel = viewModel,
+                    clearIconRef = clearIconRef
                 )
             }
         }
