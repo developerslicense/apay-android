@@ -4,37 +4,41 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import kz.airbapay.apay_android.data.constant.email
-import kz.airbapay.apay_android.data.model.EditTextDVO
-import kz.airbapay.apay_android.ui.ui_components.edit_text.core.EditTextViewModel
-import kz.airbapay.apay_android.ui.ui_components.edit_text.core.ViewEditTextSimple
+import kz.airbapay.apay_android.ui.ui_components.edit_text.core.ViewEditText
 
 @Composable
-internal fun EmailView() {
-    val editTextDVO = EditTextDVO(
+internal fun EmailView(
+    emailText: MutableState<String>,
+    emailError: MutableState<String?>,
+    emailFocusRequester: FocusRequester,
+) {
+    val focusManager = LocalFocusManager.current
+
+    ViewEditText(
+        text = emailText,
+        errorTitle = emailError,
+        focusRequester = emailFocusRequester,
         placeholder = email(),
         keyboardActions = KeyboardActions(
-            onNext = {
-
+            onDone = {
+                focusManager.clearFocus(true)
             }
         ),
         keyboardOptions = KeyboardOptions.Default.copy(
+            capitalization = KeyboardCapitalization.None,
             autoCorrect = false,
             keyboardType = KeyboardType.Email,
-            imeAction = ImeAction.Next
-        )
-    )
-
-    val viewModelNameHolder = EditTextViewModel(
-        _content = editTextDVO
-    )
-
-    ViewEditTextSimple(
-        viewModel = viewModelNameHolder,
+            imeAction = ImeAction.Done
+        ),
         modifierRoot = Modifier
             .padding(top = 16.dp)
             .padding(horizontal = 16.dp)

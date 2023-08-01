@@ -55,12 +55,20 @@ internal fun HomePage(
     val cardNumberFocusRequester = FocusRequester()
     val nameHolderFocusRequester = FocusRequester()
     val dateExpiredFocusRequester = FocusRequester()
+    val cvvFocusRequester = FocusRequester()
+    val emailFocusRequester = FocusRequester()
 
     val cardNumberText = remember { mutableStateOf("") }
     val nameHolderText = remember { mutableStateOf("") }
+    val dateExpiredText = remember { mutableStateOf("") }
+    val cvvText = remember { mutableStateOf("") }
+    val emailText = remember { mutableStateOf("") }
 
     val cardNumberError = remember { mutableStateOf<String?>(null) }
     val nameHolderError = remember { mutableStateOf<String?>(null) }
+    val dateExpiredError = remember { mutableStateOf<String?>(null) }
+    val cvvError = remember { mutableStateOf<String?>(null) }
+    val emailError = remember { mutableStateOf<String?>(null) }
 
     val paySystemIcon = remember { mutableStateOf<Int?>(null) }
 
@@ -124,11 +132,19 @@ internal fun HomePage(
                     .fillMaxWidth()
             ) {
                 DateExpiredView(
+                    dateExpiredFocusRequester = dateExpiredFocusRequester,
+                    dateExpiredError = dateExpiredError,
+                    dateExpiredText = dateExpiredText,
+                    cvvFocusRequester = cvvFocusRequester,
                     modifier = Modifier
                         .weight(0.5f)
                         .padding(end = 6.dp)
                 )
                 CvvView(
+                    cvvError = cvvError,
+                    cvvFocusRequester = cvvFocusRequester,
+                    cvvText = cvvText,
+                    emailFocusRequester = if(switchSendToEmail.value) emailFocusRequester else null,
                     modifier = Modifier
                         .weight(0.5f)
                         .padding(start = 6.dp)
@@ -151,7 +167,11 @@ internal fun HomePage(
             )
 
             if (switchSendToEmail.value) {
-                EmailView()
+                EmailView(
+                    emailText = emailText,
+                    emailError = emailError,
+                    emailFocusRequester = emailFocusRequester
+                )
             }
 
             BottomImages()

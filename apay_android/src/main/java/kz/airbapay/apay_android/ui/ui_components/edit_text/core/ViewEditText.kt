@@ -1,7 +1,11 @@
 package kz.airbapay.apay_android.ui.ui_components.edit_text.core
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -21,18 +25,10 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstrainedLayoutReference
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintLayoutScope
+import kz.airbapay.apay_android.R
 import kz.airbapay.apay_android.ui.resources.ColorsSdk
 import kz.airbapay.apay_android.ui.resources.LocalFonts
 import kz.airbapay.apay_android.ui.ui_components.InitActionIcon
-import kz.airbapay.apay_android.R
-
-@Composable
-internal fun ViewEditTextSimple(
-    viewModel: EditTextViewModel,
-    modifierRoot: Modifier = Modifier,
-    modifierChild: Modifier = Modifier,
-    visualTransformation: VisualTransformation = VisualTransformation.None
-) {}
 
 @Composable
 internal fun ViewEditText(
