@@ -40,7 +40,6 @@ internal fun NameHolderView() {
     ViewEditTextSimple(
         viewModel = viewModelNameHolder,
         modifierRoot = Modifier
-            .padding(top = 16.dp)
             .padding(horizontal = 16.dp)
     )
 }

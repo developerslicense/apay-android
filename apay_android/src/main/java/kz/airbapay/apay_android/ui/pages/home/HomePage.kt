@@ -27,6 +27,7 @@ import kz.airbapay.apay_android.data.constant.paymentOfPurchase
 import kz.airbapay.apay_android.data.constant.saveCardData
 import kz.airbapay.apay_android.data.constant.sendCheckToEmail
 import kz.airbapay.apay_android.ui.pages.dialog.InitDialogExit
+import kz.airbapay.apay_android.ui.pages.home.presentation.CardNumberView
 import kz.airbapay.apay_android.ui.pages.home.presentation.CvvView
 import kz.airbapay.apay_android.ui.pages.home.presentation.DateExpiredView
 import kz.airbapay.apay_android.ui.pages.home.presentation.EmailView
@@ -66,24 +67,26 @@ internal fun HomePage(
             }
         )
 
+        Spacer(modifier = Modifier.height(24.dp))
         Image(
             painter = painterResource(R.drawable.top_info),
             contentDescription = "top_info",
             modifier = Modifier
-                .padding(top = 24.dp)
                 .padding(horizontal = 46.dp)
                 .height(32.dp)
         )
 
         TopInfoView()
 
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(16.dp))
+        CardNumberView()
 
+        Spacer(modifier = Modifier.height(16.dp))
         NameHolderView()
 
+        Spacer(modifier = Modifier.height(16.dp))
         Row(
           modifier = Modifier
-              .padding(top = 16.dp)
               .padding(start = 16.dp, end = 16.dp)
               .fillMaxWidth()
         ) {
@@ -100,7 +103,6 @@ internal fun HomePage(
         }
 
         Spacer(modifier = Modifier.height(24.dp))
-
         SwitchedView(
             text = saveCardData(),
             switchCheckedState = switchSaveCard,

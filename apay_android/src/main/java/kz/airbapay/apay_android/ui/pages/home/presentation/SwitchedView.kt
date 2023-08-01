@@ -46,15 +46,6 @@ internal fun SwitchedView(
             modifier = Modifier
                 .height(24.dp)
                 .width(40.dp)
-                .background(
-                    color = if (switchCheckedState.value) ColorsSdk.colorBrandMainMS.value else ColorsSdk.gray25,
-                    shape = RoundedCornerShape(
-                        topStart = 12.dp,
-                        topEnd = 12.dp,
-                        bottomStart = 12.dp,
-                        bottomEnd = 12.dp
-                    )
-                )
                 .clickable {
                     switchCheckedState.value = !switchCheckedState.value
 
@@ -64,6 +55,15 @@ internal fun SwitchedView(
                         actionOnFalse()
                     }
                 }
+                .background(
+                    color = if (switchCheckedState.value) ColorsSdk.colorBrandMainMS.value else ColorsSdk.gray25,
+                    shape = RoundedCornerShape(
+                        topStart = 12.dp,
+                        topEnd = 12.dp,
+                        bottomStart = 12.dp,
+                        bottomEnd = 12.dp
+                    )
+                )
         )
     }
 }
