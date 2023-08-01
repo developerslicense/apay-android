@@ -4,25 +4,31 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import kz.airbapay.apay_android.data.constant.RegexConst
 import kz.airbapay.apay_android.data.constant.holderName
-import kz.airbapay.apay_android.data.model.EditTextDVO
-import kz.airbapay.apay_android.ui.ui_components.edit_text.core.EditTextViewModel
-import kz.airbapay.apay_android.ui.ui_components.edit_text.core.ViewEditTextSimple
+import kz.airbapay.apay_android.ui.ui_components.edit_text.core.ViewEditText
 
 @Composable
-internal fun NameHolderView() {
-    val editTextDVO = EditTextDVO(
+internal fun NameHolderView(
+    nameHolderText: MutableState<String>,
+    nameHolderError: MutableState<String?>,
+    nameHolderFocusRequester: FocusRequester,
+    dateExpiredFocusRequester: FocusRequester,
+) {
+    ViewEditText(
+        text = nameHolderText,
+        errorTitle = nameHolderError,
+        focusRequester = nameHolderFocusRequester,
         placeholder = holderName(),
-        regexForClear = Regex(RegexConst.TEXTS),
         keyboardActions = KeyboardActions(
             onNext = {
-
+                dateExpiredFocusRequester.requestFocus()
             }
         ),
         keyboardOptions = KeyboardOptions.Default.copy(
@@ -30,18 +36,10 @@ internal fun NameHolderView() {
             autoCorrect = false,
             keyboardType = KeyboardType.Text,
             imeAction = ImeAction.Next
-        )
+        ),
+        modifierRoot = Modifier.padding(horizontal = 16.dp)
     )
-
-    val viewModelNameHolder = EditTextViewModel(
-        _content = editTextDVO
-    )
-
-    ViewEditTextSimple(
-        viewModel = viewModelNameHolder,
-        modifierRoot = Modifier
-            .padding(horizontal = 16.dp)
-    )
+//        regexForClear = Regex(RegexConst.TEXTS),
 }
 
 /*class NameHolderEditTextWidget extends StatelessWidget {

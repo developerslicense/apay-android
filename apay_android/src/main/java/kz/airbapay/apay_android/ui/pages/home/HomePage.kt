@@ -18,6 +18,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -43,12 +44,25 @@ import kz.airbapay.apay_android.ui.ui_components.ViewToolbar
 @Composable
 internal fun HomePage(
     coroutineScope: CoroutineScope = rememberCoroutineScope(),
-    scrollState: ScrollState = rememberScrollState()
+    scrollState: ScrollState = rememberScrollState(),
+
 ) {
     val context = LocalContext.current
     val showDialogExit = remember { mutableStateOf(false) }
     val switchSaveCard = remember { mutableStateOf(false) }
     val switchSendToEmail = remember { mutableStateOf(false) }
+
+    val cardNumberFocusRequester = FocusRequester()
+    val nameHolderFocusRequester = FocusRequester()
+    val dateExpiredFocusRequester = FocusRequester()
+
+    val cardNumberText = remember { mutableStateOf("") }
+    val nameHolderText = remember { mutableStateOf("") }
+
+    val cardNumberError = remember { mutableStateOf<String?>(null) }
+    val nameHolderError = remember { mutableStateOf<String?>(null) }
+
+    val paySystemIcon = remember { mutableStateOf<Int?>(null) }
 
     BackHandler {
         showDialogExit.value = true
@@ -87,10 +101,21 @@ internal fun HomePage(
             TopInfoView()
 
             Spacer(modifier = Modifier.height(16.dp))
-            CardNumberView()
+            CardNumberView(
+                cardNumberText = cardNumberText,
+                paySystemIcon = paySystemIcon,
+                cardNumberError = cardNumberError,
+                cardNumberFocusRequester = cardNumberFocusRequester,
+                nameHolderFocusRequester = nameHolderFocusRequester
+            )
 
             Spacer(modifier = Modifier.height(16.dp))
-            NameHolderView()
+            NameHolderView(
+                nameHolderText = nameHolderText,
+                nameHolderError = nameHolderError,
+                nameHolderFocusRequester = nameHolderFocusRequester,
+                dateExpiredFocusRequester = dateExpiredFocusRequester
+            )
 
             Spacer(modifier = Modifier.height(16.dp))
             Row(
