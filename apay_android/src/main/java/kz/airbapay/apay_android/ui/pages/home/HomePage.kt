@@ -27,7 +27,9 @@ import kz.airbapay.apay_android.data.constant.paymentOfPurchase
 import kz.airbapay.apay_android.data.constant.saveCardData
 import kz.airbapay.apay_android.data.constant.sendCheckToEmail
 import kz.airbapay.apay_android.ui.pages.dialog.InitDialogExit
+import kz.airbapay.apay_android.ui.pages.home.presentation.BottomImages
 import kz.airbapay.apay_android.ui.pages.home.presentation.CardNumberView
+import kz.airbapay.apay_android.ui.pages.home.presentation.ConfirmButton
 import kz.airbapay.apay_android.ui.pages.home.presentation.CvvView
 import kz.airbapay.apay_android.ui.pages.home.presentation.DateExpiredView
 import kz.airbapay.apay_android.ui.pages.home.presentation.EmailView
@@ -53,10 +55,8 @@ internal fun HomePage(
     }
 
     Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(scrollState)
+            .fillMaxWidth()
             .background(ColorsSdk.bgBlock)
     ) {
         ViewToolbar(
@@ -67,67 +67,80 @@ internal fun HomePage(
             }
         )
 
-        Spacer(modifier = Modifier.height(24.dp))
-        Image(
-            painter = painterResource(R.drawable.top_info),
-            contentDescription = "top_info",
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
-                .padding(horizontal = 46.dp)
-                .height(32.dp)
-        )
-
-        TopInfoView()
-
-        Spacer(modifier = Modifier.height(16.dp))
-        CardNumberView()
-
-        Spacer(modifier = Modifier.height(16.dp))
-        NameHolderView()
-
-        Spacer(modifier = Modifier.height(16.dp))
-        Row(
-          modifier = Modifier
-              .padding(start = 16.dp, end = 16.dp)
-              .fillMaxWidth()
+                .fillMaxSize()
+                .verticalScroll(scrollState)
+                .background(ColorsSdk.bgBlock)
+                .weight(1f)
         ) {
-            DateExpiredView(
+            Spacer(modifier = Modifier.height(24.dp))
+            Image(
+                painter = painterResource(R.drawable.top_info),
+                contentDescription = "top_info",
                 modifier = Modifier
-                    .weight(0.5f)
-                    .padding(end = 6.dp)
+                    .padding(horizontal = 46.dp)
+                    .height(32.dp)
             )
-            CvvView(
+
+            TopInfoView()
+
+            Spacer(modifier = Modifier.height(16.dp))
+            CardNumberView()
+
+            Spacer(modifier = Modifier.height(16.dp))
+            NameHolderView()
+
+            Spacer(modifier = Modifier.height(16.dp))
+            Row(
                 modifier = Modifier
-                    .weight(0.5f)
-                    .padding(start = 6.dp)
-            )
-        }
-
-        Spacer(modifier = Modifier.height(24.dp))
-        SwitchedView(
-            text = saveCardData(),
-            switchCheckedState = switchSaveCard,
-            actionOnTrue = { },
-            actionOnFalse = { }
-        )
-
-        SwitchedView(
-            text = sendCheckToEmail(),
-            switchCheckedState = switchSendToEmail,
-            actionOnTrue = { },
-            actionOnFalse = { }
-        )
-
-        if (switchSendToEmail.value) {
-            EmailView()
-        }
-    }
-
-    if (showDialogExit.value) {
-        InitDialogExit(
-            onDismissRequest = {
-                showDialogExit.value = false
+                    .padding(start = 16.dp, end = 16.dp)
+                    .fillMaxWidth()
+            ) {
+                DateExpiredView(
+                    modifier = Modifier
+                        .weight(0.5f)
+                        .padding(end = 6.dp)
+                )
+                CvvView(
+                    modifier = Modifier
+                        .weight(0.5f)
+                        .padding(start = 6.dp)
+                )
             }
-        )
+
+            Spacer(modifier = Modifier.height(24.dp))
+            SwitchedView(
+                text = saveCardData(),
+                switchCheckedState = switchSaveCard,
+                actionOnTrue = { },
+                actionOnFalse = { }
+            )
+
+            SwitchedView(
+                text = sendCheckToEmail(),
+                switchCheckedState = switchSendToEmail,
+                actionOnTrue = { },
+                actionOnFalse = { }
+            )
+
+            if (switchSendToEmail.value) {
+                EmailView()
+            }
+
+            BottomImages()
+        }
+
+        ConfirmButton("13 500")//todo
+
+        if (showDialogExit.value) {
+            InitDialogExit(
+                onDismissRequest = {
+                    showDialogExit.value = false
+                }
+            )
+        }
     }
 }
 

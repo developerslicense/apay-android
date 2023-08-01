@@ -44,8 +44,8 @@ internal fun InitDialogExit(
             dismissOnClickOutside = true
         )
     ) {
-        val dialogWindowProvider = LocalView.current.parent as DialogWindowProvider
-        dialogWindowProvider.window.setGravity(Gravity.BOTTOM)
+//        val dialogWindowProvider = LocalView.current.parent as DialogWindowProvider
+//        dialogWindowProvider.window.setGravity(Gravity.BOTTOM)
 
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
