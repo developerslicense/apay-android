@@ -122,8 +122,8 @@ internal fun ErrorPage(
 
             ViewButton(
                 title = errorCode.buttonBottom(),
-                textColor = ColorsSdk.textButtonMainMS.value,
-                backgroundColor = ColorsSdk.buttonSecondaryMS.value,
+                textColor = ColorsSdk.colorBrandMainMS.value,
+                backgroundColor = ColorsSdk.colorBrandInversionMS.value,
                 actionClick = {
                     errorCode.clickOnBottom(context)
                 }

@@ -2,6 +2,8 @@ package kz.airbapay.apay_android
 
 import android.content.Context
 import android.content.Intent
+import androidx.compose.ui.graphics.Color
+import kz.airbapay.apay_android.ui.resources.ColorsSdk
 
 class AirbaPaySdk {
 
@@ -35,8 +37,18 @@ class AirbaPaySdk {
             successBackUrl: String,
             successCallback: String,
             userEmail: String?,
-            goods: List<Goods>
+            goods: List<Goods>,
+            colorBrandMain: Color? = null,
+            colorBrandInversion: Color? = null,
         ) {
+            if(colorBrandInversion != null) {
+                ColorsSdk.colorBrandInversionMS.value = colorBrandInversion
+            }
+
+            if(colorBrandMain != null) {
+                ColorsSdk.colorBrandMainMS.value = colorBrandMain
+            }
+
             val sb = StringBuilder()
             sb.append("isProd=$isProd")
             sb.append("?")

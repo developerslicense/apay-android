@@ -69,9 +69,8 @@ internal class EditTextViewModel(
     private fun getEditTextStateBorder(
         content: EditTextDVO
     ) = when {
-//        !content.stateEnabled -> olorsSdk.gray5
         content.stateError && content.needShowError -> ColorsSdk.stateError
-        content.stateFocused -> ColorsSdk.buttonMainBrandMS.value
+        content.stateFocused -> ColorsSdk.colorBrandMainMS.value
         else -> ColorsSdk.gray20
     }
 }

@@ -25,6 +25,7 @@ import kz.airbapay.apay_android.data.constant.paymentOfPurchase
 import kz.airbapay.apay_android.data.constant.saveCardData
 import kz.airbapay.apay_android.data.constant.sendCheckToEmail
 import kz.airbapay.apay_android.ui.pages.dialog.InitDialogExit
+import kz.airbapay.apay_android.ui.pages.home.presentation.NameHolder
 import kz.airbapay.apay_android.ui.pages.home.presentation.SwitchedView
 import kz.airbapay.apay_android.ui.pages.home.presentation.TopInfoView
 import kz.airbapay.apay_android.ui.ui_components.BackHandler
@@ -68,6 +69,8 @@ internal fun HomePage(
         TopInfoView()
 
         Spacer(modifier = Modifier.height(24.dp))
+
+        NameHolder()
 
         SwitchedView(
             text = saveCardData(),

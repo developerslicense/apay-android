@@ -98,8 +98,8 @@ internal fun InitDialogExit(
 
             ViewButton(
                 title = yes(),
-                textColor = ColorsSdk.textButtonMainMS.value,
-                backgroundColor = ColorsSdk.buttonSecondaryMS.value,
+                textColor = ColorsSdk.colorBrandMainMS.value,
+                backgroundColor = ColorsSdk.colorBrandInversionMS.value,
                 actionClick = {
                     onDismissRequest()
                     (context as Activity).finish()

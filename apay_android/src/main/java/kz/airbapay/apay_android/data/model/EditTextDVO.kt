@@ -1,5 +1,6 @@
 package kz.airbapay.apay_android.data.model
 
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.ImeAction
@@ -11,10 +12,8 @@ data class EditTextDVO(
     val needIcon: Boolean = false,
     val endIcon: Int? = null,
     val placeholder: String? = null,
-    val title: String? = null,
     val errorTitle: String? = null,
     val maxLines: Int = 1,
-    val titleColor: Color = ColorsSdk.buttonMainBrandMS.value,
     val editTextFieldBackgroundDefault: Color = ColorsSdk.bgElements,
     val needShowError: Boolean = true,
     val stateEnabled: Boolean = true,
@@ -32,18 +31,14 @@ data class EditTextDVO(
     val actionTextChanged: ((text: String) -> Unit)? = null,
     val actionCheckValid: ((isValid: Boolean) -> Unit)? = null,
     val actionClickIcon: (() -> Unit)? = null,
-    val actionClickFieldForGoToSearch: (() -> Unit)? = null,
-    val keyboardActions: (() -> Unit)? = null,
-
+    val keyboardActions: KeyboardActions,
     val keyboardOptions: KeyboardOptions = KeyboardOptions.Default.copy(
         capitalization = KeyboardCapitalization.Sentences,
         autoCorrect = false,
         keyboardType = KeyboardType.Text,
-        imeAction = ImeAction.Done
+        imeAction = ImeAction.Next
     )
 ) {
-    val stateForSearch: Boolean = actionClickFieldForGoToSearch != null
 
-    fun getTitleText() = title
     fun getPlaceholderText() = placeholder
 }

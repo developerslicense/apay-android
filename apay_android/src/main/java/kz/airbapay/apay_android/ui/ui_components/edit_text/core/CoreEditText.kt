@@ -1,21 +1,18 @@
 package kz.airbapay.apay_android.ui.ui_components.edit_text.core
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.material.Text
+import androidx.compose.material.TextField
+import androidx.compose.material.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
-import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.input.VisualTransformation
 import kz.airbapay.apay_android.ui.resources.ColorsSdk
-import kz.airbapay.apay_android.ui.resources.LocalFonts
 
 @Composable
 internal fun CoreEditText(
-    modifier: Modifier,
     visualTransformation: VisualTransformation,
     viewModel: EditTextViewModel
 ) {
@@ -36,30 +33,27 @@ internal fun CoreEditText(
             content.value.actionTextChanged?.invoke(text.value)
         }
 
-        BasicTextField(
-            modifier = modifier
-                .background(backgroundColor.value)
+        TextField(
+            value = text.value,
+            onValueChange = actionTextChanged,
+            label = { Text(text = viewModel.content.value.getPlaceholderText() ?: "") },
+            keyboardOptions = viewModel.content.value.keyboardOptions,
+            keyboardActions = viewModel.content.value.keyboardActions,
+            colors =  TextFieldDefaults.outlinedTextFieldColors(
+                backgroundColor = ColorsSdk.bgBlock,
+                textColor = ColorsSdk.textMain,
+                focusedLabelColor = ColorsSdk.colorBrandMainMS.value,
+                focusedBorderColor = ColorsSdk.transparent,
+                cursorColor = ColorsSdk.colorBrandMainMS.value,
+                unfocusedBorderColor = ColorsSdk.transparent,
+            ),
+            modifier = Modifier
+                .fillMaxWidth()
                 .onFocusChanged {
                     viewModel.setStateFocused(it.hasFocus)
-                    backgroundColor.value = content.value.editTextFieldBackgroundDefault
                 }
-                .focusRequester(viewModel.focusRequester)
-                .fillMaxWidth(),
-            value = text.value,
-            keyboardOptions = content.value.keyboardOptions,
-            keyboardActions = KeyboardActions(onDone = {
-//                FragmentHelper.hideKeyboard()
-                content.value.keyboardActions?.invoke()
-            }),
+                .focusRequester(viewModel.focusRequester),
             visualTransformation = visualTransformation,
-            onValueChange = actionTextChanged,
-            singleLine = content.value.maxLines == 1,
-            maxLines = content.value.maxLines,
-            cursorBrush = SolidColor(ColorsSdk.buttonMainBrandMS.value),
-            textStyle = LocalFonts.current.bodyRegular,
-            decorationBox = { innerTextField ->
-                innerTextField()
-            }
         )
     }
 }

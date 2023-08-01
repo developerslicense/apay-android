@@ -4,8 +4,6 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import kz.airbapay.apay_android.data.model.initGoodsFromString
-import kz.airbapay.apay_android.ui.pages.error.ErrorWithInstructionPage
-import kz.airbapay.apay_android.data.constant.BanksName
 import kz.airbapay.apay_android.data.constant.initErrorsCodeByCode
 import kz.airbapay.apay_android.data.utils.DataHolder
 import kz.airbapay.apay_android.data.utils.Money
@@ -29,7 +27,6 @@ class AirbaPayActivity : ComponentActivity() {
             ErrorWithInstructionPage(errorCode, BanksName.kaspi.name)
         }
     }
-
 
     private fun initProcessing(
         arguments: String

@@ -65,7 +65,8 @@ class MainActivity : ComponentActivity() {
                                     successBackUrl = "https://site.kz/success",
                                     successCallback = "https://site.kz/success-clb",
                                     userEmail = "test@test.com",
-                                    goods = goods
+                                    goods = goods,
+//                                    colorBrandMain = Color.Red
                                 )
                             }
                         ) {

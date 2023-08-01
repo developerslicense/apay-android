@@ -79,10 +79,7 @@ internal fun CoreEditTextMask(
                     )
                 },
                 keyboardOptions = content.value.keyboardOptions,
-                keyboardActions = KeyboardActions(onDone = {
-//                    FragmentHelper.hideKeyboard()
-                    content.value.keyboardActions?.invoke()
-                }),
+                keyboardActions = content.value.keyboardActions,
                 singleLine = content.value.maxLines == 1,
                 maxLines = content.value.maxLines,
                 textStyle = LocalFonts.current.bodyRegular,
@@ -138,7 +135,7 @@ internal fun CoreEditTextMask(
                                         .height(25.dp)
                                         .width(2.dp)
                                         .background(
-                                            ColorsSdk.mainBrand.copy(flash)
+                                            ColorsSdk.colorBrandMainMS.value.copy(flash)
                                         )
                                 )
                             }
@@ -171,7 +168,7 @@ internal fun CoreEditTextMask(
                                 .height(25.dp)
                                 .width(2.dp)
                                 .background(
-                                    ColorsSdk.mainBrand.copy(flash)
+                                    ColorsSdk.colorBrandMainMS.value.copy(flash)
                                 )
                         )
 
