@@ -9,6 +9,7 @@ import kz.airbapay.apay_android.data.utils.DataHolder
 import kz.airbapay.apay_android.data.utils.Money
 import kz.airbapay.apay_android.data.utils.getValueFromArguments
 import kz.airbapay.apay_android.data.utils.messageLog
+import kz.airbapay.apay_android.ui.pages.home.HomePage
 
 class AirbaPayActivity : ComponentActivity() {
 
@@ -21,10 +22,10 @@ class AirbaPayActivity : ComponentActivity() {
         /*    final Map<String, String?>? args = ModalRoute.of(context)?.settings.arguments as Map<String, String?>?
    final ErrorsCode error = ErrorsCode.initByCode(int.parse(args?["errorCode"] ?? "1"))
 */
-        val errorCode = initErrorsCodeByCode(5999)//5002
+        val errorCode = initErrorsCodeByCode(5002)
 
         setContent {
-            ErrorWithInstructionPage(errorCode, BanksName.kaspi.name)
+            HomePage()
         }
     }
 

@@ -10,13 +10,14 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import kz.airbapay.apay_android.data.constant.holderName
 import kz.airbapay.apay_android.ui.ui_components.edit_text.core.ViewEditText
 
 @Composable
 internal fun NameHolderView(
-    nameHolderText: MutableState<String>,
+    nameHolderText: MutableState<TextFieldValue>,
     nameHolderError: MutableState<String?>,
     nameHolderFocusRequester: FocusRequester,
     dateExpiredFocusRequester: FocusRequester,
@@ -37,7 +38,8 @@ internal fun NameHolderView(
             keyboardType = KeyboardType.Text,
             imeAction = ImeAction.Next
         ),
-        modifierRoot = Modifier.padding(horizontal = 16.dp)
+        modifierRoot = Modifier.padding(horizontal = 16.dp),
+        actionOnTextChanged = {}
     )
 //        regexForClear = Regex(RegexConst.TEXTS),
 }

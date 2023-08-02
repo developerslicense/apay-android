@@ -9,12 +9,14 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.TextFieldValue
+import kz.airbapay.apay_android.data.constant.RegexConst
 import kz.airbapay.apay_android.data.constant.dateExpired
 import kz.airbapay.apay_android.ui.ui_components.edit_text.core.ViewEditText
 
 @Composable
 internal fun DateExpiredView(
-    dateExpiredText: MutableState<String>,
+    dateExpiredText: MutableState<TextFieldValue>,
     dateExpiredError: MutableState<String?>,
     dateExpiredFocusRequester: FocusRequester,
     cvvFocusRequester: FocusRequester,
@@ -22,6 +24,9 @@ internal fun DateExpiredView(
 ) {
     ViewEditText(
         text = dateExpiredText,
+        mask = "BA/AA",
+        isDateExpiredMask = true,
+        regex = Regex(RegexConst.NOT_DIGITS),
         errorTitle = dateExpiredError,
         focusRequester = dateExpiredFocusRequester,
         placeholder = dateExpired(),
@@ -36,7 +41,8 @@ internal fun DateExpiredView(
             keyboardType = KeyboardType.Number,
             imeAction = ImeAction.Next
         ),
-        modifierRoot = modifier
+        modifierRoot = modifier,
+        actionOnTextChanged = {}
     )
 }
 

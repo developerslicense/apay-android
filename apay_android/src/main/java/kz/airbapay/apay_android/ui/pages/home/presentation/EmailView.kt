@@ -11,13 +11,14 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import kz.airbapay.apay_android.data.constant.email
 import kz.airbapay.apay_android.ui.ui_components.edit_text.core.ViewEditText
 
 @Composable
 internal fun EmailView(
-    emailText: MutableState<String>,
+    emailText: MutableState<TextFieldValue>,
     emailError: MutableState<String?>,
     emailFocusRequester: FocusRequester,
 ) {
@@ -41,7 +42,8 @@ internal fun EmailView(
         ),
         modifierRoot = Modifier
             .padding(top = 16.dp)
-            .padding(horizontal = 16.dp)
+            .padding(horizontal = 16.dp),
+        actionOnTextChanged = {}
     )
 }
 
