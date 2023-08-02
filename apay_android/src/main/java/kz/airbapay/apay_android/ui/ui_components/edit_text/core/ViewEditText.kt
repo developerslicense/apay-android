@@ -20,7 +20,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstrainedLayoutReference
 import androidx.constraintlayout.compose.ConstraintLayout
@@ -32,9 +32,13 @@ import kz.airbapay.apay_android.ui.ui_components.InitActionIcon
 
 @Composable
 internal fun ViewEditText(
-    text: MutableState<String>,
+    actionOnTextChanged: (String) -> Unit,
+    text: MutableState<TextFieldValue>,
     errorTitle: MutableState<String?>,
     placeholder: String,
+    mask: String? = null,
+    textLengthLimit: Int? = null,
+    regex: Regex? = null,
     focusRequester: FocusRequester,
     modifierRoot: Modifier = Modifier,
     modifierChild: Modifier = Modifier,
@@ -46,7 +50,6 @@ internal fun ViewEditText(
         keyboardType = KeyboardType.Text,
         imeAction = ImeAction.Next
     ),
-    visualTransformation: VisualTransformation = VisualTransformation.None
 
 ) {
 
@@ -71,26 +74,29 @@ internal fun ViewEditText(
                 val (clearIconRef, paySystemIconRef) = createRefs()
 
                 CoreEditText(
+                    mask = mask,
+                    textLengthLimit = textLengthLimit,
+                    regex = regex,
                     placeholder = placeholder,
                     keyboardActions = keyboardActions,
                     keyboardOptions = keyboardOptions,
-                    visualTransformation = visualTransformation,
                     hasFocus = hasFocus,
                     text = text,
-                    focusRequester = focusRequester
+                    focusRequester = focusRequester,
+                    actionOnTextChanged = actionOnTextChanged
                 )
 
                 InitIconPaySystem(
                     paySystemIconRef = paySystemIconRef,
                     clearIconRef = clearIconRef,
                     paySystemIcon = paySystemIcon.value,
-                    text = text.value,
+                    text = text.value.text,
                 )
 
                 InitIconClear(
                     clearIconRef = clearIconRef,
                     hasFocus = hasFocus.value,
-                    text = text.value,
+                    text = text.value.text,
                     actionClickClear = { }
                 )
             }

@@ -25,6 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.CoroutineScope
 import kz.airbapay.apay_android.R
@@ -65,11 +66,11 @@ internal fun HomePage(
     val cvvFocusRequester = FocusRequester()
     val emailFocusRequester = FocusRequester()
 
-    val cardNumberText = remember { mutableStateOf("") }
-    val nameHolderText = remember { mutableStateOf("") }
-    val dateExpiredText = remember { mutableStateOf("") }
-    val cvvText = remember { mutableStateOf("") }
-    val emailText = remember { mutableStateOf("") }
+    val cardNumberText = remember { mutableStateOf(TextFieldValue("")) }
+    val nameHolderText = remember { mutableStateOf(TextFieldValue("")) }
+    val dateExpiredText = remember { mutableStateOf(TextFieldValue("")) }
+    val cvvText = remember { mutableStateOf(TextFieldValue("")) }
+    val emailText = remember { mutableStateOf(TextFieldValue("")) }
 
     val cardNumberError = remember { mutableStateOf<String?>(null) }
     val nameHolderError = remember { mutableStateOf<String?>(null) }

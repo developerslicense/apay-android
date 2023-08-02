@@ -10,13 +10,16 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
+import kz.airbapay.apay_android.data.constant.RegexConst.NOT_DIGITS
 import kz.airbapay.apay_android.data.constant.cardNumber
+import kz.airbapay.apay_android.data.utils.messageLog
 import kz.airbapay.apay_android.ui.ui_components.edit_text.core.ViewEditText
 
 @Composable
 internal fun CardNumberView(
-    cardNumberText: MutableState<String>,
+    cardNumberText: MutableState<TextFieldValue>,
     cardNumberError: MutableState<String?>,
     paySystemIcon: MutableState<Int?>,
     cardNumberFocusRequester: FocusRequester,
@@ -24,7 +27,9 @@ internal fun CardNumberView(
 ) {
 
     ViewEditText(
+        mask = "AAAA AAAA AAAA AAAA",
         text = cardNumberText,
+        regex = Regex(NOT_DIGITS),
         paySystemIcon = paySystemIcon,
         errorTitle = cardNumberError,
         focusRequester = cardNumberFocusRequester,
@@ -40,7 +45,10 @@ internal fun CardNumberView(
             keyboardType = KeyboardType.Phone,
             imeAction = ImeAction.Next
         ),
-        modifierRoot = Modifier.padding(horizontal = 16.dp)
+        modifierRoot = Modifier.padding(horizontal = 16.dp),
+        actionOnTextChanged = {
+            messageLog("aaaaaaaaaa |$it|")
+        }
     )
 
 }

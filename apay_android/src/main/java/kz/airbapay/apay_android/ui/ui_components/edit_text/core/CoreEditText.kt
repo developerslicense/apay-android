@@ -8,44 +8,71 @@ import androidx.compose.material.TextField
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
-import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.text.input.TextFieldValue
+import kz.airbapay.apay_android.data.utils.MaskUtils
+import kz.airbapay.apay_android.data.utils.messageLog
 import kz.airbapay.apay_android.ui.resources.ColorsSdk
 
 @Composable
 internal fun CoreEditText(
     placeholder: String,
+    mask: String?,
+    textLengthLimit: Int?,
+    regex: Regex?,
     keyboardActions: KeyboardActions,
     keyboardOptions: KeyboardOptions,
-    text: MutableState<String>,
+    text: MutableState<TextFieldValue>,
     hasFocus: MutableState<Boolean>,
     focusRequester: FocusRequester,
-    visualTransformation: VisualTransformation,
+    actionOnTextChanged: (String) -> Unit
 ) {
 
-  /*  val actionTextChanged: ((String) -> Unit) = {
-        val result = clearText(
-            text = it,
-            viewModel = viewModel
-        )
+    val maskUtils: MaskUtils? = if (mask == null) null else MaskUtils(mask)
 
-        text.value = if (content.value.textLengthLimit != null) {
-            result.take(content.value.textLengthLimit ?: 0)
+    var cursorPosition by remember {
+        mutableStateOf(0)
+    }
+
+    val onTextChanged: ((TextFieldValue) -> Unit) = {
+        messageLog("aaaaa_ |${it.selection.start}|${it.selection.end}|${text.value.selection.end}|")
+        if(it.text.length > text.value.text.length) {//todo сделать только для большого?
+            val result = if (regex != null)
+                clearText(
+                    text = it.text,
+                    regex = regex
+                ) else it.text
+
+            val result2 = if (textLengthLimit != null) {
+                result.take(textLengthLimit)
+            } else {
+                result
+            }
+
+            cursorPosition = maskUtils?.getNextCursorPosition(it.selection.end) ?: 0
+            text.value = TextFieldValue(
+                text = maskUtils?.format(result2) ?: result2,
+                selection = TextRange(cursorPosition)
+            )
+
+            actionOnTextChanged.invoke(text.value.text)
+
         } else {
-            result
+            text.value = it
         }
-
-        content.value.actionTextChanged?.invoke(text.value)
-    }*/
+    }
 
     TextField(
         value = text.value,
-        onValueChange = {
-            text.value = it
-        },
+        onValueChange = onTextChanged,
         label = { Text(text = placeholder) },
         keyboardOptions = keyboardOptions,
         keyboardActions = keyboardActions,
@@ -63,14 +90,14 @@ internal fun CoreEditText(
                 hasFocus.value = it.hasFocus
             }
             .focusRequester(focusRequester),
-//            visualTransformation = visualTransformation,
     )
 }
 
-private fun EditTextViewModel.clearText(
-    text: String
+private fun clearText(
+    text: String,
+    regex: Regex?
 ) = try {
-    val temp = content.value.regexForClear?.let { regexForClear ->
+    val temp = regex?.let { regexForClear ->
         text.replace(
             regex = regexForClear,
             replacement = ""
