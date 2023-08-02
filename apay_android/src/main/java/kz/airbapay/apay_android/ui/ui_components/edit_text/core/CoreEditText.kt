@@ -34,18 +34,18 @@ internal fun CoreEditText(
     hasFocus: MutableState<Boolean>,
     focusRequester: FocusRequester,
     actionOnTextChanged: (String) -> Unit,
-    visualTransformation: VisualTransformation? = null
+    visualTransformation: VisualTransformation? = null,
+    isDateExpiredMask: Boolean = false
 ) {
 
-    val maskUtils: MaskUtils? = if (mask == null) null else MaskUtils(mask)
+    val maskUtils: MaskUtils? = if (mask == null) null else MaskUtils(mask, isDateExpiredMask)
 
     var cursorPosition by remember {
         mutableStateOf(0)
     }
 
     val onTextChanged: ((TextFieldValue) -> Unit) = {
-        messageLog("aaaaa_ |${it.selection.start}|${it.selection.end}|${text.value.selection.end}|")
-        if(it.text.length > text.value.text.length) {//todo сделать только для большого?
+        if(it.text.length > text.value.text.length) {
             val result = if (regex != null)
                 clearText(
                     text = it.text,

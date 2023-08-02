@@ -50,8 +50,8 @@ internal fun ViewEditText(
         keyboardType = KeyboardType.Text,
         imeAction = ImeAction.Next
     ),
-    visualTransformation: VisualTransformation? = null
-
+    visualTransformation: VisualTransformation? = null,
+    isDateExpiredMask: Boolean = false
 ) {
 
     val hasFocus = remember {
@@ -84,7 +84,8 @@ internal fun ViewEditText(
                     text = text,
                     focusRequester = focusRequester,
                     actionOnTextChanged = actionOnTextChanged,
-                    visualTransformation = visualTransformation
+                    visualTransformation = visualTransformation,
+                    isDateExpiredMask = isDateExpiredMask
                 )
 
                 InitIconPaySystem(

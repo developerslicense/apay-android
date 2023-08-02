@@ -24,7 +24,7 @@ internal fun DateExpiredView(
 ) {
     ViewEditText(
         text = dateExpiredText,
-        mask = "BA/AA",
+        mask = "AA/AA",
         isDateExpiredMask = true,
         regex = Regex(RegexConst.NOT_DIGITS),
         errorTitle = dateExpiredError,

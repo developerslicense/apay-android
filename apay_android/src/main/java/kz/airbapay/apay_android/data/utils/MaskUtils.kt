@@ -8,13 +8,15 @@ import java.lang.StringBuilder
 /// MaskFormatter("AA-AAA-AAAA").format("123456789") // 12-345-6789
 
 class MaskUtils(
-    private val pattern: String
+    private val pattern: String,
+    private val isDateExpiredMask: Boolean = false
 ) {
     private val patternArr = mutableListOf<String>()
 
     fun getNextCursorPosition(
         newPosition: Int
     ) = try {
+
         if (pattern[newPosition].toString() != "A") {
             var tempPosition = newPosition + 1
             while (pattern[tempPosition].toString() != "A") {
@@ -49,9 +51,18 @@ class MaskUtils(
                 .forEach { ch -> patternArr.add(ch) }
         }
 
+        if (isDateExpiredMask
+            && text.isNotBlank()
+            && text.first().toString() != "1"
+            && text.first().toString() != "0") {
+
+            textArr.add("0")
+        }
+
         text
             .split("")
             .forEach { ch -> textArr.add(ch) }
+
         try {
             for (patternI in 0 until patternArr.size) {
                 if (patternArr[patternI] == "A" && textI < textArr.size) {
