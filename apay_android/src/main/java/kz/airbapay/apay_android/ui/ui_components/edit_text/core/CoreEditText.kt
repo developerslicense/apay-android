@@ -18,6 +18,7 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.input.VisualTransformation
 import kz.airbapay.apay_android.data.utils.MaskUtils
 import kz.airbapay.apay_android.data.utils.messageLog
 import kz.airbapay.apay_android.ui.resources.ColorsSdk
@@ -26,14 +27,14 @@ import kz.airbapay.apay_android.ui.resources.ColorsSdk
 internal fun CoreEditText(
     placeholder: String,
     mask: String?,
-    textLengthLimit: Int?,
     regex: Regex?,
     keyboardActions: KeyboardActions,
     keyboardOptions: KeyboardOptions,
     text: MutableState<TextFieldValue>,
     hasFocus: MutableState<Boolean>,
     focusRequester: FocusRequester,
-    actionOnTextChanged: (String) -> Unit
+    actionOnTextChanged: (String) -> Unit,
+    visualTransformation: VisualTransformation? = null
 ) {
 
     val maskUtils: MaskUtils? = if (mask == null) null else MaskUtils(mask)
@@ -51,23 +52,17 @@ internal fun CoreEditText(
                     regex = regex
                 ) else it.text
 
-            val result2 = if (textLengthLimit != null) {
-                result.take(textLengthLimit)
-            } else {
-                result
-            }
-
             cursorPosition = maskUtils?.getNextCursorPosition(it.selection.end) ?: 0
             text.value = TextFieldValue(
-                text = maskUtils?.format(result2) ?: result2,
+                text = maskUtils?.format(result) ?: result,
                 selection = TextRange(cursorPosition)
             )
-
-            actionOnTextChanged.invoke(text.value.text)
 
         } else {
             text.value = it
         }
+
+        actionOnTextChanged.invoke(text.value.text)
     }
 
     TextField(
@@ -76,6 +71,7 @@ internal fun CoreEditText(
         label = { Text(text = placeholder) },
         keyboardOptions = keyboardOptions,
         keyboardActions = keyboardActions,
+        visualTransformation = visualTransformation ?: VisualTransformation.None,
         colors = TextFieldDefaults.outlinedTextFieldColors(
             backgroundColor = ColorsSdk.bgBlock,
             textColor = ColorsSdk.textMain,

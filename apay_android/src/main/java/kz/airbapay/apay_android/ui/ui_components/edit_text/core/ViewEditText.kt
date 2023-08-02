@@ -21,6 +21,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstrainedLayoutReference
 import androidx.constraintlayout.compose.ConstraintLayout
@@ -37,7 +38,6 @@ internal fun ViewEditText(
     errorTitle: MutableState<String?>,
     placeholder: String,
     mask: String? = null,
-    textLengthLimit: Int? = null,
     regex: Regex? = null,
     focusRequester: FocusRequester,
     modifierRoot: Modifier = Modifier,
@@ -50,6 +50,7 @@ internal fun ViewEditText(
         keyboardType = KeyboardType.Text,
         imeAction = ImeAction.Next
     ),
+    visualTransformation: VisualTransformation? = null
 
 ) {
 
@@ -75,7 +76,6 @@ internal fun ViewEditText(
 
                 CoreEditText(
                     mask = mask,
-                    textLengthLimit = textLengthLimit,
                     regex = regex,
                     placeholder = placeholder,
                     keyboardActions = keyboardActions,
@@ -83,7 +83,8 @@ internal fun ViewEditText(
                     hasFocus = hasFocus,
                     text = text,
                     focusRequester = focusRequester,
-                    actionOnTextChanged = actionOnTextChanged
+                    actionOnTextChanged = actionOnTextChanged,
+                    visualTransformation = visualTransformation
                 )
 
                 InitIconPaySystem(

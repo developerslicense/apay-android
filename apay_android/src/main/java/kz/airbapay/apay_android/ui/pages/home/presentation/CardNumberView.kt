@@ -42,7 +42,7 @@ internal fun CardNumberView(
         keyboardOptions = KeyboardOptions.Default.copy(
             capitalization = KeyboardCapitalization.None,
             autoCorrect = false,
-            keyboardType = KeyboardType.Phone,
+            keyboardType = KeyboardType.Number,
             imeAction = ImeAction.Next
         ),
         modifierRoot = Modifier.padding(horizontal = 16.dp),
