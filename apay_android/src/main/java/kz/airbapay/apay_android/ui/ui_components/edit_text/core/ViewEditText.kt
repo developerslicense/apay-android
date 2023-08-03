@@ -17,6 +17,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
@@ -34,6 +35,7 @@ import kz.airbapay.apay_android.ui.ui_components.InitActionIcon
 @Composable
 internal fun ViewEditText(
     actionOnTextChanged: (String) -> Unit,
+    actionClickInfo: (() -> Unit)? = null,
     text: MutableState<TextFieldValue>,
     errorTitle: MutableState<String?>,
     placeholder: String,
@@ -65,7 +67,10 @@ internal fun ViewEditText(
         Card(
             shape = RoundedCornerShape(8.dp),
             elevation = 0.dp,
-            border = BorderStroke(0.1.dp, if (errorTitle.value != null) ColorsSdk.stateError else ColorsSdk.gray20),
+            border = BorderStroke(
+                0.1.dp,
+                if (errorTitle.value != null) ColorsSdk.stateError else ColorsSdk.gray20
+            ),
             modifier = modifierChild
                 .wrapContentHeight()
                 .heightIn(min = 48.dp),
@@ -85,7 +90,8 @@ internal fun ViewEditText(
                     focusRequester = focusRequester,
                     actionOnTextChanged = actionOnTextChanged,
                     visualTransformation = visualTransformation,
-                    isDateExpiredMask = isDateExpiredMask
+                    isDateExpiredMask = isDateExpiredMask,
+                    actionClickInfo = actionClickInfo
                 )
 
                 InitIconPaySystem(
@@ -99,7 +105,12 @@ internal fun ViewEditText(
                     clearIconRef = clearIconRef,
                     hasFocus = hasFocus.value,
                     text = text.value.text,
-                    actionClickClear = { }
+                    actionClickClear = {
+                        text.value = TextFieldValue(
+                            text = "",
+                            selection = TextRange(0)
+                        )
+                    }
                 )
             }
         }

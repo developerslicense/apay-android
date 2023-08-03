@@ -19,6 +19,7 @@ import kz.airbapay.apay_android.ui.ui_components.edit_text.core.ViewEditText
 
 @Composable
 internal fun CvvView(
+    actionClickInfo: (() -> Unit),
     cvvText: MutableState<TextFieldValue>,
     cvvError: MutableState<String?>,
     cvvFocusRequester: FocusRequester,
@@ -52,6 +53,7 @@ internal fun CvvView(
         actionOnTextChanged = {
             messageLog("aaaaaaaaaa |$it|")
         },
+        actionClickInfo = actionClickInfo,
         visualTransformation = PasswordVisualTransformation()
     )
 

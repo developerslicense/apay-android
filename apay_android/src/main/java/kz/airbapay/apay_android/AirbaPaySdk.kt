@@ -41,6 +41,7 @@ class AirbaPaySdk {
             colorBrandMain: Color? = null,
             colorBrandInversion: Color? = null,
         ) {
+
             if(colorBrandInversion != null) {
                 ColorsSdk.colorBrandInversionMS.value = colorBrandInversion
             }

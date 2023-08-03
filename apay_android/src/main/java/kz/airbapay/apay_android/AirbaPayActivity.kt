@@ -9,6 +9,10 @@ import kz.airbapay.apay_android.data.utils.DataHolder
 import kz.airbapay.apay_android.data.utils.Money
 import kz.airbapay.apay_android.data.utils.getValueFromArguments
 import kz.airbapay.apay_android.data.utils.messageLog
+import kz.airbapay.apay_android.network.api.Api
+import kz.airbapay.apay_android.network.base.ClientConnector
+import kz.airbapay.apay_android.network.repository.AuthRepository
+import kz.airbapay.apay_android.network.repository.CardRepository
 import kz.airbapay.apay_android.ui.pages.home.HomePage
 
 class AirbaPayActivity : ComponentActivity() {
@@ -19,9 +23,13 @@ class AirbaPayActivity : ComponentActivity() {
         val arguments = intent.getStringExtra("airba_pay_args")
         messageLog("Arguments ${arguments.orEmpty()}")
         initProcessing(arguments.orEmpty())
-        /*    final Map<String, String?>? args = ModalRoute.of(context)?.settings.arguments as Map<String, String?>?
-   final ErrorsCode error = ErrorsCode.initByCode(int.parse(args?["errorCode"] ?? "1"))
-*/
+
+        val clientConnector = ClientConnector(this)
+        val api = clientConnector.retrofit.create(Api::class.java)
+
+        val authRepository = AuthRepository(api)
+        val cardRepository = CardRepository(api)
+
         val errorCode = initErrorsCodeByCode(5002)
 
         setContent {
@@ -59,8 +67,8 @@ class AirbaPayActivity : ComponentActivity() {
         
         DataHolder.accessToken = null
         DataHolder.isProd = isProd.toBoolean()
-        DataHolder.baseUrl = if(DataHolder.isProd) "https://ps.airbapay.kz/acquiring-api/sdk"
-        else "https://sps.airbapay.kz/acquiring-api/sdk"
+        DataHolder.baseUrl = if(DataHolder.isProd) "https://ps.airbapay.kz/acquiring-api/sdk/"
+        else "https://sps.airbapay.kz/acquiring-api/sdk/"
 
         DataHolder.userPhone = phone.orEmpty()
         DataHolder.userEmail = userEmail
