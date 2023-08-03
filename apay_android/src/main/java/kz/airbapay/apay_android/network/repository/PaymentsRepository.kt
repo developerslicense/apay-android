@@ -1,6 +1,7 @@
 package kz.airbapay.apay_android.network.repository
 
 import kz.airbapay.apay_android.data.model.PaymentCreateResponse
+import kz.airbapay.apay_android.data.model.PaymentEntryRequest
 import kz.airbapay.apay_android.data.model.PaymentEntryResponse
 import kz.airbapay.apay_android.data.model.PaymentInfoResponse
 import kz.airbapay.apay_android.data.utils.DataHolder
@@ -77,6 +78,27 @@ internal class PaymentsRepository(
             requestFlow = {
                 safeApiFlowCall {
                     api.getPaymentInfo()
+                }
+            },
+            result = { body ->
+                body.body()?.let {
+                    result(it)
+                } ?: error(Unit)
+            },
+            error = error
+        )
+    }
+
+    fun paymentAccountEntry(
+        param: PaymentEntryRequest,
+        result: (PaymentEntryResponse) -> Unit,
+        error: (Response<*>) -> Unit
+    ) {
+
+        launch(
+            requestFlow = {
+                safeApiFlowCall {
+                    api.paymentAccountEntry(param)
                 }
             },
             result = { body ->

@@ -216,7 +216,7 @@ internal fun HomePage(
                     BottomImages()
                 }
 
-                ConfirmButton("13 500") //todo
+                ConfirmButton()
 
                 if (showDialogExit.value) {
                     InitDialogExit(

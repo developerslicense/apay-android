@@ -6,6 +6,7 @@ import kz.airbapay.apay_android.data.model.CardAddRequest
 import kz.airbapay.apay_android.data.model.CardAddResponse
 import kz.airbapay.apay_android.data.model.CardsGetResponse
 import kz.airbapay.apay_android.data.model.PaymentCreateResponse
+import kz.airbapay.apay_android.data.model.PaymentEntryRequest
 import kz.airbapay.apay_android.data.model.PaymentEntryResponse
 import kz.airbapay.apay_android.data.model.PaymentInfoResponse
 import retrofit2.Response
@@ -41,7 +42,10 @@ internal interface Api {
     @GET("api/v1/payments")
     suspend fun getPaymentInfo(): Response<PaymentInfoResponse>
 
-    @PUT("api/v1/payments/retry")
+    @PUT("api/v1/payments") // проводка платежа
+    suspend fun paymentAccountEntry(param: PaymentEntryRequest): Response<PaymentEntryResponse>
+
+    @PUT("api/v1/payments/retry") // проводка без ввода данных карты
     suspend fun paymentAccountEntryRetry(): Response<PaymentEntryResponse>
 
 }
