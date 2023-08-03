@@ -25,8 +25,6 @@ import kz.airbapay.apay_android.ui.resources.LocalFonts
 internal fun SwitchedView(
     text: String,
     switchCheckedState: MutableState<Boolean>,
-    actionOnTrue: () -> Unit,
-    actionOnFalse: () -> Unit
 ) {
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -48,12 +46,6 @@ internal fun SwitchedView(
                 .width(40.dp)
                 .clickable {
                     switchCheckedState.value = !switchCheckedState.value
-
-                    if (switchCheckedState.value) {
-                        actionOnTrue()
-                    } else {
-                        actionOnFalse()
-                    }
                 }
                 .background(
                     color = if (switchCheckedState.value) ColorsSdk.colorBrandMainMS.value else ColorsSdk.gray25,

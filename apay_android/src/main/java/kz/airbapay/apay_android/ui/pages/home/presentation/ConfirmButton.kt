@@ -1,78 +1,53 @@
 package kz.airbapay.apay_android.ui.pages.home.presentation
 
-import androidx.compose.foundation.layout.padding
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import kz.airbapay.apay_android.ui.resources.ColorsSdk
-import kz.airbapay.apay_android.ui.ui_components.ViewButton
+import androidx.compose.runtime.MutableState
+import kz.airbapay.apay_android.data.constant.RegexConst
+import kz.airbapay.apay_android.data.constant.needFillTheField
+import kz.airbapay.apay_android.data.constant.wrongCardNumber
+import kz.airbapay.apay_android.data.constant.wrongEmail
+import kz.airbapay.apay_android.data.utils.card_utils.validateCardNumWithLuhnAlgorithm
 
-@Composable
-internal fun ConfirmButton(
-    text: String
+internal fun onPressedConfirm(
+    cardNumber: String?,
+    cardNumberError: MutableState<String?>,
+
+    emailStateSwitched: Boolean,
+    email: String?,
+    emailError: MutableState<String?>,
+
+
 ) {
-    ViewButton(
-        title = text,
-        textColor = ColorsSdk.colorBrandInversionMS.value,
-        backgroundColor = ColorsSdk.colorBrandMainMS.value,
-        actionClick = {
-//            errorCode.clickOnBottom(context)
-        },
-        modifierRoot = Modifier
-            .padding(horizontal = 16.dp)
-            .padding(bottom = 16.dp)
-    )
+    var hasError = false
+
+    if (emailStateSwitched
+        && (email.isNullOrBlank() || !email.contains(Regex(RegexConst.emailValidation)))
+    ) {
+        hasError = true
+        emailError.value = wrongEmail()
+
+    } else {
+        emailError.value = null
+    }
+
+    if (cardNumber.isNullOrBlank()) {
+        hasError = true
+        cardNumberError.value = needFillTheField()
+
+    } else if (!validateCardNumWithLuhnAlgorithm(cardNumber)) {
+        hasError = true
+        cardNumberError.value = wrongCardNumber()
+
+    } else {
+        cardNumberError.value = null
+    }
+
+
 }
 
-/*
-Positioned initConfirmButton(BuildContext context) {
-  return Positioned(
-      bottom: 0,
-      left: 0,
-      right: 0,
-      child: Padding(
-          padding: const EdgeInsets.fromLTRB(16, 27, 16, 24),
-          child: TextButton(
-              onPressed: () {
-                _onPressed(context);
-              },
-              style: buildButtonStyle(),
-              child: Text(
-                '${payAmount()} ${DataHolder.purchaseAmount}',
-                style: buildButtonTextStyle(),
-              ))));
-}
 
-void _onPressed(BuildContext context) {
-  FocusManager.instance.primaryFocus?.unfocus();
+ /* 
 
-  bool hasError = false;
 
-  if (readState(context).emailState?.switched == true
-      && isBlank(readState(context).email)) {
-    hasError = true;
-    addState(context, EmailEvent(switched: true, errorEmail: wrongEmail()));
-
-  } else if (readState(context).emailState?.switched == true &&
-    readState(context).email?.contains(RegExp(Regex.emailValidation)) == false) {
-    hasError = true;
-    addState(context, EmailEvent(switched: true, errorEmail: wrongEmail()));
-
-  } else {
-    addState(context, EmailEvent(switched: readState(context).emailState?.switched ?? false, errorEmail: null));
-  }
-
-  if (isBlank(readState(context).cardNumber)) {
-    hasError = true;
-    addState(context, CardNumberEvent(errorCardNumber: needFillTheField()));
-
-  } else if (!validateCardNumWithLuhnAlgorithm(readState(context).cardNumber)) {
-    hasError = true;
-    addState(context, CardNumberEvent(errorCardNumber: wrongCardNumber()));
-
-  } else {
-    addState(context, const CardNumberEvent(errorCardNumber: null));
-  }
 
   if (isBlank(readState(context).nameHolder)) {
     hasError = true;

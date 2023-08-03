@@ -1,6 +1,5 @@
 package kz.airbapay.apay_android.data.utils.card_utils
 
-import kz.airbapay.apay_android.data.utils.DataHolder
 import kz.airbapay.apay_android.data.utils.getNumberCleared
 
 // https://en.wikipedia.org/wiki/Payment_card_number
@@ -42,18 +41,24 @@ internal fun validateCardNumWithLuhnAlgorithm(
     var sum = 0
     val length = input.length
 
-    for(i in 0..length) {
-        // get digits in reverse order
+    try {
+        for (i in 0 until length) {
+            // get digits in reverse order
 
-        var digit = (input[length - i - 1]).toString().toInt()
+            var digit = (input[length - i - 1]).toString().toInt()
 
-        // every 2nd number multiply with 2
-        if (i % 2 == 1) {
-            digit *= 2
+            // every 2nd number multiply with 2
+            if (i % 2 == 1) {
+                digit *= 2
+            }
+
+            sum += if (digit > 9) (digit - 9) else digit
         }
 
-        sum += if(digit > 9) (digit-9) else digit
-    }
+        return (sum % 10 == 0)
 
-    return (sum % 10 == 0)
+    } catch (e: Exception) {
+        e.printStackTrace()
+        return false
+    }
 }

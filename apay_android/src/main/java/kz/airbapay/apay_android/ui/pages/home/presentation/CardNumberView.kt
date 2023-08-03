@@ -5,6 +5,8 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.text.input.ImeAction
@@ -14,17 +16,18 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import kz.airbapay.apay_android.data.constant.RegexConst.NOT_DIGITS
 import kz.airbapay.apay_android.data.constant.cardNumber
-import kz.airbapay.apay_android.data.utils.messageLog
+import kz.airbapay.apay_android.data.utils.card_utils.getCardTypeFromNumber
 import kz.airbapay.apay_android.ui.ui_components.edit_text.core.ViewEditText
 
 @Composable
 internal fun CardNumberView(
     cardNumberText: MutableState<TextFieldValue>,
     cardNumberError: MutableState<String?>,
-    paySystemIcon: MutableState<Int?>,
     cardNumberFocusRequester: FocusRequester,
-    nameHolderFocusRequester: FocusRequester,
+    dateExpiredFocusRequester: FocusRequester,
 ) {
+
+    val paySystemIcon = remember { mutableStateOf<Int?>(null) }
 
     ViewEditText(
         mask = "AAAA AAAA AAAA AAAA",
@@ -36,7 +39,7 @@ internal fun CardNumberView(
         placeholder = cardNumber(),
         keyboardActions = KeyboardActions(
             onNext = {
-                nameHolderFocusRequester.requestFocus()
+                dateExpiredFocusRequester.requestFocus()
             }
         ),
         keyboardOptions = KeyboardOptions.Default.copy(
@@ -47,75 +50,8 @@ internal fun CardNumberView(
         ),
         modifierRoot = Modifier.padding(horizontal = 16.dp),
         actionOnTextChanged = {
-            messageLog("aaaaaaaaaa |$it|")
+            paySystemIcon.value = getCardTypeFromNumber(it).icon
         }
     )
 
 }
-
-
-
-/*
-class CardNumberEditTextWidget extends StatelessWidget {
-   CardNumberEditTextWidget({required this.focusNode, required this.focusNodeNameHolder, super.key});
-
-  final FocusNode focusNode;
-  final FocusNode focusNodeNameHolder;
-  final TextEditingController controller = TextEditingController();
-
-  @override
-  Widget build(BuildContext context) {
-
-    return BlocBuilder<HomeBloc, HomeState>(
-      builder: (context, state) {
-        return _initCardNumberContainer(context, controller);
-      },
-    );
-  }
-
-  Container _initCardNumberContainer(BuildContext context, TextEditingController controller) {
-
-    bool hasError = !isBlank(readState(context).cardNumberState?.error);
-    String? iconPaymentSystem = readState(context).iconPaymentSystem;
-
-    return Container(
-            padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
-            margin: const EdgeInsets.only(right: 16, left: 16),
-            decoration: initEditTextBoxDecoration(hasError, focusNode),
-            child: TextFormField(
-              inputFormatters: [
-                MaskFormatter('AAAA AAAA AAAA AAAA')
-              ],
-              controller: controller,
-              onFieldSubmitted: (v){
-                FocusScope.of(context).requestFocus(focusNodeNameHolder);
-              },
-              focusNode: focusNode,
-              keyboardType: TextInputType.number,
-              onChanged: (value) {
-                addState(context, CardNumberDataEvent(
-                    cardNumber: isBlank(value) ? '' : value,
-                    iconPaymentSystem: getCardTypeFromNumber(value).icon
-                ));
-
-                if (!isBlank(readState(context).cardNumberState?.error)) {
-                  addState(context, const CardNumberEvent(errorCardNumber: ''));
-                }
-              },
-              cursorColor: ColorsSdk.colorBrandMain,
-              style: Fonts.regular(),
-              textInputAction: TextInputAction.next,
-              decoration: inputTextFieldDecoration(
-                  text: cardNumber(),
-                  iconPaymentSystem: iconPaymentSystem,
-                  isFocused: focusNode.hasFocus,
-                  controller: controller,
-                  isError: hasError,
-                  afterClearText: () => addState(context, const CardNumberDataEvent(cardNumber: '')),
-                  needSuffixExtended: true
-              )
-            ));
-  }
-}
-
-*/

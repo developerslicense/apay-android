@@ -27,6 +27,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
@@ -34,22 +35,24 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kz.airbapay.apay_android.R
 import kz.airbapay.apay_android.data.constant.cardDataSaved
+import kz.airbapay.apay_android.data.constant.payAmount
 import kz.airbapay.apay_android.data.constant.paymentOfPurchase
 import kz.airbapay.apay_android.data.constant.saveCardData
 import kz.airbapay.apay_android.data.constant.sendCheckToEmail
+import kz.airbapay.apay_android.data.utils.DataHolder
 import kz.airbapay.apay_android.ui.pages.dialog.InitDialogExit
 import kz.airbapay.apay_android.ui.pages.home.presentation.BottomImages
 import kz.airbapay.apay_android.ui.pages.home.presentation.CardNumberView
-import kz.airbapay.apay_android.ui.pages.home.presentation.ConfirmButton
 import kz.airbapay.apay_android.ui.pages.home.presentation.CvvBottomSheet
 import kz.airbapay.apay_android.ui.pages.home.presentation.CvvView
 import kz.airbapay.apay_android.ui.pages.home.presentation.DateExpiredView
 import kz.airbapay.apay_android.ui.pages.home.presentation.EmailView
-import kz.airbapay.apay_android.ui.pages.home.presentation.NameHolderView
 import kz.airbapay.apay_android.ui.pages.home.presentation.SwitchedView
 import kz.airbapay.apay_android.ui.pages.home.presentation.TopInfoView
+import kz.airbapay.apay_android.ui.pages.home.presentation.onPressedConfirm
 import kz.airbapay.apay_android.ui.resources.ColorsSdk
 import kz.airbapay.apay_android.ui.ui_components.BackHandler
+import kz.airbapay.apay_android.ui.ui_components.ViewButton
 import kz.airbapay.apay_android.ui.ui_components.ViewToolbar
 
 @Composable
@@ -66,24 +69,21 @@ internal fun HomePage(
     val switchSendToEmail = remember { mutableStateOf(false) }
 
     val cardNumberFocusRequester = FocusRequester()
-    val nameHolderFocusRequester = FocusRequester()
     val dateExpiredFocusRequester = FocusRequester()
     val cvvFocusRequester = FocusRequester()
     val emailFocusRequester = FocusRequester()
 
     val cardNumberText = remember { mutableStateOf(TextFieldValue("")) }
-    val nameHolderText = remember { mutableStateOf(TextFieldValue("")) }
     val dateExpiredText = remember { mutableStateOf(TextFieldValue("")) }
     val cvvText = remember { mutableStateOf(TextFieldValue("")) }
     val emailText = remember { mutableStateOf(TextFieldValue("")) }
 
     val cardNumberError = remember { mutableStateOf<String?>(null) }
-    val nameHolderError = remember { mutableStateOf<String?>(null) }
     val dateExpiredError = remember { mutableStateOf<String?>(null) }
     val cvvError = remember { mutableStateOf<String?>(null) }
     val emailError = remember { mutableStateOf<String?>(null) }
 
-    val paySystemIcon = remember { mutableStateOf<Int?>(null) }
+    val focusManager = LocalFocusManager.current
 
     val sheetState = rememberModalBottomSheetState(
         initialValue = ModalBottomSheetValue.Hidden,
@@ -145,17 +145,8 @@ internal fun HomePage(
                     Spacer(modifier = Modifier.height(16.dp))
                     CardNumberView(
                         cardNumberText = cardNumberText,
-                        paySystemIcon = paySystemIcon,
                         cardNumberError = cardNumberError,
                         cardNumberFocusRequester = cardNumberFocusRequester,
-                        nameHolderFocusRequester = nameHolderFocusRequester
-                    )
-
-                    Spacer(modifier = Modifier.height(16.dp))
-                    NameHolderView(
-                        nameHolderText = nameHolderText,
-                        nameHolderError = nameHolderError,
-                        nameHolderFocusRequester = nameHolderFocusRequester,
                         dateExpiredFocusRequester = dateExpiredFocusRequester
                     )
 
@@ -194,15 +185,11 @@ internal fun HomePage(
                     SwitchedView(
                         text = saveCardData(),
                         switchCheckedState = switchSaveCard,
-                        actionOnTrue = { },// todo ??
-                        actionOnFalse = { }
                     )
 
                     SwitchedView(
                         text = sendCheckToEmail(),
                         switchCheckedState = switchSendToEmail,
-                        actionOnTrue = { },
-                        actionOnFalse = { }
                     )
 
                     if (switchSendToEmail.value) {
@@ -216,7 +203,24 @@ internal fun HomePage(
                     BottomImages()
                 }
 
-                ConfirmButton()
+                ViewButton(
+                    title = "${payAmount()} ${DataHolder.purchaseAmount}",
+                    textColor = ColorsSdk.colorBrandInversionMS.value,
+                    backgroundColor = ColorsSdk.colorBrandMainMS.value,
+                    actionClick = {
+                        focusManager.clearFocus(true)
+                        onPressedConfirm(
+                            emailStateSwitched = switchSendToEmail.value,
+                            email = emailText.value.text,
+                            emailError = emailError,
+                            cardNumber = cardNumberText.value.text,
+                            cardNumberError = cardNumberError
+                        )
+                    },
+                    modifierRoot = Modifier
+                        .padding(horizontal = 16.dp)
+                        .padding(bottom = 16.dp)
+                )
 
                 if (showDialogExit.value) {
                     InitDialogExit(

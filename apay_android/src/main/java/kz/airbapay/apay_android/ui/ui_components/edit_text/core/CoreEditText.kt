@@ -24,6 +24,7 @@ import kz.airbapay.apay_android.ui.ui_components.InitActionIcon
 
 @Composable
 internal fun CoreEditText(
+    isError: Boolean,
     placeholder: String,
     mask: String?,
     regex: Regex?,
@@ -68,9 +69,10 @@ internal fun CoreEditText(
         keyboardActions = keyboardActions,
         visualTransformation = visualTransformation ?: VisualTransformation.None,
         colors = TextFieldDefaults.outlinedTextFieldColors(
-            backgroundColor = ColorsSdk.bgBlock,
-            textColor = ColorsSdk.textMain,
-            focusedLabelColor = ColorsSdk.colorBrandMainMS.value,
+            backgroundColor = if (isError) ColorsSdk.stateBgError else ColorsSdk.bgBlock,
+            textColor = if (isError) ColorsSdk.stateError else ColorsSdk.textMain,
+            focusedLabelColor = if (isError) ColorsSdk.stateError else ColorsSdk.colorBrandMainMS.value,
+            unfocusedLabelColor = if (isError) ColorsSdk.stateError else ColorsSdk.textLight,
             focusedBorderColor = ColorsSdk.transparent,
             cursorColor = ColorsSdk.colorBrandMainMS.value,
             unfocusedBorderColor = ColorsSdk.transparent,

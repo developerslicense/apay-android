@@ -2,6 +2,7 @@ package kz.airbapay.apay_android.ui.ui_components.edit_text.core
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -10,6 +11,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Card
+import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -17,6 +19,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
@@ -80,6 +83,7 @@ internal fun ViewEditText(
                 val (clearIconRef, paySystemIconRef) = createRefs()
 
                 CoreEditText(
+                    isError = errorTitle.value != null,
                     mask = mask,
                     regex = regex,
                     placeholder = placeholder,
@@ -105,6 +109,7 @@ internal fun ViewEditText(
                     clearIconRef = clearIconRef,
                     hasFocus = hasFocus.value,
                     text = text.value.text,
+                    isError = errorTitle.value != null,
                     actionClickClear = {
                         text.value = TextFieldValue(
                             text = "",
@@ -116,12 +121,21 @@ internal fun ViewEditText(
         }
 
         if (errorTitle.value != null) {
-            Text(
-                style = LocalFonts.current.caption400,
-                text = errorTitle.value!!,
-                color = ColorsSdk.stateError,
-                modifier = Modifier.padding(vertical = 4.dp)
-            )
+            Row {
+                Icon(
+                    painter = painterResource(R.drawable.alarm),
+                    contentDescription = "alarm",
+                    tint = ColorsSdk.stateError,
+                    modifier = Modifier.padding(vertical = 4.dp)
+                )
+                Text(
+                    style = LocalFonts.current.caption400,
+                    text = errorTitle.value!!,
+                    color = ColorsSdk.stateError,
+                    modifier = Modifier.padding(vertical = 4.dp)
+                )
+            }
+
         }
     }
 }
@@ -154,6 +168,7 @@ private fun ConstraintLayoutScope.InitIconPaySystem(
 
 @Composable
 private fun ConstraintLayoutScope.InitIconClear(
+    isError: Boolean,
     text: String,
     hasFocus: Boolean,
     actionClickClear: () -> Unit,
@@ -172,7 +187,8 @@ private fun ConstraintLayoutScope.InitIconClear(
                     end.linkTo(parent.end)
                     top.linkTo(parent.top)
                     bottom.linkTo(parent.bottom)
-                }
+                },
+            _outlinedButtonColor = if (isError) ColorsSdk.stateBgError else ColorsSdk.bgBlock
         )
     }
 }
