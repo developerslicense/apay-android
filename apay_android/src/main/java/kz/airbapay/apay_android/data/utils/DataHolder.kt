@@ -27,5 +27,7 @@ internal object DataHolder {
   var currentLang = AirbaPaySdk.Lang.RU.lang
 
   var goods: List<AirbaPaySdk.Goods>? = null
+  var settlementPayments: List<AirbaPaySdk.SettlementPayment>? = null
+
 
 }

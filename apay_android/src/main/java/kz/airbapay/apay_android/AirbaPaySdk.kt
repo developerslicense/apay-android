@@ -3,6 +3,9 @@ package kz.airbapay.apay_android
 import android.content.Context
 import android.content.Intent
 import androidx.compose.ui.graphics.Color
+import com.google.gson.annotations.SerializedName
+import kz.airbapay.apay_android.data.utils.DataHolder
+import kz.airbapay.apay_android.data.utils.Money
 import kz.airbapay.apay_android.ui.resources.ColorsSdk
 
 class AirbaPaySdk {
@@ -13,19 +16,36 @@ class AirbaPaySdk {
     }
 
     class Goods(
+        @SerializedName("brand")
         val brand: String,  // Брэнд продукта
-        val category: String, // Категория продукта
-        val model: String, // Модель продукта
-        val quantity: Int, // Количество в корзине
-        val price: Int // Цена продукта
-    ) 
 
-   companion object {
+        @SerializedName("category")
+        val category: String, // Категория продукта
+
+        @SerializedName("model")
+        val model: String, // Модель продукта
+
+        @SerializedName("quantity")
+        val quantity: Int, // Количество в корзине
+
+        @SerializedName("price")
+        val price: Long // Цена продукта
+    )
+
+    class SettlementPayment(
+        @SerializedName("amount")
+        val amount: Long,
+
+        @SerializedName("company_id")
+        val companyId: String?
+    )
+
+    companion object {
         fun startProcessing(
             context: Context,
             isProd: Boolean,
             lang: Lang,
-            purchaseAmount: Int,
+            purchaseAmount: Long,
             phone: String,
             invoiceId: String,
             orderNumber: String,
@@ -38,82 +58,50 @@ class AirbaPaySdk {
             successCallback: String,
             userEmail: String?,
             goods: List<Goods>,
+            settlementPayments: List<SettlementPayment>?,
             colorBrandMain: Color? = null,
             colorBrandInversion: Color? = null,
         ) {
 
-            if(colorBrandInversion != null) {
+            if (colorBrandInversion != null) {
                 ColorsSdk.colorBrandInversionMS.value = colorBrandInversion
             }
 
-            if(colorBrandMain != null) {
+            if (colorBrandMain != null) {
                 ColorsSdk.colorBrandMainMS.value = colorBrandMain
             }
 
-            val sb = StringBuilder()
-            sb.append("isProd=$isProd")
-            sb.append("?")
+            DataHolder.accessToken = null
+            DataHolder.isProd = isProd
+            DataHolder.baseUrl = if (DataHolder.isProd) "https://ps.airbapay.kz/acquiring-api/sdk/"
+            else "https://sps.airbapay.kz/acquiring-api/sdk/"
 
-            sb.append("purchaseAmount=$purchaseAmount")
-            sb.append("?")
+            DataHolder.userPhone = phone
+            DataHolder.userEmail = userEmail
 
-            sb.append("phone=$phone")
-            sb.append("?")
+            DataHolder.failureBackUrl = failureBackUrl
+            DataHolder.failureCallback = failureCallback
+            DataHolder.successBackUrl = successBackUrl
+            DataHolder.successCallback = successCallback
 
-            sb.append("lang=${lang.lang}")
-            sb.append("?")
+            DataHolder.sendTimeout = 60
+            DataHolder.connectTimeout = 60
+            DataHolder.receiveTimeout = 60
+            DataHolder.shopId = shopId
+            DataHolder.password = password
+            DataHolder.terminalId = terminalId
+            DataHolder.purchaseAmount = Money.initLong(purchaseAmount).getFormatted()
+            DataHolder.orderNumber = orderNumber
+            DataHolder.invoiceId = invoiceId
 
-            sb.append("invoiceId=$invoiceId")
-            sb.append("?")
+            DataHolder.goods = goods
+            DataHolder.settlementPayments = settlementPayments
 
-            sb.append("orderNumber=$orderNumber")
-            sb.append("?")
-
-            sb.append("shopId=$shopId")
-            sb.append("?")
-
-            sb.append("password=$password")
-            sb.append("?")
-
-            sb.append("terminalId=$terminalId")
-            sb.append("?")
-
-            sb.append("failureBackUrl=$failureBackUrl")
-            sb.append("?")
-
-            sb.append("failureCallback=$failureCallback")
-            sb.append("?")
-
-            sb.append("successBackUrl=$successBackUrl")
-            sb.append("?")
-
-            sb.append("successCallback=$successCallback")
-            sb.append("?")
-
-            if (!userEmail.isNullOrBlank()) { // Если емейла нет, то не нужно отправлять
-                sb.append("userEmail=$userEmail")
-                sb.append("?")
-            }
-
-            goods.forEach { good ->
-                sb.append("good_model=${good.model}")
-                sb.append("?")
-                sb.append("good_quantity=${good.quantity}")
-                sb.append("?")
-                sb.append("good_brand=${good.brand}")
-                sb.append("?")
-                sb.append("good_price=${good.price}")
-                sb.append("?")
-                sb.append("good_category=${good.category}")
-                sb.append("?")
-            }
+            DataHolder.currentLang = lang.lang
 
             val intent = Intent(context, AirbaPayActivity::class.java)
-                .putExtra("airba_pay_args", sb.toString())
-                .putExtra("route", "/")
-
             context.startActivity(intent)
         }
-   }
+    }
 }
 

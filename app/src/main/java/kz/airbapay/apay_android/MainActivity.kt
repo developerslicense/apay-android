@@ -49,6 +49,13 @@ class MainActivity : ComponentActivity() {
                                     )
                                 )
 
+                                val settlementPayment = listOf(
+                                    AirbaPaySdk.SettlementPayment(
+                                        1000,
+                                        "test_id"
+                                    )
+                                )
+
                                 AirbaPaySdk.startProcessing(
                                     context = this@MainActivity,
                                     isProd = false,
@@ -66,6 +73,7 @@ class MainActivity : ComponentActivity() {
                                     successCallback = "https://site.kz/success-clb",
                                     userEmail = "test@test.com",
                                     goods = goods,
+                                    settlementPayments = settlementPayment // emptyList()
 //                                    colorBrandMain = Color.Red
                                 )
                             }
