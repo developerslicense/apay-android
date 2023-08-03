@@ -41,6 +41,9 @@ class AirbaPaySdk {
     )
 
     companion object {
+        /**
+         * @settlementPayments - не обязательный параметр, нужно присылать, если есть необходимость в разделении счетов по компаниям
+         * */
         fun startProcessing(
             context: Context,
             isProd: Boolean,

@@ -12,6 +12,7 @@ internal object DataHolder {
   var isProd = true
 
   var accessToken: String? = null
+  var cardId: String? = null
   var purchaseAmount = ""
   var orderNumber = ""
   var invoiceId = ""
