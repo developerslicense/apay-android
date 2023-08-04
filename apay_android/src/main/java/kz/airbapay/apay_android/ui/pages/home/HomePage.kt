@@ -49,7 +49,8 @@ import kz.airbapay.apay_android.ui.pages.home.presentation.DateExpiredView
 import kz.airbapay.apay_android.ui.pages.home.presentation.EmailView
 import kz.airbapay.apay_android.ui.pages.home.presentation.SwitchedView
 import kz.airbapay.apay_android.ui.pages.home.presentation.TopInfoView
-import kz.airbapay.apay_android.ui.pages.home.presentation.onPressedConfirm
+import kz.airbapay.apay_android.ui.pages.home.presentation.checkValid
+import kz.airbapay.apay_android.ui.pages.home.presentation.startPaymentProcessing
 import kz.airbapay.apay_android.ui.resources.ColorsSdk
 import kz.airbapay.apay_android.ui.ui_components.BackHandler
 import kz.airbapay.apay_android.ui.ui_components.ViewButton
@@ -209,15 +210,22 @@ internal fun HomePage(
                     backgroundColor = ColorsSdk.colorBrandMainMS.value,
                     actionClick = {
                         focusManager.clearFocus(true)
-                        onPressedConfirm(
+
+                        val isValid = checkValid(
                             emailStateSwitched = switchSendToEmail.value,
                             email = emailText.value.text,
                             emailError = emailError,
                             cardNumber = cardNumberText.value.text,
                             cardNumberError = cardNumberError,
                             dateExpired = dateExpiredText.value.text,
-                            dateExpiredError = dateExpiredError
+                            dateExpiredError = dateExpiredError,
+                            cvvError = cvvError,
+                            cvv = cvvText.value.text
                         )
+
+                        if (isValid) {
+                            startPaymentProcessing()
+                        }
                     },
                     modifierRoot = Modifier
                         .padding(horizontal = 16.dp)

@@ -87,6 +87,7 @@ internal fun CoreEditText(
             null
         else {{
             InitIconInfo(
+                isError = isError,
                 actionClickInfo = { actionClickInfo() }
             )
         }}
@@ -113,11 +114,13 @@ private fun clearText(
 
 @Composable
 private fun InitIconInfo(
+    isError: Boolean,
     actionClickInfo: () -> Unit
 ) {
     InitActionIcon(
         action = actionClickInfo,
         iconSrc = R.drawable.hint,
-        modifier = Modifier.size(40.dp)
+        modifier = Modifier.size(40.dp),
+        _outlinedButtonColor = if (isError) ColorsSdk.stateBgError else ColorsSdk.bgBlock
     )
 }

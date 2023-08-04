@@ -99,10 +99,12 @@ internal fun ViewEditText(
                 )
 
                 InitIconPaySystem(
+                    isError = errorTitle.value != null,
                     paySystemIconRef = paySystemIconRef,
                     clearIconRef = clearIconRef,
                     paySystemIcon = paySystemIcon.value,
                     text = text.value.text,
+                    hasFocus = hasFocus.value
                 )
 
                 InitIconClear(
@@ -143,6 +145,8 @@ internal fun ViewEditText(
 
 @Composable
 private fun ConstraintLayoutScope.InitIconPaySystem(
+    isError: Boolean,
+    hasFocus: Boolean,
     text: String,
     paySystemIcon: Int?,
     paySystemIconRef: ConstrainedLayoutReference,
@@ -158,10 +162,15 @@ private fun ConstraintLayoutScope.InitIconPaySystem(
             modifier = Modifier
                 .size(40.dp)
                 .constrainAs(paySystemIconRef) {
-                    end.linkTo(clearIconRef.start, margin = 2.dp)
+                    if (hasFocus) {
+                        end.linkTo(clearIconRef.start, margin = 2.dp)
+                    } else {
+                        end.linkTo(parent.end, margin = 4.dp)
+                    }
                     top.linkTo(parent.top)
                     bottom.linkTo(parent.bottom)
-                }
+                },
+            _outlinedButtonColor = if (isError) ColorsSdk.stateBgError else ColorsSdk.bgBlock
         )
     }
 }
