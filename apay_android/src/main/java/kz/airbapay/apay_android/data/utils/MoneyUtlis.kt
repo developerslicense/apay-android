@@ -6,6 +6,7 @@ import java.text.NumberFormat
 import java.util.Currency
 import java.util.Locale
 
+// тесты в MoneyTests
 internal class Money(
     val amount: Long = 0,
     val currency: String = kzt

@@ -43,3 +43,10 @@ internal fun isAssert(
 ) {
     assertEquals(expected, actual)
 }
+
+internal fun isAssert(
+    actual: Boolean,
+    expected: Boolean
+) {
+    assertEquals(expected, actual)
+}

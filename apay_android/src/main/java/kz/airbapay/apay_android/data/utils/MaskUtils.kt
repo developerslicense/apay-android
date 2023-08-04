@@ -1,12 +1,11 @@
 package kz.airbapay.apay_android.data.utils
 
-import java.lang.StringBuilder
-
 /// MaskFormatter("XXXXXAAAA").format("S1234567B") // XXXXX567B
 /// MaskFormatter("XX.XXX.AAAA").format("S1234567B") // XX.XXX.567B
 /// MaskFormatter("**.***.AAAA").format("S1234567B") // **.***.567B
 /// MaskFormatter("AA-AAA-AAAA").format("123456789") // 12-345-6789
 
+// тесты в MaskFormatterTests
 class MaskUtils(
     private val pattern: String,
     private val isDateExpiredMask: Boolean = false

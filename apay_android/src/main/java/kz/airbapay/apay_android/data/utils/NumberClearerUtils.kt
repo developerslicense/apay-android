@@ -2,6 +2,7 @@ package kz.airbapay.apay_android.data.utils
 
 import kz.airbapay.apay_android.data.constant.RegexConst
 
+// тесты в GetNumberClearedTests
 internal fun getNumberCleared(
     amount: String?,
     isUserEntered: Boolean = false,
@@ -11,6 +12,7 @@ internal fun getNumberCleared(
     return clearNumberMaxSymbols(amountLocaleCleaned)
 }
 
+// тесты в GetNumberClearedWithMaxSizeTests
 internal fun getNumberClearedWithMaxSymbol(
     amount: String?,
     isUserEntered: Boolean = false,

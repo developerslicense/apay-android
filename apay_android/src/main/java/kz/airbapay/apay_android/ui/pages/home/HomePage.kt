@@ -214,7 +214,9 @@ internal fun HomePage(
                             email = emailText.value.text,
                             emailError = emailError,
                             cardNumber = cardNumberText.value.text,
-                            cardNumberError = cardNumberError
+                            cardNumberError = cardNumberError,
+                            dateExpired = dateExpiredText.value.text,
+                            dateExpiredError = dateExpiredError
                         )
                     },
                     modifierRoot = Modifier

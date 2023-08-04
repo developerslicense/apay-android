@@ -4,12 +4,17 @@ import androidx.compose.runtime.MutableState
 import kz.airbapay.apay_android.data.constant.RegexConst
 import kz.airbapay.apay_android.data.constant.needFillTheField
 import kz.airbapay.apay_android.data.constant.wrongCardNumber
+import kz.airbapay.apay_android.data.constant.wrongDate
 import kz.airbapay.apay_android.data.constant.wrongEmail
+import kz.airbapay.apay_android.data.utils.card_utils.isDateValid
 import kz.airbapay.apay_android.data.utils.card_utils.validateCardNumWithLuhnAlgorithm
 
 internal fun onPressedConfirm(
     cardNumber: String?,
     cardNumberError: MutableState<String?>,
+
+    dateExpired: String?,
+    dateExpiredError: MutableState<String?>,
 
     emailStateSwitched: Boolean,
     email: String?,
@@ -41,7 +46,17 @@ internal fun onPressedConfirm(
         cardNumberError.value = null
     }
 
+    if (dateExpired.isNullOrBlank()) {
+        hasError = true
+        dateExpiredError.value = needFillTheField()
 
+    } else if (!isDateValid(dateExpired)) {
+        hasError = true
+        dateExpiredError.value = wrongDate()
+
+    } else {
+        dateExpiredError.value = null
+    }
 }
 
 
@@ -49,13 +64,6 @@ internal fun onPressedConfirm(
 
 
 
-  if (isBlank(readState(context).nameHolder)) {
-    hasError = true;
-    addState(context, NameHolderEvent(errorNameHolder: needFillTheField()));
-
-  } else {
-    addState(context, const NameHolderEvent(errorNameHolder: null));
-  }
 
   if (isBlank(readState(context).cvv)) {
     //todo проверку на валидность c бэка?
