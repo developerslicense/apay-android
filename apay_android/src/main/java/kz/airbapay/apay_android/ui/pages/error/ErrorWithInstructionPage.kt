@@ -1,5 +1,6 @@
 package kz.airbapay.apay_android.ui.pages.error
 
+import android.app.Activity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -20,6 +21,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.navigation.NavController
 import kz.airbapay.apay_android.AirbaPaySdk
 import kz.airbapay.apay_android.R
 import kz.airbapay.apay_android.data.constant.BanksName
@@ -43,7 +45,7 @@ import kz.airbapay.apay_android.ui.ui_components.ViewButton
 @Composable
 internal fun ErrorWithInstructionPage(
     errorCode: ErrorsCode,
-    bankName: String
+    navController: NavController
 ) {
 
     /*try {
@@ -53,7 +55,7 @@ internal fun ErrorWithInstructionPage(
       bankName = BanksName.kaspi.name
     }*/
 
-    val faqUrl = when (bankName) {
+    val faqUrl = when (DataHolder.bankName) {
         BanksName.kaspi.name -> {
             if (DataHolder.currentLang == AirbaPaySdk.Lang.KZ.lang)
                 "https://static-data.object.pscloud.io/pay-manuals/Kaspi_kaz.mp4"
@@ -124,7 +126,7 @@ internal fun ErrorWithInstructionPage(
         )
 
         Text(
-            text = if (bankName == BanksName.kaspi.name) forChangeLimitInKaspi() else forChangeLimitInHomebank(),
+            text = if (DataHolder.bankName == BanksName.kaspi.name) forChangeLimitInKaspi() else forChangeLimitInHomebank(),
             style = LocalFonts.current.semiBold,
             textAlign = TextAlign.Start,
             modifier = Modifier
@@ -162,7 +164,10 @@ internal fun ErrorWithInstructionPage(
             ViewButton(
                 title = errorCode.buttonTop(),
                 actionClick = {
-                    errorCode.clickOnTop(context)
+                    errorCode.clickOnTop(
+                        navController = navController,
+                        finish = { (context as Activity).finish() }
+                    )
                 }
             )
 
@@ -173,7 +178,10 @@ internal fun ErrorWithInstructionPage(
                 textColor = ColorsSdk.colorBrandMainMS.value,
                 backgroundColor = ColorsSdk.colorBrandInversionMS.value,
                 actionClick = {
-                    errorCode.clickOnBottom(context)
+                    errorCode.clickOnBottom(
+                        navController = navController,
+                        finish = { (context as Activity).finish() }
+                    )
                 }
             )
         }

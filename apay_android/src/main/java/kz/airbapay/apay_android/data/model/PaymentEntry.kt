@@ -13,24 +13,7 @@ internal class PaymentEntryRequest(
     val sendReceipt: Boolean,
 
     @SerializedName("card")
-    val card: PaymentEntryCard
-)
-
-internal data class PaymentEntryCard(
-    @SerializedName("card_name")
-    val cardName: String?,
-
-    @SerializedName("cvv")
-    val cvv: String?,
-
-    @SerializedName("expiry")
-    val expiry: String?,
-
-    @SerializedName("id")
-    val cardId: String?,
-
-    @SerializedName("pan")
-    val pan: String?,
+    val card: BankCard
 )
 
 internal data class PaymentEntryResponse(

@@ -43,7 +43,7 @@ internal interface Api {
     suspend fun getPaymentInfo(): Response<PaymentInfoResponse>
 
     @PUT("api/v1/payments") // проводка платежа
-    suspend fun paymentAccountEntry(param: PaymentEntryRequest): Response<PaymentEntryResponse>
+    suspend fun paymentAccountEntry(@Body param: PaymentEntryRequest): Response<PaymentEntryResponse>
 
     @PUT("api/v1/payments/retry") // проводка без ввода данных карты
     suspend fun paymentAccountEntryRetry(): Response<PaymentEntryResponse>

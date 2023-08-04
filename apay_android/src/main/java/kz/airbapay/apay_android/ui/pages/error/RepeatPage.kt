@@ -9,19 +9,31 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.navigation.NavController
+import kotlinx.coroutines.launch
+import kz.airbapay.apay_android.data.constant.ARG_ACTION
+import kz.airbapay.apay_android.data.constant.ARG_IS_RETRY
+import kz.airbapay.apay_android.data.constant.ErrorsCode
+import kz.airbapay.apay_android.data.constant.routesSuccess
+import kz.airbapay.apay_android.data.constant.routesWebView
 import kz.airbapay.apay_android.data.constant.thisNeedSomeTime
 import kz.airbapay.apay_android.data.constant.weRepeatYourPayment
+import kz.airbapay.apay_android.network.repository.PaymentsRepository
 import kz.airbapay.apay_android.ui.resources.ColorsSdk
 import kz.airbapay.apay_android.ui.resources.LocalFonts
 import kz.airbapay.apay_android.ui.ui_components.BackHandler
 
 @Composable
-internal fun RepeatPage() {
+internal fun RepeatPage(
+    navController: NavController,
+    paymentsRepository: PaymentsRepository
+) {
 
     BackHandler {}
 
@@ -79,4 +91,50 @@ internal fun RepeatPage() {
                 }
         )
     }
+
+    LaunchedEffect("onStart") {
+        launch {
+            onStart(
+                navController = navController,
+                paymentsRepository = paymentsRepository
+            )
+        }
+    }
+}
+
+private fun onStart(
+    navController: NavController,
+    paymentsRepository: PaymentsRepository
+) {
+
+    paymentsRepository.paymentAccountEntryRetry(
+        result = { response ->
+            if (response.isSecure3D == true) {
+
+                navController.navigate(
+                    route = routesWebView
+                            + "?$ARG_ACTION=${response.secure3D?.action}"
+                            + "?${ARG_IS_RETRY}=true",
+                )
+
+            } else if (response.errorCode != "0") {
+                openErrorPageWithCondition(
+                    errorCode = response.errorCode?.toInt() ?: 0,
+                    isRetry = true,
+                    navController = navController
+                )
+
+            } else {
+                navController.navigate(routesSuccess)
+            }
+        },
+        error = {
+            openErrorPageWithCondition(
+                errorCode = ErrorsCode.error_1.code,
+                isRetry = true,
+                navController = navController
+            )
+        }
+    )
+
 }

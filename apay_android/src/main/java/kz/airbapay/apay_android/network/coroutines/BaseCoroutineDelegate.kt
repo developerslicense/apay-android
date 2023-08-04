@@ -1,6 +1,5 @@
 package kz.airbapay.apay_android.network.coroutines
 
-import androidx.compose.runtime.mutableStateOf
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -13,7 +12,6 @@ class BaseCoroutineDelegate : BaseCoroutine {
     private val parentJob = Job()
 
     override val scope = CoroutineScope(Dispatchers.Main + parentJob)
-    override val hasInternet = mutableStateOf(true)
 
     override fun clearCoroutine() {
         parentJob.cancelChildren()
@@ -24,7 +22,6 @@ class BaseCoroutineDelegate : BaseCoroutine {
         result: (T) -> Unit,
         error: (Response<T>) -> Unit
     ) {
-        hasInternet.value = true
 
         scope.launch {
             requestFlow

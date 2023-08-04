@@ -10,7 +10,9 @@ internal object DataHolder {
   var sendTimeout = 60
 
   var isProd = true
+  var needShowSdkSuccessPage = true
 
+  var bankName: String? = null
   var accessToken: String? = null
   var cardId: String? = null
   var purchaseAmount = ""

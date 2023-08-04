@@ -1,5 +1,6 @@
 package kz.airbapay.apay_android.ui.pages.error
 
+import android.app.Activity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -20,10 +21,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.navigation.NavController
 import kz.airbapay.apay_android.R
-import kz.airbapay.apay_android.ui.resources.ColorsSdk
 import kz.airbapay.apay_android.data.constant.ErrorsCode
-import kz.airbapay.apay_android.ui.resources.LocalFonts
 import kz.airbapay.apay_android.data.constant.buttonBottom
 import kz.airbapay.apay_android.data.constant.buttonTop
 import kz.airbapay.apay_android.data.constant.clickOnBottom
@@ -31,12 +31,15 @@ import kz.airbapay.apay_android.data.constant.clickOnTop
 import kz.airbapay.apay_android.data.constant.description
 import kz.airbapay.apay_android.data.constant.message
 import kz.airbapay.apay_android.ui.pages.dialog.InitDialogExit
+import kz.airbapay.apay_android.ui.resources.ColorsSdk
+import kz.airbapay.apay_android.ui.resources.LocalFonts
 import kz.airbapay.apay_android.ui.ui_components.BackHandler
 import kz.airbapay.apay_android.ui.ui_components.ViewButton
 
 @Composable
 internal fun ErrorPage(
-    errorCode: ErrorsCode
+    errorCode: ErrorsCode,
+    navController: NavController
 ) {
 
     val context = LocalContext.current
@@ -114,7 +117,10 @@ internal fun ErrorPage(
             ViewButton(
                 title = errorCode.buttonTop(),
                 actionClick = {
-                    errorCode.clickOnTop(context)
+                    errorCode.clickOnTop(
+                        navController = navController,
+                        finish = { (context as Activity).finish() }
+                    )
                 }
             )
 
@@ -125,7 +131,10 @@ internal fun ErrorPage(
                 textColor = ColorsSdk.colorBrandMainMS.value,
                 backgroundColor = ColorsSdk.colorBrandInversionMS.value,
                 actionClick = {
-                    errorCode.clickOnBottom(context)
+                    errorCode.clickOnBottom(
+                        navController = navController,
+                        finish = { (context as Activity).finish() }
+                    )
                 }
             )
         }

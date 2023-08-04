@@ -1,7 +1,6 @@
 package kz.airbapay.apay_android.data.constant
 
-import android.app.Activity
-import android.content.Context
+import androidx.navigation.NavController
 import kz.airbapay.apay_android.AirbaPaySdk
 import kz.airbapay.apay_android.data.utils.DataHolder
 
@@ -135,28 +134,40 @@ internal fun ErrorsCode.buttonBottom() = if (DataHolder.currentLang == AirbaPayS
 
 
 internal fun ErrorsCode.clickOnTop(
-    context: Context
+    navController: NavController,
+    finish: () -> Unit
 ) {
     when (code) {
-//         5002  -> { Navigator.of(context).popUntil((route) => route . isFirst) }
-//         5003  -> { Navigator.of(context).popUntil((route) => route . isFirst) }
-//         5006  -> { Navigator.of(context).popUntil((route) => route . isFirst) }
-//         5007  -> { Navigator.pushNamed(context, routesRepeat) }
-//         5008  -> { Navigator.pushNamed(context, routesRepeat) }
-//         5009  -> { Navigator.pushNamed(context, routesRepeat) }
-//         5999  -> { Navigator.pushNamed(context, routesRepeat) }
-        else -> { (context as  Activity).finish() }
+        5002 -> { goToHome(navController) }
+        5003 -> { goToHome(navController) }
+        5006 -> { goToHome(navController) }
+        5007 -> { goToRepeat(navController) }
+        5008 -> { goToRepeat(navController) }
+        5009 -> { goToRepeat(navController) }
+        5999 -> { goToRepeat(navController) }
+        else -> { finish() }
     }
 }
 
 internal fun ErrorsCode.clickOnBottom(
-    context: Context
+    navController: NavController,
+    finish: () -> Unit
 ) {
     when (code) {
-//         5008 -> { Navigator.of(context).popUntil((route) => route . isFirst) }
-//         5999 ->{ Navigator.of(context).popUntil((route) => route . isFirst) }
-        else -> { (context as  Activity).finish() }
-
+        5008 -> { goToHome(navController) }
+        5999 -> { goToHome(navController) }
+        else -> { finish() }
     }
+}
+
+private fun goToHome(navController: NavController) {
+    navController.popBackStack(
+        route = routesHome,
+        inclusive = false
+    )
+}
+
+private fun goToRepeat(navController: NavController) {
+    navController.navigate(route = routesRepeat)
 }
 

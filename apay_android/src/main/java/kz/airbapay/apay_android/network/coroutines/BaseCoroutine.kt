@@ -1,6 +1,5 @@
 package kz.airbapay.apay_android.network.coroutines
 
-import androidx.compose.runtime.MutableState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import retrofit2.Response
@@ -8,8 +7,6 @@ import retrofit2.Response
 interface BaseCoroutine {
 
     val scope: CoroutineScope
-
-    val hasInternet: MutableState<Boolean>
 
     /**
      * Очиска coroutine (если спользовать в паре с CoreLaunchViewModel

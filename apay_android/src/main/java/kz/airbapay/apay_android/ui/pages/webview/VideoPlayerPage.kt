@@ -7,7 +7,6 @@ import android.webkit.WebView
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
 
 @Composable
@@ -15,8 +14,6 @@ internal fun VideoPlayerPage(
     url: String?
 ) {
     val inProgress = remember { mutableStateOf(true) }
-    val isRetry = remember { mutableStateOf(false) }
-    val context = LocalContext.current
 
     AndroidView(
         factory = {
@@ -37,8 +34,7 @@ internal fun VideoPlayerPage(
                 webChromeClient = WebChromeClient()
                 webViewClient = WebViewClientCompose(
                     inProgress = inProgress,
-                    context = context,
-                    isRetry = isRetry
+                    isRetry = false
                 )
 
                 loadPage(url)

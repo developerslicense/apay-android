@@ -67,13 +67,12 @@ class MainActivity : ComponentActivity() {
                                     lang = AirbaPaySdk.Lang.RU,
                                     password = "123456",
                                     terminalId = "64216e7ccc4a48db060dd689",
-                                    failureBackUrl = "https://site.kz/failure",
                                     failureCallback = "https://site.kz/failure-clb",
-                                    successBackUrl = "https://site.kz/success",
                                     successCallback = "https://site.kz/success-clb",
+                                    needShowSdkSuccessPage = true,
                                     userEmail = "test@test.com",
                                     goods = goods,
-                                    settlementPayments = settlementPayment // emptyList()
+                                    settlementPayments = emptyList() //settlementPayment // emptyList()
 //                                    colorBrandMain = Color.Red
                                 )
                             }

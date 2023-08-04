@@ -55,9 +55,8 @@ class AirbaPaySdk {
             shopId: String,
             password: String,
             terminalId: String,
-            failureBackUrl: String,
+            needShowSdkSuccessPage: Boolean,
             failureCallback: String,
-            successBackUrl: String,
             successCallback: String,
             userEmail: String?,
             goods: List<Goods>,
@@ -74,17 +73,19 @@ class AirbaPaySdk {
                 ColorsSdk.colorBrandMainMS.value = colorBrandMain
             }
 
+            DataHolder.bankName = null
             DataHolder.accessToken = null
             DataHolder.isProd = isProd
+            DataHolder.needShowSdkSuccessPage = needShowSdkSuccessPage
             DataHolder.baseUrl = if (DataHolder.isProd) "https://ps.airbapay.kz/acquiring-api/sdk/"
             else "https://sps.airbapay.kz/acquiring-api/sdk/"
 
             DataHolder.userPhone = phone
             DataHolder.userEmail = userEmail
 
-            DataHolder.failureBackUrl = failureBackUrl
+            DataHolder.failureBackUrl = "https://site.kz/failure" // не нужно
             DataHolder.failureCallback = failureCallback
-            DataHolder.successBackUrl = successBackUrl
+            DataHolder.successBackUrl = "https://site.kz/success"// не нужно
             DataHolder.successCallback = successCallback
 
             DataHolder.sendTimeout = 60

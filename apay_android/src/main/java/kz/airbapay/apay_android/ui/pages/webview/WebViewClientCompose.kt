@@ -1,7 +1,6 @@
 package kz.airbapay.apay_android.ui.pages.webview
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.graphics.Bitmap
 import android.net.http.SslError
 import android.webkit.SslErrorHandler
@@ -9,19 +8,18 @@ import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.compose.runtime.MutableState
-import kz.airbapay.apay_android.ui.pages.error.openErrorPageWithCondition
+import androidx.navigation.NavController
+import kz.airbapay.apay_android.data.constant.routesSuccess
 import kz.airbapay.apay_android.data.utils.DataHolder
 import kz.airbapay.apay_android.data.utils.errorLog
 import kz.airbapay.apay_android.data.utils.messageLog
+import kz.airbapay.apay_android.ui.pages.error.openErrorPageWithCondition
 
 internal class WebViewClientCompose(
+    private val navController: NavController? = null,
     private val inProgress: MutableState<Boolean>,
-    private val isRetry: MutableState<Boolean>,
-    private val context: Context
+    private val isRetry: Boolean
 ) : WebViewClient() {
-    /* final Map<String, String?>? data = ModalRoute.of(context)?.settings.arguments as Map<String, String?>?
-        _action = data?["action"]
-        _isRetry = data?["is_retry"] == "true" ? true : false*/
 
     @SuppressLint("WebViewClientOnReceivedSslError")
     override fun onReceivedSslError(view: WebView, handler: SslErrorHandler, error: SslError) {
@@ -49,10 +47,7 @@ internal class WebViewClientCompose(
             url.contains("status=auth")
                     || url.contains("status=success") -> {
                 messageLog("Status success")
-                /*Navigator.pushNamed(
-                    context,
-                    routesSuccess,
-                )*/
+                navController?.navigate(routesSuccess)
             }
             url.contains("status=error") -> {
                 messageLog("3D secure status error")
@@ -66,14 +61,19 @@ internal class WebViewClientCompose(
                         .toInt()
 
                     openErrorPageWithCondition(
-                        code,
-                        context,
-                        "",
-                        isRetry.value
+                        errorCode = code,
+                        isRetry = isRetry,
+                        navController = navController!!
                     )
                 } catch (e: Exception) {
                     errorLog(e)
-                    openErrorPageWithCondition(0, context, null, false)
+                    if (navController != null) {
+                        openErrorPageWithCondition(
+                            errorCode = 0,
+                            isRetry = true,
+                            navController = navController
+                        )
+                    }
                 }
             }
 

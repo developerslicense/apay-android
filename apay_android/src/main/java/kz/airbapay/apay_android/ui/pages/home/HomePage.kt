@@ -31,6 +31,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kz.airbapay.apay_android.R
@@ -40,6 +41,8 @@ import kz.airbapay.apay_android.data.constant.paymentOfPurchase
 import kz.airbapay.apay_android.data.constant.saveCardData
 import kz.airbapay.apay_android.data.constant.sendCheckToEmail
 import kz.airbapay.apay_android.data.utils.DataHolder
+import kz.airbapay.apay_android.network.repository.AuthRepository
+import kz.airbapay.apay_android.network.repository.PaymentsRepository
 import kz.airbapay.apay_android.ui.pages.dialog.InitDialogExit
 import kz.airbapay.apay_android.ui.pages.home.presentation.BottomImages
 import kz.airbapay.apay_android.ui.pages.home.presentation.CardNumberView
@@ -53,18 +56,24 @@ import kz.airbapay.apay_android.ui.pages.home.presentation.checkValid
 import kz.airbapay.apay_android.ui.pages.home.presentation.startPaymentProcessing
 import kz.airbapay.apay_android.ui.resources.ColorsSdk
 import kz.airbapay.apay_android.ui.ui_components.BackHandler
+import kz.airbapay.apay_android.ui.ui_components.ProgressBarView
 import kz.airbapay.apay_android.ui.ui_components.ViewButton
 import kz.airbapay.apay_android.ui.ui_components.ViewToolbar
 
 @Composable
 internal fun HomePage(
+    navController: NavController,
+    authRepository: AuthRepository,
+    paymentsRepository: PaymentsRepository,
     coroutineScope: CoroutineScope = rememberCoroutineScope(),
-    scrollState: ScrollState = rememberScrollState(),
+    scrollState: ScrollState = rememberScrollState()
 
 ) {
+
     val scaffoldState: ScaffoldState = rememberScaffoldState()
 
     val context = LocalContext.current
+    val showProgressBar = remember { mutableStateOf(false) }
     val showDialogExit = remember { mutableStateOf(false) }
     val switchSaveCard = remember { mutableStateOf(false) }
     val switchSendToEmail = remember { mutableStateOf(false) }
@@ -224,7 +233,19 @@ internal fun HomePage(
                         )
 
                         if (isValid) {
-                            startPaymentProcessing()
+                            startPaymentProcessing(
+                                navController = navController,
+                                showProgressBar = showProgressBar,
+                                saveCard = switchSaveCard.value,
+                                sendReceipt = switchSendToEmail.value,
+                                cardNumber = cardNumberText.value.text,
+                                email = if (switchSendToEmail.value) emailText.value.text else null,
+                                cvv = cvvText.value.text,
+                                dateExpired = dateExpiredText.value.text,
+                                coroutineScope = coroutineScope,
+                                authRepository = authRepository,
+                                paymentsRepository = paymentsRepository,
+                            )
                         }
                     },
                     modifierRoot = Modifier
@@ -248,6 +269,10 @@ internal fun HomePage(
                         actionLabel = null
                     )
                 }
+            }
+
+            if (showProgressBar.value) {
+                ProgressBarView()
             }
         }
     }

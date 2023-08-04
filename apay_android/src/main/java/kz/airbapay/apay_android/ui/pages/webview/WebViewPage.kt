@@ -10,8 +10,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.navigation.NavController
 import kz.airbapay.apay_android.R
 import kz.airbapay.apay_android.ui.pages.dialog.InitDialogExit
 import kz.airbapay.apay_android.ui.ui_components.BackHandler
@@ -20,10 +20,10 @@ import kz.airbapay.apay_android.ui.ui_components.ViewToolbar
 @Composable
 internal fun WebViewPage(
     url: String?,
+    isRetry: Boolean,
+    navController: NavController
 ) {
     val inProgress = remember { mutableStateOf(true) }
-    val isRetry = remember { mutableStateOf(false) }
-    val context = LocalContext.current
 
     val showDialogExit = remember {
         mutableStateOf(false)
@@ -63,9 +63,9 @@ internal fun WebViewPage(
 
                     webChromeClient = WebChromeClient()
                     webViewClient = WebViewClientCompose(
+                        navController = navController,
                         inProgress = inProgress,
-                        isRetry = isRetry,
-                        context = context
+                        isRetry = isRetry
                     )
 
                     loadPage(url)
