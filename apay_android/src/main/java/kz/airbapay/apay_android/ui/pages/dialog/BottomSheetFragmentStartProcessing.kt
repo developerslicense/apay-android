@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.compose.ui.platform.ComposeView
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import kz.airbapay.apay_android.data.utils.DataHolder
 
 internal class BottomSheetFragmentStartProcessing : BottomSheetDialogFragment() {
 
@@ -17,10 +18,11 @@ internal class BottomSheetFragmentStartProcessing : BottomSheetDialogFragment() 
     ): View {
         return ComposeView(requireContext()).apply {
             setContent {
-                InitDialogStartProcessing(
+                DialogStartProcessing(
                     actionClose = {
                         this@BottomSheetFragmentStartProcessing.dialog?.hide()
-                    }
+                    },
+                    purchaseAmount = DataHolder.purchaseAmount
                 )
             }
         }

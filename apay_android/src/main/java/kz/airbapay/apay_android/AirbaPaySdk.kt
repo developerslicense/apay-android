@@ -5,7 +5,9 @@ import androidx.compose.material.ModalBottomSheetLayout
 import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.fragment.app.FragmentManager
@@ -15,7 +17,7 @@ import kotlinx.coroutines.launch
 import kz.airbapay.apay_android.data.utils.DataHolder
 import kz.airbapay.apay_android.data.utils.Money
 import kz.airbapay.apay_android.ui.pages.dialog.BottomSheetFragmentStartProcessing
-import kz.airbapay.apay_android.ui.pages.dialog.InitDialogStartProcessing
+import kz.airbapay.apay_android.ui.pages.dialog.DialogStartProcessing
 import kz.airbapay.apay_android.ui.resources.ColorsSdk
 
 class AirbaPaySdk {
@@ -143,18 +145,23 @@ fun AirbaPaySdkModalBottomSheetProcessingCompose(
     )
 
     val coroutineScope = rememberCoroutineScope()
+    val purchaseAmount = rememberSaveable {
+        mutableStateOf("")
+    }
 
     ModalBottomSheetLayout(
         sheetState = sheetState,
         sheetBackgroundColor = ColorsSdk.transparent,
         sheetContent = {
-            InitDialogStartProcessing {
-                coroutineScope.launch { sheetState.hide() }
-            }
+            DialogStartProcessing(
+                actionClose = { coroutineScope.launch { sheetState.hide() } },
+                purchaseAmount = purchaseAmount.value
+            )
         },
         modifier = Modifier.fillMaxSize()
     ) {
         content {
+            purchaseAmount.value = DataHolder.purchaseAmount
             coroutineScope.launch {
                 sheetState.show()
             }

@@ -16,7 +16,7 @@ internal object ColorsSdk {// todo надо предоставить внешн�
     val bgAccent = Color(0xFF10142D)
     val bgSecondaryAccent = Color(0xFFFFF3C8)
     val bgElements = Color(0xFFFCFCFF)
-    val bgGPAY = Color(0x00000000)
+    val bgGPAY = Color(0xFF000000)
 
     // text
     val textMain = Color(0xFF10142D)

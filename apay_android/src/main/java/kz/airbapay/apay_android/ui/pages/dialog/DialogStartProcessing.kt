@@ -19,15 +19,15 @@ import androidx.compose.ui.unit.dp
 import kz.airbapay.apay_android.R
 import kz.airbapay.apay_android.data.constant.amountOfPurchase
 import kz.airbapay.apay_android.data.constant.paymentByCard
-import kz.airbapay.apay_android.data.utils.DataHolder
 import kz.airbapay.apay_android.ui.resources.ColorsSdk
 import kz.airbapay.apay_android.ui.resources.LocalFonts
 import kz.airbapay.apay_android.ui.ui_components.InitHeader
 import kz.airbapay.apay_android.ui.ui_components.LoadImageSrc
 
 @Composable
-internal fun InitDialogStartProcessing(
-    actionClose: () -> Unit
+internal fun DialogStartProcessing(
+    actionClose: () -> Unit,
+    purchaseAmount: String? = null
 ) {
     Card(
         shape = RoundedCornerShape(
@@ -49,7 +49,7 @@ internal fun InitDialogStartProcessing(
                     .background(ColorsSdk.gray0)
             )
 
-            InitAmount()
+            InitAmount(purchaseAmount)
 
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -57,7 +57,6 @@ internal fun InitDialogStartProcessing(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier
                     .padding(horizontal = 16.dp)
-                    .padding(top = 24.dp)
                     .fillMaxWidth()
                     .background(
                         color = ColorsSdk.bgGPAY,
@@ -78,13 +77,9 @@ internal fun InitDialogStartProcessing(
 }
 
 @Composable
-private fun InitAmount() {
-    Spacer(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(1.dp)
-            .background(ColorsSdk.gray5)
-    )
+private fun InitAmount(
+    purchaseAmount: String?
+) {
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -113,7 +108,7 @@ private fun InitAmount() {
                 style = LocalFonts.current.regular
             )
             Text(
-                text = DataHolder.purchaseAmount,
+                text = purchaseAmount.orEmpty(),
                 textAlign = TextAlign.End,
                 style = LocalFonts.current.semiBold
             )
