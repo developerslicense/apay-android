@@ -3,6 +3,8 @@ package kz.airbapay.apay_android.data.constant
 import androidx.navigation.NavController
 import kz.airbapay.apay_android.AirbaPaySdk
 import kz.airbapay.apay_android.data.utils.DataHolder
+import kz.airbapay.apay_android.data.utils.backToHome
+import kz.airbapay.apay_android.data.utils.openRepeat
 
 internal enum class ErrorsCode(
     val code: Int,
@@ -138,13 +140,13 @@ internal fun ErrorsCode.clickOnTop(
     finish: () -> Unit
 ) {
     when (code) {
-        5002 -> { goToHome(navController) }
-        5003 -> { goToHome(navController) }
-        5006 -> { goToHome(navController) }
-        5007 -> { goToRepeat(navController) }
-        5008 -> { goToRepeat(navController) }
-        5009 -> { goToRepeat(navController) }
-        5999 -> { goToRepeat(navController) }
+        5002 -> { backToHome(navController) }
+        5003 -> { backToHome(navController) }
+        5006 -> { backToHome(navController) }
+        5007 -> { openRepeat(navController) }
+        5008 -> { openRepeat(navController) }
+        5009 -> { openRepeat(navController) }
+        5999 -> { openRepeat(navController) }
         else -> { finish() }
     }
 }
@@ -154,20 +156,10 @@ internal fun ErrorsCode.clickOnBottom(
     finish: () -> Unit
 ) {
     when (code) {
-        5008 -> { goToHome(navController) }
-        5999 -> { goToHome(navController) }
+        5008 -> { backToHome(navController) }
+        5999 -> { backToHome(navController) }
         else -> { finish() }
     }
 }
 
-private fun goToHome(navController: NavController) {
-    navController.popBackStack(
-        route = ROUTES_HOME,
-        inclusive = false
-    )
-}
-
-private fun goToRepeat(navController: NavController) {
-    navController.navigate(route = ROUTES_REPEAT)
-}
 

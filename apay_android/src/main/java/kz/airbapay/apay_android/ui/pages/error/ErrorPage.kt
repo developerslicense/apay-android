@@ -53,7 +53,7 @@ internal fun ErrorPage(
 
     ConstraintLayout(
         modifier = Modifier
-            .background(ColorsSdk.bgMain)
+            .background(ColorsSdk.bgBlock)
             .clipToBounds()
             .fillMaxSize()
     ) {

@@ -11,16 +11,15 @@ import androidx.navigation.navArgument
 import androidx.navigation.navDeepLink
 import kz.airbapay.apay_android.data.constant.ARG_ACTION
 import kz.airbapay.apay_android.data.constant.ARG_ERROR_CODE
-import kz.airbapay.apay_android.data.constant.ARG_IS_RETRY
 import kz.airbapay.apay_android.data.constant.ROUTES_ERROR
 import kz.airbapay.apay_android.data.constant.ROUTES_ERROR_FINAL
+import kz.airbapay.apay_android.data.constant.ROUTES_ERROR_SOMETHING_WRONG
 import kz.airbapay.apay_android.data.constant.ROUTES_ERROR_WITH_INSTRUCTION
 import kz.airbapay.apay_android.data.constant.ROUTES_HOME
 import kz.airbapay.apay_android.data.constant.ROUTES_REPEAT
 import kz.airbapay.apay_android.data.constant.ROUTES_SUCCESS
 import kz.airbapay.apay_android.data.constant.ROUTES_WEB_VIEW
 import kz.airbapay.apay_android.data.constant.initErrorsCodeByCode
-import kz.airbapay.apay_android.data.constant.routesErrorSomethingWrong
 import kz.airbapay.apay_android.data.utils.DataHolder
 import kz.airbapay.apay_android.network.api.Api
 import kz.airbapay.apay_android.network.base.ClientConnector
@@ -65,6 +64,9 @@ class AirbaPayActivity : ComponentActivity() {
 
                 composable(
                     route = ROUTES_ERROR,
+                    deepLinks = listOf(
+                        navDeepLink { uriPattern = ROUTES_ERROR }
+                    ),
                     arguments = listOf(
                         navArgument(ARG_ERROR_CODE) {
                             type = NavType.StringType
@@ -83,7 +85,7 @@ class AirbaPayActivity : ComponentActivity() {
                     ErrorFinalPage()
                 }
 
-                composable(routesErrorSomethingWrong) {
+                composable(ROUTES_ERROR_SOMETHING_WRONG) {
                     ErrorSomethingWrongPage()
                 }
 
@@ -121,15 +123,11 @@ class AirbaPayActivity : ComponentActivity() {
                     arguments = listOf(
                         navArgument(ARG_ACTION) {
                             type = NavType.StringType
-                        },
-                        navArgument(ARG_IS_RETRY) {
-                            type = NavType.BoolType
                         }
                     )
                 ) { backStackEntry ->
                     WebViewPage(
                         url = backStackEntry.arguments?.getString(ARG_ACTION).orEmpty(),
-                        isRetry = backStackEntry.arguments?.getBoolean(ARG_IS_RETRY) ?: false,
                         navController = navController
                     )
                 }

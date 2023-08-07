@@ -20,7 +20,6 @@ import kz.airbapay.apay_android.ui.ui_components.ViewToolbar
 @Composable
 internal fun WebViewPage(
     url: String?,
-    isRetry: Boolean,
     navController: NavController
 ) {
     val inProgress = remember { mutableStateOf(true) }
@@ -65,7 +64,6 @@ internal fun WebViewPage(
                     webViewClient = WebViewClientCompose(
                         navController = navController,
                         inProgress = inProgress,
-                        isRetry = isRetry
                     )
 
                     loadPage(url)

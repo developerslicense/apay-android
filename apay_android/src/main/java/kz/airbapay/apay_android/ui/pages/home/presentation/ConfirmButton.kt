@@ -6,9 +6,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kz.airbapay.apay_android.data.constant.ErrorsCode
 import kz.airbapay.apay_android.data.constant.RegexConst
+import kz.airbapay.apay_android.data.constant.initErrorsCodeByCode
 import kz.airbapay.apay_android.data.constant.needFillTheField
-import kz.airbapay.apay_android.data.constant.ROUTES_ERROR
-import kz.airbapay.apay_android.data.constant.ROUTES_SUCCESS
 import kz.airbapay.apay_android.data.constant.wrongCardNumber
 import kz.airbapay.apay_android.data.constant.wrongCvv
 import kz.airbapay.apay_android.data.constant.wrongDate
@@ -21,10 +20,11 @@ import kz.airbapay.apay_android.data.utils.DataHolder
 import kz.airbapay.apay_android.data.utils.card_utils.isDateValid
 import kz.airbapay.apay_android.data.utils.card_utils.validateCardNumWithLuhnAlgorithm
 import kz.airbapay.apay_android.data.utils.getNumberCleared
+import kz.airbapay.apay_android.data.utils.openErrorPageWithCondition
+import kz.airbapay.apay_android.data.utils.openSuccess
 import kz.airbapay.apay_android.data.utils.openWebView
 import kz.airbapay.apay_android.network.repository.AuthRepository
 import kz.airbapay.apay_android.network.repository.PaymentsRepository
-import kz.airbapay.apay_android.ui.pages.error.openErrorPageWithCondition
 
 private var saveCardSaved = false
 private var sendReceiptSaved = false
@@ -126,27 +126,30 @@ internal fun startPaymentProcessing(
     coroutineScope.launch {
         startAuth(
             authRepository = authRepository,
-            onError = { navController.navigate(ROUTES_ERROR) },
+            onError = {
+                openErrorPageWithCondition(
+                    errorCode = ErrorsCode.error_1.code,
+                    navController = navController
+                )
+            },
             onResult = {
                 startCreatePayment(
                     paymentsRepository = paymentsRepository,
                     authRepository = authRepository,
-                    on3DS = { secure3D, isRetry ->
+                    on3DS = { secure3D ->
                        openWebView(
                            secure3D = secure3D,
-                           isRetry = isRetry,
                            navController = navController
                        )
                     },
-                    onError = { errorCode, isRetry ->
+                    onError = { errorCode ->
                         openErrorPageWithCondition(
                             errorCode = errorCode.code,
-                            isRetry = isRetry,
                             navController = navController
                         )
                     },
                     onSuccess = {
-                        navController.navigate(ROUTES_SUCCESS)
+                        openSuccess(navController)
                     }
                 )
             }
@@ -156,9 +159,9 @@ internal fun startPaymentProcessing(
 }
 
 private fun startCreatePayment(
-    on3DS: (secure3D: Secure3D?, isRetry: Boolean) -> Unit,
+    on3DS: (secure3D: Secure3D?) -> Unit,
     onSuccess: () -> Unit,
-    onError: (ErrorsCode, Boolean) -> Unit,
+    onError: (ErrorsCode) -> Unit,
     authRepository: AuthRepository,
     paymentsRepository: PaymentsRepository,
 ) {
@@ -168,7 +171,7 @@ private fun startCreatePayment(
             startAuth(
                 authRepository = authRepository,
                 paymentId = it.id,
-                onError = { onError(ErrorsCode.error_1, true) },
+                onError = { onError(ErrorsCode.error_1) },
                 onResult = {
                     val request = PaymentEntryRequest(
                         cardSave = saveCardSaved,
@@ -180,27 +183,25 @@ private fun startCreatePayment(
                         param = request,
                         result = { entryResponse ->
                             if (entryResponse.errorCode != "0") {
-                                onError(
-                                    ErrorsCode.valueOf(entryResponse.errorCode ?: "1"),
-                                    entryResponse.isRetry ?: true
-                                )
+                                val error = initErrorsCodeByCode(entryResponse.errorCode?.toInt() ?: 1)
+                                onError(error)
 
                             } else if (entryResponse.isSecure3D == true) {
-                                on3DS(entryResponse.secure3D, entryResponse.isRetry ?: false)
+                                on3DS(entryResponse.secure3D)
 
                             } else {
                                 onSuccess()
                             }
                         },
                         error = {
-                            onError(ErrorsCode.error_1, true)
+                            onError(ErrorsCode.error_1)
                         }
                     )
                 }
             )
         },
         error = {
-            onError(ErrorsCode.error_1, true)
+            onError(ErrorsCode.error_1)
         }
     )
 }

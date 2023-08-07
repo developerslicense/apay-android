@@ -80,7 +80,7 @@ internal fun ErrorWithInstructionPage(
 
     ConstraintLayout(
         modifier = Modifier
-            .background(ColorsSdk.bgMain)
+            .background(ColorsSdk.bgBlock)
             .clipToBounds()
             .fillMaxSize()
     ) {

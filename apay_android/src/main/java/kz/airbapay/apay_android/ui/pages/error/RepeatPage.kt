@@ -18,12 +18,12 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.navigation.NavController
 import kotlinx.coroutines.launch
 import kz.airbapay.apay_android.data.constant.ARG_ACTION
-import kz.airbapay.apay_android.data.constant.ARG_IS_RETRY
 import kz.airbapay.apay_android.data.constant.ErrorsCode
-import kz.airbapay.apay_android.data.constant.ROUTES_SUCCESS
 import kz.airbapay.apay_android.data.constant.ROUTES_WEB_VIEW
 import kz.airbapay.apay_android.data.constant.thisNeedSomeTime
 import kz.airbapay.apay_android.data.constant.weRepeatYourPayment
+import kz.airbapay.apay_android.data.utils.openErrorPageWithCondition
+import kz.airbapay.apay_android.data.utils.openSuccess
 import kz.airbapay.apay_android.network.repository.PaymentsRepository
 import kz.airbapay.apay_android.ui.resources.ColorsSdk
 import kz.airbapay.apay_android.ui.resources.LocalFonts
@@ -114,24 +114,21 @@ private fun onStart(
                 navController.navigate(
                     route = ROUTES_WEB_VIEW
                             + "?$ARG_ACTION=${response.secure3D?.action}"
-                            + "?${ARG_IS_RETRY}=true",
                 )
 
             } else if (response.errorCode != "0") {
                 openErrorPageWithCondition(
                     errorCode = response.errorCode?.toInt() ?: 0,
-                    isRetry = true,
                     navController = navController
                 )
 
             } else {
-                navController.navigate(ROUTES_SUCCESS)
+                openSuccess(navController)
             }
         },
         error = {
             openErrorPageWithCondition(
                 errorCode = ErrorsCode.error_1.code,
-                isRetry = true,
                 navController = navController
             )
         }

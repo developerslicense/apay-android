@@ -33,8 +33,7 @@ internal fun VideoPlayerPage(
 
                 webChromeClient = WebChromeClient()
                 webViewClient = WebViewClientCompose(
-                    inProgress = inProgress,
-                    isRetry = false
+                    inProgress = inProgress
                 )
 
                 loadPage(url)
