@@ -39,7 +39,7 @@ internal fun openErrorPageWithCondition(
     } else if (error.code == ErrorsCode.error_5020.code || errorCode == null) {
         navController.navigate(ROUTES_ERROR_FINAL)
 
-    } else if (error.code== ErrorsCode.error_5999.code /*&& DataHolder.bankName?.isNotBlank() == true*/) {
+    } else if (error.code== ErrorsCode.error_5999.code && DataHolder.bankName?.isNotBlank() == true) {
         val deepLink = TEMPLATE_ROUTES_ERROR_WITH_INSTRUCTION +
                 "?${ARG_ERROR_CODE}=${error.code}".toUri()
         navController.navigate(deepLink)

@@ -17,13 +17,12 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.navigation.NavController
 import kotlinx.coroutines.launch
-import kz.airbapay.apay_android.data.constant.ARG_ACTION
 import kz.airbapay.apay_android.data.constant.ErrorsCode
-import kz.airbapay.apay_android.data.constant.ROUTES_WEB_VIEW
 import kz.airbapay.apay_android.data.constant.thisNeedSomeTime
 import kz.airbapay.apay_android.data.constant.weRepeatYourPayment
 import kz.airbapay.apay_android.data.utils.openErrorPageWithCondition
 import kz.airbapay.apay_android.data.utils.openSuccess
+import kz.airbapay.apay_android.data.utils.openWebView
 import kz.airbapay.apay_android.network.repository.PaymentsRepository
 import kz.airbapay.apay_android.ui.resources.ColorsSdk
 import kz.airbapay.apay_android.ui.resources.LocalFonts
@@ -110,10 +109,9 @@ private fun onStart(
     paymentsRepository.paymentAccountEntryRetry(
         result = { response ->
             if (response.isSecure3D == true) {
-
-                navController.navigate(
-                    route = ROUTES_WEB_VIEW
-                            + "?$ARG_ACTION=${response.secure3D?.action}"
+                openWebView(
+                    secure3D = response.secure3D,
+                    navController = navController
                 )
 
             } else if (response.errorCode != "0") {
