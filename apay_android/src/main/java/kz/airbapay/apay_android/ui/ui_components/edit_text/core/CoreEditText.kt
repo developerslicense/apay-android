@@ -42,7 +42,9 @@ internal fun CoreEditText(
     val maskUtils: MaskUtils? = if (mask == null) null else MaskUtils(mask, isDateExpiredMask)
 
     val onTextChanged: ((TextFieldValue) -> Unit) = {
-        if (it.text.length > text.value.text.length) {
+        if (maskUtils != null
+            && it.text.length > text.value.text.length
+        ) {
             val result = if (regex != null)
                 clearText(
                     text = it.text,
@@ -50,8 +52,8 @@ internal fun CoreEditText(
                 ) else it.text
 
             text.value = TextFieldValue(
-                text = maskUtils?.format(result) ?: result,
-                selection = TextRange(maskUtils?.getNextCursorPosition(it.selection.end) ?: 0)
+                text = maskUtils.format(result),
+                selection = TextRange(maskUtils.getNextCursorPosition(it.selection.end) ?: 0)
             )
 
         } else {
