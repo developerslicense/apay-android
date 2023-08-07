@@ -1,5 +1,6 @@
 package kz.airbapay.apay_android.ui.pages.dialog
 
+import android.content.Intent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -12,23 +13,42 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import kz.airbapay.apay_android.AirbaPayActivity
 import kz.airbapay.apay_android.R
 import kz.airbapay.apay_android.data.constant.amountOfPurchase
 import kz.airbapay.apay_android.data.constant.paymentByCard
+import kz.airbapay.apay_android.data.constant.paymentByCard2
 import kz.airbapay.apay_android.ui.resources.ColorsSdk
 import kz.airbapay.apay_android.ui.resources.LocalFonts
+import kz.airbapay.apay_android.ui.ui_components.BackHandler
 import kz.airbapay.apay_android.ui.ui_components.InitHeader
 import kz.airbapay.apay_android.ui.ui_components.LoadImageSrc
+import kz.airbapay.apay_android.ui.ui_components.ProgressBarView
+import kz.airbapay.apay_android.ui.ui_components.ViewButton
 
 @Composable
-internal fun DialogStartProcessing(
+internal fun DialogStartProcessing(// todo нужно добавить запрос на получение карт
     actionClose: () -> Unit,
+    needShowGPay: Boolean = true,
+    hasSavedCard: Boolean = true,
     purchaseAmount: String? = null
 ) {
+    BackHandler {
+        actionClose()
+    }
+
+    val context = LocalContext.current
+    val showProgressBar = remember {
+        mutableStateOf(false)//true
+    }
+
     Card(
         shape = RoundedCornerShape(
             topStart = 12.dp,
@@ -37,9 +57,8 @@ internal fun DialogStartProcessing(
         modifier = Modifier.fillMaxWidth()
     ) {
         Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-
-            ) {
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
 
             InitHeader(
                 title = paymentByCard(),
@@ -51,29 +70,32 @@ internal fun DialogStartProcessing(
 
             InitAmount(purchaseAmount)
 
-            Spacer(modifier = Modifier.height(16.dp))
-
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier
-                    .padding(horizontal = 16.dp)
-                    .fillMaxWidth()
-                    .background(
-                        color = ColorsSdk.bgGPAY,
-                        shape = RoundedCornerShape(
-                            topStart = 8.dp,
-                            topEnd = 8.dp,
-                            bottomEnd = 8.dp,
-                            bottomStart = 8.dp
-                        )
-                    )
-                    .padding(16.dp)
-            ) {
-                LoadImageSrc(imageSrc = R.drawable.g_pay)
+            if (needShowGPay) {
+                InitGPay()
             }
+
+            if (hasSavedCard) {
+
+            }
+
+            ViewButton(
+                title = paymentByCard2(),
+                actionClick = {
+                    actionClose()
+                    val intent = Intent(context, AirbaPayActivity::class.java)
+                    context.startActivity(intent)
+                },
+                modifierRoot = Modifier
+                    .padding(horizontal = 16.dp)
+                    .padding(top = 16.dp)
+                    .padding(bottom = 32.dp)
+            )
         }
     }
 
+    if (showProgressBar.value) {
+        ProgressBarView()
+    }
 }
 
 @Composable
@@ -113,5 +135,29 @@ private fun InitAmount(
                 style = LocalFonts.current.semiBold
             )
         }
+    }
+}
+
+@Composable
+private fun InitGPay() {
+    Spacer(modifier = Modifier.height(16.dp))
+
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier
+            .padding(horizontal = 16.dp)
+            .fillMaxWidth()
+            .background(
+                color = ColorsSdk.bgGPAY,
+                shape = RoundedCornerShape(
+                    topStart = 8.dp,
+                    topEnd = 8.dp,
+                    bottomEnd = 8.dp,
+                    bottomStart = 8.dp
+                )
+            )
+            .padding(16.dp)
+    ) {
+        LoadImageSrc(imageSrc = R.drawable.g_pay)
     }
 }

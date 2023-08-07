@@ -42,7 +42,7 @@ internal fun ViewButton(
         elevation = 0.dp,
         backgroundColor = backgroundColor,
         modifier = modifierRoot
-            .height(40.dp)
+            .height(48.dp)
             .clickable(
                 role = Role.Button,
                 enabled = true,

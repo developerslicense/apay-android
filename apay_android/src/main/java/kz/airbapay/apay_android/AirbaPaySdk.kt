@@ -113,10 +113,6 @@ class AirbaPaySdk {
             DataHolder.settlementPayments = settlementPayments
 
             DataHolder.currentLang = lang.lang
-
-//            val intent = Intent(context, AirbaPayActivity::class.java)
-//            context.startActivity(intent)
-
         }
 
         fun modalBottomSheetProcessingXml(

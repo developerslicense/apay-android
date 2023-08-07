@@ -78,8 +78,8 @@ class MainActivity : ComponentActivity() {
                         needShowSdkSuccessPage = true,
                         userEmail = "test@test.com",
                         goods = goods,
-                        settlementPayments = emptyList() //settlementPayment
-                        //                                    colorBrandMain = Color.Red
+                        settlementPayments = emptyList(), //settlementPayment
+//                        colorBrandMain = Color.Red
                     )
 
                     actionShowBottomSheet()
