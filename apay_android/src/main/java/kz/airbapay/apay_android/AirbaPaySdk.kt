@@ -1,11 +1,21 @@
 package kz.airbapay.apay_android
 
-import android.content.Context
-import android.content.Intent
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material.ModalBottomSheetLayout
+import androidx.compose.material.ModalBottomSheetValue
+import androidx.compose.material.rememberModalBottomSheetState
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentTransaction
 import com.google.gson.annotations.SerializedName
+import kotlinx.coroutines.launch
 import kz.airbapay.apay_android.data.utils.DataHolder
 import kz.airbapay.apay_android.data.utils.Money
+import kz.airbapay.apay_android.ui.pages.dialog.BottomSheetFragmentStartProcessing
+import kz.airbapay.apay_android.ui.pages.dialog.InitDialogStartProcessing
 import kz.airbapay.apay_android.ui.resources.ColorsSdk
 
 class AirbaPaySdk {
@@ -44,8 +54,7 @@ class AirbaPaySdk {
         /**
          * @settlementPayments - не обязательный параметр, нужно присылать, если есть необходимость в разделении счетов по компаниям
          * */
-        fun startProcessing(
-            context: Context,
+        fun initProcessing(
             isProd: Boolean,
             lang: Lang,
             purchaseAmount: Long,
@@ -103,9 +112,52 @@ class AirbaPaySdk {
 
             DataHolder.currentLang = lang.lang
 
-            val intent = Intent(context, AirbaPayActivity::class.java)
-            context.startActivity(intent)
+//            val intent = Intent(context, AirbaPayActivity::class.java)
+//            context.startActivity(intent)
+
+        }
+
+        fun modalBottomSheetProcessingXml(
+            fragmentManager: FragmentManager
+        ) {
+            val bottomSheet = BottomSheetFragmentStartProcessing()
+            bottomSheet.show(fragmentManager, "AirbaPay")
+        }
+
+        fun modalBottomSheetProcessingXml(
+            transaction: FragmentTransaction
+        ) {
+            val bottomSheet = BottomSheetFragmentStartProcessing()
+            bottomSheet.show(transaction, "AirbaPay")
         }
     }
 }
 
+@Composable
+fun AirbaPaySdkModalBottomSheetProcessingCompose(
+    content: @Composable (actionShowBottomSheet: () -> Unit) -> Unit
+) {
+    val sheetState = rememberModalBottomSheetState(
+        initialValue = ModalBottomSheetValue.Hidden,
+        confirmValueChange = { it != ModalBottomSheetValue.HalfExpanded },
+    )
+
+    val coroutineScope = rememberCoroutineScope()
+
+    ModalBottomSheetLayout(
+        sheetState = sheetState,
+        sheetBackgroundColor = ColorsSdk.transparent,
+        sheetContent = {
+            InitDialogStartProcessing {
+                coroutineScope.launch { sheetState.hide() }
+            }
+        },
+        modifier = Modifier.fillMaxSize()
+    ) {
+        content {
+            coroutineScope.launch {
+                sheetState.show()
+            }
+        }
+    }
+}

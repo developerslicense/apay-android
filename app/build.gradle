@@ -46,6 +46,26 @@ android {
     }
 }
 
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
+    kotlinOptions {//это чтоб убрать необходимость писать аннотации варнингов для Jetpack Compose
+        freeCompilerArgs += [
+                "-opt-in=kotlin.ExperimentalUnsignedTypes",
+                "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
+                "-opt-in=kotlinx.coroutines.InternalCoroutinesApi",
+                "-opt-in=androidx.compose.foundation.ExperimentalFoundationApi",
+                "-opt-in=androidx.compose.animation.ExperimentalAnimationApi",
+                "-opt-in=androidx.compose.ExperimentalComposeApi",
+                "-opt-in=androidx.compose.material.ExperimentalMaterialApi",
+                "-opt-in=androidx.compose.runtime.ExperimentalComposeApi",
+                "-opt-in=androidx.compose.ui.ExperimentalComposeUiApi",
+                "-opt-in=coil.annotation.ExperimentalCoilApi",
+                "-opt-in=kotlinx.serialization.ExperimentalSerializationApi",
+                "-opt-in=com.google.accompanist.pager.ExperimentalPagerApi",
+                "-opt-in=com.google.accompanist.permissions.ExperimentalPermissionsApi"
+        ]
+    }
+}
+
 dependencies {
 
     implementation project(":apay_android")

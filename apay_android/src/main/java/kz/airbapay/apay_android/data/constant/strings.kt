@@ -7,6 +7,8 @@ internal  val tryAgainRu = "Попробовать снова"
 internal  val tryAgainKz = "Қайтадан байқап көріңіз"
 internal val kzt = "₸"
 
+internal fun paymentByCard() = getStrFromRes("Оплата картой", "Карточка арқылы төлеу")
+
 internal fun paymentOfPurchase() = getStrFromRes("Оплата покупки", "Сатып алу төлемі")
 
 
