@@ -1,7 +1,6 @@
 package kz.airbapay.apay_android.ui.pages.dialog
 
 import android.app.Activity
-import android.view.Gravity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -15,13 +14,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import androidx.compose.ui.window.DialogWindowProvider
 import kz.airbapay.apay_android.R
 import kz.airbapay.apay_android.data.constant.dropPayment
 import kz.airbapay.apay_android.data.constant.dropPaymentDescription
@@ -98,8 +95,7 @@ internal fun InitDialogExit(
 
             ViewButton(
                 title = yes(),
-                textColor = ColorsSdk.colorBrandMainMS.value,
-                backgroundColor = ColorsSdk.colorBrandInversionMS.value,
+                isMainBrand = false,
                 actionClick = {
                     onDismissRequest()
                     (context as Activity).finish()

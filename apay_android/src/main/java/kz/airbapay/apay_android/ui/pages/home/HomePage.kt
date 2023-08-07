@@ -215,8 +215,6 @@ internal fun HomePage(
 
                 ViewButton(
                     title = "${payAmount()} ${DataHolder.purchaseAmount}",
-                    textColor = ColorsSdk.colorBrandInversionMS.value,
-                    backgroundColor = ColorsSdk.colorBrandMainMS.value,
                     actionClick = {
                         focusManager.clearFocus(true)
 

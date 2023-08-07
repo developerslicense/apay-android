@@ -26,8 +26,9 @@ import kz.airbapay.apay_android.ui.resources.LocalFonts
 @Composable
 internal fun ViewButton(
     title: String,
-    textColor: Color = ColorsSdk.colorBrandInversionMS.value,
-    backgroundColor: Color = ColorsSdk.colorBrandMainMS.value,
+    isMainBrand: Boolean = true,
+    textColor: Color = initButtonTextColor(isMainBrand),
+    backgroundColor: Color = initButtonBackground(isMainBrand),
     actionClick: (() -> Unit),
     modifierRoot: Modifier = Modifier,
     modifierChild: Modifier = Modifier.initConstraintModifier(),
@@ -69,6 +70,15 @@ internal fun ViewButton(
         }
     }
 }
+
+private fun initButtonBackground(
+    isMainBrand: Boolean
+) = if(isMainBrand) ColorsSdk.colorBrandMainMS.value else ColorsSdk.gray5
+
+private fun initButtonTextColor(
+    isMainBrand: Boolean
+) = if(isMainBrand) ColorsSdk.colorBrandInversionMS.value else ColorsSdk.colorBrandMainMS.value
+
 
 private fun Modifier.initConstraintModifier() =
     this

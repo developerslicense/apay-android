@@ -175,8 +175,7 @@ internal fun ErrorWithInstructionPage(
 
             ViewButton(
                 title = errorCode.buttonBottom(),
-                textColor = ColorsSdk.colorBrandMainMS.value,
-                backgroundColor = ColorsSdk.colorBrandInversionMS.value,
+                isMainBrand = false,
                 actionClick = {
                     errorCode.clickOnBottom(
                         navController = navController,
