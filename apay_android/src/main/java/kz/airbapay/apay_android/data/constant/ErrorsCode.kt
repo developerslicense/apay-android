@@ -162,12 +162,12 @@ internal fun ErrorsCode.clickOnBottom(
 
 private fun goToHome(navController: NavController) {
     navController.popBackStack(
-        route = routesHome,
+        route = ROUTES_HOME,
         inclusive = false
     )
 }
 
 private fun goToRepeat(navController: NavController) {
-    navController.navigate(route = routesRepeat)
+    navController.navigate(route = ROUTES_REPEAT)
 }
 

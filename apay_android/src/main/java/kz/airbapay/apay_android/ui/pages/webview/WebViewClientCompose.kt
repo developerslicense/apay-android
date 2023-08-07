@@ -9,7 +9,7 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.compose.runtime.MutableState
 import androidx.navigation.NavController
-import kz.airbapay.apay_android.data.constant.routesSuccess
+import kz.airbapay.apay_android.data.constant.ROUTES_SUCCESS
 import kz.airbapay.apay_android.data.utils.DataHolder
 import kz.airbapay.apay_android.data.utils.errorLog
 import kz.airbapay.apay_android.data.utils.messageLog
@@ -47,7 +47,7 @@ internal class WebViewClientCompose(
             url.contains("status=auth")
                     || url.contains("status=success") -> {
                 messageLog("Status success")
-                navController?.navigate(routesSuccess)
+                navController?.navigate(ROUTES_SUCCESS)
             }
             url.contains("status=error") -> {
                 messageLog("3D secure status error")

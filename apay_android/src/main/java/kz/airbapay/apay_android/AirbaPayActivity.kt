@@ -8,18 +8,19 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import androidx.navigation.navDeepLink
 import kz.airbapay.apay_android.data.constant.ARG_ACTION
 import kz.airbapay.apay_android.data.constant.ARG_ERROR_CODE
 import kz.airbapay.apay_android.data.constant.ARG_IS_RETRY
+import kz.airbapay.apay_android.data.constant.ROUTES_ERROR
+import kz.airbapay.apay_android.data.constant.ROUTES_ERROR_FINAL
+import kz.airbapay.apay_android.data.constant.ROUTES_ERROR_WITH_INSTRUCTION
+import kz.airbapay.apay_android.data.constant.ROUTES_HOME
+import kz.airbapay.apay_android.data.constant.ROUTES_REPEAT
+import kz.airbapay.apay_android.data.constant.ROUTES_SUCCESS
+import kz.airbapay.apay_android.data.constant.ROUTES_WEB_VIEW
 import kz.airbapay.apay_android.data.constant.initErrorsCodeByCode
-import kz.airbapay.apay_android.data.constant.routesError
-import kz.airbapay.apay_android.data.constant.routesErrorFinal
 import kz.airbapay.apay_android.data.constant.routesErrorSomethingWrong
-import kz.airbapay.apay_android.data.constant.routesErrorWithInstruction
-import kz.airbapay.apay_android.data.constant.routesHome
-import kz.airbapay.apay_android.data.constant.routesRepeat
-import kz.airbapay.apay_android.data.constant.routesSuccess
-import kz.airbapay.apay_android.data.constant.routesWebView
 import kz.airbapay.apay_android.data.utils.DataHolder
 import kz.airbapay.apay_android.network.api.Api
 import kz.airbapay.apay_android.network.base.ClientConnector
@@ -52,9 +53,9 @@ class AirbaPayActivity : ComponentActivity() {
 
             NavHost(
                 navController = navController,
-                startDestination = routesHome
+                startDestination = ROUTES_HOME
             ) {
-                composable(routesHome) {
+                composable(ROUTES_HOME) {
                     HomePage(
                         navController = navController,
                         authRepository = authRepository,
@@ -63,7 +64,7 @@ class AirbaPayActivity : ComponentActivity() {
                 }
 
                 composable(
-                    route = routesError,
+                    route = ROUTES_ERROR,
                     arguments = listOf(
                         navArgument(ARG_ERROR_CODE) {
                             type = NavType.StringType
@@ -78,7 +79,7 @@ class AirbaPayActivity : ComponentActivity() {
                     )
                 }
 
-                composable(routesErrorFinal) {
+                composable(ROUTES_ERROR_FINAL) {
                     ErrorFinalPage()
                 }
 
@@ -87,7 +88,10 @@ class AirbaPayActivity : ComponentActivity() {
                 }
 
                 composable(
-                    route = routesErrorWithInstruction,
+                    route = ROUTES_ERROR_WITH_INSTRUCTION,
+                    deepLinks = listOf(
+                        navDeepLink { uriPattern = ROUTES_ERROR_WITH_INSTRUCTION }
+                    ),
                     arguments = listOf(
                         navArgument(ARG_ERROR_CODE) {
                             type = NavType.StringType
@@ -102,7 +106,7 @@ class AirbaPayActivity : ComponentActivity() {
                     )
                 }
 
-                composable(routesRepeat) {
+                composable(ROUTES_REPEAT) {
                     RepeatPage(
                         navController = navController,
                         paymentsRepository = paymentsRepository
@@ -110,7 +114,10 @@ class AirbaPayActivity : ComponentActivity() {
                 }
 
                 composable(
-                    route = routesWebView,
+                    route = ROUTES_WEB_VIEW,
+                    deepLinks = listOf(
+                        navDeepLink { uriPattern = ROUTES_WEB_VIEW }
+                    ),
                     arguments = listOf(
                         navArgument(ARG_ACTION) {
                             type = NavType.StringType
@@ -127,7 +134,7 @@ class AirbaPayActivity : ComponentActivity() {
                     )
                 }
 
-                composable(routesSuccess) {
+                composable(ROUTES_SUCCESS) {
                     if (DataHolder.needShowSdkSuccessPage) {
                         SuccessPage()
                     } else {

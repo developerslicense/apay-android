@@ -4,14 +4,11 @@ import androidx.compose.runtime.MutableState
 import androidx.navigation.NavController
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import kz.airbapay.apay_android.data.constant.ARG_ACTION
-import kz.airbapay.apay_android.data.constant.ARG_IS_RETRY
 import kz.airbapay.apay_android.data.constant.ErrorsCode
 import kz.airbapay.apay_android.data.constant.RegexConst
 import kz.airbapay.apay_android.data.constant.needFillTheField
-import kz.airbapay.apay_android.data.constant.routesError
-import kz.airbapay.apay_android.data.constant.routesSuccess
-import kz.airbapay.apay_android.data.constant.routesWebView
+import kz.airbapay.apay_android.data.constant.ROUTES_ERROR
+import kz.airbapay.apay_android.data.constant.ROUTES_SUCCESS
 import kz.airbapay.apay_android.data.constant.wrongCardNumber
 import kz.airbapay.apay_android.data.constant.wrongCvv
 import kz.airbapay.apay_android.data.constant.wrongDate
@@ -24,6 +21,7 @@ import kz.airbapay.apay_android.data.utils.DataHolder
 import kz.airbapay.apay_android.data.utils.card_utils.isDateValid
 import kz.airbapay.apay_android.data.utils.card_utils.validateCardNumWithLuhnAlgorithm
 import kz.airbapay.apay_android.data.utils.getNumberCleared
+import kz.airbapay.apay_android.data.utils.openWebView
 import kz.airbapay.apay_android.network.repository.AuthRepository
 import kz.airbapay.apay_android.network.repository.PaymentsRepository
 import kz.airbapay.apay_android.ui.pages.error.openErrorPageWithCondition
@@ -128,17 +126,17 @@ internal fun startPaymentProcessing(
     coroutineScope.launch {
         startAuth(
             authRepository = authRepository,
-            onError = { navController.navigate(routesError) },
+            onError = { navController.navigate(ROUTES_ERROR) },
             onResult = {
                 startCreatePayment(
                     paymentsRepository = paymentsRepository,
                     authRepository = authRepository,
                     on3DS = { secure3D, isRetry ->
-                        navController.navigate(
-                            routesWebView
-                                    + "?$ARG_ACTION=${secure3D?.action}"
-                                    + "?$ARG_IS_RETRY=$isRetry",
-                        )
+                       openWebView(
+                           secure3D = secure3D,
+                           isRetry = isRetry,
+                           navController = navController
+                       )
                     },
                     onError = { errorCode, isRetry ->
                         openErrorPageWithCondition(
@@ -148,7 +146,7 @@ internal fun startPaymentProcessing(
                         )
                     },
                     onSuccess = {
-                        navController.navigate(routesSuccess)
+                        navController.navigate(ROUTES_SUCCESS)
                     }
                 )
             }

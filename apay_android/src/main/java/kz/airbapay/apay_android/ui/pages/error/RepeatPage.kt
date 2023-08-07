@@ -20,8 +20,8 @@ import kotlinx.coroutines.launch
 import kz.airbapay.apay_android.data.constant.ARG_ACTION
 import kz.airbapay.apay_android.data.constant.ARG_IS_RETRY
 import kz.airbapay.apay_android.data.constant.ErrorsCode
-import kz.airbapay.apay_android.data.constant.routesSuccess
-import kz.airbapay.apay_android.data.constant.routesWebView
+import kz.airbapay.apay_android.data.constant.ROUTES_SUCCESS
+import kz.airbapay.apay_android.data.constant.ROUTES_WEB_VIEW
 import kz.airbapay.apay_android.data.constant.thisNeedSomeTime
 import kz.airbapay.apay_android.data.constant.weRepeatYourPayment
 import kz.airbapay.apay_android.network.repository.PaymentsRepository
@@ -112,7 +112,7 @@ private fun onStart(
             if (response.isSecure3D == true) {
 
                 navController.navigate(
-                    route = routesWebView
+                    route = ROUTES_WEB_VIEW
                             + "?$ARG_ACTION=${response.secure3D?.action}"
                             + "?${ARG_IS_RETRY}=true",
                 )
@@ -125,7 +125,7 @@ private fun onStart(
                 )
 
             } else {
-                navController.navigate(routesSuccess)
+                navController.navigate(ROUTES_SUCCESS)
             }
         },
         error = {
