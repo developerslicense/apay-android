@@ -23,6 +23,7 @@ internal object ColorsSdk {// todo надо предоставить внешн�
     val textLight = Color(0xFF787E9E)
     val textSecondary = Color(0xFF383E61)
     val textInversion = Color(0xFFFCFCFD)
+    val textBlue = Color(0xFF319CF3)
 
     // icons
     val iconMain = Color(0xFF10142D)

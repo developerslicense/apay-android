@@ -3,8 +3,21 @@ package kz.airbapay.apay_android.data.constant
 import kz.airbapay.apay_android.data.utils.getStrFromRes
 
 // эти исключения из-за того, что в enum используются
-internal  val tryAgainRu = "Попробовать снова"
-internal  val tryAgainKz = "Қайтадан байқап көріңіз"
+internal val tryAgainRu = "Попробовать снова"
+internal val tryAgainKz = "Қайтадан байқап көріңіз"
+
+internal val payAnotherCardRu = "Оплатить другой картой"
+internal val payAnotherCardKz = "Басқа картамен төлеңіз"
+
+internal val goToMarketRu = "Вернуться в магазин"
+internal val goToMarketKz = "Дүкенге оралу"
+
+internal val limitExceededRu = "Превышен лимит \nпо карте"
+internal val limitExceededKz = "Карта шегінен \nасып кетті"
+
+internal val tryPayAnotherCardRu = "Попробуйте оплатить другой картой"
+internal val tryPayAnotherCardKz = "Басқа картамен төлеуге тырысыңыз"
+
 internal val kzt = "₸"
 
 internal fun paymentByCard() = getStrFromRes("Оплата картой", "Карточка арқылы төлеу")
@@ -76,7 +89,7 @@ internal fun dropPayment() = getStrFromRes("Прервать оплату?", "Т
 internal fun paySuccess() = getStrFromRes("Оплата прошла успешно", "Төлем сәтті болды")
 
 
-internal fun goToMarker() = getStrFromRes("Вернуться в магазин", "Дүкенге оралу")
+internal fun goToMarker() = getStrFromRes(goToMarketRu, goToMarketKz)
 
 
 internal fun dropPaymentDescription() = getStrFromRes(
@@ -123,6 +136,11 @@ internal fun somethingWentWrongDescription() = getStrFromRes(
 internal fun orPayWithCard() = getStrFromRes(
     "или оплатите картой",
     "немесе картамен төлеңіз"
+)
+
+internal fun payAnotherCard() = getStrFromRes(
+    payAnotherCardRu,
+    payAnotherCardKz
 )
 
 

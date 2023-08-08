@@ -1,6 +1,8 @@
 package kz.airbapay.apay_android.ui.pages.dialog
 
 import android.content.Intent
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -10,6 +12,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
@@ -23,14 +26,19 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.constraintlayout.compose.ConstraintLayout
 import kz.airbapay.apay_android.AirbaPayActivity
 import kz.airbapay.apay_android.R
 import kz.airbapay.apay_android.data.constant.amountOfPurchase
 import kz.airbapay.apay_android.data.constant.orPayWithCard
 import kz.airbapay.apay_android.data.constant.payAmount
+import kz.airbapay.apay_android.data.constant.payAnotherCard
 import kz.airbapay.apay_android.data.constant.paymentByCard
 import kz.airbapay.apay_android.data.constant.paymentByCard2
 import kz.airbapay.apay_android.data.model.BankCard
@@ -218,6 +226,13 @@ private fun InitCards(
             }
         )
     }
+
+    Spacer(modifier = Modifier.height(32.dp))
+    PayWithNewCard(
+        actionClick = {
+
+        }
+    )
 }
 
 @Composable
@@ -270,6 +285,67 @@ private fun InitCard(
 
         Spacer(modifier = Modifier.height(16.dp))
     }
+}
+
+@Composable
+private fun PayWithNewCard(
+    actionClick: (() -> Unit)
+) {
+
+    Card(
+        shape = RoundedCornerShape(8.dp),
+        elevation = 0.dp,
+//        backgroundColor = Color(0xFFFFFFFF),
+        border = BorderStroke(
+            width = 0.1.dp,
+            color = ColorsSdk.gray10
+        ),
+        modifier = Modifier
+            .padding(horizontal = 16.dp)
+            .fillMaxWidth()
+            .height(32.dp)
+            .clickable(
+                role = Role.Button,
+                enabled = true,
+                onClick = { actionClick() }
+            )
+
+    ) {
+        ConstraintLayout(
+            modifier = Modifier.fillMaxWidth(),
+        ) {
+            val (plusRef, titleRef) = createRefs()
+
+            Image(
+                painter = painterResource(R.drawable.ic_add),
+                contentDescription = "ic_add",
+                modifier = Modifier
+                    .size(16.dp)
+                    .constrainAs(plusRef) {
+                        top.linkTo(parent.top)
+                        bottom.linkTo(parent.bottom)
+                        end.linkTo(titleRef.start, margin = 12.dp)
+                    },
+                colorFilter = ColorFilter.tint(color = ColorsSdk.textBlue)
+            )
+
+            Text(
+                text = payAnotherCard(),
+                color = ColorsSdk.textBlue,
+                style = LocalFonts.current.semiBold,
+                modifier = Modifier
+                    .constrainAs(titleRef) {
+                        top.linkTo(parent.top)
+                        bottom.linkTo(parent.bottom)
+                        start.linkTo(parent.start)
+                        end.linkTo(parent.end)
+                    }
+            )
+
+        }
+    }
+
+    Spacer(modifier = Modifier.height(16.dp))
 }
 
 @Composable

@@ -22,34 +22,34 @@ internal enum class ErrorsCode(
         5002,
         "Неверный номер карты",
         "Карта нөміріндегі қате",
-        "Попробуйте оплатить другой картой",
-        "Басқа картамен төлеуге тырысыңыз",
-        "Оплатить другой картой",
-        "Басқа картамен төлеңіз",
-        "Вернуться в магазин",
-        "Дүкенге оралу"
+        tryPayAnotherCardRu,
+        tryPayAnotherCardKz,
+        payAnotherCardRu,
+        payAnotherCardKz,
+        goToMarketRu,
+        goToMarketKz
     ),
     error_5003(
         5003,
         "Истек срок карты",
         "Картаның мерзімі бітті",
-        "Попробуйте оплатить другой картой",
-        "Басқа картамен төлеуге тырысыңыз",
-        "Оплатить другой картой",
-        "Басқа картамен төлеңіз",
-        "Вернуться в магазин",
-        "Дүкенге оралу"
+        tryPayAnotherCardRu,
+        tryPayAnotherCardKz,
+        payAnotherCardRu,
+        payAnotherCardKz,
+        goToMarketRu,
+        goToMarketKz
     ),
     error_5006(
         5006,
         "Неверный CVV",
         "CVV қатесі",
-        "Попробуйте оплатить другой картой",
-        "Басқа картамен төлеуге тырысыңыз",
-        "Оплатить другой картой",
-        "Басқа картамен төлеңіз",
-        "Вернуться в магазин",
-        "Дүкенге оралу"
+        tryPayAnotherCardRu,
+        tryPayAnotherCardKz,
+        payAnotherCardRu,
+        payAnotherCardKz,
+        goToMarketRu,
+        goToMarketKz
     ),
     error_5007(
         5007,
@@ -59,19 +59,19 @@ internal enum class ErrorsCode(
         "Қайталап көріңіз немесе басқа картамен төлеңіз",
         tryAgainRu,
         tryAgainKz,
-        "Вернуться в магазин",
-        "Дүкенге оралу"
+        goToMarketRu,
+        goToMarketKz
     ),
     error_5008(
         5008,
-        "Превышен лимит \nпо карте",
-        "Карта шегінен \nасып кетті",
+        limitExceededRu,
+        limitExceededKz,
         "Попробуйте оплатить другой картой или измените лимит в настройках банкинга",
         "Басқа картамен төлеуге тырысыңыз немесе банк параметрлерінде лимитті өзгертіңіз",
         tryAgainRu,
         tryAgainKz,
-        "Оплатить другой картой",
-        "Басқа картамен төлеңіз"
+        payAnotherCardRu,
+        payAnotherCardKz
     ),
     error_5009(
         5009,
@@ -81,20 +81,20 @@ internal enum class ErrorsCode(
         "3D кодын қайта енгізіп көріңіз",
         tryAgainRu,
         tryAgainKz,
-        "Вернуться в магазин",
-        "Дүкенге оралу"
+        goToMarketRu,
+        goToMarketKz
     ),
     error_5020(5020, "", "", "", "", "", "", "", ""),
     error_5999(
         5999,
-        "Превышен лимит \nпо карте",
-        "Карта шегінен \nасып кетті",
+        limitExceededRu,
+        limitExceededKz,
         "Измените лимит в настройках \nбанкинга и попробуйте снова.\nЛибо оплатите другой картой",
         "Банк параметрлерінде шектеуді \nөзгертіп, әрекетті қайталаңыз.\nНемесе басқа картамен төлеңіз",
         tryAgainRu,
         tryAgainKz,
-        "Оплатить другой картой",
-        "Басқа картамен төлеңіз"
+        payAnotherCardRu,
+        payAnotherCardKz
     )
 }
 
