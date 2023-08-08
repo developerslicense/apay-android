@@ -9,7 +9,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -17,6 +19,8 @@ import kz.airbapay.apay_android.ui.theme.Apay_androidTheme
 import java.util.Date
 
 class MainActivity : ComponentActivity() {
+
+    private val isBottomSheet = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,17 +42,22 @@ class MainActivity : ComponentActivity() {
         setContent {
 
             Apay_androidTheme {
-                AirbaPaySdkModalBottomSheetProcessingCompose(
-                    content = { actionShowBottomSheet ->
-                        PageContent(actionShowBottomSheet)
-                    }
-                )
+                if (isBottomSheet) {
+                    AirbaPaySdkModalBottomSheetProcessingCompose(
+                        content = { actionShowBottomSheet ->
+                            PageContentForBottomSheet(actionShowBottomSheet)
+                        }
+                    )
+
+                } else {
+                    PageContentForView()
+                }
             }
         }
     }
 
     @Composable
-    private fun PageContent(
+    private fun PageContentForBottomSheet(
         actionShowBottomSheet: () -> Unit
     ) {
         Column(
@@ -66,6 +75,24 @@ class MainActivity : ComponentActivity() {
             ) {
                 Text("переход на эквайринг")
             }
+        }
+    }
+
+    @OptIn(ExperimentalMaterial3Api::class)
+    @Composable
+    private fun PageContentForView() {
+        Column(
+            verticalArrangement = Arrangement.Top,
+            modifier = Modifier.fillMaxSize()
+        ) {
+            TopAppBar(
+                title = { Text("Оплата заказа") }
+            )
+
+            AirbaPaySdkModalProcessingCompose(
+                actionClose = {}, // оставить пустым в случае isBottomSheetType = false
+                isBottomSheetType = false
+            )
         }
     }
 
