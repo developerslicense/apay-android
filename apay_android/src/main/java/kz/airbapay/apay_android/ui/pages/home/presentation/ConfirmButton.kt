@@ -12,7 +12,6 @@ import kz.airbapay.apay_android.data.constant.wrongCardNumber
 import kz.airbapay.apay_android.data.constant.wrongCvv
 import kz.airbapay.apay_android.data.constant.wrongDate
 import kz.airbapay.apay_android.data.constant.wrongEmail
-import kz.airbapay.apay_android.data.model.AuthRequest
 import kz.airbapay.apay_android.data.model.BankCard
 import kz.airbapay.apay_android.data.model.PaymentEntryRequest
 import kz.airbapay.apay_android.data.model.Secure3D
@@ -25,6 +24,7 @@ import kz.airbapay.apay_android.data.utils.openSuccess
 import kz.airbapay.apay_android.data.utils.openWebView
 import kz.airbapay.apay_android.network.repository.AuthRepository
 import kz.airbapay.apay_android.network.repository.PaymentsRepository
+import kz.airbapay.apay_android.network.repository.startAuth
 
 private var saveCardSaved = false
 private var sendReceiptSaved = false
@@ -124,38 +124,27 @@ internal fun startPaymentProcessing(
     DataHolder.userEmail = email
 
     coroutineScope.launch {
-        startAuth(
+
+        startCreatePayment(
+            paymentsRepository = paymentsRepository,
             authRepository = authRepository,
-            onError = {
-                openErrorPageWithCondition(
-                    errorCode = ErrorsCode.error_1.code,
+            on3DS = { secure3D ->
+                openWebView(
+                    secure3D = secure3D,
                     navController = navController
                 )
             },
-            onResult = {
-                startCreatePayment(
-                    paymentsRepository = paymentsRepository,
-                    authRepository = authRepository,
-                    on3DS = { secure3D ->
-                       openWebView(
-                           secure3D = secure3D,
-                           navController = navController
-                       )
-                    },
-                    onError = { errorCode ->
-                        openErrorPageWithCondition(
-                            errorCode = errorCode.code,
-                            navController = navController
-                        )
-                    },
-                    onSuccess = {
-                        openSuccess(navController)
-                    }
+            onError = { errorCode ->
+                openErrorPageWithCondition(
+                    errorCode = errorCode.code,
+                    navController = navController
                 )
+            },
+            onSuccess = {
+                openSuccess(navController)
             }
         )
     }
-
 }
 
 private fun startCreatePayment(
@@ -206,26 +195,3 @@ private fun startCreatePayment(
     )
 }
 
-private fun startAuth(
-    authRepository: AuthRepository,
-    onResult: () -> Unit,
-    onError: () -> Unit,
-    paymentId: String? = null
-) {
-    val authRequest = AuthRequest(
-        paymentId = paymentId,
-        password = DataHolder.password,
-        terminalId = DataHolder.terminalId,
-        user = DataHolder.shopId
-    )
-
-    authRepository.auth(
-        param = authRequest,
-        result = {
-            onResult()
-        },
-        error = {
-            onError()
-        }
-    )
-}

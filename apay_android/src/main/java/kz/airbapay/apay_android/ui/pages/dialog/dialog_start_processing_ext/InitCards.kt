@@ -25,7 +25,6 @@ import kz.airbapay.apay_android.data.model.BankCard
 import kz.airbapay.apay_android.ui.resources.LocalFonts
 import kz.airbapay.apay_android.ui.ui_components.LineDecorator
 import kz.airbapay.apay_android.ui.ui_components.LoadImageSrc
-import kz.airbapay.apay_android.ui.ui_components.LoadImageUrl
 
 @Composable
 internal fun InitDialogStartProcessingCards(
@@ -102,12 +101,7 @@ private fun InitCard(
             Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                LoadImageUrl(
-                    imageUrl = if(card.type.isNullOrBlank()) "https" else card.type,
-                    errorImageSrc = null,
-                    progressImageSrc = null
-                )
-//                LoadImageUrl(imageSrc = R.drawable.visa)  //todo
+                LoadImageSrc(imageSrc = card.typeIcon)
 
                 Spacer(modifier = Modifier.width(16.dp))
 

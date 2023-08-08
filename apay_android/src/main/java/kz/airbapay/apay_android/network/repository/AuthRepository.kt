@@ -34,3 +34,27 @@ internal class AuthRepository(
         )
     }
 }
+
+internal fun startAuth(
+    authRepository: AuthRepository,
+    onResult: () -> Unit,
+    onError: () -> Unit,
+    paymentId: String? = null
+) {
+    val authRequest = AuthRequest(
+        paymentId = paymentId,
+        password = DataHolder.password,
+        terminalId = DataHolder.terminalId,
+        user = DataHolder.shopId
+    )
+
+    authRepository.auth(
+        param = authRequest,
+        result = {
+            onResult()
+        },
+        error = {
+            onError()
+        }
+    )
+}

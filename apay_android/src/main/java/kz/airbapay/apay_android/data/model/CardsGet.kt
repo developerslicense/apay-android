@@ -35,4 +35,6 @@ internal data class BankCard(
     @SerializedName("cvv")
     val cvv: String? = null,
 
+    val typeIcon: Int? = null
+
 )

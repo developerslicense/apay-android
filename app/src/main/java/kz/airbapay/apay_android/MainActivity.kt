@@ -20,7 +20,7 @@ import java.util.Date
 
 class MainActivity : ComponentActivity() {
 
-    private val isBottomSheet = false
+    private val isBottomSheet = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,6 +38,10 @@ class MainActivity : ComponentActivity() {
             userEmail = "test@test.com",
             // colorBrandMain = Color.Red
         )
+
+        if (!isBottomSheet) {
+            initProcessing()
+        }
 
         setContent {
 
