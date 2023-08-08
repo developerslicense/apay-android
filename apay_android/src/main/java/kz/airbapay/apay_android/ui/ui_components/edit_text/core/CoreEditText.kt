@@ -35,6 +35,7 @@ internal fun CoreEditText(
     focusRequester: FocusRequester,
     actionOnTextChanged: (String) -> Unit,
     actionClickInfo: (() -> Unit)?,
+    paySystemIcon: Int? = null,
     visualTransformation: VisualTransformation? = null,
     isDateExpiredMask: Boolean = false
 ) {
@@ -85,12 +86,21 @@ internal fun CoreEditText(
                 hasFocus.value = it.hasFocus
             }
             .focusRequester(focusRequester),
-        leadingIcon = if (actionClickInfo == null)
+        leadingIcon = if (actionClickInfo == null
+            && paySystemIcon == null
+       ) {
             null
-        else {{
+        } else if(paySystemIcon != null) {{
+            InitIconPaySystem(
+                isError = isError,
+                text = text.value.text,
+                paySystemIcon = paySystemIcon
+            )
+
+        }} else {{
             InitIconInfo(
                 isError = isError,
-                actionClickInfo = { actionClickInfo() }
+                actionClickInfo = { actionClickInfo?.invoke() }
             )
         }}
     )
@@ -125,4 +135,23 @@ private fun InitIconInfo(
         modifier = Modifier.size(40.dp),
         _outlinedButtonColor = if (isError) ColorsSdk.stateBgError else ColorsSdk.bgBlock
     )
+}
+
+@Composable
+private fun InitIconPaySystem(
+    isError: Boolean,
+    text: String,
+    paySystemIcon: Int?
+) {
+    if (
+        text.isNotBlank()
+        && paySystemIcon != null
+    ) {
+        InitActionIcon(
+            action = null,
+            iconSrc = paySystemIcon,
+            modifier = Modifier.size(40.dp),
+            _outlinedButtonColor = if (isError) ColorsSdk.stateBgError else ColorsSdk.bgBlock
+        )
+    }
 }

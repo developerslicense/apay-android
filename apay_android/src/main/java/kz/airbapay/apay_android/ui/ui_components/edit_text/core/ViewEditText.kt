@@ -80,7 +80,7 @@ internal fun ViewEditText(
             onClick = {}
         ) {
             ConstraintLayout {
-                val (clearIconRef, paySystemIconRef) = createRefs()
+                val (clearIconRef) = createRefs()
 
                 CoreEditText(
                     isError = errorTitle.value != null,
@@ -95,16 +95,8 @@ internal fun ViewEditText(
                     actionOnTextChanged = actionOnTextChanged,
                     visualTransformation = visualTransformation,
                     isDateExpiredMask = isDateExpiredMask,
-                    actionClickInfo = actionClickInfo
-                )
-
-                InitIconPaySystem(
-                    isError = errorTitle.value != null,
-                    paySystemIconRef = paySystemIconRef,
-                    clearIconRef = clearIconRef,
-                    paySystemIcon = paySystemIcon.value,
-                    text = text.value.text,
-                    hasFocus = hasFocus.value
+                    actionClickInfo = actionClickInfo,
+                    paySystemIcon = paySystemIcon.value
                 )
 
                 InitIconClear(
@@ -117,6 +109,7 @@ internal fun ViewEditText(
                             text = "",
                             selection = TextRange(0)
                         )
+                        paySystemIcon.value = null
                     }
                 )
             }
@@ -139,39 +132,6 @@ internal fun ViewEditText(
             }
 
         }
-    }
-}
-
-
-@Composable
-private fun ConstraintLayoutScope.InitIconPaySystem(
-    isError: Boolean,
-    hasFocus: Boolean,
-    text: String,
-    paySystemIcon: Int?,
-    paySystemIconRef: ConstrainedLayoutReference,
-    clearIconRef: ConstrainedLayoutReference
-) {
-    if (
-        text.isNotBlank()
-        && paySystemIcon != null
-    ) {
-        InitActionIcon(
-            action = null,
-            iconSrc = paySystemIcon,
-            modifier = Modifier
-                .size(40.dp)
-                .constrainAs(paySystemIconRef) {
-                    if (hasFocus) {
-                        end.linkTo(clearIconRef.start, margin = 2.dp)
-                    } else {
-                        end.linkTo(parent.end, margin = 4.dp)
-                    }
-                    top.linkTo(parent.top)
-                    bottom.linkTo(parent.bottom)
-                },
-            _outlinedButtonColor = if (isError) ColorsSdk.stateBgError else ColorsSdk.bgBlock
-        )
     }
 }
 
