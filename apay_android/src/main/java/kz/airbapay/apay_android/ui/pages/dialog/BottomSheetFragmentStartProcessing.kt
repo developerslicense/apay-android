@@ -22,7 +22,6 @@ internal class BottomSheetFragmentStartProcessing : BottomSheetDialogFragment() 
                     actionClose = {
                         this@BottomSheetFragmentStartProcessing.dialog?.hide()
                     },
-                    purchaseAmount = DataHolder.purchaseAmount,
                 )
             }
         }

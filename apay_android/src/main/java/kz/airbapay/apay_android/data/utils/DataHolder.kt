@@ -1,5 +1,6 @@
 package kz.airbapay.apay_android.data.utils
 
+import kotlinx.coroutines.flow.MutableStateFlow
 import kz.airbapay.apay_android.AirbaPaySdk
 
 internal object DataHolder {
@@ -32,5 +33,6 @@ internal object DataHolder {
   var goods: List<AirbaPaySdk.Goods>? = null
   var settlementPayments: List<AirbaPaySdk.SettlementPayment>? = null
 
+  val purchaseAmountFormatted = MutableStateFlow("")
 
 }

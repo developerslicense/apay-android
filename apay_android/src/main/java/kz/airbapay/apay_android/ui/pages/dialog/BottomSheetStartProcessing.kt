@@ -8,6 +8,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -20,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import kz.airbapay.apay_android.data.constant.paymentByCard
 import kz.airbapay.apay_android.data.model.BankCard
+import kz.airbapay.apay_android.data.utils.DataHolder
 import kz.airbapay.apay_android.data.utils.messageLog
 import kz.airbapay.apay_android.network.api.Api
 import kz.airbapay.apay_android.network.base.ClientConnector
@@ -37,15 +39,19 @@ import kz.airbapay.apay_android.ui.ui_components.ProgressBarView
 internal fun BottomSheetStartProcessing(
     actionClose: () -> Unit,
     needShowGPay: Boolean = true,
-    purchaseAmount: String? = null
+    isBottomSheetType: Boolean = true
 ) {
     val context = LocalContext.current
     val clientConnector = ClientConnector(context)
     val api = clientConnector.retrofit.create(Api::class.java)
     val cardRepository = CardRepository(api)
 
-    BackHandler {
-        actionClose()
+    val purchaseAmount = DataHolder.purchaseAmountFormatted.collectAsState()
+
+    if (isBottomSheetType) {
+        BackHandler {
+            actionClose()
+        }
     }
 
     val size = remember { mutableStateOf(IntSize.Zero) }
@@ -68,8 +74,8 @@ internal fun BottomSheetStartProcessing(
 
     Card(
         shape = RoundedCornerShape(
-            topStart = 12.dp,
-            topEnd = 12.dp
+            topStart = if (isBottomSheetType) 12.dp else 0.dp,
+            topEnd = if (isBottomSheetType) 12.dp else 0.dp
         ),
         modifier = Modifier
             .fillMaxWidth()
@@ -81,15 +87,17 @@ internal fun BottomSheetStartProcessing(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
-            InitHeader(
-                title = paymentByCard(),
-                actionClose = actionClose,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(ColorsSdk.gray0)
-            )
+            if (isBottomSheetType) {
+                InitHeader(
+                    title = paymentByCard(),
+                    actionClose = actionClose,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(ColorsSdk.gray0)
+                )
+            }
 
-            InitDialogStartProcessingAmount(purchaseAmount)
+            InitDialogStartProcessingAmount(purchaseAmount.value)
 
             if (needShowGPay) {
                 InitDialogStartProcessingGPay()
@@ -104,7 +112,8 @@ internal fun BottomSheetStartProcessing(
 
             InitDialogStartProcessingButtonNext(
                 savedCards = savedCards.value,
-                actionClose = actionClose
+                actionClose = actionClose,
+                purchaseAmount = purchaseAmount.value
             )
         }
 

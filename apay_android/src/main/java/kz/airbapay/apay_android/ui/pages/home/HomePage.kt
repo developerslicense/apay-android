@@ -20,6 +20,7 @@ import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -102,6 +103,8 @@ internal fun HomePage(
         confirmValueChange = { it != ModalBottomSheetValue.HalfExpanded },
     )
 
+    val purchaseAmount = DataHolder.purchaseAmountFormatted.collectAsState()
+
     BackHandler {
         coroutineScope.launch {
             if (sheetState.isVisible) sheetState.hide()
@@ -152,7 +155,7 @@ internal fun HomePage(
                             .height(32.dp)
                     )
 
-                    TopInfoView()
+                    TopInfoView(purchaseAmount.value)
 
                     Spacer(modifier = Modifier.height(16.dp))
                     CardNumberView(
@@ -216,7 +219,7 @@ internal fun HomePage(
                 }
 
                 ViewButton(
-                    title = "${payAmount()} ${DataHolder.purchaseAmount}",
+                    title = "${payAmount()} ${purchaseAmount.value}",
                     actionClick = {
                         focusManager.clearFocus(true)
 

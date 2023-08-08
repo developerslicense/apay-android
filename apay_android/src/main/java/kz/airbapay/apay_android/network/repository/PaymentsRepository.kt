@@ -5,7 +5,6 @@ import kz.airbapay.apay_android.data.model.PaymentEntryRequest
 import kz.airbapay.apay_android.data.model.PaymentEntryResponse
 import kz.airbapay.apay_android.data.model.PaymentInfoResponse
 import kz.airbapay.apay_android.data.utils.DataHolder
-import kz.airbapay.apay_android.data.utils.getNumberCleared
 import kz.airbapay.apay_android.network.api.Api
 import kz.airbapay.apay_android.network.base.safeApiFlowCall
 import kz.airbapay.apay_android.network.coroutines.BaseCoroutine
@@ -28,7 +27,7 @@ internal class PaymentsRepository(
 
         val param = HashMap<String, Any?>().apply {
             put("account_id", DataHolder.userPhone)
-            put("amount", getNumberCleared(DataHolder.purchaseAmount).toDouble())
+            put("amount", DataHolder.purchaseAmount.toDouble())
             put("card_save", saveCard)
             put("cart", cart)
             put("currency", "KZT")

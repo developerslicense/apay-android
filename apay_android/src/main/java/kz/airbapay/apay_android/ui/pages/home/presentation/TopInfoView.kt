@@ -22,7 +22,9 @@ import kz.airbapay.apay_android.ui.resources.ColorsSdk
 import kz.airbapay.apay_android.ui.resources.LocalFonts
 
 @Composable
-internal fun TopInfoView() {
+internal fun TopInfoView(
+    purchaseAmount: String?
+) {
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -43,7 +45,7 @@ internal fun TopInfoView() {
     ) {
         InitRow(
             textStart = amountOfPurchase(),
-            textEnd = DataHolder.purchaseAmount
+            textEnd = purchaseAmount.orEmpty()
         )
         Spacer(modifier = Modifier.height(8.dp))
         InitRow(

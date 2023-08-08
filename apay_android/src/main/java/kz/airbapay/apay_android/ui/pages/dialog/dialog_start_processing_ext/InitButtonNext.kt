@@ -10,13 +10,13 @@ import kz.airbapay.apay_android.AirbaPayActivity
 import kz.airbapay.apay_android.data.constant.payAmount
 import kz.airbapay.apay_android.data.constant.paymentByCard2
 import kz.airbapay.apay_android.data.model.BankCard
-import kz.airbapay.apay_android.data.utils.DataHolder
 import kz.airbapay.apay_android.ui.ui_components.ViewButton
 
 @Composable
 internal fun InitDialogStartProcessingButtonNext(
     savedCards: List<BankCard>,
     actionClose: () -> Unit,
+    purchaseAmount: String?
 ) {
     val context = LocalContext.current
 
@@ -27,7 +27,7 @@ internal fun InitDialogStartProcessingButtonNext(
 
     if (savedCards.isNotEmpty()) {
         ViewButton(
-            title = "${payAmount()} ${DataHolder.purchaseAmount}",
+            title = "${payAmount()} $purchaseAmount",
             actionClick = {
                 actionClose()
                 val intent = Intent(context, AirbaPayActivity::class.java)

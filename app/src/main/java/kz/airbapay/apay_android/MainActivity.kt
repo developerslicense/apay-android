@@ -11,9 +11,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import kz.airbapay.apay_android.ui.theme.Apay_androidTheme
@@ -23,19 +20,27 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        AirbaPaySdk.initOnCreate(
+            isProd = false,
+            phone = "77051234567",
+            shopId = "test-merchant",
+            lang = AirbaPaySdk.Lang.RU,
+            password = "123456",
+            terminalId = "64216e7ccc4a48db060dd689",
+            failureCallback = "https://site.kz/failure-clb",
+            successCallback = "https://site.kz/success-clb",
+            needShowSdkSuccessPage = true,
+            userEmail = "test@test.com",
+            // colorBrandMain = Color.Red
+        )
+
         setContent {
-            val isProcessingInited = rememberSaveable {
-                mutableStateOf(false)
-            }
 
             Apay_androidTheme {
                 AirbaPaySdkModalBottomSheetProcessingCompose(
-                    isProcessingInited = isProcessingInited.value,
                     content = { actionShowBottomSheet ->
-                        PageContent(
-                            actionShowBottomSheet = actionShowBottomSheet,
-                            isSdkInited = isProcessingInited
-                        )
+                        PageContent(actionShowBottomSheet)
                     }
                 )
             }
@@ -44,8 +49,7 @@ class MainActivity : ComponentActivity() {
 
     @Composable
     private fun PageContent(
-        actionShowBottomSheet: () -> Unit,
-        isSdkInited: MutableState<Boolean>
+        actionShowBottomSheet: () -> Unit
     ) {
         Column(
             verticalArrangement = Arrangement.Center,
@@ -57,7 +61,6 @@ class MainActivity : ComponentActivity() {
                     .padding(vertical = 50.dp, horizontal = 50.dp),
                 onClick = {
                     initProcessing()
-                    isSdkInited.value = true
                     actionShowBottomSheet()
                 }
             ) {
@@ -81,28 +84,17 @@ class MainActivity : ComponentActivity() {
 
         val settlementPayment = listOf(
             AirbaPaySdk.SettlementPayment(
-                1000,
-                "test_id"
+                amount = 1000,
+                companyId = "test_id"
             )
         )
 
         AirbaPaySdk.initProcessing(
-            isProd = false,
-            purchaseAmount = id, //50150,
-            phone = "77051234567",
+            purchaseAmount = 50150,
             invoiceId = id.toString(),
             orderNumber = id.toString(),
-            shopId = "test-merchant",
-            lang = AirbaPaySdk.Lang.RU,
-            password = "123456",
-            terminalId = "64216e7ccc4a48db060dd689",
-            failureCallback = "https://site.kz/failure-clb",
-            successCallback = "https://site.kz/success-clb",
-            needShowSdkSuccessPage = true,
-            userEmail = "test@test.com",
             goods = goods,
             settlementPayments = emptyList(), //settlementPayment
-    //                        colorBrandMain = Color.Red
         )
     }
 }
