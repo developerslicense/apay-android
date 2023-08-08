@@ -86,7 +86,9 @@ internal fun HomePage(
     val cardNumberText = remember { mutableStateOf(TextFieldValue("")) }
     val dateExpiredText = remember { mutableStateOf(TextFieldValue("")) }
     val cvvText = remember { mutableStateOf(TextFieldValue("")) }
-    val emailText = remember { mutableStateOf(TextFieldValue("")) }
+    val emailText = remember {
+        mutableStateOf(TextFieldValue(if (DataHolder.userEmail.isNullOrBlank()) "" else DataHolder.userEmail!!))
+    }
 
     val cardNumberError = remember { mutableStateOf<String?>(null) }
     val dateExpiredError = remember { mutableStateOf<String?>(null) }
