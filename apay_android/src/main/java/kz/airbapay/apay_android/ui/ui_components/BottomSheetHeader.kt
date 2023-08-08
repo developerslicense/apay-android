@@ -72,11 +72,7 @@ internal fun InitHeader(
 
         Spacer(modifier = Modifier.height(6.dp))
 
-        Spacer(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(1.dp)
-                .background(ColorsSdk.gray5)
-        )
+        LineDecorator()
     }
 }
+

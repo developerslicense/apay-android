@@ -11,7 +11,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.FragmentTransaction
 import com.google.gson.annotations.SerializedName
 import kotlinx.coroutines.launch
 import kz.airbapay.apay_android.data.utils.DataHolder
@@ -121,13 +120,6 @@ class AirbaPaySdk {
             val bottomSheet = BottomSheetFragmentStartProcessing()
             bottomSheet.show(fragmentManager, "AirbaPay")
         }
-
-        fun modalBottomSheetProcessingXml(
-            transaction: FragmentTransaction
-        ) {
-            val bottomSheet = BottomSheetFragmentStartProcessing()
-            bottomSheet.show(transaction, "AirbaPay")
-        }
     }
 }
 
@@ -138,6 +130,7 @@ fun AirbaPaySdkModalBottomSheetProcessingCompose(
     val sheetState = rememberModalBottomSheetState(
         initialValue = ModalBottomSheetValue.Hidden,
         confirmValueChange = { it != ModalBottomSheetValue.HalfExpanded },
+        skipHalfExpanded = true
     )
 
     val coroutineScope = rememberCoroutineScope()

@@ -120,3 +120,9 @@ internal fun somethingWentWrongDescription() = getStrFromRes(
     "Дүкен қолдау қызметіне хабарласыңыз"
 )
 
+internal fun orPayWithCard() = getStrFromRes(
+    "или оплатите картой",
+    "немесе картамен төлеңіз"
+)
+
+

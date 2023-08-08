@@ -38,7 +38,7 @@ internal fun ViewButton(
     val kc = LocalSoftwareKeyboardController.current
 
     Card(
-        shape = RoundedCornerShape(4.dp),
+        shape = RoundedCornerShape(8.dp),
         elevation = 0.dp,
         backgroundColor = backgroundColor,
         modifier = modifierRoot
