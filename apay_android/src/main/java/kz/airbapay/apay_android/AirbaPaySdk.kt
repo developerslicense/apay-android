@@ -1,22 +1,23 @@
 package kz.airbapay.apay_android
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.ModalBottomSheetLayout
+import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.fragment.app.FragmentManager
 import com.google.gson.annotations.SerializedName
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kz.airbapay.apay_android.data.utils.DataHolder
 import kz.airbapay.apay_android.data.utils.Money
 import kz.airbapay.apay_android.ui.pages.dialog.BottomSheetFragmentStartProcessing
-import kz.airbapay.apay_android.ui.pages.dialog.DialogStartProcessing
+import kz.airbapay.apay_android.ui.pages.dialog.BottomSheetStartProcessing
 import kz.airbapay.apay_android.ui.resources.ColorsSdk
 
 class AirbaPaySdk {
@@ -56,21 +57,21 @@ class AirbaPaySdk {
          * @settlementPayments - не обязательный параметр, нужно присылать, если есть необходимость в разделении счетов по компаниям
          * */
         fun initProcessing(
-            isProd: Boolean,
-            lang: Lang,
             purchaseAmount: Long,
-            phone: String,
             invoiceId: String,
             orderNumber: String,
+            goods: List<Goods>,
+            settlementPayments: List<SettlementPayment>?,
+            isProd: Boolean,
+            lang: Lang,
+            phone: String,
+            userEmail: String?,
             shopId: String,
             password: String,
             terminalId: String,
             needShowSdkSuccessPage: Boolean,
             failureCallback: String,
             successCallback: String,
-            userEmail: String?,
-            goods: List<Goods>,
-            settlementPayments: List<SettlementPayment>?,
             colorBrandMain: Color? = null,
             colorBrandInversion: Color? = null,
         ) {
@@ -114,6 +115,9 @@ class AirbaPaySdk {
             DataHolder.currentLang = lang.lang
         }
 
+        /**
+         * Вызов xml BottomSheet Dialog Fragment
+         * */
         fun modalBottomSheetProcessingXml(
             fragmentManager: FragmentManager
         ) {
@@ -123,10 +127,15 @@ class AirbaPaySdk {
     }
 }
 
+/**
+ * Первый вариант имплементации Compose. Здесь все выполняется на стороне sdk
+ * */
 @Composable
 fun AirbaPaySdkModalBottomSheetProcessingCompose(
+    isProcessingInited: Boolean,
     content: @Composable (actionShowBottomSheet: () -> Unit) -> Unit
 ) {
+
     val sheetState = rememberModalBottomSheetState(
         initialValue = ModalBottomSheetValue.Hidden,
         confirmValueChange = { it != ModalBottomSheetValue.HalfExpanded },
@@ -134,26 +143,40 @@ fun AirbaPaySdkModalBottomSheetProcessingCompose(
     )
 
     val coroutineScope = rememberCoroutineScope()
-    val purchaseAmount = rememberSaveable {
-        mutableStateOf("")
-    }
 
     ModalBottomSheetLayout(
         sheetState = sheetState,
         sheetBackgroundColor = ColorsSdk.transparent,
         sheetContent = {
-            DialogStartProcessing(
-                actionClose = { coroutineScope.launch { sheetState.hide() } },
-                purchaseAmount = purchaseAmount.value
-            )
+            if (isProcessingInited) {
+                BottomSheetStartProcessing(
+                    actionClose = { coroutineScope.launch { sheetState.hide() } },
+                    purchaseAmount = DataHolder.purchaseAmount
+                )
+            } else {
+                Box(modifier = Modifier)
+            }
         },
         modifier = Modifier.fillMaxSize()
     ) {
         content {
-            purchaseAmount.value = DataHolder.purchaseAmount
             coroutineScope.launch {
                 sheetState.show()
             }
         }
     }
+}
+
+/**
+ * Второй вариант имплементации Compose. Здесь все выполняется на стороне клиента
+ * */
+@Composable
+fun AirbaPaySdkModalBottomSheetProcessingCompose(
+    sheetState: ModalBottomSheetState,
+    coroutineScope: CoroutineScope = rememberCoroutineScope()
+) {
+    BottomSheetStartProcessing(
+        actionClose = { coroutineScope.launch { sheetState.hide() } },
+        purchaseAmount = DataHolder.purchaseAmount
+    )
 }

@@ -18,7 +18,7 @@ internal class BottomSheetFragmentStartProcessing : BottomSheetDialogFragment() 
     ): View {
         return ComposeView(requireContext()).apply {
             setContent {
-                DialogStartProcessing(
+                BottomSheetStartProcessing(
                     actionClose = {
                         this@BottomSheetFragmentStartProcessing.dialog?.hide()
                     },

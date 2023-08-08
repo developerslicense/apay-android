@@ -103,7 +103,7 @@ private fun InitCard(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 LoadImageUrl(
-                    imageUrl = card.type ?: "http",
+                    imageUrl = if(card.type.isNullOrBlank()) "https" else card.type,
                     errorImageSrc = null,
                     progressImageSrc = null
                 )
