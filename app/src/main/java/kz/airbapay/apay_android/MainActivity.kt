@@ -93,10 +93,7 @@ class MainActivity : ComponentActivity() {
                 title = { Text("Оплата заказа") }
             )
 
-            AirbaPaySdkModalProcessingCompose(
-                actionClose = {}, // оставить пустым в случае isBottomSheetType = false
-                isBottomSheetType = false
-            )
+            AirbaPaySdkModalProcessingCompose()
         }
     }
 

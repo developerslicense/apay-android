@@ -8,12 +8,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.fragment.app.FragmentManager
 import com.google.gson.annotations.SerializedName
 import kotlinx.coroutines.launch
 import kz.airbapay.apay_android.data.utils.DataHolder
 import kz.airbapay.apay_android.data.utils.Money
-import kz.airbapay.apay_android.ui.pages.dialog.BottomSheetFragmentStartProcessing
 import kz.airbapay.apay_android.ui.pages.dialog.BottomSheetStartProcessing
 import kz.airbapay.apay_android.ui.resources.ColorsSdk
 
@@ -120,12 +118,12 @@ class AirbaPaySdk {
         /**
          * Вызов xml BottomSheet Dialog Fragment
          * */
-        fun modalBottomSheetProcessingXml(
+       /* fun modalBottomSheetProcessingXml(
             fragmentManager: FragmentManager
         ) {
             val bottomSheet = BottomSheetFragmentStartProcessing()
             bottomSheet.show(fragmentManager, "AirbaPay")
-        }
+        }*/
     }
 }
 
@@ -167,13 +165,10 @@ fun AirbaPaySdkModalBottomSheetProcessingCompose(
  * Второй вариант имплементации Compose. Здесь все выполняется на стороне клиента
  * */
 @Composable
-fun AirbaPaySdkModalProcessingCompose(
-    actionClose: () -> Unit,
-    isBottomSheetType: Boolean
-) {
+fun AirbaPaySdkModalProcessingCompose() {
 
     BottomSheetStartProcessing(
-        actionClose = actionClose,
-        isBottomSheetType = isBottomSheetType
+        actionClose = {},
+        isBottomSheetType = false
     )
 }
