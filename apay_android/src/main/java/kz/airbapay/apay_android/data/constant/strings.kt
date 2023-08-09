@@ -25,7 +25,6 @@ internal fun paymentByCard2() = getStrFromRes("Оплатить картой", "
 
 internal fun paymentOfPurchase() = getStrFromRes("Оплата покупки", "Сатып алу төлемі")
 
-
 internal fun amountOfPurchase() = getStrFromRes("Сумма покупки", "Сатып алу сомасы")
 
 internal fun numberOfPurchase() = getStrFromRes("Номер заказа", "Тапсырыс нөмірі")

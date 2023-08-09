@@ -47,7 +47,7 @@ import kz.airbapay.apay_android.ui.ui_components.InitHeader
 import kz.airbapay.apay_android.ui.ui_components.ProgressBarView
 
 @Composable
-internal fun BottomSheetStartProcessing(
+internal fun StartProcessingView(
     actionClose: () -> Unit,
     isBottomSheetType: Boolean = true,
     backgroundColor: Color = ColorsSdk.bgBlock

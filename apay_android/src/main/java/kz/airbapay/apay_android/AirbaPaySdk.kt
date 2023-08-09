@@ -12,7 +12,7 @@ import com.google.gson.annotations.SerializedName
 import kotlinx.coroutines.launch
 import kz.airbapay.apay_android.data.utils.DataHolder
 import kz.airbapay.apay_android.data.utils.Money
-import kz.airbapay.apay_android.ui.pages.dialog.BottomSheetStartProcessing
+import kz.airbapay.apay_android.ui.pages.dialog.StartProcessingView
 import kz.airbapay.apay_android.ui.resources.ColorsSdk
 
 class AirbaPaySdk {
@@ -147,7 +147,7 @@ fun AirbaPaySdkProcessingBottomSheet(
         sheetState = sheetState,
         sheetBackgroundColor = ColorsSdk.transparent,
         sheetContent = {
-            BottomSheetStartProcessing(
+            StartProcessingView(
                 actionClose = { coroutineScope.launch { sheetState.hide() } },
             )
         },
@@ -169,7 +169,7 @@ fun AirbaPaySdkProcessingView(
     backgroundColor: Color = ColorsSdk.bgBlock
 ) {
 
-    BottomSheetStartProcessing(
+    StartProcessingView(
         actionClose = {},
         isBottomSheetType = false,
         backgroundColor = backgroundColor
