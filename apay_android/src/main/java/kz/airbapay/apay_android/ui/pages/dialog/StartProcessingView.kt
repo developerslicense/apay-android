@@ -36,10 +36,10 @@ import kz.airbapay.apay_android.network.base.ClientConnector
 import kz.airbapay.apay_android.network.repository.AuthRepository
 import kz.airbapay.apay_android.network.repository.CardRepository
 import kz.airbapay.apay_android.network.repository.startAuth
-import kz.airbapay.apay_android.ui.pages.dialog.dialog_start_processing_ext.InitDialogStartProcessingAmount
-import kz.airbapay.apay_android.ui.pages.dialog.dialog_start_processing_ext.InitDialogStartProcessingButtonNext
-import kz.airbapay.apay_android.ui.pages.dialog.dialog_start_processing_ext.InitDialogStartProcessingCards
-import kz.airbapay.apay_android.ui.pages.dialog.dialog_start_processing_ext.InitDialogStartProcessingGPay
+import kz.airbapay.apay_android.ui.pages.dialog.start_processing_ext.InitDialogStartProcessingAmount
+import kz.airbapay.apay_android.ui.pages.dialog.start_processing_ext.InitDialogStartProcessingButtonNext
+import kz.airbapay.apay_android.ui.pages.dialog.start_processing_ext.InitDialogStartProcessingCards
+import kz.airbapay.apay_android.ui.pages.dialog.start_processing_ext.InitDialogStartProcessingGPay
 import kz.airbapay.apay_android.ui.resources.ColorsSdk
 import kz.airbapay.apay_android.ui.resources.LocalFonts
 import kz.airbapay.apay_android.ui.ui_components.BackHandler
