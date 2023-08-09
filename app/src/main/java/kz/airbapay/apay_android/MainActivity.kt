@@ -102,7 +102,8 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun initProcessing() {
-        val id = Date().time
+        val someInvoiceId = Date().time
+        val someOrderNumber = Date().time
 
         val goods = listOf(
             AirbaPaySdk.Goods(
@@ -123,8 +124,8 @@ class MainActivity : ComponentActivity() {
 
         AirbaPaySdk.initProcessing(
             purchaseAmount = 50150,
-            invoiceId = id.toString(),
-            orderNumber = id.toString(),
+            invoiceId = someInvoiceId.toString(),
+            orderNumber = someOrderNumber.toString(),
             goods = goods,
             settlementPayments = emptyList(), //settlementPayment
         )
