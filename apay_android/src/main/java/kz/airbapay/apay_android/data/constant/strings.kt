@@ -142,4 +142,24 @@ internal fun payAnotherCard() = getStrFromRes(
     payAnotherCardKz
 )
 
+internal fun accessToCardRestricted() = getStrFromRes(
+    "Доступ к сохраненным картам отменен",
+    "Сақталған карталарға кіруден бас тартылды"
+)
+
+internal fun requestAccessToSavedCards() = getStrFromRes(
+    "Запрос доступа к сохраненным картам",
+    "Сақталған карталарға рұқсат сұрау"
+)
+
+internal fun authenticateFingerprint() = getStrFromRes(
+    "Отсканируйте отпечаток пальца",
+    "Саусақ ізін сканерлеңіз"
+)
+
+internal fun textCancel() = getStrFromRes(
+    "Отменить",
+    "Бас тарту"
+)
+
 

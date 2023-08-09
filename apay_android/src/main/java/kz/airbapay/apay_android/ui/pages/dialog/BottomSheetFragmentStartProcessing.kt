@@ -6,9 +6,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ComposeView
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import kz.airbapay.apay_android.data.utils.DataHolder
+import kz.airbapay.apay_android.AirbaPaySdkProcessingView
 
 internal class BottomSheetFragmentStartProcessing : BottomSheetDialogFragment() {
 
@@ -18,10 +19,8 @@ internal class BottomSheetFragmentStartProcessing : BottomSheetDialogFragment() 
     ): View {
         return ComposeView(requireContext()).apply {
             setContent {
-                StartProcessingView(
-                    actionClose = {
-                        this@BottomSheetFragmentStartProcessing.dialog?.hide()
-                    },
+                AirbaPaySdkProcessingView(
+                    backgroundColor = Color.LightGray
                 )
             }
         }

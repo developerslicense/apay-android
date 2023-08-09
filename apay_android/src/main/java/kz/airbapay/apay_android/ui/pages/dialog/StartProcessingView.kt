@@ -12,6 +12,7 @@ import androidx.compose.material.Card
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -52,7 +53,8 @@ internal fun StartProcessingView(
     actionClose: () -> Unit,
     actionOnLoadingCompleted: () -> Unit = {},
     isBottomSheetType: Boolean = true,
-    backgroundColor: Color = ColorsSdk.bgBlock
+    backgroundColor: Color = ColorsSdk.bgBlock,
+    isAuthenticated: MutableState<Boolean>
 ) {
     val context = LocalContext.current
     val clientConnector = ClientConnector(context)
@@ -111,7 +113,9 @@ internal fun StartProcessingView(
                 InitDialogStartProcessingAmount(purchaseAmount.value)
                 InitDialogStartProcessingGPay()
 
-                if (savedCards.value.isNotEmpty()) {
+                if (savedCards.value.isNotEmpty()
+                    && isAuthenticated.value
+                ) {
                     InitDialogStartProcessingCards(
                         savedCards = savedCards.value,
                         selectedCard

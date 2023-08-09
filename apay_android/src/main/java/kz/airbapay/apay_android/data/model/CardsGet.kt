@@ -37,4 +37,6 @@ internal data class BankCard(
 
     val typeIcon: Int? = null
 
-)
+) {
+    fun getMaskedPanCleared() = maskedPan?.takeLast(6).orEmpty()
+ }

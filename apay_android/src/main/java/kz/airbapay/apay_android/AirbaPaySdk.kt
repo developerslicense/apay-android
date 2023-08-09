@@ -5,11 +5,15 @@ import androidx.compose.material.ModalBottomSheetLayout
 import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import com.google.gson.annotations.SerializedName
 import kotlinx.coroutines.launch
+import kz.airbapay.apay_android.data.utils.AirbaPayBiometric
 import kz.airbapay.apay_android.data.utils.DataHolder
 import kz.airbapay.apay_android.data.utils.Money
 import kz.airbapay.apay_android.ui.pages.dialog.StartProcessingView
@@ -135,13 +139,19 @@ fun AirbaPaySdkProcessingBottomSheet(
     content: @Composable (actionShowBottomSheet: () -> Unit) -> Unit
 ) {
 
+    val coroutineScope = rememberCoroutineScope()
+    val context = LocalContext.current
+    val airbaPayBiometric = AirbaPayBiometric(context)
+
     val sheetState = rememberModalBottomSheetState(
         initialValue = ModalBottomSheetValue.Hidden,
         confirmValueChange = { it != ModalBottomSheetValue.HalfExpanded },
         skipHalfExpanded = true
     )
 
-    val coroutineScope = rememberCoroutineScope()
+    val isAuthenticated = rememberSaveable {
+        mutableStateOf(false)
+    }
 
     ModalBottomSheetLayout(
         sheetState = sheetState,
@@ -149,14 +159,21 @@ fun AirbaPaySdkProcessingBottomSheet(
         sheetContent = {
             StartProcessingView(
                 actionClose = { coroutineScope.launch { sheetState.hide() } },
+                isAuthenticated = isAuthenticated
             )
         },
         modifier = Modifier.fillMaxSize()
     ) {
         content {
-            coroutineScope.launch {
-                sheetState.show()
-            }
+            airbaPayBiometric.authenticate(
+                onSuccess = {
+                    isAuthenticated.value = true
+                    coroutineScope.launch { sheetState.show() }
+                },
+                onError = {
+                    coroutineScope.launch { sheetState.show() }
+                }
+            )
         }
     }
 }

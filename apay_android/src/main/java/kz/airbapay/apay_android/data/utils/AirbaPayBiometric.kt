@@ -1,6 +1,5 @@
 package kz.airbapay.apay_android.data.utils
 
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.KeyguardManager
 import android.content.ActivityNotFoundException
@@ -10,44 +9,47 @@ import android.hardware.biometrics.BiometricPrompt
 import android.os.Build
 import android.os.CancellationSignal
 import android.widget.Toast
-import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
+import kz.airbapay.apay_android.data.constant.accessToCardRestricted
+import kz.airbapay.apay_android.data.constant.authenticateFingerprint
+import kz.airbapay.apay_android.data.constant.requestAccessToSavedCards
+import kz.airbapay.apay_android.data.constant.textCancel
 
-class AirbaPayBiometric(
+internal class AirbaPayBiometric(
     private val context: Context
 ) {
     private var cancellationSignal: CancellationSignal? = null
-    private val authenticationCallback: BiometricPrompt.AuthenticationCallback
-        get() =
-            @RequiresApi(Build.VERSION_CODES.P)
-            object : BiometricPrompt.AuthenticationCallback() {
-                override fun onAuthenticationError(errorCode: Int, errString: CharSequence?) {
-                    super.onAuthenticationError(errorCode, errString)
-                    notifyUser("Authentication error: $errString")
-                }
 
-                override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult?) {
-                    super.onAuthenticationSucceeded(result)
-                    notifyUser("Authentication Success!")
-//                    startActivity(Intent(this@MainActivity, Secret::class.java))
-                }
-            }
-
-    fun authenticate() {
+    fun authenticate(
+        onSuccess: () -> Unit,
+        onError: () -> Unit,
+    ) {
         val keyguardManager = context.getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager
 
         if (keyguardManager.isKeyguardSecure) {
-            if (isAndroidVersionCompareCondition()) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
                 val biometricPrompt = BiometricPrompt.Builder(context)
-                    .setTitle("Проверка личности")
-                    .setDescription("Отсканируйте отпечаток пальца")
-                    .setNegativeButton("Отменить", context.mainExecutor) { dialog, which ->
+                    .setTitle(requestAccessToSavedCards()) //"Проверка личности"
+                    .setDescription(authenticateFingerprint())
+                    .setNegativeButton(textCancel(), context.mainExecutor) { dialog, which ->
+                        onError()
+                        notifyUser(accessToCardRestricted())
                     }.build()
 
                 biometricPrompt.authenticate(
-                    getCancellationSignal(),
+                    getCancellationSignal(onError),
                     context.mainExecutor,
-                    authenticationCallback
+                    object : BiometricPrompt.AuthenticationCallback() {
+                        override fun onAuthenticationError(errorCode: Int, errString: CharSequence?) {
+                            super.onAuthenticationError(errorCode, errString)
+                            notifyUser(accessToCardRestricted())
+                        }
+
+                        override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult?) {
+                            super.onAuthenticationSucceeded(result)
+                            onSuccess()
+                        }
+                    }
                 )
 
             } else {
@@ -66,25 +68,25 @@ class AirbaPayBiometric(
             }
 
         } else if (!keyguardManager.isKeyguardSecure) {
-            notifyUser("Fingerprint hs not been enabled in settings.")
+            notifyUser(accessToCardRestricted())
+            onError()
 
         } else if (ActivityCompat.checkSelfPermission(
                 context,
                 android.Manifest.permission.USE_BIOMETRIC
             ) != PackageManager.PERMISSION_GRANTED
         ) {
-            notifyUser("Fingerprint hs not been enabled in settings.")
-
+            notifyUser(accessToCardRestricted())
+            onError()
         }
     }
 
-    @SuppressLint("AnnotateVersionCheck")
-    private fun isAndroidVersionCompareCondition() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.P
-
-    private fun getCancellationSignal(): CancellationSignal {
+    private fun getCancellationSignal(
+        onError: () -> Unit
+    ): CancellationSignal {
         cancellationSignal = CancellationSignal()
         cancellationSignal?.setOnCancelListener {
-            notifyUser("Authentication was cancelled by the user")
+            onError()
         }
         return cancellationSignal as CancellationSignal
     }

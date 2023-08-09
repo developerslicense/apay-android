@@ -107,7 +107,7 @@ private fun InitCard(
 
                 Text(
                     style = LocalFonts.current.semiBold,
-                    text = card.maskedPan.orEmpty()
+                    text = card.getMaskedPanCleared()
                 )
             }
 
