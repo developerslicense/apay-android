@@ -17,7 +17,8 @@ internal fun InitViewStartProcessingButtonNext(
     savedCards: List<BankCard>,
     actionClose: () -> Unit,
     purchaseAmount: String?,
-    isAuthenticated: Boolean
+    isAuthenticated: Boolean,
+    selectedCard: MutableState<BankCard?>
 ) {
     val context = LocalContext.current
 

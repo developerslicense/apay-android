@@ -16,7 +16,6 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -73,7 +72,7 @@ internal fun StartProcessingView(
     val isError = remember { mutableStateOf(false) }
     val size = remember { mutableStateOf(IntSize.Zero) }
     val showProgressBar = remember { mutableStateOf(true) }
-    val selectedCard = rememberSaveable { mutableStateOf<BankCard?>(null) }
+    val selectedCard = remember { mutableStateOf<BankCard?>(null) }
 
     val savedCards = remember {
         mutableStateOf<List<BankCard>>(emptyList())
@@ -127,7 +126,8 @@ internal fun StartProcessingView(
                     savedCards = savedCards.value,
                     actionClose = actionClose,
                     purchaseAmount = purchaseAmount.value,
-                    isAuthenticated = isAuthenticated.value
+                    isAuthenticated = isAuthenticated.value,
+                    selectedCard = selectedCard
                 )
             }
         }
@@ -164,6 +164,9 @@ internal fun StartProcessingView(
                             showProgressBar.value = false
                             savedCards.value = it
                             actionOnLoadingCompleted()
+                            if (it.isNotEmpty()) {
+                                selectedCard.value = it[0]
+                            }
                         }
                     )
                 }

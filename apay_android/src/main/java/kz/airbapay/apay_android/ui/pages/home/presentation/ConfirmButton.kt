@@ -100,12 +100,13 @@ internal fun checkValid(
 internal fun startPaymentProcessing(
     navController: NavController,
     showProgressBar: MutableState<Boolean>,
-    saveCard: Boolean,
-    sendReceipt: Boolean,
+    saveCard: Boolean = false,
+    sendReceipt: Boolean = false,
     cardNumber: String,
-    email: String?,
-    dateExpired: String,
-    cvv: String,
+    email: String? = null,
+    dateExpired: String? = null,
+    cvv: String? = null,
+    cardId: String? = null,
     authRepository: AuthRepository,
     paymentsRepository: PaymentsRepository,
     coroutineScope: CoroutineScope
@@ -116,7 +117,8 @@ internal fun startPaymentProcessing(
         pan = getNumberCleared(cardNumber),
         expiry = dateExpired,
         name = "Card Holder",
-        cvv = cvv
+        cvv = cvv,
+        id = cardId
     )
     sendReceiptSaved = sendReceipt
     saveCardSaved = saveCard
