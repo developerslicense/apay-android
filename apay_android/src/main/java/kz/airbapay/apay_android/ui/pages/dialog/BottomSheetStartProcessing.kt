@@ -18,6 +18,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -48,8 +49,8 @@ import kz.airbapay.apay_android.ui.ui_components.ProgressBarView
 @Composable
 internal fun BottomSheetStartProcessing(
     actionClose: () -> Unit,
-    needShowGPay: Boolean = true,
-    isBottomSheetType: Boolean = true
+    isBottomSheetType: Boolean = true,
+    backgroundColor: Color = ColorsSdk.bgBlock
 ) {
     val context = LocalContext.current
     val clientConnector = ClientConnector(context)
@@ -75,6 +76,7 @@ internal fun BottomSheetStartProcessing(
     }
 
     Card(
+        backgroundColor = backgroundColor,
         shape = RoundedCornerShape(
             topStart = if (isBottomSheetType) 12.dp else 0.dp,
             topEnd = if (isBottomSheetType) 12.dp else 0.dp
@@ -83,7 +85,8 @@ internal fun BottomSheetStartProcessing(
             .fillMaxWidth()
             .onSizeChanged {
                 size.value = it
-            }
+            },
+        elevation = if(isBottomSheetType) 5.dp else 0.dp
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally
@@ -104,10 +107,7 @@ internal fun BottomSheetStartProcessing(
 
             } else {
                 InitDialogStartProcessingAmount(purchaseAmount.value)
-
-                if (needShowGPay) {
-                    InitDialogStartProcessingGPay()
-                }
+                InitDialogStartProcessingGPay()
 
                 if (savedCards.value.isNotEmpty()) {
                     InitDialogStartProcessingCards(
