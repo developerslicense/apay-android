@@ -131,7 +131,7 @@ class AirbaPaySdk {
  * Первый вариант имплементации Compose. Здесь все выполняется на стороне sdk
  * */
 @Composable
-fun AirbaPaySdkModalBottomSheetProcessingCompose(
+fun AirbaPaySdkProcessingBottomSheet(
     content: @Composable (actionShowBottomSheet: () -> Unit) -> Unit
 ) {
 
@@ -165,7 +165,7 @@ fun AirbaPaySdkModalBottomSheetProcessingCompose(
  * Второй вариант имплементации Compose. Здесь все выполняется на стороне клиента
  * */
 @Composable
-fun AirbaPaySdkModalProcessingCompose(
+fun AirbaPaySdkProcessingView(
     backgroundColor: Color = ColorsSdk.bgBlock
 ) {
 

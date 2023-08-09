@@ -47,7 +47,7 @@ class MainActivity : ComponentActivity() {
 
             Apay_androidTheme {
                 if (isBottomSheet) {
-                    AirbaPaySdkModalBottomSheetProcessingCompose(
+                    AirbaPaySdkProcessingBottomSheet(
                         content = { actionShowBottomSheet ->
                             PageContentForBottomSheet(actionShowBottomSheet)
                         }
@@ -95,7 +95,7 @@ class MainActivity : ComponentActivity() {
                 title = { Text("Оплата заказа") }
             )
 
-            AirbaPaySdkModalProcessingCompose(
+            AirbaPaySdkProcessingView(
 //                backgroundColor = Color.Gray //при необходимости, можно подобрать цвет бэкграунда под цвет страницы
             )
         }
