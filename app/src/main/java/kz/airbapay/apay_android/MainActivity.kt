@@ -15,15 +15,18 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import kz.airbapay.apay_android.data.utils.AirbaPayBiometric
 import kz.airbapay.apay_android.ui.theme.Apay_androidTheme
 import java.util.Date
 
 class MainActivity : ComponentActivity() {
 
     private val isBottomSheet = true
+    private lateinit var airbaPayBiometric: AirbaPayBiometric//todo если меньше 9-го андроида, то не показывай сохраненные карты
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        airbaPayBiometric = AirbaPayBiometric(this)
 
         AirbaPaySdk.initOnCreate(
             isProd = false,
@@ -74,7 +77,9 @@ class MainActivity : ComponentActivity() {
                     .padding(vertical = 50.dp, horizontal = 50.dp),
                 onClick = {
                     initProcessing()
-                    actionShowBottomSheet()
+                    airbaPayBiometric.authenticate()
+//                    actionShowBottomSheet()
+
                 }
             ) {
                 Text("переход на эквайринг")

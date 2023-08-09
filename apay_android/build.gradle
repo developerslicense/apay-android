@@ -45,6 +45,9 @@ ext {
     androidxTestRunner = '1.5.1'
     androidxCore = '1.9.0'
     activityKtx = '1.6.1'
+
+    biometricLibraryVersion = '1.1.0'
+
     constraint = '2.1.4'
     constraintCompose = '1.0.1'
     desugarJdkLibs = '1.1.1'
@@ -86,6 +89,9 @@ dependencies {
     implementation "androidx.core:core-ktx:$androidxCore"
     // Activity ktx
     implementation "androidx.activity:activity-ktx:$activityKtx"
+
+    // Biometric
+    implementation "androidx.biometric:biometric:$biometricLibraryVersion"
 
     // Constraint
     implementation "androidx.constraintlayout:constraintlayout:$constraint"
