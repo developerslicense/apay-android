@@ -15,6 +15,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -41,7 +42,7 @@ class MainActivity : ComponentActivity() {
             successCallback = "https://site.kz/success-clb",
             needShowSdkSuccessPage = true,
             userEmail = "test@test.com",
-            // colorBrandMain = Color.Red
+//            colorBrandMain = Color.Blue
         )
 
         if (!isBottomSheet) {
@@ -93,7 +94,7 @@ class MainActivity : ComponentActivity() {
         ConstraintLayout(
             modifier = Modifier.fillMaxSize()
         ) {
-            var isLoading = remember { true }
+            val isLoading = remember { mutableStateOf(true) }
 
             Column(
                 verticalArrangement = Arrangement.Top,
@@ -106,7 +107,7 @@ class MainActivity : ComponentActivity() {
                 )
 
                 AirbaPaySdkProcessingView(
-                    actionOnLoadingCompleted = { isLoading = false },
+                    actionOnLoadingCompleted = { isLoading.value = false },
                     needShowProgressBar = false,
                     backgroundColor = Color.White
                 )
@@ -114,7 +115,7 @@ class MainActivity : ComponentActivity() {
 
             val (progressRef) = createRefs()
 
-            if (isLoading) {
+            if (isLoading.value) {
                 CircularProgressIndicator(
                     color = Color.Blue,
                     modifier = Modifier

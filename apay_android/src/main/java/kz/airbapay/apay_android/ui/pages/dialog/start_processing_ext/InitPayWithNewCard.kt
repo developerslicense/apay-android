@@ -24,7 +24,7 @@ import kz.airbapay.apay_android.ui.resources.ColorsSdk
 import kz.airbapay.apay_android.ui.resources.LocalFonts
 
 @Composable
-internal fun InitDialogStartProcessingPayWithNewCard(
+internal fun InitViewStartProcessingPayWithNewCard(
     actionClick: (() -> Unit)
 ) {
 

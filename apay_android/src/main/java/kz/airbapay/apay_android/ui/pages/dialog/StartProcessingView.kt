@@ -37,10 +37,10 @@ import kz.airbapay.apay_android.network.base.ClientConnector
 import kz.airbapay.apay_android.network.repository.AuthRepository
 import kz.airbapay.apay_android.network.repository.CardRepository
 import kz.airbapay.apay_android.network.repository.startAuth
-import kz.airbapay.apay_android.ui.pages.dialog.start_processing_ext.InitDialogStartProcessingAmount
-import kz.airbapay.apay_android.ui.pages.dialog.start_processing_ext.InitDialogStartProcessingButtonNext
-import kz.airbapay.apay_android.ui.pages.dialog.start_processing_ext.InitDialogStartProcessingCards
-import kz.airbapay.apay_android.ui.pages.dialog.start_processing_ext.InitDialogStartProcessingGPay
+import kz.airbapay.apay_android.ui.pages.dialog.start_processing_ext.InitViewStartProcessingAmount
+import kz.airbapay.apay_android.ui.pages.dialog.start_processing_ext.InitViewStartProcessingButtonNext
+import kz.airbapay.apay_android.ui.pages.dialog.start_processing_ext.InitViewStartProcessingCards
+import kz.airbapay.apay_android.ui.pages.dialog.start_processing_ext.InitViewStartProcessingGPay
 import kz.airbapay.apay_android.ui.resources.ColorsSdk
 import kz.airbapay.apay_android.ui.resources.LocalFonts
 import kz.airbapay.apay_android.ui.ui_components.BackHandler
@@ -110,22 +110,24 @@ internal fun StartProcessingView(
                 InitErrorState()
 
             } else {
-                InitDialogStartProcessingAmount(purchaseAmount.value)
-                InitDialogStartProcessingGPay()
+                InitViewStartProcessingAmount(purchaseAmount.value)
+                InitViewStartProcessingGPay()
 
                 if (savedCards.value.isNotEmpty()
                     && isAuthenticated.value
                 ) {
-                    InitDialogStartProcessingCards(
+                    InitViewStartProcessingCards(
                         savedCards = savedCards.value,
-                        selectedCard
+                        selectedCard = selectedCard,
+                        actionClose = actionClose
                     )
                 }
 
-                InitDialogStartProcessingButtonNext(
+                InitViewStartProcessingButtonNext(
                     savedCards = savedCards.value,
                     actionClose = actionClose,
-                    purchaseAmount = purchaseAmount.value
+                    purchaseAmount = purchaseAmount.value,
+                    isAuthenticated = isAuthenticated.value
                 )
             }
         }

@@ -13,10 +13,11 @@ import kz.airbapay.apay_android.data.model.BankCard
 import kz.airbapay.apay_android.ui.ui_components.ViewButton
 
 @Composable
-internal fun InitDialogStartProcessingButtonNext(
+internal fun InitViewStartProcessingButtonNext(
     savedCards: List<BankCard>,
     actionClose: () -> Unit,
-    purchaseAmount: String?
+    purchaseAmount: String?,
+    isAuthenticated: Boolean
 ) {
     val context = LocalContext.current
 
@@ -25,7 +26,9 @@ internal fun InitDialogStartProcessingButtonNext(
         .padding(top = 16.dp)
         .padding(bottom = 32.dp)
 
-    if (savedCards.isNotEmpty()) {
+    if (savedCards.isNotEmpty()
+        && isAuthenticated
+    ) {
         ViewButton(
             title = "${payAmount()} $purchaseAmount",
             actionClick = {

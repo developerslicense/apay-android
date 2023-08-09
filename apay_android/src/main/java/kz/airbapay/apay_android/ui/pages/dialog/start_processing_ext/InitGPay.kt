@@ -16,7 +16,7 @@ import kz.airbapay.apay_android.ui.resources.ColorsSdk
 import kz.airbapay.apay_android.ui.ui_components.LoadImageSrc
 
 @Composable
-internal fun InitDialogStartProcessingGPay() {
+internal fun InitViewStartProcessingGPay() {
     Spacer(modifier = Modifier.height(16.dp))
 
     Column(

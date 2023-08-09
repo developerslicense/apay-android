@@ -5,6 +5,7 @@ import androidx.compose.material.ModalBottomSheetLayout
 import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -188,11 +189,28 @@ fun AirbaPaySdkProcessingView(
     backgroundColor: Color = ColorsSdk.bgBlock
 ) {
 
+    val context = LocalContext.current
+    val airbaPayBiometric = AirbaPayBiometric(context)
+
+    val isAuthenticated = rememberSaveable {
+        mutableStateOf(false)
+    }
+
     StartProcessingView(
         needShowProgressBar = needShowProgressBar,
         actionClose = {},
         actionOnLoadingCompleted = actionOnLoadingCompleted,
         isBottomSheetType = false,
-        backgroundColor = backgroundColor
+        backgroundColor = backgroundColor,
+        isAuthenticated = isAuthenticated
     )
+
+    LaunchedEffect("Authenticate") {
+        airbaPayBiometric.authenticate(
+            onSuccess = {
+                isAuthenticated.value = true
+            },
+            onError = {}
+        )
+    }
 }
