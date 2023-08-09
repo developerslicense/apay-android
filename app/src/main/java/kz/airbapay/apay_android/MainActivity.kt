@@ -87,13 +87,17 @@ class MainActivity : ComponentActivity() {
     private fun PageContentForView() {
         Column(
             verticalArrangement = Arrangement.Top,
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier
+                .fillMaxSize()
+//                .background(Color.Gray)
         ) {
             TopAppBar(
                 title = { Text("Оплата заказа") }
             )
 
-            AirbaPaySdkModalProcessingCompose()
+            AirbaPaySdkModalProcessingCompose(
+//                backgroundColor = Color.Gray //при необходимости, можно подобрать цвет бэкграунда под цвет страницы
+            )
         }
     }
 

@@ -165,10 +165,13 @@ fun AirbaPaySdkModalBottomSheetProcessingCompose(
  * Второй вариант имплементации Compose. Здесь все выполняется на стороне клиента
  * */
 @Composable
-fun AirbaPaySdkModalProcessingCompose() {
+fun AirbaPaySdkModalProcessingCompose(
+    backgroundColor: Color = ColorsSdk.bgBlock
+) {
 
     BottomSheetStartProcessing(
         actionClose = {},
-        isBottomSheetType = false
+        isBottomSheetType = false,
+        backgroundColor = backgroundColor
     )
 }
