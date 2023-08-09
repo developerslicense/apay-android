@@ -166,11 +166,15 @@ fun AirbaPaySdkProcessingBottomSheet(
  * */
 @Composable
 fun AirbaPaySdkProcessingView(
+    actionOnLoadingCompleted: () -> Unit = {},
+    needShowProgressBar: Boolean = true,
     backgroundColor: Color = ColorsSdk.bgBlock
 ) {
 
     StartProcessingView(
+        needShowProgressBar = needShowProgressBar,
         actionClose = {},
+        actionOnLoadingCompleted = actionOnLoadingCompleted,
         isBottomSheetType = false,
         backgroundColor = backgroundColor
     )

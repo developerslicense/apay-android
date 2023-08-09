@@ -3,18 +3,23 @@ package kz.airbapay.apay_android
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.constraintlayout.compose.ConstraintLayout
 import kz.airbapay.apay_android.data.utils.AirbaPayBiometric
 import kz.airbapay.apay_android.ui.theme.Apay_androidTheme
 import java.util.Date
@@ -90,19 +95,43 @@ class MainActivity : ComponentActivity() {
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     private fun PageContentForView() {
-        Column(
-            verticalArrangement = Arrangement.Top,
-            modifier = Modifier
-                .fillMaxSize()
-//                .background(Color.Gray)
+        ConstraintLayout(
+            modifier = Modifier.fillMaxSize()
         ) {
-            TopAppBar(
-                title = { Text("Оплата заказа") }
-            )
+            var isLoading = remember { true }
 
-            AirbaPaySdkProcessingView(
-//                backgroundColor = Color.Gray //при необходимости, можно подобрать цвет бэкграунда под цвет страницы
-            )
+            Column(
+                verticalArrangement = Arrangement.Top,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.White)
+            ) {
+                TopAppBar(
+                    title = { Text("Оплата заказа") }
+                )
+
+                AirbaPaySdkProcessingView(
+                    actionOnLoadingCompleted = { isLoading = false },
+                    needShowProgressBar = false,
+                    backgroundColor = Color.White
+                )
+            }
+
+            val (progressRef) = createRefs()
+
+            if (isLoading) {
+                CircularProgressIndicator(
+                    color = Color.Blue,
+                    modifier = Modifier
+                        .fillMaxWidth(0.3f)
+                        .constrainAs(progressRef) {
+                            top.linkTo(parent.top)
+                            bottom.linkTo(parent.bottom)
+                            start.linkTo(parent.start)
+                            end.linkTo(parent.end)
+                        }
+                )
+            }
         }
     }
 

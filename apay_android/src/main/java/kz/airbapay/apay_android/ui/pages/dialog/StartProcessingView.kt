@@ -48,7 +48,9 @@ import kz.airbapay.apay_android.ui.ui_components.ProgressBarView
 
 @Composable
 internal fun StartProcessingView(
+    needShowProgressBar: Boolean = true,
     actionClose: () -> Unit,
+    actionOnLoadingCompleted: () -> Unit = {},
     isBottomSheetType: Boolean = true,
     backgroundColor: Color = ColorsSdk.bgBlock
 ) {
@@ -124,7 +126,9 @@ internal fun StartProcessingView(
             }
         }
 
-        if (showProgressBar.value) {
+        if (showProgressBar.value
+            && needShowProgressBar
+        ) {
             ProgressBarView(
                 size = size,
                 modifier = Modifier.wrapContentHeight()
@@ -141,16 +145,19 @@ internal fun StartProcessingView(
                 onError = {
                     isError.value = true
                     showProgressBar.value = false
+                    actionOnLoadingCompleted()
                 },
                 onResult = {
                     cardRepository.getCards(
                         phone = DataHolder.userPhone,
                         error = {
                             showProgressBar.value = false
+                            actionOnLoadingCompleted()
                         },
                         result = {
                             showProgressBar.value = false
                             savedCards.value = it
+                            actionOnLoadingCompleted()
                         }
                     )
                 }
