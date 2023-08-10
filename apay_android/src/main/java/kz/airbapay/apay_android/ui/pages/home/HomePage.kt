@@ -74,7 +74,7 @@ internal fun HomePage(
     val scaffoldState: ScaffoldState = rememberScaffoldState()
 
     val context = LocalContext.current
-    val showProgressBar = remember { mutableStateOf(false) }
+    val isLoading  = remember { mutableStateOf(false) }
     val showDialogExit = remember { mutableStateOf(false) }
     val switchSaveCard = remember { mutableStateOf(false) }
     val switchSendToEmail = remember { mutableStateOf(false) }
@@ -238,7 +238,7 @@ internal fun HomePage(
                         if (isValid) {
                             startPaymentProcessing(
                                 navController = navController,
-                                showProgressBar = showProgressBar,
+                                isLoading  = isLoading ,
                                 saveCard = switchSaveCard.value,
                                 sendReceipt = switchSendToEmail.value,
                                 cardNumber = cardNumberText.value.text,
@@ -247,7 +247,7 @@ internal fun HomePage(
                                 dateExpired = dateExpiredText.value.text,
                                 coroutineScope = coroutineScope,
                                 authRepository = authRepository,
-                                paymentsRepository = paymentsRepository,
+                                paymentsRepository = paymentsRepository
                             )
                         }
                     },
@@ -274,7 +274,9 @@ internal fun HomePage(
                 }
             }
 
-            if (showProgressBar.value) {
+            if (isLoading .value
+                || selectedCardId != null
+            ) {
                 ProgressBarView()
             }
         }

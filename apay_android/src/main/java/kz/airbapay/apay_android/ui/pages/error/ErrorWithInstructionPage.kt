@@ -56,7 +56,7 @@ internal fun ErrorWithInstructionPage(
     }*/
 
     val faqUrl = when (DataHolder.bankName) {
-        BanksName.kaspi.name -> {
+        BanksName.kaspibank.name -> {
             if (DataHolder.currentLang == AirbaPaySdk.Lang.KZ.lang)
                 "https://static-data.object.pscloud.io/pay-manuals/Kaspi_kaz.mp4"
             else "https://static-data.object.pscloud.io/pay-manuals/Kaspi_rus.mp4"
@@ -126,7 +126,7 @@ internal fun ErrorWithInstructionPage(
         )
 
         Text(
-            text = if (DataHolder.bankName == BanksName.kaspi.name) forChangeLimitInKaspi() else forChangeLimitInHomebank(),
+            text = if (DataHolder.bankName == BanksName.kaspibank.name) forChangeLimitInKaspi() else forChangeLimitInHomebank(),
             style = LocalFonts.current.semiBold,
             textAlign = TextAlign.Start,
             modifier = Modifier

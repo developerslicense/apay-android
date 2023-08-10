@@ -99,7 +99,7 @@ internal fun checkValid(
 
 internal fun startPaymentProcessing(
     navController: NavController,
-    showProgressBar: MutableState<Boolean>,
+    isLoading : MutableState<Boolean>,
     saveCard: Boolean = false,
     sendReceipt: Boolean = false,
     cardNumber: String,
@@ -111,7 +111,7 @@ internal fun startPaymentProcessing(
     paymentsRepository: PaymentsRepository,
     coroutineScope: CoroutineScope
 ) {
-    showProgressBar.value = true
+    isLoading .value = true
 
     cardSaved = BankCard(
         pan = getNumberCleared(cardNumber),

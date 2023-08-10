@@ -71,7 +71,7 @@ internal fun StartProcessingView(
 
     val isError = remember { mutableStateOf(false) }
     val size = remember { mutableStateOf(IntSize.Zero) }
-    val showProgressBar = remember { mutableStateOf(true) }
+    val isLoading  = remember { mutableStateOf(true) }
     val selectedCard = remember { mutableStateOf<BankCard?>(null) }
 
     val savedCards = remember {
@@ -132,7 +132,7 @@ internal fun StartProcessingView(
             }
         }
 
-        if (showProgressBar.value
+        if (isLoading .value
             && needShowProgressBar
         ) {
             ProgressBarView(
@@ -150,18 +150,18 @@ internal fun StartProcessingView(
                 authRepository = authRepository,
                 onError = {
                     isError.value = true
-                    showProgressBar.value = false
+                    isLoading .value = false
                     actionOnLoadingCompleted()
                 },
                 onResult = {
                     cardRepository.getCards(
                         phone = DataHolder.userPhone,
                         error = {
-                            showProgressBar.value = false
+                            isLoading .value = false
                             actionOnLoadingCompleted()
                         },
                         result = {
-                            showProgressBar.value = false
+                            isLoading .value = false
                             savedCards.value = it
                             actionOnLoadingCompleted()
                             if (it.isNotEmpty()) {
