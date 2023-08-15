@@ -9,7 +9,7 @@ internal enum class CardType(
   MASTER_CARD(R.drawable.master_card),
   MAESTRO(R.drawable.maestro_card),
   VISA(R.drawable.visa),
-  AMERICAN_EXPRESS(R.drawable.americanexpress),
+  AMERICAN_EXPRESS(R.drawable.american_express),
   CHINA_UNION_PAY(R.drawable.union_pay),
   INVALID(null);
 }

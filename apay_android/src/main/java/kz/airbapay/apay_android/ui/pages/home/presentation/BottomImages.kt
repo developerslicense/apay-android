@@ -1,7 +1,6 @@
 package kz.airbapay.apay_android.ui.pages.home.presentation
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -35,7 +34,7 @@ internal fun BottomImages() {
 
         Spacer(modifier = Modifier.width(16.dp))
         LoadImageSrc(
-            imageSrc = R.drawable.americanexpress,
+            imageSrc = R.drawable.american_express,
             modifier = Modifier.height(32.dp)
         )
     }

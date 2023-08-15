@@ -1,6 +1,5 @@
 package kz.airbapay.apay_android.ui.pages.home
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -29,7 +28,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -146,15 +144,6 @@ internal fun HomePage(
                         .background(ColorsSdk.bgBlock)
                         .weight(1f)
                 ) {
-                    Spacer(modifier = Modifier.height(24.dp))
-                    Image(
-                        painter = painterResource(R.drawable.top_info),
-                        contentDescription = "top_info",
-                        modifier = Modifier
-                            .padding(horizontal = 46.dp)
-                            .height(32.dp)
-                    )
-
                     TopInfoView(purchaseAmount.value)
 
                     Spacer(modifier = Modifier.height(16.dp))
