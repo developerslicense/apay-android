@@ -21,7 +21,7 @@ internal fun getNumberClearedWithMaxSymbol(
 ): String {
     val amountLocaleCleaned = clearNumberForLocale(amount, isUserEntered, isPhoneNumber)
     return clearNumberMaxSymbols(
-        amountLocaleCleaned,
+        amountLocaleCleaned = amountLocaleCleaned,
         maxSize = maxSize,
         needClearMax = true
     )
