@@ -25,9 +25,6 @@ class MoneyTests {
 
         isAssert(initMoneyAmountLong(0), 0)
         isAssert(initMoneyAmountLong(123), 123)
-//        isAssert(initMoneyAmountLong("012"), 12)
-//        isAssert(initMoneyAmountLong("00012"), 12)
-//        isAssert(initMoneyAmountLong("0000012"), 12)
         isAssert(initMoneyAmountLong(5123), 5123)
         isAssert(initMoneyAmountLong(123456), 123456)
         isAssert(initMoneyAmountLong(1234567890), 1234567890)
