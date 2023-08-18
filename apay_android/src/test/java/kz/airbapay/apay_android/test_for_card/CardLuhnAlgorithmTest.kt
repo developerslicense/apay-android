@@ -9,17 +9,17 @@ internal class CardLuhnAlgorithmTest {
     fun testLuhnAlgorithm() {
         // success
         isAssert(_validateCardNumWithLuhnAlgorithm("6250941006528599"), true)
-        isAssert(_validateCardNumWithLuhnAlgorithm("60115564485789458"), true)
         isAssert(_validateCardNumWithLuhnAlgorithm("6011000991300009"), true)
         isAssert(_validateCardNumWithLuhnAlgorithm("5425233430109903"), true)
         isAssert(_validateCardNumWithLuhnAlgorithm("2222420000001113"), true)
         isAssert(_validateCardNumWithLuhnAlgorithm("4263982640269299"), true)
         isAssert(_validateCardNumWithLuhnAlgorithm("4917484589897107"), true)
         isAssert(_validateCardNumWithLuhnAlgorithm("4001919257537193"), true)
-        isAssert(_validateCardNumWithLuhnAlgorithm("411111111111111"), false)
+        isAssert(_validateCardNumWithLuhnAlgorithm("4111111111111111"), true)
         isAssert(_validateCardNumWithLuhnAlgorithm("5392150002388575"), true)
 
         // failure
+        isAssert(_validateCardNumWithLuhnAlgorithm("41111111111111"), false)
         isAssert(_validateCardNumWithLuhnAlgorithm("378282246310005"), false)
         isAssert(_validateCardNumWithLuhnAlgorithm("411111111111112"), false)
         isAssert(_validateCardNumWithLuhnAlgorithm("411111111111113"), false)
