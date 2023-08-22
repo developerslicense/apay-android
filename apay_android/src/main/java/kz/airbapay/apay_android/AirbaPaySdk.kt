@@ -119,16 +119,6 @@ class AirbaPaySdk {
 
             DataHolder.purchaseAmountFormatted.value = Money.initLong(purchaseAmount).getFormatted()
         }
-
-        /**
-         * Вызов xml BottomSheet Dialog Fragment
-         * */
-       /* fun modalBottomSheetProcessingXml(
-            fragmentManager: FragmentManager
-        ) {
-            val bottomSheet = BottomSheetFragmentStartProcessing()
-            bottomSheet.show(fragmentManager, "AirbaPay")
-        }*/
     }
 }
 
