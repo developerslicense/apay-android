@@ -9,9 +9,12 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Card
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -22,8 +25,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import kz.airbapay.apay_android.AirbaPayActivity
-import kz.airbapay.apay_android.R
 import kz.airbapay.apay_android.data.model.BankCard
+import kz.airbapay.apay_android.ui.resources.ColorsSdk
 import kz.airbapay.apay_android.ui.resources.LocalFonts
 import kz.airbapay.apay_android.ui.ui_components.LineDecorator
 import kz.airbapay.apay_android.ui.ui_components.LoadImageSrc
@@ -117,9 +120,34 @@ private fun InitCard(
                 )
             }
 
-            LoadImageSrc(
-                imageSrc = if (isSelected) R.drawable.ic_radio_button_on else R.drawable.ic_radio_button_off,
-            )
+            if (isSelected) {
+                Card(
+                    shape = RoundedCornerShape(45.dp),
+                    backgroundColor = ColorsSdk.colorBrandMainMS.value,
+                    modifier = Modifier.size(20.dp),
+                    elevation = 0.dp
+                ) {
+                    Card(
+                        shape = RoundedCornerShape(45.dp),
+                        backgroundColor = ColorsSdk.bgBlock,
+                        modifier = Modifier.padding(6.dp)
+                    ) {}
+                }
+
+            } else {
+                Card(
+                    shape = RoundedCornerShape(45.dp),
+                    backgroundColor = ColorsSdk.gray15,
+                    modifier = Modifier.size(20.dp),
+                    elevation = 0.dp
+                ) {
+                    Card(
+                        shape = RoundedCornerShape(45.dp),
+                        backgroundColor = ColorsSdk.bgBlock,
+                        modifier = Modifier.padding(2.dp)
+                    ) {}
+                }
+            }
         }
 
         Spacer(modifier = Modifier.height(16.dp))

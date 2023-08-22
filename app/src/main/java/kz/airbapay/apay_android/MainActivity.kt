@@ -42,7 +42,7 @@ class MainActivity : ComponentActivity() {
             successCallback = "https://site.kz/success-clb",
             needShowSdkSuccessPage = true,
             userEmail = "test@test.com",
-//            colorBrandMain = Color.Blue
+//            colorBrandMain = Color.Red
         )
 
         if (!isBottomSheet) {
