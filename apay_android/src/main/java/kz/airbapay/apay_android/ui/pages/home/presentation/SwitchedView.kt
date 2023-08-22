@@ -36,7 +36,7 @@ internal fun SwitchedView(
     ) {
         Text(
             text = text,
-            style = LocalFonts.current.regular
+            style = LocalFonts.current.semiBold
         )
         Image(
             painter = painterResource(if (switchCheckedState.value) R.drawable.switch_on else R.drawable.switch_off),
