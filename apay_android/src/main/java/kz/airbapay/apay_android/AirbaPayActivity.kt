@@ -25,6 +25,7 @@ import kz.airbapay.apay_android.data.utils.DataHolder
 import kz.airbapay.apay_android.network.api.Api
 import kz.airbapay.apay_android.network.base.ClientConnector
 import kz.airbapay.apay_android.network.repository.AuthRepository
+import kz.airbapay.apay_android.network.repository.CardRepository
 import kz.airbapay.apay_android.network.repository.PaymentsRepository
 import kz.airbapay.apay_android.ui.pages.error.ErrorFinalPage
 import kz.airbapay.apay_android.ui.pages.error.ErrorPage
@@ -45,6 +46,7 @@ class AirbaPayActivity : ComponentActivity() {
 
         val authRepository = AuthRepository(api)
         val paymentsRepository = PaymentsRepository(api)
+        val cardRepository = CardRepository(api)
 
         val selectedCardId: String? = intent.getStringExtra(ARG_CARD_ID)
 
@@ -60,6 +62,7 @@ class AirbaPayActivity : ComponentActivity() {
                         navController = navController,
                         authRepository = authRepository,
                         paymentsRepository = paymentsRepository,
+                        cardRepository = cardRepository,
                         selectedCardId = selectedCardId
                     )
                 }

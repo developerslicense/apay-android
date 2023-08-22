@@ -5,6 +5,7 @@ import kz.airbapay.apay_android.data.model.AuthResponse
 import kz.airbapay.apay_android.data.model.CardAddRequest
 import kz.airbapay.apay_android.data.model.CardAddResponse
 import kz.airbapay.apay_android.data.model.CardsGetResponse
+import kz.airbapay.apay_android.data.model.CardsPanResponse
 import kz.airbapay.apay_android.data.model.PaymentCreateResponse
 import kz.airbapay.apay_android.data.model.PaymentEntryRequest
 import kz.airbapay.apay_android.data.model.PaymentEntryResponse
@@ -33,6 +34,9 @@ internal interface Api {
 
     @DELETE("api/v1/cards/{id}")
     suspend fun deleteCard(@Path("id") cardId: String): Response<Any>
+
+    @GET("api/v1/cards/info-by-pan/{pan}")
+    suspend fun getCardsBank(@Path("pan") pan: String): Response<CardsPanResponse>
 
     // payments
 

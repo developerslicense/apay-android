@@ -39,6 +39,7 @@ import kz.airbapay.apay_android.data.constant.paymentOfPurchase
 import kz.airbapay.apay_android.data.constant.saveCardData
 import kz.airbapay.apay_android.data.utils.DataHolder
 import kz.airbapay.apay_android.network.repository.AuthRepository
+import kz.airbapay.apay_android.network.repository.CardRepository
 import kz.airbapay.apay_android.network.repository.PaymentsRepository
 import kz.airbapay.apay_android.ui.pages.dialog.InitDialogExit
 import kz.airbapay.apay_android.ui.pages.home.bl.checkValid
@@ -60,6 +61,7 @@ import kz.airbapay.apay_android.ui.ui_components.ViewToolbar
 internal fun HomePage(
     navController: NavController,
     authRepository: AuthRepository,
+    cardRepository: CardRepository,
     paymentsRepository: PaymentsRepository,
     selectedCardId: String?,
     coroutineScope: CoroutineScope = rememberCoroutineScope(),
@@ -69,7 +71,7 @@ internal fun HomePage(
 
     val scaffoldState: ScaffoldState = rememberScaffoldState()
 
-    val isLoading  = remember { mutableStateOf(false) }
+    val isLoading = remember { mutableStateOf(false) }
     val showDialogExit = remember { mutableStateOf(false) }
     val switchSaveCard = remember { mutableStateOf(false) }
 
@@ -201,16 +203,24 @@ internal fun HomePage(
                         )
 
                         if (isValid) {
-                            startPaymentProcessing(
-                                navController = navController,
-                                isLoading  = isLoading ,
-                                saveCard = switchSaveCard.value,
-                                cardNumber = cardNumberText.value.text,
-                                cvv = cvvText.value.text,
-                                dateExpired = dateExpiredText.value.text,
+                            isLoading.value = true
+
+                            cardRepository.getCardsBank(
+                                pan = cardNumberText.value.text.replace(" ", ""),
                                 coroutineScope = coroutineScope,
-                                authRepository = authRepository,
-                                paymentsRepository = paymentsRepository
+                                next = {
+                                    startPaymentProcessing(
+                                        navController = navController,
+                                        isLoading = isLoading,
+                                        saveCard = switchSaveCard.value,
+                                        cardNumber = cardNumberText.value.text,
+                                        cvv = cvvText.value.text,
+                                        dateExpired = dateExpiredText.value.text,
+                                        coroutineScope = coroutineScope,
+                                        authRepository = authRepository,
+                                        paymentsRepository = paymentsRepository
+                                    )
+                                }
                             )
                         }
                     },
@@ -248,7 +258,7 @@ internal fun HomePage(
         if (selectedCardId != null) {
             startPaymentProcessing(
                 navController = navController,
-                isLoading  = isLoading ,
+                isLoading = isLoading,
                 coroutineScope = coroutineScope,
                 paymentsRepository = paymentsRepository,
                 cardId = selectedCardId

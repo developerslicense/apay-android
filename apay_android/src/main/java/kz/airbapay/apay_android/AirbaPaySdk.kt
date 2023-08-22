@@ -79,7 +79,7 @@ class AirbaPaySdk {
                 ColorsSdk.colorBrandMainMS.value = colorBrandMain
             }
 
-            DataHolder.bankName = null
+            DataHolder.bankCode = null
             DataHolder.accessToken = null
             DataHolder.isProd = isProd
             DataHolder.needShowSdkSuccessPage = needShowSdkSuccessPage

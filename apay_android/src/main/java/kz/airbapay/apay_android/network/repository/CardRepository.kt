@@ -1,8 +1,12 @@
 package kz.airbapay.apay_android.network.repository
 
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 import kz.airbapay.apay_android.data.model.BankCard
 import kz.airbapay.apay_android.data.model.CardAddRequest
 import kz.airbapay.apay_android.data.model.CardAddResponse
+import kz.airbapay.apay_android.data.utils.DataHolder
 import kz.airbapay.apay_android.data.utils.card_utils.CardType
 import kz.airbapay.apay_android.network.api.Api
 import kz.airbapay.apay_android.network.base.safeApiFlowCall
@@ -44,6 +48,40 @@ internal class CardRepository(
             error = error
         )
     }
+
+    fun getCardsBank(
+        coroutineScope: CoroutineScope,
+        pan: String,
+        next: () -> Unit
+    ) {
+        coroutineScope.launch {
+            val deferred = async {
+                api.getCardsBank(pan)
+            }
+
+            val result = deferred.await()
+            DataHolder.bankCode = result.body()?.bankCode
+            next()
+        }
+    }/*    fun getCardsBank(
+        pan: String,
+        result: (CardsPanResponse) -> Unit,
+        error: (Response<*>) -> Unit
+    ) {
+        launch(
+            requestFlow = {
+                safeApiFlowCall {
+                    api.getCardsBank(pan)
+                }
+            },
+            result = { body ->
+                body.body()?.let {
+                    result(it)
+                } ?: error(Unit)
+            },
+            error = error
+        )
+    }*/
 
     fun cardAdd(
         param: CardAddRequest,

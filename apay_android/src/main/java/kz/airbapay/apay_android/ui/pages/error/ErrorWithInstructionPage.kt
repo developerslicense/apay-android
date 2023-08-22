@@ -48,14 +48,7 @@ internal fun ErrorWithInstructionPage(
     navController: NavController
 ) {
 
-    /*try {
-      bankName = ModalRoute.of(context)?.settings.arguments as String
-
-    } catch (e) {
-      bankName = BanksName.kaspi.name
-    }*/
-
-    val faqUrl = when (DataHolder.bankName) {
+    val faqUrl = when (DataHolder.bankCode) {
         BanksName.kaspibank.name -> {
             if (DataHolder.currentLang == AirbaPaySdk.Lang.KZ.lang)
                 "https://static-data.object.pscloud.io/pay-manuals/Kaspi_kaz.mp4"
@@ -126,7 +119,7 @@ internal fun ErrorWithInstructionPage(
         )
 
         Text(
-            text = if (DataHolder.bankName == BanksName.kaspibank.name) forChangeLimitInKaspi() else forChangeLimitInHomebank(),
+            text = if (DataHolder.bankCode == BanksName.kaspibank.name) forChangeLimitInKaspi() else forChangeLimitInHomebank(),
             style = LocalFonts.current.semiBold,
             textAlign = TextAlign.Start,
             modifier = Modifier

@@ -13,7 +13,7 @@ internal object DataHolder {
   var isProd = true
   var needShowSdkSuccessPage = true
 
-  var bankName: String? = null
+  var bankCode: String? = null
   var accessToken: String? = null
   var purchaseAmount = ""
   var orderNumber = ""

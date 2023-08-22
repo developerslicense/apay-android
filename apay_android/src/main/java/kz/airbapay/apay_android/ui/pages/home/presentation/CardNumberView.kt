@@ -49,8 +49,8 @@ internal fun CardNumberView(
             imeAction = ImeAction.Next
         ),
         modifierRoot = Modifier.padding(horizontal = 16.dp),
-        actionOnTextChanged = {
-            paySystemIcon.value = getCardTypeFromNumber(it).icon
+        actionOnTextChanged = { pan ->
+            paySystemIcon.value = getCardTypeFromNumber(pan).icon
         }
     )
 
