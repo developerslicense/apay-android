@@ -8,7 +8,7 @@ plugins {
 
 android {
     namespace 'kz.airbapay.apay_android'
-    compileSdk 33
+    compileSdk 34
 
     defaultConfig {
         minSdk 21
@@ -23,6 +23,13 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+    buildFeatures {
+        compose true
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion '1.4.3'
+    }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
@@ -32,22 +39,129 @@ android {
     }
 }
 
+ext {
+    androidxJUnit = '1.1.4'
+    androidxTest = '1.5.0'
+    androidxTestRunner = '1.5.1'
+    androidxCore = '1.9.0'
+    activityKtx = '1.6.1'
+
+    biometricLibraryVersion = '1.1.0'
+
+    constraint = '2.1.4'
+    constraintCompose = '1.0.1'
+    desugarJdkLibs = '1.1.1'
+    coroutines = '1.5.2'
+    coroutinesCore = '1.6.1'
+    coilVersion = "2.2.2"
+    coilComposeVersion = "1.4.5"
+
+    espressoCore = '3.5.0'
+
+    junit = '4.13.2'
+    jetpackCompose = '2023.08.00'
+    jetpackComposeAccompanist = '0.28.0'
+    jetpackComposeFoundation = '1.4.3'
+
+    lifecycle = '2.5.1'
+    lifecycleTesting = '2.1.0'
+
+    material = '1.7.0'
+
+    navigationComponent = '2.6.0'//'2.5.3'
+
+    okhttp = '4.2.2'
+    okhttpInterceptor = '4.9.2'
+
+    retrofitVersion = '2.9.0'
+
+}
+
 dependencies {
-
-    implementation 'androidx.core:core-ktx:1.9.0'
-    implementation 'androidx.appcompat:appcompat:1.6.1'
-    implementation 'com.google.android.material:material:1.8.0'
-
-//    debugImplementation 'kz.airbapay.apay:flutter_debug:1.0'
-//    releaseImplementation 'kz.airbapay.apay:flutter_release:1.0'
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+    androidTestImplementation 'androidx.compose.ui:ui-test-junit4'
+    androidTestImplementation platform('androidx.compose:compose-bom:2023.08.00')
+
+    // AndroidxCore
+    implementation "androidx.core:core-ktx:$androidxCore"
+    // Activity ktx
+    implementation "androidx.activity:activity-ktx:$activityKtx"
+
+    // Biometric
+    implementation "androidx.biometric:biometric:$biometricLibraryVersion"
+
+    // Constraint
+    implementation "androidx.constraintlayout:constraintlayout:$constraint"
+    implementation "androidx.constraintlayout:constraintlayout-compose:$constraintCompose"
+
+    // CoreLibraryDesugaring
+    coreLibraryDesugaring "com.android.tools:desugar_jdk_libs:$desugarJdkLibs"//добавляет поддержку в старые версии андроида новые апи java
+
+    // Coroutines
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesCore"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutinesCore"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-play-services:$coroutines"
+
+    // Coil
+    implementation "io.coil-kt:coil:$coilVersion"
+    implementation "io.coil-kt:coil-gif:$coilVersion"
+    implementation "io.coil-kt:coil-svg:$coilVersion"
+    implementation "com.github.skydoves:landscapist-coil:$coilComposeVersion"// обертка для coil для композа https://github.com/skydoves/landscapist#coil
+
+    // Jetpack compose
+    def composeBom = platform("androidx.compose:compose-bom:$jetpackCompose") // https://developer.android.com/jetpack/compose/setup#bom-version-mapping
+    implementation composeBom
+    androidTestImplementation composeBom
+
+    implementation "androidx.activity:activity-compose"
+    implementation 'androidx.compose.animation:animation'
+    implementation "androidx.compose.material:material:1.4.0-alpha03" //todo при переходе на 1.4.0 для jetpackCompose
+
+    implementation 'androidx.compose.ui:ui-tooling-data'
+    implementation 'androidx.compose.ui:ui-tooling-preview' //https://developer.android.com/jetpack/compose/tooling
+    debugImplementation 'androidx.compose.ui:ui-tooling'
+
+    implementation 'androidx.compose.runtime:runtime-livedata'
+
+    implementation "com.google.accompanist:accompanist-flowlayout:$jetpackComposeAccompanist"
+    implementation "com.google.accompanist:accompanist-pager:$jetpackComposeAccompanist"
+    implementation "com.google.accompanist:accompanist-swiperefresh:$jetpackComposeAccompanist"
+    implementation "com.google.accompanist:accompanist-permissions:$jetpackComposeAccompanist"
+
+    // Lifecycle
+    implementation "androidx.lifecycle:lifecycle-process:$lifecycle"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle"
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle"
+    testImplementation "androidx.arch.core:core-testing:$lifecycleTesting"
+
+    // Material
+    implementation "com.google.android.material:material:$material"
+
+    // Navigation
+    implementation "androidx.navigation:navigation-compose:$navigationComponent"
+    implementation "androidx.compose.foundation:foundation:$jetpackComposeFoundation"
+
+    // Retrofit
+    implementation "com.squareup.retrofit2:retrofit:$retrofitVersion"
+    implementation "com.squareup.retrofit2:converter-gson:$retrofitVersion"
+    implementation "com.squareup.okhttp3:logging-interceptor:$okhttpInterceptor"
+
+    // Tests
+    implementation "androidx.test:core-ktx:$androidxTest"
+    implementation "androidx.test:runner:$androidxTestRunner"
+    testImplementation "junit:junit:$junit"
+    debugImplementation 'androidx.compose.ui:ui-test-manifest'
+    androidTestImplementation 'androidx.compose.ui:ui-test-junit4'
+    androidTestImplementation "androidx.test.ext:junit:$androidxJUnit"
+    androidTestImplementation "androidx.test.espresso:espresso-core:$espressoCore"
+
 }
 
 group 'kz.airbapay' // this is your groupId
-version '0.0.14' // this is your version
+version '0.0.0.1' // this is your version
 
 ext { // this are variables
     pomGroupId = group
@@ -64,6 +178,26 @@ tasks.withType(JavaCompile) {
     options.release = 17
 }
 
+
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
+    kotlinOptions {//это чтоб убрать необходимость писать аннотации варнингов для Jetpack Compose
+        freeCompilerArgs += [
+                "-opt-in=kotlin.ExperimentalUnsignedTypes",
+                "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
+                "-opt-in=kotlinx.coroutines.InternalCoroutinesApi",
+                "-opt-in=androidx.compose.foundation.ExperimentalFoundationApi",
+                "-opt-in=androidx.compose.animation.ExperimentalAnimationApi",
+                "-opt-in=androidx.compose.ExperimentalComposeApi",
+                "-opt-in=androidx.compose.material.ExperimentalMaterialApi",
+                "-opt-in=androidx.compose.runtime.ExperimentalComposeApi",
+                "-opt-in=androidx.compose.ui.ExperimentalComposeUiApi",
+                "-opt-in=coil.annotation.ExperimentalCoilApi",
+                "-opt-in=kotlinx.serialization.ExperimentalSerializationApi",
+                "-opt-in=com.google.accompanist.pager.ExperimentalPagerApi",
+                "-opt-in=com.google.accompanist.permissions.ExperimentalPermissionsApi"
+        ]
+    }
+}
 
 afterEvaluate {
     publishing {

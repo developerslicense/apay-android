@@ -10,8 +10,6 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
-//        maven { url '/Users/mikhail.belikov/AndroidStudioProjects/apay/build/host/outputs/repo' }
-//        maven { url 'https://storage.googleapis.com/download.flutter.io' }
     }
 }
 

@@ -1,117 +1,206 @@
 package kz.airbapay.apay_android
 
-import android.content.Context
-import android.content.Intent
-import android.os.Bundle
-import android.util.Log
-//import io.flutter.embedding.android.FlutterActivity
-//import io.flutter.plugin.common.MethodChannel
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material.ModalBottomSheetLayout
+import androidx.compose.material.ModalBottomSheetValue
+import androidx.compose.material.rememberModalBottomSheetState
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import com.google.gson.annotations.SerializedName
+import kotlinx.coroutines.launch
+import kz.airbapay.apay_android.data.utils.AirbaPayBiometric
+import kz.airbapay.apay_android.data.utils.DataHolder
+import kz.airbapay.apay_android.data.utils.Money
+import kz.airbapay.apay_android.ui.pages.dialog.StartProcessingView
+import kz.airbapay.apay_android.ui.resources.ColorsSdk
 
-class AirbaPay {
+class AirbaPaySdk {
+
+    enum class Lang(val lang: String) {
+        RU("ru"),
+        KZ("kz"),
+    }
+
     class Goods(
+        @SerializedName("brand")
         val brand: String,  // Брэнд продукта
+
+        @SerializedName("category")
         val category: String, // Категория продукта
+
+        @SerializedName("model")
         val model: String, // Модель продукта
+
+        @SerializedName("quantity")
         val quantity: Int, // Количество в корзине
-        val price: Int // Цена продукта
+
+        @SerializedName("price")
+        val price: Long // Цена продукта
+    )
+
+    class SettlementPayment(
+        @SerializedName("amount")
+        val amount: Long,
+
+        @SerializedName("company_id")
+        val companyId: String?
     )
 
     companion object {
-        fun startProcessing(
-            context: Context,
+        /**
+         * @settlementPayments - не обязательный параметр, нужно присылать, если есть необходимость в разделении счетов по компаниям
+         * */
+        fun initOnCreate(
             isProd: Boolean,
-            purchaseAmount: Int,
+            lang: Lang,
             phone: String,
-            invoiceId: String,
-            orderNumber: String,
+            userEmail: String?,
             shopId: String,
             password: String,
             terminalId: String,
-            failureBackUrl: String,
+            needShowSdkSuccessPage: Boolean,
             failureCallback: String,
-            successBackUrl: String,
             successCallback: String,
-            email: String?,
-            goods: List<Goods>
+            colorBrandMain: Color? = null,
+            colorBrandInversion: Color? = null,
         ) {
-            val sb = StringBuilder()
-            sb.append("isProd=$isProd")
-            sb.append("?")
 
-            sb.append("purchaseAmount=$purchaseAmount")
-            sb.append("?")
-
-            sb.append("phone=$phone")
-            sb.append("?")
-
-            sb.append("invoiceId=$invoiceId")
-            sb.append("?")
-
-            sb.append("orderNumber=$orderNumber")
-            sb.append("?")
-
-            sb.append("shopId=$shopId")
-            sb.append("?")
-
-            sb.append("password=$password")
-            sb.append("?")
-
-            sb.append("terminalId=$terminalId")
-            sb.append("?")
-
-            sb.append("failureBackUrl=$failureBackUrl")
-            sb.append("?")
-
-            sb.append("failureCallback=$failureCallback")
-            sb.append("?")
-
-            sb.append("successBackUrl=$successBackUrl")
-            sb.append("?")
-
-            sb.append("successCallback=$successCallback")
-            sb.append("?")
-
-            if (!email.isNullOrBlank()) { // Если емейла нет, то не нужно отправлять
-                sb.append("userEmail=$email")
-                sb.append("?")
+            if (colorBrandInversion != null) {
+                ColorsSdk.colorBrandInversionMS.value = colorBrandInversion
             }
 
-            goods.forEach { good ->
-                sb.append("good_model=${good.model}")
-                sb.append("?")
-                sb.append("good_quantity=${good.quantity}")
-                sb.append("?")
-                sb.append("good_brand=${good.brand}")
-                sb.append("?")
-                sb.append("good_price=${good.price}")
-                sb.append("?")
-                sb.append("good_category=${good.category}")
-                sb.append("?")
+            if (colorBrandMain != null) {
+                ColorsSdk.colorBrandMainMS.value = colorBrandMain
             }
 
-            val intent = Intent(context, AirbaPayActivity::class.java)
-                .putExtra("airba_pay_args", sb.toString())
-                .putExtra("route", "/")
-                .putExtra("destroy_engine_with_activity" ,true)
+            DataHolder.bankCode = null
+            DataHolder.accessToken = null
+            DataHolder.isProd = isProd
+            DataHolder.needShowSdkSuccessPage = needShowSdkSuccessPage
+            DataHolder.baseUrl = if (DataHolder.isProd) "https://ps.airbapay.kz/acquiring-api/sdk/"
+            else "https://sps.airbapay.kz/acquiring-api/sdk/"
 
-            context.startActivity(intent)
+            DataHolder.userPhone = phone
+            DataHolder.userEmail = userEmail
+
+            DataHolder.failureBackUrl = "https://site.kz/failure" // не нужно
+            DataHolder.failureCallback = failureCallback
+            DataHolder.successBackUrl = "https://site.kz/success"// не нужно
+            DataHolder.successCallback = successCallback
+
+            DataHolder.sendTimeout = 60
+            DataHolder.connectTimeout = 60
+            DataHolder.receiveTimeout = 60
+            DataHolder.shopId = shopId
+            DataHolder.password = password
+            DataHolder.terminalId = terminalId
+
+            DataHolder.currentLang = lang.lang
+        }
+
+        fun initProcessing(
+            purchaseAmount: Long,
+            invoiceId: String,
+            orderNumber: String,
+            goods: List<Goods>,
+            settlementPayments: List<SettlementPayment>?,
+        ) {
+            DataHolder.purchaseAmount = purchaseAmount.toString()
+            DataHolder.orderNumber = orderNumber
+            DataHolder.invoiceId = invoiceId
+            DataHolder.goods = goods
+            DataHolder.settlementPayments = settlementPayments
+
+            DataHolder.purchaseAmountFormatted.value = Money.initLong(purchaseAmount).getFormatted()
         }
     }
 }
 
-/*
-class AirbaPayActivity : FlutterActivity() {
+/**
+ * Первый вариант имплементации Compose. Здесь все выполняется на стороне sdk
+ * */
+@Composable
+fun AirbaPaySdkProcessingBottomSheet(
+    content: @Composable (actionShowBottomSheet: () -> Unit) -> Unit
+) {
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    val coroutineScope = rememberCoroutineScope()
+    val context = LocalContext.current
+    val airbaPayBiometric = AirbaPayBiometric(context)
 
-        val arguments = intent.getStringExtra("airba_pay_args")
-        Log.i("Arguments for AirbaPay", arguments.orEmpty())
+    val sheetState = rememberModalBottomSheetState(
+        initialValue = ModalBottomSheetValue.Hidden,
+        confirmValueChange = { it != ModalBottomSheetValue.HalfExpanded },
+        skipHalfExpanded = true
+    )
 
-        val testChannel =
-            MethodChannel(flutterEngine!!.dartExecutor.binaryMessenger, "airba_pay_channel")
-        testChannel.invokeMethod("airba_pay_arguments", arguments)
+    val isAuthenticated = rememberSaveable {
+        mutableStateOf(false)
+    }
 
+    ModalBottomSheetLayout(
+        sheetState = sheetState,
+        sheetBackgroundColor = ColorsSdk.transparent,
+        sheetContent = {
+            StartProcessingView(
+                actionClose = { coroutineScope.launch { sheetState.hide() } },
+                isAuthenticated = isAuthenticated
+            )
+        },
+        modifier = Modifier.fillMaxSize()
+    ) {
+        content {
+            airbaPayBiometric.authenticate(
+                onSuccess = {
+                    isAuthenticated.value = true
+                    coroutineScope.launch { sheetState.show() }
+                },
+                onError = {
+                    coroutineScope.launch { sheetState.show() }
+                }
+            )
+        }
     }
 }
-*/
+
+/**
+ * Второй вариант имплементации Compose. Здесь все выполняется на стороне клиента
+ * */
+@Composable
+fun AirbaPaySdkProcessingView(
+    actionOnLoadingCompleted: () -> Unit = {},
+    needShowProgressBar: Boolean = true,
+    backgroundColor: Color = ColorsSdk.bgBlock
+) {
+
+    val context = LocalContext.current
+    val airbaPayBiometric = AirbaPayBiometric(context)
+
+    val isAuthenticated = rememberSaveable {
+        mutableStateOf(false)
+    }
+
+    StartProcessingView(
+        needShowProgressBar = needShowProgressBar,
+        actionClose = {},
+        actionOnLoadingCompleted = actionOnLoadingCompleted,
+        isBottomSheetType = false,
+        backgroundColor = backgroundColor,
+        isAuthenticated = isAuthenticated
+    )
+
+    LaunchedEffect("Authenticate") {
+        airbaPayBiometric.authenticate(
+            onSuccess = {
+                isAuthenticated.value = true
+            },
+            onError = {}
+        )
+    }
+}
