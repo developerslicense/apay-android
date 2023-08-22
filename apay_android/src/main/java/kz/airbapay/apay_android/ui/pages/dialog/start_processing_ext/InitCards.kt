@@ -23,7 +23,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import kz.airbapay.apay_android.AirbaPayActivity
 import kz.airbapay.apay_android.R
-import kz.airbapay.apay_android.data.constant.orPayWithCard
 import kz.airbapay.apay_android.data.model.BankCard
 import kz.airbapay.apay_android.ui.resources.LocalFonts
 import kz.airbapay.apay_android.ui.ui_components.LineDecorator
@@ -40,11 +39,11 @@ internal fun InitViewStartProcessingCards(
         mutableIntStateOf(0)
     }
 
-    Spacer(modifier = Modifier.height(32.dp))
+    /*Spacer(modifier = Modifier.height(32.dp)) //todo временно
     Text(
         style = LocalFonts.current.regular,
         text = orPayWithCard()
-    )
+    )*/
     Spacer(modifier = Modifier.height(16.dp))
 
     LazyColumn(

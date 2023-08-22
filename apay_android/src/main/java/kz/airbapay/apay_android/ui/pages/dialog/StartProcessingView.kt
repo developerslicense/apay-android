@@ -39,7 +39,6 @@ import kz.airbapay.apay_android.network.repository.startAuth
 import kz.airbapay.apay_android.ui.pages.dialog.start_processing_ext.InitViewStartProcessingAmount
 import kz.airbapay.apay_android.ui.pages.dialog.start_processing_ext.InitViewStartProcessingButtonNext
 import kz.airbapay.apay_android.ui.pages.dialog.start_processing_ext.InitViewStartProcessingCards
-import kz.airbapay.apay_android.ui.pages.dialog.start_processing_ext.InitViewStartProcessingGPay
 import kz.airbapay.apay_android.ui.resources.ColorsSdk
 import kz.airbapay.apay_android.ui.resources.LocalFonts
 import kz.airbapay.apay_android.ui.ui_components.BackHandler
@@ -110,12 +109,12 @@ internal fun StartProcessingView(
 
             } else {
                 InitViewStartProcessingAmount(purchaseAmount.value)
-                InitViewStartProcessingGPay()
+//                InitViewStartProcessingGPay() //todo временно закоментировал
 
                 if (savedCards.value.isNotEmpty()
                     && isAuthenticated.value
                 ) {
-                    InitViewStartProcessingCards(
+                    InitViewStartProcessingCards( // todo внутри есть закоментированное
                         savedCards = savedCards.value,
                         selectedCard = selectedCard,
                         actionClose = actionClose
