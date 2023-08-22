@@ -22,7 +22,6 @@ internal fun CvvView(
     cvvText: MutableState<TextFieldValue>,
     cvvError: MutableState<String?>,
     cvvFocusRequester: FocusRequester,
-    emailFocusRequester: FocusRequester?,
     modifier: Modifier
 ) {
     val focusManager = LocalFocusManager.current
@@ -35,9 +34,6 @@ internal fun CvvView(
         focusRequester = cvvFocusRequester,
         placeholder = cvv(),
         keyboardActions = KeyboardActions(
-            onNext = {
-                emailFocusRequester?.requestFocus()
-            },
             onDone = {
                 focusManager.clearFocus(true)
             }
@@ -46,7 +42,7 @@ internal fun CvvView(
             capitalization = KeyboardCapitalization.None,
             autoCorrect = false,
             keyboardType = KeyboardType.NumberPassword,
-            imeAction = if (emailFocusRequester == null) ImeAction.Done else ImeAction.Next
+            imeAction = ImeAction.Done
         ),
         modifierRoot = modifier,
         actionOnTextChanged = {},

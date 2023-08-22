@@ -4,12 +4,10 @@ import android.app.Activity
 import android.app.KeyguardManager
 import android.content.ActivityNotFoundException
 import android.content.Context
-import android.content.pm.PackageManager
 import android.hardware.biometrics.BiometricPrompt
 import android.os.Build
 import android.os.CancellationSignal
 import android.widget.Toast
-import androidx.core.app.ActivityCompat
 import kz.airbapay.apay_android.data.constant.accessToCardRestricted
 import kz.airbapay.apay_android.data.constant.authenticateFingerprint
 import kz.airbapay.apay_android.data.constant.requestAccessToSavedCards
@@ -43,6 +41,7 @@ internal class AirbaPayBiometric(
                         override fun onAuthenticationError(errorCode: Int, errString: CharSequence?) {
                             super.onAuthenticationError(errorCode, errString)
                             notifyUser(accessToCardRestricted())
+                            onError()
                         }
 
                         override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult?) {
@@ -66,16 +65,7 @@ internal class AirbaPayBiometric(
                     }
                 }
             }
-
-        } else if (!keyguardManager.isKeyguardSecure) {
-            notifyUser(accessToCardRestricted())
-            onError()
-
-        } else if (ActivityCompat.checkSelfPermission(
-                context,
-                android.Manifest.permission.USE_BIOMETRIC
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
+        } else {
             notifyUser(accessToCardRestricted())
             onError()
         }

@@ -73,7 +73,7 @@ class MaskUtils(
                 }
             }
         } catch (e: Exception) {
-            e.printStackTrace()
+//            e.printStackTrace()
         }
 
         val sb = StringBuilder()

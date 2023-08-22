@@ -8,6 +8,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import kz.airbapay.apay_android.AirbaPayActivity
+import kz.airbapay.apay_android.data.constant.ARG_CARD_ID
 import kz.airbapay.apay_android.data.constant.payAmount
 import kz.airbapay.apay_android.data.constant.paymentByCard2
 import kz.airbapay.apay_android.data.model.BankCard
@@ -36,7 +37,7 @@ internal fun InitViewStartProcessingButtonNext(
             actionClick = {
                 actionClose()
                 val intent = Intent(context, AirbaPayActivity::class.java)
-//                intent.putExtra("", "")//todo
+                intent.putExtra(ARG_CARD_ID, selectedCard.value?.id)
                 context.startActivity(intent)
             },
             modifierRoot = buttonModifier

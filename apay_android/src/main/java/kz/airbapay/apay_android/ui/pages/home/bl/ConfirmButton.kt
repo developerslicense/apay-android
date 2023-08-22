@@ -1,17 +1,15 @@
-package kz.airbapay.apay_android.ui.pages.home.presentation
+package kz.airbapay.apay_android.ui.pages.home.bl
 
 import androidx.compose.runtime.MutableState
 import androidx.navigation.NavController
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kz.airbapay.apay_android.data.constant.ErrorsCode
-import kz.airbapay.apay_android.data.constant.RegexConst
 import kz.airbapay.apay_android.data.constant.initErrorsCodeByCode
 import kz.airbapay.apay_android.data.constant.needFillTheField
 import kz.airbapay.apay_android.data.constant.wrongCardNumber
 import kz.airbapay.apay_android.data.constant.wrongCvv
 import kz.airbapay.apay_android.data.constant.wrongDate
-import kz.airbapay.apay_android.data.constant.wrongEmail
 import kz.airbapay.apay_android.data.model.BankCard
 import kz.airbapay.apay_android.data.model.PaymentEntryRequest
 import kz.airbapay.apay_android.data.model.Secure3D
@@ -26,10 +24,6 @@ import kz.airbapay.apay_android.network.repository.AuthRepository
 import kz.airbapay.apay_android.network.repository.PaymentsRepository
 import kz.airbapay.apay_android.network.repository.startAuth
 
-private var saveCardSaved = false
-private var sendReceiptSaved = false
-private var cardSaved: BankCard? = null
-
 internal fun checkValid(
     cardNumber: String?,
     cardNumberError: MutableState<String?>,
@@ -40,15 +34,14 @@ internal fun checkValid(
     cvv: String?,
     cvvError: MutableState<String?>,
 
-    emailStateSwitched: Boolean,
-    email: String?,
-    emailError: MutableState<String?>,
-
-
-    ): Boolean {
+//    emailStateSwitched: Boolean,
+//    email: String?,
+    emailError: MutableState<String?>
+//
+): Boolean {
     var hasError = false
 
-    if (emailStateSwitched
+   /* if (emailStateSwitched // todo оставил на всякий случай
         && (email.isNullOrBlank() || !email.contains(Regex(RegexConst.emailValidation)))
     ) {
         hasError = true
@@ -56,7 +49,7 @@ internal fun checkValid(
 
     } else {
         emailError.value = null
-    }
+    }*/
 
     if (cardNumber.isNullOrBlank()) {
         hasError = true
@@ -101,38 +94,32 @@ internal fun startPaymentProcessing(
     navController: NavController,
     isLoading : MutableState<Boolean>,
     saveCard: Boolean = false,
-    sendReceipt: Boolean = false,
     cardNumber: String,
-    email: String? = null,
     dateExpired: String? = null,
     cvv: String? = null,
-    cardId: String? = null,
     authRepository: AuthRepository,
     paymentsRepository: PaymentsRepository,
     coroutineScope: CoroutineScope
 ) {
     isLoading .value = true
 
-    cardSaved = BankCard(
+    val cardSaved = BankCard(
         pan = getNumberCleared(cardNumber),
         expiry = dateExpired,
         name = "Card Holder",
         cvv = cvv,
-        id = cardId
     )
-    sendReceiptSaved = sendReceipt
-    saveCardSaved = saveCard
-
-    DataHolder.userEmail = email
 
     coroutineScope.launch {
 
         startCreatePayment(
+            cardSaved = cardSaved,
+            saveCardSaved = saveCard,
             paymentsRepository = paymentsRepository,
             authRepository = authRepository,
             on3DS = { secure3D ->
                 openWebView(
-                    secure3D = secure3D,
+                    redirectUrl = secure3D?.action,
                     navController = navController
                 )
             },
@@ -150,6 +137,8 @@ internal fun startPaymentProcessing(
 }
 
 private fun startCreatePayment(
+    cardSaved: BankCard,
+    saveCardSaved: Boolean,
     on3DS: (secure3D: Secure3D?) -> Unit,
     onSuccess: () -> Unit,
     onError: (ErrorsCode) -> Unit,
@@ -166,9 +155,9 @@ private fun startCreatePayment(
                 onResult = {
                     val request = PaymentEntryRequest(
                         cardSave = saveCardSaved,
-                        email = if (sendReceiptSaved) DataHolder.userEmail else null,
-                        sendReceipt = sendReceiptSaved,
-                        card = cardSaved!!
+                        email = DataHolder.userEmail,
+                        sendReceipt = DataHolder.userEmail != null,
+                        card = cardSaved
                     )
                     paymentsRepository.paymentAccountEntry(
                         param = request,

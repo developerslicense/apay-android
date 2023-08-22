@@ -4,16 +4,16 @@ import com.google.gson.annotations.SerializedName
 
 internal class PaymentEntryRequest(
     @SerializedName("card_save")
-    val cardSave: Boolean,
+    val cardSave: Boolean?,
 
     @SerializedName("email")
     val email: String?,
 
     @SerializedName("send_receipt")
-    val sendReceipt: Boolean,
+    val sendReceipt: Boolean? = null,
 
     @SerializedName("card")
-    val card: BankCard
+    val card: BankCard?
 )
 
 internal data class PaymentEntryResponse(

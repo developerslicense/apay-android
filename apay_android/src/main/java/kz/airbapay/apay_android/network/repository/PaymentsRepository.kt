@@ -21,37 +21,7 @@ internal class PaymentsRepository(
         error: (Response<*>) -> Unit
     ) {
 
-        val cart = HashMap<String, Any?>().apply {
-            put("goods", DataHolder.goods)
-        }
-
-        val param = HashMap<String, Any?>().apply {
-            put("account_id", DataHolder.userPhone)
-            put("amount", DataHolder.purchaseAmount.toDouble())
-            put("card_save", saveCard)
-            put("cart", cart)
-            put("currency", "KZT")
-            put("description", "description")
-            put("email", DataHolder.userEmail)
-            put("invoice_id", DataHolder.invoiceId)
-            put("language", DataHolder.currentLang)
-            put("order_number", DataHolder.orderNumber)
-            put("phone", DataHolder.userPhone)
-            put("card_id", DataHolder.cardId)
-            put("auto_charge", 0)
-            put("failure_back_url", DataHolder.failureBackUrl)
-            put("failure_callback", DataHolder.failureCallback)
-            put("success_back_url", DataHolder.successBackUrl)
-            put("success_callback", DataHolder.successCallback)
-
-            /** не обязательный параметр, нужно присылать, если есть необходимость в разделении счетов по компаниям*/
-            if (!DataHolder.settlementPayments.isNullOrEmpty()) {
-                val settlement = HashMap<String, Any>().apply {
-                    put("payments", DataHolder.settlementPayments)
-                }
-                put("settlement", settlement)
-            }
-        }
+        val param = initParamsForCreatePayment(saveCard)
 
         launch(
             requestFlow = {
@@ -66,6 +36,73 @@ internal class PaymentsRepository(
             },
             error = error
         )
+    }
+
+    fun createPayment(
+        cardId: String,
+        result: (PaymentCreateResponse) -> Unit,
+        error: (Response<*>) -> Unit
+    ) {
+
+        val param = initParamsForCreatePayment(
+            saveCard = null,
+            cardId = cardId
+        )
+
+        launch(
+            requestFlow = {
+                safeApiFlowCall {
+                    api.createPayment(
+                        param = param,
+                        cardId = cardId
+                    )
+                }
+            },
+            result = { body ->
+                body.body()?.let {
+                    result(it)
+                } ?: error(Unit)
+            },
+            error = error
+        )
+    }
+
+    private fun initParamsForCreatePayment(
+        saveCard: Boolean? = null,
+        cardId: String? = null
+    ): HashMap<String, Any?> {
+        val cart = HashMap<String, Any?>().apply {
+            put("goods", DataHolder.goods)
+        }
+
+        val param = HashMap<String, Any?>().apply {
+            put("account_id", DataHolder.userPhone)
+            put("amount", DataHolder.purchaseAmount.toDouble())
+            saveCard?.let { put("card_save", saveCard) }
+            put("cart", cart)
+            put("currency", "KZT")
+            put("description", "description")
+            put("email", DataHolder.userEmail)
+            put("invoice_id", DataHolder.invoiceId)
+            put("language", DataHolder.currentLang)
+            put("order_number", DataHolder.orderNumber)
+            put("phone", DataHolder.userPhone)
+            cardId?.let { put("card_id", cardId) }
+            put("auto_charge", 0)
+            put("failure_back_url", DataHolder.failureBackUrl)
+            put("failure_callback", DataHolder.failureCallback)
+            put("success_back_url", DataHolder.successBackUrl)
+            put("success_callback", DataHolder.successCallback)
+
+            /** не обязательный параметр, нужно присылать, если есть необходимость в разделении счетов по компаниям*/
+            if (!DataHolder.settlementPayments.isNullOrEmpty()) {
+                val settlement = HashMap<String, Any>().apply {
+                    put("payments", DataHolder.settlementPayments)
+                }
+                put("settlement", settlement)
+            }
+        }
+        return param
     }
 
     fun getPaymentInfo(

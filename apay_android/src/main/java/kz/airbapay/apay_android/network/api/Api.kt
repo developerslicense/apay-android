@@ -39,6 +39,12 @@ internal interface Api {
     @POST("api/v1/payments")
     suspend fun createPayment(@Body param: HashMap<String, Any?>): Response<PaymentCreateResponse>
 
+    @POST("api/v1/payments/{cardId}")
+    suspend fun createPayment(
+        @Path("cardId") cardId: String,
+        @Body param: HashMap<String, Any?>
+    ): Response<PaymentCreateResponse>
+
     @GET("api/v1/payments")
     suspend fun getPaymentInfo(): Response<PaymentInfoResponse>
 

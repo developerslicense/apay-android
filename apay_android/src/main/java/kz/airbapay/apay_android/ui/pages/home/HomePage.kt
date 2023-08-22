@@ -26,7 +26,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
@@ -38,21 +37,19 @@ import kz.airbapay.apay_android.data.constant.cardDataSaved
 import kz.airbapay.apay_android.data.constant.payAmount
 import kz.airbapay.apay_android.data.constant.paymentOfPurchase
 import kz.airbapay.apay_android.data.constant.saveCardData
-import kz.airbapay.apay_android.data.constant.sendCheckToEmail
 import kz.airbapay.apay_android.data.utils.DataHolder
 import kz.airbapay.apay_android.network.repository.AuthRepository
 import kz.airbapay.apay_android.network.repository.PaymentsRepository
 import kz.airbapay.apay_android.ui.pages.dialog.InitDialogExit
+import kz.airbapay.apay_android.ui.pages.home.bl.checkValid
+import kz.airbapay.apay_android.ui.pages.home.bl.startPaymentProcessing
 import kz.airbapay.apay_android.ui.pages.home.presentation.BottomImages
 import kz.airbapay.apay_android.ui.pages.home.presentation.CardNumberView
 import kz.airbapay.apay_android.ui.pages.home.presentation.CvvBottomSheet
 import kz.airbapay.apay_android.ui.pages.home.presentation.CvvView
 import kz.airbapay.apay_android.ui.pages.home.presentation.DateExpiredView
-import kz.airbapay.apay_android.ui.pages.home.presentation.EmailView
 import kz.airbapay.apay_android.ui.pages.home.presentation.SwitchedView
 import kz.airbapay.apay_android.ui.pages.home.presentation.TopInfoView
-import kz.airbapay.apay_android.ui.pages.home.presentation.checkValid
-import kz.airbapay.apay_android.ui.pages.home.presentation.startPaymentProcessing
 import kz.airbapay.apay_android.ui.resources.ColorsSdk
 import kz.airbapay.apay_android.ui.ui_components.BackHandler
 import kz.airbapay.apay_android.ui.ui_components.ProgressBarView
@@ -64,6 +61,7 @@ internal fun HomePage(
     navController: NavController,
     authRepository: AuthRepository,
     paymentsRepository: PaymentsRepository,
+    selectedCardId: String?,
     coroutineScope: CoroutineScope = rememberCoroutineScope(),
     scrollState: ScrollState = rememberScrollState()
 
@@ -71,23 +69,17 @@ internal fun HomePage(
 
     val scaffoldState: ScaffoldState = rememberScaffoldState()
 
-    val context = LocalContext.current
     val isLoading  = remember { mutableStateOf(false) }
     val showDialogExit = remember { mutableStateOf(false) }
     val switchSaveCard = remember { mutableStateOf(false) }
-    val switchSendToEmail = remember { mutableStateOf(false) }
 
     val cardNumberFocusRequester = FocusRequester()
     val dateExpiredFocusRequester = FocusRequester()
     val cvvFocusRequester = FocusRequester()
-    val emailFocusRequester = FocusRequester()
 
     val cardNumberText = remember { mutableStateOf(TextFieldValue("")) }
     val dateExpiredText = remember { mutableStateOf(TextFieldValue("")) }
     val cvvText = remember { mutableStateOf(TextFieldValue("")) }
-    val emailText = remember {
-        mutableStateOf(TextFieldValue(if (DataHolder.userEmail.isNullOrBlank()) "" else DataHolder.userEmail!!))
-    }
 
     val cardNumberError = remember { mutableStateOf<String?>(null) }
     val dateExpiredError = remember { mutableStateOf<String?>(null) }
@@ -173,7 +165,6 @@ internal fun HomePage(
                             cvvError = cvvError,
                             cvvFocusRequester = cvvFocusRequester,
                             cvvText = cvvText,
-                            emailFocusRequester = if (switchSendToEmail.value) emailFocusRequester else null,
                             actionClickInfo = {
                                 coroutineScope.launch {
                                     sheetState.show()
@@ -191,19 +182,6 @@ internal fun HomePage(
                         switchCheckedState = switchSaveCard,
                     )
 
-                    SwitchedView(
-                        text = sendCheckToEmail(),
-                        switchCheckedState = switchSendToEmail,
-                    )
-
-                    if (switchSendToEmail.value) {
-                        EmailView(
-                            emailText = emailText,
-                            emailError = emailError,
-                            emailFocusRequester = emailFocusRequester
-                        )
-                    }
-
                     BottomImages()
                 }
 
@@ -213,8 +191,6 @@ internal fun HomePage(
                         focusManager.clearFocus(true)
 
                         val isValid = checkValid(
-                            emailStateSwitched = switchSendToEmail.value,
-                            email = emailText.value.text,
                             emailError = emailError,
                             cardNumber = cardNumberText.value.text,
                             cardNumberError = cardNumberError,
@@ -229,9 +205,7 @@ internal fun HomePage(
                                 navController = navController,
                                 isLoading  = isLoading ,
                                 saveCard = switchSaveCard.value,
-                                sendReceipt = switchSendToEmail.value,
                                 cardNumber = cardNumberText.value.text,
-                                email = if (switchSendToEmail.value) emailText.value.text else null,
                                 cvv = cvvText.value.text,
                                 dateExpired = dateExpiredText.value.text,
                                 coroutineScope = coroutineScope,
@@ -263,11 +237,22 @@ internal fun HomePage(
                 }
             }
 
-            if (isLoading .value
-                || selectedCardId != null
-            ) {
+            if (isLoading.value) {
                 ProgressBarView()
             }
+        }
+    }
+
+    LaunchedEffect("Has CardId") {
+
+        if (selectedCardId != null) {
+            startPaymentProcessing(
+                navController = navController,
+                isLoading  = isLoading ,
+                coroutineScope = coroutineScope,
+                paymentsRepository = paymentsRepository,
+                cardId = selectedCardId
+            )
         }
     }
 }

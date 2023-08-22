@@ -14,7 +14,6 @@ import kz.airbapay.apay_android.data.constant.TEMPLATE_DEEP_LINK_WEB_VIEW
 import kz.airbapay.apay_android.data.constant.TEMPLATE_ROUTES_ERROR
 import kz.airbapay.apay_android.data.constant.TEMPLATE_ROUTES_ERROR_WITH_INSTRUCTION
 import kz.airbapay.apay_android.data.constant.initErrorsCodeByCode
-import kz.airbapay.apay_android.data.model.Secure3D
 
 internal fun backToHome(navController: NavController) {
     navController.popBackStack(
@@ -52,13 +51,12 @@ internal fun openErrorPageWithCondition(
     }
 }
 
-
 internal fun openWebView(
-    secure3D: Secure3D?,
+    redirectUrl: String?,
     navController: NavController
 ) {
     val deepLink = TEMPLATE_DEEP_LINK_WEB_VIEW +
-            "?$ARG_ACTION=${secure3D?.action}".toUri()
+            "?$ARG_ACTION=${redirectUrl}".toUri()
 
     navController.navigate(deepLink)
 }

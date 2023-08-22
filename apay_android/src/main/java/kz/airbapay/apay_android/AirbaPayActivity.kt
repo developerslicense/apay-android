@@ -10,6 +10,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import androidx.navigation.navDeepLink
 import kz.airbapay.apay_android.data.constant.ARG_ACTION
+import kz.airbapay.apay_android.data.constant.ARG_CARD_ID
 import kz.airbapay.apay_android.data.constant.ARG_ERROR_CODE
 import kz.airbapay.apay_android.data.constant.ROUTES_ERROR
 import kz.airbapay.apay_android.data.constant.ROUTES_ERROR_FINAL
@@ -45,6 +46,8 @@ class AirbaPayActivity : ComponentActivity() {
         val authRepository = AuthRepository(api)
         val paymentsRepository = PaymentsRepository(api)
 
+        val selectedCardId: String? = intent.getStringExtra(ARG_CARD_ID)
+
         setContent {
             val navController = rememberNavController()
 
@@ -56,7 +59,8 @@ class AirbaPayActivity : ComponentActivity() {
                     HomePage(
                         navController = navController,
                         authRepository = authRepository,
-                        paymentsRepository = paymentsRepository
+                        paymentsRepository = paymentsRepository,
+                        selectedCardId = selectedCardId
                     )
                 }
 

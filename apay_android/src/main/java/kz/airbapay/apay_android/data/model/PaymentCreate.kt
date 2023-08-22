@@ -7,5 +7,11 @@ internal data class PaymentCreateResponse(
     val invoiceId: String?,
 
     @SerializedName("id")
-    val id: String?
+    val id: String?,
+
+    @SerializedName("status")
+    val status: String?,
+
+    @SerializedName("redirectURL")
+    val redirectURL: String?
 )

@@ -67,7 +67,7 @@ internal fun RepeatPage(
 
         Text(
             text = thisNeedSomeTime(),
-            style = LocalFonts.current.regular,
+            style = LocalFonts.current.bodyRegular,
             textAlign = TextAlign.Center,
             modifier = Modifier
                 .padding(top = 16.dp)
@@ -110,7 +110,7 @@ private fun onStart(
         result = { response ->
             if (response.isSecure3D == true) {
                 openWebView(
-                    secure3D = response.secure3D,
+                    redirectUrl = response.secure3D?.action,
                     navController = navController
                 )
 

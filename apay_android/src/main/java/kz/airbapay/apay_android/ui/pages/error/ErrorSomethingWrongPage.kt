@@ -76,7 +76,7 @@ internal fun ErrorSomethingWrongPage() {
 
         Text(
             text = somethingWentWrongDescription(),
-            style = LocalFonts.current.regular,
+            style = LocalFonts.current.bodyRegular,
             textAlign = TextAlign.Center,
             modifier = Modifier
                 .constrainAs(text2Ref) {

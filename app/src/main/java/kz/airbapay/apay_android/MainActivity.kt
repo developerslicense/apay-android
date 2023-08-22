@@ -33,7 +33,7 @@ class MainActivity : ComponentActivity() {
 
         AirbaPaySdk.initOnCreate(
             isProd = false,
-            phone = "77051234567",
+            phone = "77051111111",
             shopId = "test-merchant",
             lang = AirbaPaySdk.Lang.RU,
             password = "123456",
