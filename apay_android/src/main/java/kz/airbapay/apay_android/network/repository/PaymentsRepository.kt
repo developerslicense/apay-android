@@ -82,7 +82,9 @@ internal class PaymentsRepository(
             put("cart", cart)
             put("currency", "KZT")
             put("description", "description")
-            put("email", DataHolder.userEmail)
+            if (!DataHolder.userEmail.isNullOrEmpty()) {
+                put("email", DataHolder.userEmail)
+            }
             put("invoice_id", DataHolder.invoiceId)
             put("language", DataHolder.currentLang)
             put("order_number", DataHolder.orderNumber)
