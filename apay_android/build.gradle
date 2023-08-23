@@ -8,7 +8,7 @@ plugins {
 
 android {
     namespace 'kz.airbapay.apay_android'
-    compileSdk 33
+    compileSdk airbaPayCompileSdk
 
     defaultConfig {
         minSdk 21
@@ -59,7 +59,6 @@ ext {
     espressoCore = '3.5.0'
 
     junit = '4.13.2'
-    jetpackCompose = '2023.03.00'// 2023.08.00
     jetpackComposeAccompanist = '0.28.0'
     jetpackComposeFoundation = '1.4.3'
 
@@ -112,7 +111,7 @@ dependencies {
     implementation "com.github.skydoves:landscapist-coil:$coilComposeVersion"// обертка для coil для композа https://github.com/skydoves/landscapist#coil
 
     // Jetpack compose
-    def composeBom = platform("androidx.compose:compose-bom:$jetpackCompose") // https://developer.android.com/jetpack/compose/setup#bom-version-mapping
+    def composeBom = platform("androidx.compose:compose-bom:$airbaPayJetpackCompose") // https://developer.android.com/jetpack/compose/setup#bom-version-mapping
     implementation composeBom
     androidTestImplementation composeBom
 
