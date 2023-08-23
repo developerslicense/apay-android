@@ -94,11 +94,10 @@ internal class PaymentsRepository(
             put("success_back_url", DataHolder.successBackUrl)
             put("success_callback", DataHolder.successCallback)
 
-            /** не обязательный параметр, нужно присылать, если есть необходимость в разделении счетов по компаниям*/
+            /** параметр, нужный, если несколько айдишников компаний*/
             if (!DataHolder.settlementPayments.isNullOrEmpty()) {
-                val settlement = HashMap<String, Any>().apply {
-                    put("payments", DataHolder.settlementPayments)
-                }
+                val settlement = HashMap<String, Any>()
+                settlement["payments"] = DataHolder.settlementPayments!!
                 put("settlement", settlement)
             }
         }
