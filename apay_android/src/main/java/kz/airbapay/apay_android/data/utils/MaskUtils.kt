@@ -27,7 +27,7 @@ class MaskUtils(
             newPosition
         }
     } catch (e: Exception) {
-        e.printStackTrace()
+//        e.printStackTrace()
         newPosition
     }
 

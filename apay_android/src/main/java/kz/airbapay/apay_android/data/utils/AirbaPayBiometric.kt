@@ -61,7 +61,7 @@ internal class AirbaPayBiometric(
                             1
                         )
                     } catch (e: ActivityNotFoundException) {
-                        e.printStackTrace()
+//                        e.printStackTrace()
                     }
                 }
             }

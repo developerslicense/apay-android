@@ -18,7 +18,7 @@ import androidx.compose.material.Card
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -39,7 +39,7 @@ internal fun InitViewStartProcessingCards(
 ) {
     val context = LocalContext.current
     val selected = remember {
-        mutableIntStateOf(0)
+        mutableStateOf(0)
     }
 
     /*Spacer(modifier = Modifier.height(32.dp)) //todo временно
@@ -60,10 +60,10 @@ internal fun InitViewStartProcessingCards(
                 val card = savedCards[index]
                 InitCard(
                     card = card,
-                    isSelected = index == selected.intValue,
+                    isSelected = index == selected.value,
                     isFirst = index == 0,
                     clickOnCard = {
-                        selected.intValue = index
+                        selected.value = index
                         selectedCard.value = card
                     }
                 )

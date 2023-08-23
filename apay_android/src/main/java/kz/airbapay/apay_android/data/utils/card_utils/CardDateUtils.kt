@@ -28,14 +28,14 @@ internal fun isDateValid(
       month = try {
         split[0].toInt()
       } catch (e: Exception) {
-        e.printStackTrace()
+//        e.printStackTrace()
         -1
       }
 
       year = try {
         split[1].toInt()
       } catch (e: Exception) {
-        e.printStackTrace()
+//        e.printStackTrace()
         0
       }
 
@@ -69,7 +69,7 @@ internal fun isDateValid(
       && month > nowMonth
 
   } catch (e: Exception) {
-    e.printStackTrace()
+//    e.printStackTrace()
 
     return false
   }
