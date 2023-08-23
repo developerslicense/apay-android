@@ -80,7 +80,6 @@ class AirbaPaySdk {
             }
 
             DataHolder.bankCode = null
-            DataHolder.accessToken = null
             DataHolder.isProd = isProd
             DataHolder.needShowSdkSuccessPage = needShowSdkSuccessPage
             DataHolder.baseUrl = if (DataHolder.isProd) "https://ps.airbapay.kz/acquiring-api/sdk/"
@@ -109,7 +108,7 @@ class AirbaPaySdk {
             invoiceId: String,
             orderNumber: String,
             goods: List<Goods>,
-            settlementPayments: List<SettlementPayment>?,
+            settlementPayments: List<SettlementPayment>? = null // параметр, нужный, если несколько айдишников компаний
         ) {
             DataHolder.purchaseAmount = purchaseAmount.toString()
             DataHolder.orderNumber = orderNumber
