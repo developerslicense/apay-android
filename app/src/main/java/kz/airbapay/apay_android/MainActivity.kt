@@ -42,7 +42,7 @@ class MainActivity : ComponentActivity() {
             successCallback = "https://site.kz/success-clb",
             needShowSdkSuccessPage = true,
             userEmail = "test@test.com",
-//            colorBrandMain = Color.Blue
+//            colorBrandMain = Color.Red
         )
 
         if (!isBottomSheet) {
@@ -142,22 +142,33 @@ class MainActivity : ComponentActivity() {
                 category = "Черный чай",
                 quantity = 1,
                 price = 1000
+            ),
+            AirbaPaySdk.Goods(
+                model = "Чай Tess Green",
+                brand = "Tess",
+                category = "Green чай",
+                quantity = 1,
+                price = 500
             )
         )
 
         val settlementPayment = listOf(
             AirbaPaySdk.SettlementPayment(
                 amount = 1000,
-                companyId = "test_id"
+                companyId = "210840019439"
+            ),
+            AirbaPaySdk.SettlementPayment(
+                amount = 500,
+                companyId = "254353"
             )
         )
 
         AirbaPaySdk.initProcessing(
-            purchaseAmount = 50150,
+            purchaseAmount = 1500,
             invoiceId = someInvoiceId.toString(),
             orderNumber = someOrderNumber.toString(),
             goods = goods,
-            settlementPayments = emptyList(), //settlementPayment
+            settlementPayments = settlementPayment // параметр, нужный, если несколько айдишников компаний
         )
     }
 }

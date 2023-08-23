@@ -82,7 +82,9 @@ internal class PaymentsRepository(
             put("cart", cart)
             put("currency", "KZT")
             put("description", "description")
-            put("email", DataHolder.userEmail)
+            if (!DataHolder.userEmail.isNullOrEmpty()) {
+                put("email", DataHolder.userEmail)
+            }
             put("invoice_id", DataHolder.invoiceId)
             put("language", DataHolder.currentLang)
             put("order_number", DataHolder.orderNumber)
@@ -94,11 +96,10 @@ internal class PaymentsRepository(
             put("success_back_url", DataHolder.successBackUrl)
             put("success_callback", DataHolder.successCallback)
 
-            /** не обязательный параметр, нужно присылать, если есть необходимость в разделении счетов по компаниям*/
+            /** параметр, нужный, если несколько айдишников компаний*/
             if (!DataHolder.settlementPayments.isNullOrEmpty()) {
-                val settlement = HashMap<String, Any>().apply {
-                    put("payments", DataHolder.settlementPayments)
-                }
+                val settlement = HashMap<String, Any>()
+                settlement["payments"] = DataHolder.settlementPayments!!
                 put("settlement", settlement)
             }
         }

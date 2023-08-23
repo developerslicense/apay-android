@@ -16,6 +16,10 @@ ext { // this are variables
     pomArtifactName = "apay_android"
 
     jdkCompileVersion = 17
+
+    airbaPayJetpackCompose = '2023.08.00'// 2023.03.00
+    airbaPayCompileSdk = 34 //33
+
 }
 
 test {

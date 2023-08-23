@@ -120,7 +120,7 @@ private fun clearText(
     temp
 
 } catch (e: Exception) {
-    e.printStackTrace()
+//    e.printStackTrace()
     ""
 }
 

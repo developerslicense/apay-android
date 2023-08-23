@@ -58,7 +58,7 @@ internal fun validateCardNumWithLuhnAlgorithm(
         return (sum % 10 == 0)
 
     } catch (e: Exception) {
-        e.printStackTrace()
+//        e.printStackTrace()
         return false
     }
 }

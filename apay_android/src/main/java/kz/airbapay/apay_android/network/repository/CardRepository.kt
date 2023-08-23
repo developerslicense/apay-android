@@ -63,25 +63,7 @@ internal class CardRepository(
             DataHolder.bankCode = result.body()?.bankCode
             next()
         }
-    }/*    fun getCardsBank(
-        pan: String,
-        result: (CardsPanResponse) -> Unit,
-        error: (Response<*>) -> Unit
-    ) {
-        launch(
-            requestFlow = {
-                safeApiFlowCall {
-                    api.getCardsBank(pan)
-                }
-            },
-            result = { body ->
-                body.body()?.let {
-                    result(it)
-                } ?: error(Unit)
-            },
-            error = error
-        )
-    }*/
+    }
 
     fun cardAdd(
         param: CardAddRequest,

@@ -71,7 +71,7 @@ internal fun HomePage(
 
     val scaffoldState: ScaffoldState = rememberScaffoldState()
 
-    val isLoading = remember { mutableStateOf(false) }
+    val isLoading = remember { mutableStateOf(true) }
     val showDialogExit = remember { mutableStateOf(false) }
     val switchSaveCard = remember { mutableStateOf(false) }
 
@@ -263,6 +263,9 @@ internal fun HomePage(
                 paymentsRepository = paymentsRepository,
                 cardId = selectedCardId
             )
+
+        } else {
+            isLoading.value = false
         }
     }
 }
