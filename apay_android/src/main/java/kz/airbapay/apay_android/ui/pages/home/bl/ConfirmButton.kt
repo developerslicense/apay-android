@@ -36,7 +36,7 @@ internal fun checkValid(
 
 //    emailStateSwitched: Boolean,
 //    email: String?,
-    emailError: MutableState<String?>
+//    emailError: MutableState<String?>
 //
 ): Boolean {
     var hasError = false
