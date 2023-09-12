@@ -44,7 +44,8 @@ internal fun StartProcessingView(
     actionOnLoadingCompleted: () -> Unit = {},
     isBottomSheetType: Boolean = true,
     backgroundColor: Color = ColorsSdk.bgBlock,
-    isAuthenticated: MutableState<Boolean>
+    isAuthenticated: MutableState<Boolean>,
+    customSuccessPage: @Composable (() -> Unit)? = null
 ) {
     val context = LocalContext.current
     val clientConnector = ClientConnector(context)
@@ -109,7 +110,8 @@ internal fun StartProcessingView(
                     InitViewStartProcessingCards( // todo внутри есть закоментированное
                         savedCards = savedCards.value,
                         selectedCard = selectedCard,
-                        actionClose = actionClose
+                        actionClose = actionClose,
+                        customSuccessPage = customSuccessPage
                     )
                 }
 
@@ -118,7 +120,8 @@ internal fun StartProcessingView(
                     actionClose = actionClose,
                     purchaseAmount = purchaseAmount.value,
                     isAuthenticated = isAuthenticated.value,
-                    selectedCard = selectedCard
+                    selectedCard = selectedCard,
+                    customSuccessPage = customSuccessPage
                 )
             }
         }
@@ -152,7 +155,7 @@ internal fun StartProcessingView(
                             actionOnLoadingCompleted()
                         },
                         result = {
-                            isLoading .value = false
+                            isLoading.value = false
                             savedCards.value = it
                             actionOnLoadingCompleted()
                             if (it.isNotEmpty()) {

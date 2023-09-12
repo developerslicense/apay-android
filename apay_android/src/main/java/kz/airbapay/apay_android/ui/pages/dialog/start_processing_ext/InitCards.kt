@@ -1,6 +1,5 @@
 package kz.airbapay.apay_android.ui.pages.dialog.start_processing_ext
 
-import android.content.Intent
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -35,7 +34,8 @@ import kz.airbapay.apay_android.ui.ui_components.LoadImageSrc
 internal fun InitViewStartProcessingCards(
     savedCards: List<BankCard>,
     selectedCard: MutableState<BankCard?>,
-    actionClose: () -> Unit
+    actionClose: () -> Unit,
+    customSuccessPage: @Composable (() -> Unit)?
 ) {
     val context = LocalContext.current
     val selected = remember {
@@ -76,8 +76,10 @@ internal fun InitViewStartProcessingCards(
     InitViewStartProcessingPayWithNewCard(
         actionClick = {
             actionClose()
-            val intent = Intent(context, AirbaPayActivity::class.java)
-            context.startActivity(intent)
+            AirbaPayActivity.init(
+                context = context,
+                customSuccessPage = customSuccessPage
+            )
         }
     )
 }

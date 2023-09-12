@@ -40,8 +40,7 @@ class MainActivity : ComponentActivity() {
             terminalId = "64216e7ccc4a48db060dd689",
             failureCallback = "https://site.kz/failure-clb",
             successCallback = "https://site.kz/success-clb",
-            needShowSdkSuccessPage = true,
-            userEmail = "test@test.com",
+            userEmail = "test@test.com",//todo исправь насчет опциональности в документации
 //            colorBrandMain = Color.Red
         )
 
@@ -56,6 +55,9 @@ class MainActivity : ComponentActivity() {
                     AirbaPaySdkProcessingBottomSheet(
                         content = { actionShowBottomSheet ->
                             PageContentForBottomSheet(actionShowBottomSheet)
+                        },
+                        customSuccessPage = {
+                            Text("SUCCESS PAGE CUSTOM")
                         }
                     )
 
@@ -109,7 +111,10 @@ class MainActivity : ComponentActivity() {
                 AirbaPaySdkProcessingView(
                     actionOnLoadingCompleted = { isLoading.value = false },
                     needShowProgressBar = false,
-                    backgroundColor = Color.White
+                    backgroundColor = Color.White,
+                    customSuccessPage = {
+                        Text("SUCCESS PAGE CUSTOM")
+                    }
                 )
             }
 
@@ -168,7 +173,7 @@ class MainActivity : ComponentActivity() {
             invoiceId = someInvoiceId.toString(),
             orderNumber = someOrderNumber.toString(),
             goods = goods,
-            settlementPayments = settlementPayment // параметр, нужный, если несколько айдишников компаний
+            settlementPayments = settlementPayment //todo исправь насчет опциональности в документации
         )
     }
 }
