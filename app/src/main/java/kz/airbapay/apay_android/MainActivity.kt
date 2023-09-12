@@ -56,9 +56,9 @@ class MainActivity : ComponentActivity() {
                         content = { actionShowBottomSheet ->
                             PageContentForBottomSheet(actionShowBottomSheet)
                         },
-                        customSuccessPage = {
-                            Text("SUCCESS PAGE CUSTOM")
-                        }
+//                        customSuccessPage = {
+//                            Text("SUCCESS PAGE CUSTOM")
+//                        }
                     )
 
                 } else {
