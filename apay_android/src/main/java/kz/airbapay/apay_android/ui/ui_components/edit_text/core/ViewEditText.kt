@@ -56,7 +56,8 @@ internal fun ViewEditText(
         imeAction = ImeAction.Next
     ),
     visualTransformation: VisualTransformation? = null,
-    isDateExpiredMask: Boolean = false
+    isDateExpiredMask: Boolean = false,
+    isCardNumberMask: Boolean = false
 ) {
 
     val hasFocus = remember {
@@ -99,11 +100,12 @@ internal fun ViewEditText(
                     paySystemIcon = paySystemIcon.value
                 )
 
-                InitIconClear(
+                InitIconEnd(
                     clearIconRef = clearIconRef,
                     hasFocus = hasFocus.value,
                     text = text.value.text,
                     isError = errorTitle.value != null,
+                    isCardNumberMask = isCardNumberMask,
                     actionClickClear = {
                         text.value = TextFieldValue(
                             text = "",
@@ -136,20 +138,38 @@ internal fun ViewEditText(
 }
 
 @Composable
-private fun ConstraintLayoutScope.InitIconClear(
+private fun ConstraintLayoutScope.InitIconEnd(
     isError: Boolean,
+    isCardNumberMask: Boolean,
     text: String,
     hasFocus: Boolean,
     actionClickClear: () -> Unit,
     clearIconRef: ConstrainedLayoutReference
 ) {
+    val context = LocalContext.current
+
     if (
         text.isNotBlank()
         && hasFocus
+        && !isCardNumberMask
     ) {
         InitActionIcon(
             action = actionClickClear,
             iconSrc = R.drawable.ic_close,
+            modifier = Modifier
+                .size(40.dp)
+                .constrainAs(clearIconRef) {
+                    end.linkTo(parent.end)
+                    top.linkTo(parent.top)
+                    bottom.linkTo(parent.bottom)
+                },
+            _outlinedButtonColor = if (isError) ColorsSdk.stateBgError else ColorsSdk.bgBlock
+        )
+
+    } else if (isCardNumberMask) {
+        InitActionIcon(
+            action = { actionClickScanner(context) },
+            iconSrc = R.drawable.ic_card_scanner,
             modifier = Modifier
                 .size(40.dp)
                 .constrainAs(clearIconRef) {

@@ -51,7 +51,8 @@ internal fun CardNumberView(
         modifierRoot = Modifier.padding(horizontal = 16.dp),
         actionOnTextChanged = { pan ->
             paySystemIcon.value = getCardTypeFromNumber(pan).icon
-        }
+        },
+        isCardNumberMask = true
     )
 
 }
