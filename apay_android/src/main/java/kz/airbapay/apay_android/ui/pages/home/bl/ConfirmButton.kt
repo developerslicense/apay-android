@@ -36,7 +36,7 @@ internal fun checkValid(
 
 //    emailStateSwitched: Boolean,
 //    email: String?,
-    emailError: MutableState<String?>
+//    emailError: MutableState<String?>
 //
 ): Boolean {
     var hasError = false
@@ -153,32 +153,50 @@ private fun startCreatePayment(
                 paymentId = it.id,
                 onError = { onError(ErrorsCode.error_1) },
                 onResult = {
-                    val request = PaymentEntryRequest(
-                        cardSave = saveCardSaved,
-                        email = DataHolder.userEmail,
-                        sendReceipt = DataHolder.userEmail != null,
-                        card = cardSaved
-                    )
-                    paymentsRepository.paymentAccountEntry(
-                        param = request,
-                        result = { entryResponse ->
-                            if (entryResponse.errorCode != "0") {
-                                val error = initErrorsCodeByCode(entryResponse.errorCode?.toInt() ?: 1)
-                                onError(error)
-
-                            } else if (entryResponse.isSecure3D == true) {
-                                on3DS(entryResponse.secure3D)
-
-                            } else {
-                                onSuccess()
-                            }
-                        },
-                        error = {
-                            onError(ErrorsCode.error_1)
-                        }
+                    onSuccessAuth(
+                        saveCardSaved = saveCardSaved,
+                        cardSaved = cardSaved,
+                        paymentsRepository = paymentsRepository,
+                        onError = onError,
+                        on3DS = on3DS,
+                        onSuccess = onSuccess
                     )
                 }
             )
+        },
+        error = {
+            onError(ErrorsCode.error_1)
+        }
+    )
+}
+
+private fun onSuccessAuth(
+    saveCardSaved: Boolean,
+    cardSaved: BankCard,
+    paymentsRepository: PaymentsRepository,
+    onError: (ErrorsCode) -> Unit,
+    on3DS: (secure3D: Secure3D?) -> Unit,
+    onSuccess: () -> Unit
+) {
+    val request = PaymentEntryRequest(
+        cardSave = saveCardSaved,
+        email = DataHolder.userEmail,
+        sendReceipt = DataHolder.userEmail != null,
+        card = cardSaved
+    )
+    paymentsRepository.paymentAccountEntry(
+        param = request,
+        result = { entryResponse ->
+            if (entryResponse.errorCode != "0") {
+                val error = initErrorsCodeByCode(entryResponse.errorCode?.toInt() ?: 1)
+                onError(error)
+
+            } else if (entryResponse.isSecure3D == true) {
+                on3DS(entryResponse.secure3D)
+
+            } else {
+                onSuccess()
+            }
         },
         error = {
             onError(ErrorsCode.error_1)

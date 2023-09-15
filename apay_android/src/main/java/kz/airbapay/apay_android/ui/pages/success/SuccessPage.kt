@@ -26,7 +26,9 @@ import kz.airbapay.apay_android.ui.ui_components.BackHandler
 import kz.airbapay.apay_android.ui.ui_components.ViewButton
 
 @Composable
-internal fun SuccessPage() {
+internal fun SuccessPage(
+    customSuccessPage: @Composable (() -> Unit)?
+) {
     val context = LocalContext.current
 
     BackHandler {
@@ -41,36 +43,42 @@ internal fun SuccessPage() {
     ) {
 
         val (spaceRef, iconRef, textRef, buttonRef) = createRefs()
-        Spacer(
-            modifier = Modifier
-                .fillMaxHeight(0.25f)
-                .constrainAs(spaceRef) {
-                    top.linkTo(parent.top)
-                }
-        )
-        Image(
-            painter = painterResource(R.drawable.pay_success),
-            contentDescription = "pay_success",
-            modifier = Modifier
-                .fillMaxWidth(0.5f)
-                .constrainAs(iconRef) {
-                    top.linkTo(spaceRef.bottom)
-                    start.linkTo(parent.start)
-                    end.linkTo(parent.end)
-                }
-        )
 
-        Text(
-            text = paySuccess(),
-            style = LocalFonts.current.h3,
-            textAlign = TextAlign.Center,
-            modifier = Modifier
-                .constrainAs(textRef) {
-                    top.linkTo(iconRef.bottom, margin = 24.dp)
-                    start.linkTo(parent.start)
-                    end.linkTo(parent.end)
-                }
-        )
+        if (customSuccessPage != null) {
+            customSuccessPage()
+
+        } else {
+            Spacer(
+                modifier = Modifier
+                    .fillMaxHeight(0.25f)
+                    .constrainAs(spaceRef) {
+                        top.linkTo(parent.top)
+                    }
+            )
+            Image(
+                painter = painterResource(R.drawable.pay_success),
+                contentDescription = "pay_success",
+                modifier = Modifier
+                    .fillMaxWidth(0.5f)
+                    .constrainAs(iconRef) {
+                        top.linkTo(spaceRef.bottom)
+                        start.linkTo(parent.start)
+                        end.linkTo(parent.end)
+                    }
+            )
+
+            Text(
+                text = paySuccess(),
+                style = LocalFonts.current.h3,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .constrainAs(textRef) {
+                        top.linkTo(iconRef.bottom, margin = 24.dp)
+                        start.linkTo(parent.start)
+                        end.linkTo(parent.end)
+                    }
+            )
+        }
 
         ViewButton(
             title = goToMarker(),

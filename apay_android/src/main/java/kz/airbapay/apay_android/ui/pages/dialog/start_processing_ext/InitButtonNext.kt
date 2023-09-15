@@ -1,6 +1,5 @@
 package kz.airbapay.apay_android.ui.pages.dialog.start_processing_ext
 
-import android.content.Intent
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -8,7 +7,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import kz.airbapay.apay_android.AirbaPayActivity
-import kz.airbapay.apay_android.data.constant.ARG_CARD_ID
 import kz.airbapay.apay_android.data.constant.payAmount
 import kz.airbapay.apay_android.data.constant.paymentByCard2
 import kz.airbapay.apay_android.data.model.BankCard
@@ -20,7 +18,8 @@ internal fun InitViewStartProcessingButtonNext(
     actionClose: () -> Unit,
     purchaseAmount: String?,
     isAuthenticated: Boolean,
-    selectedCard: MutableState<BankCard?>
+    selectedCard: MutableState<BankCard?>,
+    customSuccessPage: @Composable (() -> Unit)?
 ) {
     val context = LocalContext.current
 
@@ -36,9 +35,11 @@ internal fun InitViewStartProcessingButtonNext(
             title = "${payAmount()} $purchaseAmount",
             actionClick = {
                 actionClose()
-                val intent = Intent(context, AirbaPayActivity::class.java)
-                intent.putExtra(ARG_CARD_ID, selectedCard.value?.id)
-                context.startActivity(intent)
+                AirbaPayActivity.init(
+                    context = context,
+                    cardId = selectedCard.value?.id,
+                    customSuccessPage = customSuccessPage
+                )
             },
             modifierRoot = buttonModifier
         )
@@ -48,8 +49,10 @@ internal fun InitViewStartProcessingButtonNext(
             title = paymentByCard2(),
             actionClick = {
                 actionClose()
-                val intent = Intent(context, AirbaPayActivity::class.java)
-                context.startActivity(intent)
+                AirbaPayActivity.init(
+                    context = context,
+                    customSuccessPage = customSuccessPage
+                )
             },
             modifierRoot = buttonModifier
         )

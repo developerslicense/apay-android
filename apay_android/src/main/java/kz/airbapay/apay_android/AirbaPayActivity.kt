@@ -1,8 +1,11 @@
 package kz.airbapay.apay_android
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.runtime.Composable
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -21,7 +24,6 @@ import kz.airbapay.apay_android.data.constant.ROUTES_REPEAT
 import kz.airbapay.apay_android.data.constant.ROUTES_SUCCESS
 import kz.airbapay.apay_android.data.constant.ROUTES_WEB_VIEW
 import kz.airbapay.apay_android.data.constant.initErrorsCodeByCode
-import kz.airbapay.apay_android.data.utils.DataHolder
 import kz.airbapay.apay_android.network.api.Api
 import kz.airbapay.apay_android.network.base.ClientConnector
 import kz.airbapay.apay_android.network.repository.AuthRepository
@@ -35,8 +37,26 @@ import kz.airbapay.apay_android.ui.pages.error.RepeatPage
 import kz.airbapay.apay_android.ui.pages.home.HomePage
 import kz.airbapay.apay_android.ui.pages.success.SuccessPage
 import kz.airbapay.apay_android.ui.pages.webview.WebViewPage
+import java.lang.ref.WeakReference
 
 class AirbaPayActivity : ComponentActivity() {
+
+    companion object {
+        private var customSuccessPage: WeakReference<@Composable () -> Unit>? = null
+
+        fun init(
+            context: Context,
+            cardId: String? = null,
+            customSuccessPage: @Composable (() -> Unit)?
+        ) {
+            val intent = Intent(context, AirbaPayActivity::class.java)
+            if (cardId != null) {
+                intent.putExtra(ARG_CARD_ID, cardId)
+            }
+            this.customSuccessPage = WeakReference(customSuccessPage)
+            context.startActivity(intent)
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,6 +69,9 @@ class AirbaPayActivity : ComponentActivity() {
         val cardRepository = CardRepository(api)
 
         val selectedCardId: String? = intent.getStringExtra(ARG_CARD_ID)
+
+        val localSuccessCustomPage: @Composable (() -> Unit)? = customSuccessPage?.get()
+        customSuccessPage = null
 
         setContent {
             val navController = rememberNavController()
@@ -138,11 +161,7 @@ class AirbaPayActivity : ComponentActivity() {
                 }
 
                 composable(ROUTES_SUCCESS) {
-                    if (DataHolder.needShowSdkSuccessPage) {
-                        SuccessPage()
-                    } else {
-                        this@AirbaPayActivity.finish()
-                    }
+                    SuccessPage(customSuccessPage = localSuccessCustomPage)
                 }
             }
 

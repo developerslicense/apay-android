@@ -65,7 +65,6 @@ class AirbaPaySdk {
             terminalId: String,
             failureCallback: String,
             successCallback: String,
-            needShowSdkSuccessPage: Boolean = true,
             userEmail: String? = null,
             colorBrandMain: Color? = null,
             colorBrandInversion: Color? = null,
@@ -81,7 +80,7 @@ class AirbaPaySdk {
 
             DataHolder.bankCode = null
             DataHolder.isProd = isProd
-            DataHolder.needShowSdkSuccessPage = needShowSdkSuccessPage
+
             DataHolder.baseUrl = if (DataHolder.isProd) "https://ps.airbapay.kz/acquiring-api/sdk/"
             else "https://sps.airbapay.kz/acquiring-api/sdk/"
 
@@ -126,7 +125,8 @@ class AirbaPaySdk {
  * */
 @Composable
 fun AirbaPaySdkProcessingBottomSheet(
-    content: @Composable (actionShowBottomSheet: () -> Unit) -> Unit
+    content: @Composable (actionShowBottomSheet: () -> Unit) -> Unit,
+    customSuccessPage: @Composable (() -> Unit)? = null
 ) {
 
     val coroutineScope = rememberCoroutineScope()
@@ -149,7 +149,8 @@ fun AirbaPaySdkProcessingBottomSheet(
         sheetContent = {
             StartProcessingView(
                 actionClose = { coroutineScope.launch { sheetState.hide() } },
-                isAuthenticated = isAuthenticated
+                isAuthenticated = isAuthenticated,
+                customSuccessPage = customSuccessPage
             )
         },
         modifier = Modifier.fillMaxSize()
@@ -175,7 +176,8 @@ fun AirbaPaySdkProcessingBottomSheet(
 fun AirbaPaySdkProcessingView(
     actionOnLoadingCompleted: () -> Unit = {},
     needShowProgressBar: Boolean = true,
-    backgroundColor: Color = ColorsSdk.bgBlock
+    backgroundColor: Color = ColorsSdk.bgBlock,
+    customSuccessPage: @Composable (() -> Unit)? = null
 ) {
 
     val context = LocalContext.current
@@ -191,7 +193,8 @@ fun AirbaPaySdkProcessingView(
         actionOnLoadingCompleted = actionOnLoadingCompleted,
         isBottomSheetType = false,
         backgroundColor = backgroundColor,
-        isAuthenticated = isAuthenticated
+        isAuthenticated = isAuthenticated,
+        customSuccessPage = customSuccessPage
     )
 
     LaunchedEffect("Authenticate") {

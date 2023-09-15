@@ -86,7 +86,6 @@ internal fun HomePage(
     val cardNumberError = remember { mutableStateOf<String?>(null) }
     val dateExpiredError = remember { mutableStateOf<String?>(null) }
     val cvvError = remember { mutableStateOf<String?>(null) }
-    val emailError = remember { mutableStateOf<String?>(null) }
 
     val focusManager = LocalFocusManager.current
 
@@ -193,7 +192,6 @@ internal fun HomePage(
                         focusManager.clearFocus(true)
 
                         val isValid = checkValid(
-                            emailError = emailError,
                             cardNumber = cardNumberText.value.text,
                             cardNumberError = cardNumberError,
                             dateExpired = dateExpiredText.value.text,
