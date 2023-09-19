@@ -39,6 +39,7 @@ import kz.airbapay.apay_android.ui.ui_components.InitActionIcon
 internal fun ViewEditText(
     actionOnTextChanged: (String) -> Unit,
     actionClickInfo: (() -> Unit)? = null,
+    actionClickScanCard: (() -> Unit)? = null,
     text: MutableState<TextFieldValue>,
     errorTitle: MutableState<String?>,
     placeholder: String,
@@ -112,7 +113,8 @@ internal fun ViewEditText(
                             selection = TextRange(0)
                         )
                         paySystemIcon.value = null
-                    }
+                    },
+                    actionClickScanCard = actionClickScanCard
                 )
             }
         }
@@ -144,9 +146,9 @@ private fun ConstraintLayoutScope.InitIconEnd(
     text: String,
     hasFocus: Boolean,
     actionClickClear: () -> Unit,
+    actionClickScanCard: (() -> Unit)?,
     clearIconRef: ConstrainedLayoutReference
 ) {
-    val context = LocalContext.current
 
     if (
         text.isNotBlank()
@@ -168,7 +170,7 @@ private fun ConstraintLayoutScope.InitIconEnd(
 
     } else if (isCardNumberMask) {
         InitActionIcon(
-            action = { actionClickScanner(context) },
+            action = { actionClickScanCard?.invoke() },
             iconSrc = R.drawable.ic_card_scanner,
             modifier = Modifier
                 .size(40.dp)

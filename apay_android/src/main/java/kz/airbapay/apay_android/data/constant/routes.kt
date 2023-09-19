@@ -9,6 +9,7 @@ internal const val ROUTES_SUCCESS = "success"
 internal const val ROUTES_REPEAT = "repeat"
 internal const val ROUTES_ERROR_FINAL = "error_final"
 internal const val ROUTES_ERROR_SOMETHING_WRONG = "error_something_wrong"
+internal const val ROUTES_CARD_SCANNER = "card_scanner"
 
 
 internal const val TEMPLATE_ROUTES_ERROR = "error"

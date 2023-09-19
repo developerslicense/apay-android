@@ -5,6 +5,7 @@ import androidx.navigation.NavController
 import kz.airbapay.apay_android.data.constant.ARG_ACTION
 import kz.airbapay.apay_android.data.constant.ARG_ERROR_CODE
 import kz.airbapay.apay_android.data.constant.ErrorsCode
+import kz.airbapay.apay_android.data.constant.ROUTES_CARD_SCANNER
 import kz.airbapay.apay_android.data.constant.ROUTES_ERROR_FINAL
 import kz.airbapay.apay_android.data.constant.ROUTES_ERROR_SOMETHING_WRONG
 import kz.airbapay.apay_android.data.constant.ROUTES_HOME
@@ -63,4 +64,8 @@ internal fun openWebView(
 
 internal fun openSuccess(navController: NavController?) {
     navController?.navigate(ROUTES_SUCCESS)
+}
+
+internal fun openCardScanner(navController: NavController?) {
+    navController?.navigate(ROUTES_CARD_SCANNER)
 }

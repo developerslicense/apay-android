@@ -15,6 +15,7 @@ import androidx.navigation.navDeepLink
 import kz.airbapay.apay_android.data.constant.ARG_ACTION
 import kz.airbapay.apay_android.data.constant.ARG_CARD_ID
 import kz.airbapay.apay_android.data.constant.ARG_ERROR_CODE
+import kz.airbapay.apay_android.data.constant.ROUTES_CARD_SCANNER
 import kz.airbapay.apay_android.data.constant.ROUTES_ERROR
 import kz.airbapay.apay_android.data.constant.ROUTES_ERROR_FINAL
 import kz.airbapay.apay_android.data.constant.ROUTES_ERROR_SOMETHING_WRONG
@@ -29,6 +30,7 @@ import kz.airbapay.apay_android.network.base.ClientConnector
 import kz.airbapay.apay_android.network.repository.AuthRepository
 import kz.airbapay.apay_android.network.repository.CardRepository
 import kz.airbapay.apay_android.network.repository.PaymentsRepository
+import kz.airbapay.apay_android.ui.pages.card_reader.bl.ScanActivity
 import kz.airbapay.apay_android.ui.pages.error.ErrorFinalPage
 import kz.airbapay.apay_android.ui.pages.error.ErrorPage
 import kz.airbapay.apay_android.ui.pages.error.ErrorSomethingWrongPage
@@ -72,6 +74,7 @@ class AirbaPayActivity : ComponentActivity() {
 
         val localSuccessCustomPage: @Composable (() -> Unit)? = customSuccessPage?.get()
         customSuccessPage = null
+
 
         setContent {
             val navController = rememberNavController()
@@ -162,6 +165,10 @@ class AirbaPayActivity : ComponentActivity() {
 
                 composable(ROUTES_SUCCESS) {
                     SuccessPage(customSuccessPage = localSuccessCustomPage)
+                }
+
+                composable(ROUTES_CARD_SCANNER) {
+//                    CardScannerPage()
                 }
             }
 
