@@ -26,6 +26,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
@@ -38,6 +39,7 @@ import kz.airbapay.apay_android.data.constant.payAmount
 import kz.airbapay.apay_android.data.constant.paymentOfPurchase
 import kz.airbapay.apay_android.data.constant.saveCardData
 import kz.airbapay.apay_android.data.utils.DataHolder
+import kz.airbapay.apay_android.data.utils.openCardScanner
 import kz.airbapay.apay_android.network.repository.AuthRepository
 import kz.airbapay.apay_android.network.repository.CardRepository
 import kz.airbapay.apay_android.network.repository.PaymentsRepository
@@ -68,7 +70,7 @@ internal fun HomePage(
     scrollState: ScrollState = rememberScrollState()
 
 ) {
-
+    val context = LocalContext.current
     val scaffoldState: ScaffoldState = rememberScaffoldState()
 
     val isLoading = remember { mutableStateOf(true) }
@@ -144,7 +146,10 @@ internal fun HomePage(
                         cardNumberText = cardNumberText,
                         cardNumberError = cardNumberError,
                         cardNumberFocusRequester = cardNumberFocusRequester,
-                        dateExpiredFocusRequester = dateExpiredFocusRequester
+                        dateExpiredFocusRequester = dateExpiredFocusRequester,
+                        actionClickScanCard = {
+                            openCardScanner(context)
+                        }
                     )
 
                     Spacer(modifier = Modifier.height(16.dp))

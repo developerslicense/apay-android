@@ -80,7 +80,7 @@ class FindFourModel extends ImageClassifier {
 
 	@Override
 	protected int getNumBytesPerChannel() {
-		return 4; // Float.SIZE / Byte.SIZE;
+		return 4;
 	}
 
 	@Override

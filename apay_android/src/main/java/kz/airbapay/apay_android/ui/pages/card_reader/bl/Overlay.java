@@ -10,7 +10,6 @@ import android.graphics.RectF;
 import android.graphics.Xfermode;
 import android.util.AttributeSet;
 import android.view.View;
-import kz.airbapay.apay_android.R;
 
 // adapted from this: https://medium.com/@rgomez/android-how-to-draw-an-overlay-with-a-transparent-hole-471af6cf3953
 public class Overlay extends View {
@@ -55,7 +54,6 @@ public class Overlay extends View {
 		super.onDraw(canvas);
 		if (rect != null) {
 			Paint paintAntiAlias = new Paint(Paint.ANTI_ALIAS_FLAG);
-//			paintAntiAlias.setColor(getResources().getColor(getBackgroundColorId()));
 			paintAntiAlias.setStyle(Paint.Style.FILL);
 			canvas.drawPaint(paintAntiAlias);
 
@@ -67,7 +65,6 @@ public class Overlay extends View {
 			}
 
 			Paint paint = new Paint();
-//			paint.setColor(getResources().getColor(getCornerColorId()));
 			paint.setStyle(Paint.Style.STROKE);
 			paint.setStrokeWidth(dpToPx(cornerDp));
 

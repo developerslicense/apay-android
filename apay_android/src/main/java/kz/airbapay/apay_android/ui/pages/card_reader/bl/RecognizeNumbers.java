@@ -27,7 +27,7 @@ class RecognizeNumbers {
 				candidateNumber.append(recognized.stringResult());
 			}
 
-			if (candidateNumber.length() == 16) {//&& DebitCardUtils.luhnCheck(candidateNumber.toString())
+			if (candidateNumber.length() == 16) {
 				return candidateNumber.toString();
 			}
 		}

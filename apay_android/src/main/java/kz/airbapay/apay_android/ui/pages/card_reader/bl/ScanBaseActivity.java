@@ -30,7 +30,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.Semaphore;
-import kz.airbapay.apay_android.R;
 
 /**
  * Any classes that subclass this must:
@@ -40,7 +39,7 @@ import kz.airbapay.apay_android.R;
  * <p>
  * (2) Call setViewIds to set these resource IDs and initalize appropriate handlers
  */
-abstract class ScanBaseActivity extends Activity implements Camera.PreviewCallback,
+public abstract class ScanBaseActivity extends Activity implements Camera.PreviewCallback,
 		View.OnClickListener, OnScanListener, OnObjectListener, OnCameraOpenListener {
 
 	public static final String IS_OCR = "is_ocr";
@@ -186,13 +185,6 @@ abstract class ScanBaseActivity extends Activity implements Camera.PreviewCallba
 			}
 		} catch (Exception e) {
 			AlertDialog.Builder builder = new AlertDialog.Builder(this);
-//			builder.setMessage(R.string.busy_camera)
-//					.setTitle(R.string.busy_camera_title);
-//			builder.setPositiveButton(R.string.deny_permission_button, new DialogInterface.OnClickListener() {
-//				public void onClick(DialogInterface dialog, int id) {
-//					finish();
-//				}
-//			});
 			AlertDialog dialog = builder.create();
 			dialog.show();
 		}
@@ -305,10 +297,6 @@ abstract class ScanBaseActivity extends Activity implements Camera.PreviewCallba
 		}
 		camera.setDisplayOrientation(result);
 		mRotation = result;
-	}
-
-	static public void warmUp(Context context) {
-		getMachineLearningThread().warmUp(context);
 	}
 
 	static public MachineLearningThread getMachineLearningThread() {
@@ -435,7 +423,6 @@ abstract class ScanBaseActivity extends Activity implements Camera.PreviewCallba
 		if (textView.getVisibility() != View.VISIBLE) {
 			textView.setVisibility(View.VISIBLE);
 			textView.setAlpha(0.0f);
-//			textView.animate().setDuration(errorCorrectionDurationMs / 2).alpha(1.0f);
 		}
 		textView.setText(value);
 	}

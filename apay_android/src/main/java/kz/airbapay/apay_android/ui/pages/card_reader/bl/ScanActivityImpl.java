@@ -55,19 +55,12 @@ public class ScanActivityImpl extends ScanBaseActivity {
 			mIsPermissionCheckDone = true;
 		}
 
-		findViewById(R.id.closeButton).setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				onBackPressed();
-			}
-		});
-
 		mDebugImageView = findViewById(R.id.debugImageView);
 		mInDebugMode = getIntent().getBooleanExtra("debug", false);
 		if (!mInDebugMode) {
 			mDebugImageView.setVisibility(View.INVISIBLE);
 		}
-		setViewIds(/*R.id.flashlightButton, */R.id.cardRectangle, R.id.shadedBackground, R.id.texture,
+		setViewIds(R.id.cardRectangle, R.id.shadedBackground, R.id.texture,
 				R.id.cardNumber, R.id.expiry);
 	}
 

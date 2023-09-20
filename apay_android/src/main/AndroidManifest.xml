@@ -6,9 +6,19 @@
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.USE_BIOMETRIC" />
 
-    <uses-feature android:name="android.hardware.camera"/>
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-feature android:name="android.hardware.camera" />
     <uses-feature android:name="android.hardware.camera.any" />
-    <uses-permission android:name="android.permission.CAMERA"/>
 
+
+    <application>
+        <activity
+            android:name=".AirbaPayActivity"
+            android:exported="true"
+            android:windowSoftInputMode="adjustResize"/>
+
+        <activity android:name=".ui.pages.card_reader.bl.ScanActivityImpl"
+            android:screenOrientation="portrait"/>
+    </application>
 
 </manifest>
