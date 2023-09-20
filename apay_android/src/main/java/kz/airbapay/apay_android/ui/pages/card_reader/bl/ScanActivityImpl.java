@@ -32,8 +32,7 @@ public class ScanActivityImpl extends ScanBaseActivity {
 			mIsPermissionCheckDone = true;
 		}
 
-		setViewIds(R.id.cardRectangle, R.id.shadedBackground, R.id.texture,
-				R.id.cardNumber, R.id.expiry);
+		setViewIds(R.id.cardRectangle, R.id.shadedBackground, R.id.texture);
 	}
 
 	@Override

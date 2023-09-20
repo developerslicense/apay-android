@@ -35,53 +35,25 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.5" />
-
     <TextView
-        android:id="@+id/cardNumber"
+        android:id="@+id/title"
+        android:text="Поместите банковскую карту в рамку"
         android:layout_width="0dp"
         android:layout_height="48dp"
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
-        android:layout_marginTop="0dp"
+        android:layout_marginTop="70dp"
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
-        android:gravity="center"
+        android:gravity="center_horizontal"
         android:maxLines="1"
         android:textColor="@android:color/white"
-        android:textSize="30sp"
-        android:visibility="invisible"
-        app:autoSizeMaxTextSize="100sp"
-        app:autoSizeMinTextSize="12sp"
-        app:autoSizeStepGranularity="2sp"
-        app:autoSizeTextType="uniform"
+        android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="@+id/cardRectangle"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/cardRectangle"
-        app:layout_constraintTop_toTopOf="@+id/guideline" />
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/expiry"
-        android:layout_width="0dp"
-        android:layout_height="36dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="0dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
-        android:gravity="center"
-        android:maxLines="1"
-        android:textColor="@android:color/white"
-        android:textSize="17sp"
-        android:visibility="invisible"
-        app:layout_constraintEnd_toEndOf="@+id/cardRectangle"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/cardRectangle"
-        app:layout_constraintTop_toBottomOf="@+id/cardNumber" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

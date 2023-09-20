@@ -20,7 +20,6 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.FrameLayout;
-import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
@@ -40,7 +39,7 @@ import java.util.concurrent.Semaphore;
  * (2) Call setViewIds to set these resource IDs and initalize appropriate handlers
  */
 public abstract class ScanBaseActivity extends Activity implements Camera.PreviewCallback,
-		View.OnClickListener, OnScanListener, OnObjectListener, OnCameraOpenListener {
+		OnScanListener, OnObjectListener, OnCameraOpenListener {
 
 	public static final String IS_OCR = "is_ocr";
 	public static final String RESULT_FATAL_ERROR = "result_fatal_error";
@@ -56,9 +55,6 @@ public abstract class ScanBaseActivity extends Activity implements Camera.Previe
 	private HashMap<String, Integer> numberResults = new HashMap<>();
 	private HashMap<Expiry, Integer> expiryResults = new HashMap<>();
 	private long firstResultMs = 0;
-	private int mFlashlightId;
-	private int mCardNumberId;
-	private int mExpiryId;
 	private int mTextureId;
 	private float mRoiCenterYRatio;
 	private CameraThread mCameraThread = null;
@@ -73,7 +69,6 @@ public abstract class ScanBaseActivity extends Activity implements Camera.Previe
 	public long mPredictionStartMs = 0;
 	// Child classes must set to ensure proper flaslight handling
 	public boolean mIsPermissionCheckDone = false;
-	protected boolean mShowNumberAndExpiryAsScanning = true;
 
 	protected File objectDetectFile;
 
@@ -214,13 +209,6 @@ public abstract class ScanBaseActivity extends Activity implements Camera.Previe
 		expiryResults = new HashMap<>();
 		mSentResponse = false;
 
-		if (findViewById(mCardNumberId) != null) {
-			findViewById(mCardNumberId).setVisibility(View.INVISIBLE);
-		}
-		if (findViewById(mExpiryId) != null) {
-			findViewById(mExpiryId).setVisibility(View.INVISIBLE);
-		}
-
 		startCamera();
 	}
 
@@ -230,11 +218,8 @@ public abstract class ScanBaseActivity extends Activity implements Camera.Previe
 		super.onDestroy();
 	}
 
-	public void setViewIds( int cardRectangleId, int overlayId, int textureId,
-						   int cardNumberId, int expiryId) {
+	public void setViewIds( int cardRectangleId, int overlayId, int textureId) {
 		mTextureId = textureId;
-		mCardNumberId = cardNumberId;
-		mExpiryId = expiryId;
 
 		findViewById(cardRectangleId).getViewTreeObserver()
 				.addOnGlobalLayoutListener(new MyGlobalListenerClass(cardRectangleId, overlayId));
@@ -334,21 +319,6 @@ public abstract class ScanBaseActivity extends Activity implements Camera.Previe
 	}
 
 	@Override
-	public void onClick(View view) {
-		if (mCamera != null && mFlashlightId == view.getId()) {
-			Camera.Parameters parameters = mCamera.getParameters();
-			if (parameters.getFlashMode().equals(Camera.Parameters.FLASH_MODE_TORCH)) {
-				parameters.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
-			} else {
-				parameters.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
-			}
-			mCamera.setParameters(parameters);
-			mCamera.startPreview();
-		}
-
-	}
-
-	@Override
 	public void onBackPressed() {
 		if (!mSentResponse && mIsActivityActive) {
 			mSentResponse = true;
@@ -419,27 +389,7 @@ public abstract class ScanBaseActivity extends Activity implements Camera.Previe
 		return result;
 	}
 
-	private void setValueAnimated(TextView textView, String value) {
-		if (textView.getVisibility() != View.VISIBLE) {
-			textView.setVisibility(View.VISIBLE);
-			textView.setAlpha(0.0f);
-		}
-		textView.setText(value);
-	}
-
 	protected abstract void onCardScanned(String numberResult, String month, String year);
-
-	protected void setNumberAndExpiryAnimated(long duration) {
-		String numberResult = getNumberResult();
-		Expiry expiryResult = getExpiryResult();
-		TextView textView = findViewById(mCardNumberId);
-		setValueAnimated(textView, DebitCardUtils.format(numberResult));
-
-		if (expiryResult != null && duration >= (errorCorrectionDurationMs / 2)) {
-			textView = findViewById(mExpiryId);
-			setValueAnimated(textView, expiryResult.format());
-		}
-	}
 
 	@Override
 	public void onFatalError() {
@@ -465,9 +415,6 @@ public abstract class ScanBaseActivity extends Activity implements Camera.Previe
 			}
 
 			long duration = SystemClock.uptimeMillis() - firstResultMs;
-			if (firstResultMs != 0 && mShowNumberAndExpiryAsScanning) {
-				setNumberAndExpiryAnimated(duration);
-			}
 
 			if (firstResultMs != 0 && duration >= errorCorrectionDurationMs) {
 				mSentResponse = true;
