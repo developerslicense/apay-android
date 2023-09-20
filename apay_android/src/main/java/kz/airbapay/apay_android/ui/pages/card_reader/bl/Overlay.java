@@ -3,6 +3,7 @@ package kz.airbapay.apay_android.ui.pages.card_reader.bl;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
@@ -23,21 +24,10 @@ public class Overlay extends View {
 
 	boolean drawCorners = true;
 
-	//private Paint paintAntiAlias = new Paint(Paint.ANTI_ALIAS_FLAG);
-	//private Paint paint = new Paint();
-
 	public Overlay(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		setLayerType(View.LAYER_TYPE_SOFTWARE, null);
 	}
-
-//	protected int getBackgroundColorId() {
-//		return R.color.irdcs_camera_background;
-//	}
-//
-//	protected int getCornerColorId() {
-//		return R.color.irdcs_corner_color;
-//	}
 
 	public void setCircle(RectF rect, int radius) {
 		this.rect = rect;
@@ -54,6 +44,7 @@ public class Overlay extends View {
 		super.onDraw(canvas);
 		if (rect != null) {
 			Paint paintAntiAlias = new Paint(Paint.ANTI_ALIAS_FLAG);
+			paintAntiAlias.setColor(Color.GRAY);
 			paintAntiAlias.setStyle(Paint.Style.FILL);
 			canvas.drawPaint(paintAntiAlias);
 
@@ -65,6 +56,7 @@ public class Overlay extends View {
 			}
 
 			Paint paint = new Paint();
+			paint.setColor(Color.BLUE);
 			paint.setStyle(Paint.Style.STROKE);
 			paint.setStrokeWidth(dpToPx(cornerDp));
 

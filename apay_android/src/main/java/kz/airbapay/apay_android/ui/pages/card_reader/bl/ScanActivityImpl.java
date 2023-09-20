@@ -6,43 +6,20 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.SystemClock;
-import android.text.TextUtils;
-import android.util.Log;
-import android.view.View;
-import android.widget.ImageView;
-import android.widget.TextView;
-import kz.airbapay.apay_android.R;
+
 import java.util.List;
 
+import kz.airbapay.apay_android.R;
+
 public class ScanActivityImpl extends ScanBaseActivity {
-
-	private static final String TAG = "ScanActivityImpl";
-
-	public static final String SCAN_CARD_TEXT = "scanCardText";
-	public static final String POSITION_CARD_TEXT = "positionCardText";
 
 	public static final String RESULT_CARD_NUMBER = "cardNumber";
 	public static final String RESULT_EXPIRY_MONTH = "expiryMonth";
 	public static final String RESULT_EXPIRY_YEAR = "expiryYear";
 
-	private ImageView mDebugImageView;
-	private boolean mInDebugMode = false;
-	private static long startTimeMs = 0;
-
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.irdcs_activity_scan_card);
-
-		String scanCardText = getIntent().getStringExtra(SCAN_CARD_TEXT);
-		if (!TextUtils.isEmpty(scanCardText)) {
-			((TextView) findViewById(R.id.scanCard)).setText(scanCardText);
-		}
-
-		String positionCardText = getIntent().getStringExtra(POSITION_CARD_TEXT);
-		if (!TextUtils.isEmpty(positionCardText)) {
-			((TextView) findViewById(R.id.positionCard)).setText(positionCardText);
-		}
 
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
 			if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
@@ -55,11 +32,6 @@ public class ScanActivityImpl extends ScanBaseActivity {
 			mIsPermissionCheckDone = true;
 		}
 
-		mDebugImageView = findViewById(R.id.debugImageView);
-		mInDebugMode = getIntent().getBooleanExtra("debug", false);
-		if (!mInDebugMode) {
-			mDebugImageView.setVisibility(View.INVISIBLE);
-		}
 		setViewIds(R.id.cardRectangle, R.id.shadedBackground, R.id.texture,
 				R.id.cardNumber, R.id.expiry);
 	}
@@ -77,14 +49,6 @@ public class ScanActivityImpl extends ScanBaseActivity {
 	@Override
 	public void onPrediction(final String number, final Expiry expiry, final Bitmap bitmap,
 							 final List<DetectedBox> digitBoxes, final DetectedBox expiryBox) {
-		if (mInDebugMode) {
-			mDebugImageView.setImageBitmap(ImageUtils.drawBoxesOnImage(bitmap, digitBoxes, expiryBox));
-			Log.d(TAG, "Prediction (ms): " + (SystemClock.uptimeMillis() - mPredictionStartMs));
-			if (startTimeMs != 0) {
-				Log.d(TAG, "time to first prediction: " + (SystemClock.uptimeMillis() - startTimeMs));
-				startTimeMs = 0;
-			}
-		}
 
 		super.onPrediction(number, expiry, bitmap, digitBoxes, expiryBox);
 	}
