@@ -39,9 +39,8 @@ import java.util.concurrent.Semaphore;
  * (2) Call setViewIds to set these resource IDs and initalize appropriate handlers
  */
 public abstract class ScanBaseActivity extends Activity implements Camera.PreviewCallback,
-		OnScanListener, OnObjectListener, OnCameraOpenListener {
+		OnScanListener, OnCameraOpenListener {
 
-	public static final String IS_OCR = "is_ocr";
 	public static final String RESULT_FATAL_ERROR = "result_fatal_error";
 	public static final String RESULT_CAMERA_OPEN_ERROR = "result_camera_open_error";
 
@@ -58,7 +57,6 @@ public abstract class ScanBaseActivity extends Activity implements Camera.Previe
 	private int mTextureId;
 	private float mRoiCenterYRatio;
 	private CameraThread mCameraThread = null;
-	private boolean mIsOcr = true;
 
 	public boolean wasPermissionDenied = false;
 	public String denyPermissionTitle;
@@ -70,8 +68,6 @@ public abstract class ScanBaseActivity extends Activity implements Camera.Previe
 	// Child classes must set to ensure proper flaslight handling
 	public boolean mIsPermissionCheckDone = false;
 
-	protected File objectDetectFile;
-
 	public long errorCorrectionDurationMs = 0;
 
 	@Override
@@ -81,8 +77,6 @@ public abstract class ScanBaseActivity extends Activity implements Camera.Previe
 		denyPermissionTitle = "deny_permission_title";
 		denyPermissionMessage = "deny_permission_messag";
 		denyPermissionButton = "eny_permission_button";
-
-		mIsOcr = getIntent().getBooleanExtra(IS_OCR, true);
 
 		mOrientationEventListener = new OrientationEventListener(this) {
 			@Override
@@ -212,12 +206,6 @@ public abstract class ScanBaseActivity extends Activity implements Camera.Previe
 		startCamera();
 	}
 
-
-	@Override
-	protected void onDestroy() {
-		super.onDestroy();
-	}
-
 	public void setViewIds( int cardRectangleId, int overlayId, int textureId) {
 		mTextureId = textureId;
 
@@ -302,19 +290,13 @@ public abstract class ScanBaseActivity extends Activity implements Camera.Previe
 			Camera.Parameters parameters = camera.getParameters();
 			int width = parameters.getPreviewSize().width;
 			int height = parameters.getPreviewSize().height;
-			int format = parameters.getPreviewFormat();
 
 			mPredictionStartMs = SystemClock.uptimeMillis();
 
 			// Use the application context here because the machine learning thread's lifecycle
 			// is connected to the application and not this activity
-			if (mIsOcr) {
-				mlThread.post(bytes, width, height, format, mRotation, this,
-						this.getApplicationContext(), mRoiCenterYRatio);
-			} else {
-				mlThread.post(bytes, width, height, format, mRotation, this,
-						this.getApplicationContext(), mRoiCenterYRatio, objectDetectFile);
-			}
+			mlThread.post(bytes, width, height, mRotation, this,
+					this.getApplicationContext(), mRoiCenterYRatio);
 		}
 	}
 
@@ -431,19 +413,6 @@ public abstract class ScanBaseActivity extends Activity implements Camera.Previe
 			}
 		}
 
-		mMachineLearningSemaphore.release();
-	}
-
-	@Override
-	public void onObjectFatalError() {
-		Log.d("ScanBaseActivity", "onObjectFatalError for object detection");
-	}
-
-	@Override
-	public void onPrediction(Bitmap bm, int imageWidth, int imageHeight) {
-		if (!mSentResponse && mIsActivityActive) {
-			// do something with the prediction
-		}
 		mMachineLearningSemaphore.release();
 	}
 
