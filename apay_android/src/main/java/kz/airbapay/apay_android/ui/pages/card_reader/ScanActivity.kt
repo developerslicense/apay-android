@@ -3,72 +3,30 @@ package kz.airbapay.apay_android.ui.pages.card_reader
 import android.Manifest
 import android.app.Activity
 import android.app.AlertDialog
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.Resources
 import android.graphics.RectF
-import android.hardware.Camera
-import android.hardware.Camera.AutoFocusCallback
-import android.hardware.Camera.PreviewCallback
 import android.os.Build
 import android.os.Bundle
-import android.os.SystemClock
-import android.util.Log
-import android.view.Surface
-import android.view.SurfaceHolder
-import android.view.SurfaceView
 import android.view.View
 import android.view.ViewTreeObserver
-import android.widget.FrameLayout
 import kz.airbapay.apay_android.R
-import kz.airbapay.apay_android.ui.pages.card_reader.bl.CameraThread
+import kz.airbapay.apay_android.ui.pages.card_reader.bl.ExecutorCamera
 import kz.airbapay.apay_android.ui.pages.card_reader.bl.ExecutorML
 import kz.airbapay.apay_android.ui.pages.card_reader.bl.MachineLearningThread
-import kz.airbapay.apay_android.ui.pages.card_reader.bl.OnCameraOpenListener
 import kz.airbapay.apay_android.ui.pages.card_reader.bl.Overlay
-import java.io.IOException
 import java.util.concurrent.Semaphore
 
-/**
- * Any classes that subclass this must:
- *
- *
- * (1) set mIsPermissionCheckDone after the permission check is done, which should be sometime
- * before "onResume" is called
- *
- *
- * (2) Call setViewIds to set these resource IDs and initalize appropriate handlers
- */
-internal class ScanActivity : Activity(), PreviewCallback,
-    OnCameraOpenListener {
+internal class ScanActivity : Activity() {
 
-    private var executorML: ExecutorML? = null
-
-    private var mCamera: Camera? = null
+    var executorML: ExecutorML? = null
+    private var executorCamera: ExecutorCamera? = null
     private val mMachineLearningSemaphore = Semaphore(1)
-    private var mRotation = 0
-    private var mRoiCenterYRatio = 0f
-    private var mCameraThread: CameraThread? = null
-
-    // set when this activity posts to the machineLearningThread
-    private var mPredictionStartMs: Long = 0
-    private var mIsPermissionCheckDone = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.irdcs_activity_scan_card)
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-                requestPermissions(arrayOf(Manifest.permission.CAMERA), 110)
-            } else {
-                mIsPermissionCheckDone = true
-            }
-        } else {
-            // no permission checks
-            mIsPermissionCheckDone = true
-        }
 
         findViewById<View>(R.id.cardRectangle).viewTreeObserver
             .addOnGlobalLayoutListener(MyGlobalListenerClass(R.id.cardRectangle, R.id.shadedBackground))
@@ -77,6 +35,21 @@ internal class ScanActivity : Activity(), PreviewCallback,
             activity = this,
             releaseSemaphore = { mMachineLearningSemaphore.release() }
         )
+
+        executorCamera = ExecutorCamera(
+            activity = this,
+            tryAcquire = { mMachineLearningSemaphore.tryAcquire() }
+        )
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(arrayOf(Manifest.permission.CAMERA), 110)
+            } else {
+                executorCamera?.mIsPermissionCheckDone = true
+            }
+        } else {
+            executorCamera?.mIsPermissionCheckDone = true
+        }
     }
 
     internal inner class MyGlobalListenerClass(
@@ -99,7 +72,7 @@ internal class ScanActivity : Activity(), PreviewCallback,
 
             val overlay = findViewById<Overlay>(overlayId)
             overlay.setCircle(rect, radius)
-            mRoiCenterYRatio = (xy[1] + view.height * 0.5f) / overlay.height
+            executorCamera?.mRoiCenterYRatio = (xy[1] + view.height * 0.5f) / overlay.height
         }
     }
 
@@ -109,7 +82,8 @@ internal class ScanActivity : Activity(), PreviewCallback,
         grantResults: IntArray
     ) {
         if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            mIsPermissionCheckDone = true
+            executorCamera?.mIsPermissionCheckDone = true
+
         } else {
             val builder = AlertDialog.Builder(this)
             builder.setMessage("Доступ к камере запрещен")
@@ -118,107 +92,16 @@ internal class ScanActivity : Activity(), PreviewCallback,
         }
     }
 
-    override fun onCameraOpen(camera: Camera?) {
-        if (camera == null) {
-            val intent = Intent()
-            intent.putExtra(RESULT_CAMERA_OPEN_ERROR, true)
-            setResult(RESULT_CANCELED, intent)
-            finish()
-        } else if (!executorML!!.mIsActivityActive) {
-            camera.release()
-        } else {
-            mCamera = camera
-            setCameraDisplayOrientation(
-                this, Camera.CameraInfo.CAMERA_FACING_BACK,
-                mCamera!!
-            )
-            // Create our Preview view and set it as the content of our activity.
-            val cameraPreview = CameraPreview(this, this)
-            val preview = findViewById<FrameLayout>(R.id.texture)
-            preview.addView(cameraPreview)
-            mCamera!!.setPreviewCallback(this)
-        }
-    }
-
-    private fun startCamera() {
-        executorML?.onStartCamera()
-
-        try {
-            if (mIsPermissionCheckDone) {
-                if (mCameraThread == null) {
-                    mCameraThread = CameraThread()
-                    mCameraThread!!.start()
-                }
-                mCameraThread!!.startCamera(this)
-            }
-        } catch (e: Exception) {
-            val builder = AlertDialog.Builder(this)
-            val dialog = builder.create()
-            dialog.show()
-        }
-    }
-
     override fun onPause() {
         super.onPause()
-        if (mCamera != null) {
-            mCamera!!.stopPreview()
-            mCamera!!.setPreviewCallback(null)
-            mCamera!!.release()
-            mCamera = null
-        }
+        executorCamera?.onPause()
         executorML?.mIsActivityActive = false
     }
 
     override fun onResume() {
         super.onResume()
         executorML?.onResume()
-        startCamera()
-    }
-
-    private fun setCameraDisplayOrientation(
-        activity: Activity,
-        cameraId: Int, camera: Camera
-    ) {
-        val info = Camera.CameraInfo()
-        Camera.getCameraInfo(cameraId, info)
-
-        val rotation = activity.windowManager.defaultDisplay.rotation
-        var degrees = 0
-
-        when (rotation) {
-            Surface.ROTATION_0 -> degrees = 0
-            Surface.ROTATION_90 -> degrees = 90
-            Surface.ROTATION_180 -> degrees = 180
-            Surface.ROTATION_270 -> degrees = 270
-        }
-
-        var result: Int
-        if (info.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
-            result = (info.orientation + degrees) % 360
-            result = (360 - result) % 360 // compensate the mirror
-        } else {  // back-facing
-            result = (info.orientation - degrees + 360) % 360
-        }
-
-        camera.setDisplayOrientation(result)
-        mRotation = result
-    }
-
-    override fun onPreviewFrame(bytes: ByteArray, camera: Camera) {
-        if (mMachineLearningSemaphore.tryAcquire()) {
-            val mlThread = machineLearningThread
-            val parameters = camera.parameters
-            val width = parameters.previewSize.width
-            val height = parameters.previewSize.height
-            mPredictionStartMs = SystemClock.uptimeMillis()
-
-            // Use the application context here because the machine learning thread's lifecycle
-            // is connected to the application and not this activity
-            mlThread!!.post(
-                bytes, width, height, mRotation, executorML,
-                this.applicationContext, mRoiCenterYRatio
-            )
-        }
+        executorCamera?.startCamera()
     }
 
     override fun onBackPressed() {
@@ -227,79 +110,6 @@ internal class ScanActivity : Activity(), PreviewCallback,
             val intent = Intent()
             setResult(RESULT_CANCELED, intent)
             finish()
-        }
-    }
-
-    /**
-     * A basic Camera preview class
-     */
-    inner class CameraPreview(context: Context?, private val mPreviewCallback: PreviewCallback) :
-        SurfaceView(context), AutoFocusCallback, SurfaceHolder.Callback {
-        private val mHolder: SurfaceHolder = holder
-
-        init {
-
-            // Install a SurfaceHolder.Callback so we get notified when the
-            // underlying surface is created and destroyed.
-            mHolder.addCallback(this)
-            // deprecated setting, but required on Android versions prior to 3.0
-            mHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS)
-
-            val params = mCamera!!.parameters
-            val focusModes = params.supportedFocusModes
-
-            if (focusModes.contains(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE)) {
-                params.focusMode = Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE
-            } else if (focusModes.contains(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO)) {
-                params.focusMode = Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO
-            }
-
-            params.setRecordingHint(true)
-            mCamera!!.parameters = params
-        }
-
-        override fun onAutoFocus(success: Boolean, camera: Camera) {}
-        override fun surfaceCreated(holder: SurfaceHolder) {
-            // The Surface has been created, now tell the camera where to draw the preview.
-            try {
-                if (mCamera == null) return
-                mCamera!!.setPreviewDisplay(holder)
-                mCamera!!.startPreview()
-            } catch (e: IOException) {
-                Log.d("CameraCaptureActivity", "Error setting camera preview: " + e.message)
-            }
-        }
-
-        override fun surfaceDestroyed(holder: SurfaceHolder) {
-            // empty. Take care of releasing the Camera preview in your activity.
-        }
-
-        override fun surfaceChanged(holder: SurfaceHolder, format: Int, w: Int, h: Int) {
-            // If your preview can change or rotate, take care of those events here.
-            // Make sure to stop the preview before resizing or reformatting it.
-            if (mHolder.surface == null) {
-                // preview surface does not exist
-                return
-            }
-
-            // stop preview before making changes
-            try {
-                mCamera!!.stopPreview()
-            } catch (e: Exception) {
-                // ignore: tried to stop a non-existent preview
-            }
-
-            // set preview size and make any resize, rotate or
-            // reformatting changes here
-
-            // start preview with new settings
-            try {
-                mCamera!!.setPreviewDisplay(mHolder)
-                mCamera!!.setPreviewCallback(mPreviewCallback)
-                mCamera!!.startPreview()
-            } catch (e: Exception) {
-                Log.d("CameraCaptureActivity", "Error starting camera preview: " + e.message)
-            }
         }
     }
 

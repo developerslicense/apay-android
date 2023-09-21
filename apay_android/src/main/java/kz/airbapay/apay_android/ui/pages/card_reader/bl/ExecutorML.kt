@@ -52,11 +52,6 @@ internal class ExecutorML(
         mSentResponse = false
     }
 
-    fun onStartCamera() {
-        numberResults = HashMap()
-        firstResultMs = 0
-    }
-
     private fun onCardScanned(numberResult: String?) {
         println("aaaaa $numberResult")
         val intent = Intent()
@@ -64,7 +59,6 @@ internal class ExecutorML(
         activity.setResult(Activity.RESULT_OK, intent)
         activity.finish()
     }
-
 
     private fun incrementNumber(number: String) {
         var currentValue = numberResults[number]
@@ -79,12 +73,15 @@ internal class ExecutorML(
             // Ugg there has to be a better way
             var result: String? = null
             var maxValue = 0
+
             for (number in numberResults.keys) {
                 var value = 0
                 val count = numberResults[number]
+
                 if (count != null) {
                     value = count
                 }
+
                 if (value > maxValue) {
                     result = number
                     maxValue = value
