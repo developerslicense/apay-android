@@ -11,10 +11,8 @@ import android.graphics.RectF
 import android.hardware.Camera
 import android.hardware.Camera.AutoFocusCallback
 import android.hardware.Camera.PreviewCallback
-import android.os.Bundle
 import android.os.SystemClock
 import android.util.Log
-import android.view.OrientationEventListener
 import android.view.Surface
 import android.view.SurfaceHolder
 import android.view.SurfaceView
@@ -38,7 +36,6 @@ internal abstract class ScanBaseActivity : Activity(), PreviewCallback, OnScanLi
     OnCameraOpenListener {
 
     private var mCamera: Camera? = null
-    private var mOrientationEventListener: OrientationEventListener? = null
     private val mMachineLearningSemaphore = Semaphore(1)
     private var mRotation = 0
     private var mSentResponse = false
@@ -54,15 +51,6 @@ internal abstract class ScanBaseActivity : Activity(), PreviewCallback, OnScanLi
 
     var mIsPermissionCheckDone = false
     private var errorCorrectionDurationMs: Long = 0
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        mOrientationEventListener = object : OrientationEventListener(this) {
-            override fun onOrientationChanged(orientation: Int) {
-                orientationChanged(orientation)
-            }
-        }
-    }
 
     internal inner class MyGlobalListenerClass(
         private val cardRectangleId: Int,
@@ -129,10 +117,6 @@ internal abstract class ScanBaseActivity : Activity(), PreviewCallback, OnScanLi
         numberResults = HashMap()
         firstResultMs = 0
 
-        if (mOrientationEventListener!!.canDetectOrientation()) {
-            mOrientationEventListener!!.enable()
-        }
-
         try {
             if (mIsPermissionCheckDone) {
                 if (mCameraThread == null) {
@@ -156,7 +140,6 @@ internal abstract class ScanBaseActivity : Activity(), PreviewCallback, OnScanLi
             mCamera!!.release()
             mCamera = null
         }
-        mOrientationEventListener!!.disable()
         mIsActivityActive = false
     }
 
@@ -173,34 +156,6 @@ internal abstract class ScanBaseActivity : Activity(), PreviewCallback, OnScanLi
         mTextureId = textureId
         findViewById<View>(cardRectangleId).viewTreeObserver
             .addOnGlobalLayoutListener(MyGlobalListenerClass(cardRectangleId, overlayId))
-    }
-
-    fun orientationChanged(orientation: Int) {
-        var orientation = orientation
-        if (orientation == OrientationEventListener.ORIENTATION_UNKNOWN) return
-
-        val info = Camera.CameraInfo()
-        Camera.getCameraInfo(Camera.CameraInfo.CAMERA_FACING_BACK, info)
-        orientation = (orientation + 45) / 90 * 90
-
-        val rotation: Int = if (info.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
-            (info.orientation - orientation + 360) % 360
-        } else {  // back-facing camera
-            (info.orientation + orientation) % 360
-        }
-
-        if (mCamera != null) {
-            try {
-                val params = mCamera!!.parameters
-                params.setRotation(rotation)
-                mCamera!!.parameters = params
-            } catch (e: Exception) {
-                // This gets called often so we can just swallow it and wait for the next one
-                e.printStackTrace()
-            } catch (e: Error) {
-                e.printStackTrace()
-            }
-        }
     }
 
     private fun setCameraDisplayOrientation(
@@ -258,7 +213,7 @@ internal abstract class ScanBaseActivity : Activity(), PreviewCallback, OnScanLi
         }
     }
 
-    fun incrementNumber(number: String) {
+    private fun incrementNumber(number: String) {
         var currentValue = numberResults[number]
         if (currentValue == null) {
             currentValue = 0
