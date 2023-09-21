@@ -4,7 +4,9 @@ import android.content.Context
 import java.io.IOException
 import java.nio.MappedByteBuffer
 
-internal class RecognizedDigitsModel(context: Context?) : ImageClassifier(
+internal class RecognizedDigitsModel(
+    context: Context?
+) : ImageClassifier(
     context!!
 ) {
     private val classes = 11
