@@ -1,44 +1,44 @@
-package kz.airbapay.apay_android.ui.pages.card_reader.bl;
+package kz.airbapay.apay_android.ui.pages.card_reader.bl
 
-import android.content.Context;
-import android.content.res.AssetFileDescriptor;
+import android.content.Context
+import kz.airbapay.apay_android.R
+import java.io.FileInputStream
+import java.io.IOException
+import java.nio.MappedByteBuffer
+import java.nio.channels.FileChannel
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.nio.MappedByteBuffer;
-import java.nio.channels.FileChannel;
+internal class ResourceModelFactory {
+    @Throws(IOException::class)
+    fun loadFindFourFile(context: Context): MappedByteBuffer {
+        return loadModelFromResource(context, R.raw.findfour)
+    }
 
-import kz.airbapay.apay_android.R;
+    @Throws(IOException::class)
+    fun loadRecognizeDigitsFile(context: Context): MappedByteBuffer {
+        return loadModelFromResource(context, R.raw.fourrecognize)
+    }
 
-class ResourceModelFactory {
+    @Throws(IOException::class)
+    private fun loadModelFromResource(context: Context, resource: Int): MappedByteBuffer {
+        val fileDescriptor = context.resources.openRawResourceFd(resource)
+        val inputStream = FileInputStream(fileDescriptor.fileDescriptor)
+        val fileChannel = inputStream.channel
+        val startOffset = fileDescriptor.startOffset
+        val declaredLength = fileDescriptor.declaredLength
+        val result = fileChannel.map(FileChannel.MapMode.READ_ONLY, startOffset, declaredLength)
+        inputStream.close()
+        fileDescriptor.close()
+        return result
+    }
 
-	private static ResourceModelFactory instance;
-
-	static ResourceModelFactory getInstance() {
-		if (instance == null) {
-			instance = new ResourceModelFactory();
-		}
-
-		return instance;
-	}
-
-	MappedByteBuffer loadFindFourFile(Context context) throws IOException {
-		return loadModelFromResource(context, R.raw.findfour);
-	}
-
-	MappedByteBuffer loadRecognizeDigitsFile(Context context) throws IOException {
-		return loadModelFromResource(context, R.raw.fourrecognize);
-	}
-
-	private MappedByteBuffer loadModelFromResource(Context context, int resource) throws IOException {
-		AssetFileDescriptor fileDescriptor = context.getResources().openRawResourceFd(resource);
-		FileInputStream inputStream = new FileInputStream(fileDescriptor.getFileDescriptor());
-		FileChannel fileChannel = inputStream.getChannel();
-		long startOffset = fileDescriptor.getStartOffset();
-		long declaredLength = fileDescriptor.getDeclaredLength();
-		MappedByteBuffer result = fileChannel.map(FileChannel.MapMode.READ_ONLY, startOffset, declaredLength);
-		inputStream.close();
-		fileDescriptor.close();
-		return result;
-	}
+    companion object {
+        var instance: ResourceModelFactory? = null
+            get() {
+                if (field == null) {
+                    field = ResourceModelFactory()
+                }
+                return field
+            }
+            private set
+    }
 }

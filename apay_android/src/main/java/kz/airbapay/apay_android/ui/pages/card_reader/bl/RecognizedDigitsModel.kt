@@ -33,8 +33,8 @@ internal class RecognizedDigitsModel(context: Context?) : ImageClassifier(
     }
 
     @Throws(IOException::class)
-    override fun loadModelFile(context: Context?): MappedByteBuffer? {
-        return ResourceModelFactory.getInstance().loadRecognizeDigitsFile(context)
+    override fun loadModelFile(context: Context): MappedByteBuffer? {
+        return ResourceModelFactory.instance?.loadRecognizeDigitsFile(context)
     }
 
     override fun getImageSizeX() = 80

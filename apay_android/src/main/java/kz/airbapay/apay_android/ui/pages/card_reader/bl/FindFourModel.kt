@@ -66,8 +66,8 @@ internal class FindFourModel(context: Context?) : ImageClassifier(
     }
 
     @Throws(IOException::class)
-    override fun loadModelFile(context: Context?): MappedByteBuffer? {
-        return ResourceModelFactory.getInstance().loadFindFourFile(context)
+    override fun loadModelFile(context: Context): MappedByteBuffer? {
+        return ResourceModelFactory.instance?.loadFindFourFile(context)
     }
 
     override fun getImageSizeX() = 480

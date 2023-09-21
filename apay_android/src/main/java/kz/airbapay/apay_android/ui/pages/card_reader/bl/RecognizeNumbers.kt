@@ -1,46 +1,36 @@
-package kz.airbapay.apay_android.ui.pages.card_reader.bl;
+package kz.airbapay.apay_android.ui.pages.card_reader.bl
 
-import android.graphics.Bitmap;
+import android.graphics.Bitmap
 
-import java.util.ArrayList;
+internal class RecognizeNumbers(
+    private val image: Bitmap,
+    numRows: Int,
+    numCols: Int
+) {
+    private val recognizedDigits: Array<Array<RecognizedDigits?>>
 
-class RecognizeNumbers {
+    init {
+        recognizedDigits = Array(numRows) { arrayOfNulls(numCols) }
+    }
 
-	private RecognizedDigits[][] recognizedDigits;
-	private final Bitmap image;
+    fun number(model: RecognizedDigitsModel, lines: ArrayList<ArrayList<DetectedBox>>): String? {
+        for (line in lines) {
+            val candidateNumber = StringBuilder()
+            for (word in line) {
+                val recognized = cachedDigits(model, word) ?: return null
+                candidateNumber.append(recognized.stringResult())
+            }
+            if (candidateNumber.length == 16) {
+                return candidateNumber.toString()
+            }
+        }
+        return null
+    }
 
-	RecognizeNumbers(Bitmap image, int numRows, int numCols) {
-		this.image = image;
-		this.recognizedDigits = new RecognizedDigits[numRows][numCols];
-	}
-
-	String number(RecognizedDigitsModel model, ArrayList<ArrayList<DetectedBox>> lines) {
-		for (ArrayList<DetectedBox> line : lines) {
-			StringBuilder candidateNumber = new StringBuilder();
-
-			for (DetectedBox word : line) {
-				RecognizedDigits recognized = this.cachedDigits(model, word);
-				if (recognized == null) {
-					return null;
-				}
-
-				candidateNumber.append(recognized.stringResult());
-			}
-
-			if (candidateNumber.length() == 16) {
-				return candidateNumber.toString();
-			}
-		}
-
-		return null;
-	}
-
-	private RecognizedDigits cachedDigits(RecognizedDigitsModel model, DetectedBox box) {
-		if (this.recognizedDigits[box.row][box.col] == null) {
-			this.recognizedDigits[box.row][box.col] = RecognizedDigits.from(model, image, box.rect);
-		}
-
-		return this.recognizedDigits[box.row][box.col];
-	}
-
+    private fun cachedDigits(model: RecognizedDigitsModel, box: DetectedBox): RecognizedDigits? {
+        if (recognizedDigits[box.row][box.col] == null) {
+            recognizedDigits[box.row][box.col] = RecognizedDigits.from(model, image, box.rect)
+        }
+        return recognizedDigits[box.row][box.col]
+    }
 }
