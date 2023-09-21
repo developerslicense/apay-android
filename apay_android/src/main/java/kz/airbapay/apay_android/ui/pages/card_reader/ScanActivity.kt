@@ -81,6 +81,8 @@ internal class ScanActivity : Activity() {
         permissions: Array<String>,
         grantResults: IntArray
     ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+
         if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             executorCamera?.mIsPermissionCheckDone = true
 

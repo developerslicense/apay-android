@@ -1,9 +1,9 @@
 package kz.airbapay.apay_android.data.utils
 
-import android.content.Context
 import android.content.Intent
 import androidx.core.net.toUri
 import androidx.navigation.NavController
+import kz.airbapay.apay_android.AirbaPayActivity
 import kz.airbapay.apay_android.data.constant.ARG_ACTION
 import kz.airbapay.apay_android.data.constant.ARG_ERROR_CODE
 import kz.airbapay.apay_android.data.constant.ErrorsCode
@@ -68,6 +68,6 @@ internal fun openSuccess(navController: NavController?) {
     navController?.navigate(ROUTES_SUCCESS)
 }
 
-internal fun openCardScanner(context: Context) {
-    context.startActivity(Intent(context, ScanActivity::class.java))
+internal fun openCardScanner(activity: AirbaPayActivity) {
+    activity.scanResultLauncher?.launch(Intent(activity, ScanActivity::class.java))
 }

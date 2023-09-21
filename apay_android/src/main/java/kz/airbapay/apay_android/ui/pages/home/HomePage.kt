@@ -1,5 +1,6 @@
 package kz.airbapay.apay_android.ui.pages.home
 
+import android.app.Activity
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -19,6 +20,7 @@ import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -33,6 +35,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import kz.airbapay.apay_android.AirbaPayActivity
 import kz.airbapay.apay_android.R
 import kz.airbapay.apay_android.data.constant.cardDataSaved
 import kz.airbapay.apay_android.data.constant.payAmount
@@ -61,6 +64,7 @@ import kz.airbapay.apay_android.ui.ui_components.ViewToolbar
 
 @Composable
 internal fun HomePage(
+    cardNumberText: MutableState<TextFieldValue>,
     navController: NavController,
     authRepository: AuthRepository,
     cardRepository: CardRepository,
@@ -70,7 +74,7 @@ internal fun HomePage(
     scrollState: ScrollState = rememberScrollState()
 
 ) {
-    val context = LocalContext.current
+    val activity = LocalContext.current as Activity
     val scaffoldState: ScaffoldState = rememberScaffoldState()
 
     val isLoading = remember { mutableStateOf(true) }
@@ -81,7 +85,6 @@ internal fun HomePage(
     val dateExpiredFocusRequester = FocusRequester()
     val cvvFocusRequester = FocusRequester()
 
-    val cardNumberText = remember { mutableStateOf(TextFieldValue("")) }
     val dateExpiredText = remember { mutableStateOf(TextFieldValue("")) }
     val cvvText = remember { mutableStateOf(TextFieldValue("")) }
 
@@ -148,7 +151,7 @@ internal fun HomePage(
                         cardNumberFocusRequester = cardNumberFocusRequester,
                         dateExpiredFocusRequester = dateExpiredFocusRequester,
                         actionClickScanCard = {
-                            openCardScanner(context)
+                            openCardScanner(activity as AirbaPayActivity)
                         }
                     )
 

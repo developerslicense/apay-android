@@ -1,11 +1,17 @@
 package kz.airbapay.apay_android
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -24,11 +30,13 @@ import kz.airbapay.apay_android.data.constant.ROUTES_REPEAT
 import kz.airbapay.apay_android.data.constant.ROUTES_SUCCESS
 import kz.airbapay.apay_android.data.constant.ROUTES_WEB_VIEW
 import kz.airbapay.apay_android.data.constant.initErrorsCodeByCode
+import kz.airbapay.apay_android.data.utils.MaskUtils
 import kz.airbapay.apay_android.network.api.Api
 import kz.airbapay.apay_android.network.base.ClientConnector
 import kz.airbapay.apay_android.network.repository.AuthRepository
 import kz.airbapay.apay_android.network.repository.CardRepository
 import kz.airbapay.apay_android.network.repository.PaymentsRepository
+import kz.airbapay.apay_android.ui.pages.card_reader.ScanActivity
 import kz.airbapay.apay_android.ui.pages.error.ErrorFinalPage
 import kz.airbapay.apay_android.ui.pages.error.ErrorPage
 import kz.airbapay.apay_android.ui.pages.error.ErrorSomethingWrongPage
@@ -40,6 +48,9 @@ import kz.airbapay.apay_android.ui.pages.webview.WebViewPage
 import java.lang.ref.WeakReference
 
 class AirbaPayActivity : ComponentActivity() {
+
+    var scanResultLauncher: ActivityResultLauncher<Intent>? = null
+    private val cardNumberText = mutableStateOf(TextFieldValue())
 
     companion object {
         private var customSuccessPage: WeakReference<@Composable () -> Unit>? = null
@@ -73,6 +84,20 @@ class AirbaPayActivity : ComponentActivity() {
         val localSuccessCustomPage: @Composable (() -> Unit)? = customSuccessPage?.get()
         customSuccessPage = null
 
+        scanResultLauncher = registerForActivityResult(
+            ActivityResultContracts.StartActivityForResult()
+        ) { result ->
+                if (result.resultCode == Activity.RESULT_OK) {
+                    val data = result.data
+                    val cardNumber = data?.extras?.getString(ScanActivity.RESULT_CARD_NUMBER)
+                    val maskUtils = MaskUtils("AAAA AAAA AAAA AAAA")
+
+                    cardNumberText.value = TextFieldValue(
+                        text = maskUtils.format(cardNumber ?: ""),
+                        selection = TextRange(cardNumber?.length ?: 0)
+                    )
+                }
+            }
 
         setContent {
             val navController = rememberNavController()
@@ -83,6 +108,7 @@ class AirbaPayActivity : ComponentActivity() {
             ) {
                 composable(ROUTES_HOME) {
                     HomePage(
+                        cardNumberText = cardNumberText,
                         navController = navController,
                         authRepository = authRepository,
                         paymentsRepository = paymentsRepository,
