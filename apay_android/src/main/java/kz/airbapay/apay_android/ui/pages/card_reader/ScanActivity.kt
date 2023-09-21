@@ -52,7 +52,6 @@ internal class ScanActivity : Activity(), PreviewCallback, OnScanListener,
     private var mIsActivityActive = false
     private var numberResults = HashMap<String, Int>()
     private var firstResultMs: Long = 0
-    private var mTextureId = 0
     private var mRoiCenterYRatio = 0f
     private var mCameraThread: CameraThread? = null
 
@@ -76,7 +75,9 @@ internal class ScanActivity : Activity(), PreviewCallback, OnScanListener,
             // no permission checks
             mIsPermissionCheckDone = true
         }
-        setViewIds(R.id.cardRectangle, R.id.shadedBackground, R.id.texture)
+
+        findViewById<View>(R.id.cardRectangle).viewTreeObserver
+            .addOnGlobalLayoutListener(MyGlobalListenerClass(R.id.cardRectangle, R.id.shadedBackground))
     }
 
     private fun onCardScanned(numberResult: String?) {
@@ -142,7 +143,7 @@ internal class ScanActivity : Activity(), PreviewCallback, OnScanListener,
             )
             // Create our Preview view and set it as the content of our activity.
             val cameraPreview = CameraPreview(this, this)
-            val preview = findViewById<FrameLayout>(mTextureId)
+            val preview = findViewById<FrameLayout>(R.id.texture)
             preview.addView(cameraPreview)
             mCamera!!.setPreviewCallback(this)
         }
@@ -185,12 +186,6 @@ internal class ScanActivity : Activity(), PreviewCallback, OnScanListener,
         numberResults = HashMap()
         mSentResponse = false
         startCamera()
-    }
-
-    fun setViewIds(cardRectangleId: Int, overlayId: Int, textureId: Int) {
-        mTextureId = textureId
-        findViewById<View>(cardRectangleId).viewTreeObserver
-            .addOnGlobalLayoutListener(MyGlobalListenerClass(cardRectangleId, overlayId))
     }
 
     private fun setCameraDisplayOrientation(
@@ -378,6 +373,7 @@ internal class ScanActivity : Activity(), PreviewCallback, OnScanListener,
         const val RESULT_CARD_NUMBER = "cardNumber"
         const val RESULT_FATAL_ERROR = "result_fatal_error"
         const val RESULT_CAMERA_OPEN_ERROR = "result_camera_open_error"
+
         var machineLearningThread: MachineLearningThread? = null
             get() {
                 if (field == null) {
