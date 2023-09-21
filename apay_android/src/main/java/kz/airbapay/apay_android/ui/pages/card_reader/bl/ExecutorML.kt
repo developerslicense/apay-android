@@ -18,6 +18,28 @@ internal class ExecutorML(
 
     private var errorCorrectionDurationMs: Long = 0
 
+    private val numberResult: String?
+        get() {
+            // Ugg there has to be a better way
+            var result: String? = null
+            var maxValue = 0
+
+            for (number in numberResults.keys) {
+                var value = 0
+                val count = numberResults[number]
+
+                if (count != null) {
+                    value = count
+                }
+
+                if (value > maxValue) {
+                    result = number
+                    maxValue = value
+                }
+            }
+            return result
+        }
+
     override fun onFatalError() {
         val intent = Intent()
         intent.putExtra(ScanActivity.RESULT_FATAL_ERROR, true)
@@ -67,27 +89,5 @@ internal class ExecutorML(
         }
         numberResults[number] = currentValue + 1
     }
-
-    private val numberResult: String?
-        get() {
-            // Ugg there has to be a better way
-            var result: String? = null
-            var maxValue = 0
-
-            for (number in numberResults.keys) {
-                var value = 0
-                val count = numberResults[number]
-
-                if (count != null) {
-                    value = count
-                }
-
-                if (value > maxValue) {
-                    result = number
-                    maxValue = value
-                }
-            }
-            return result
-        }
 
 }
