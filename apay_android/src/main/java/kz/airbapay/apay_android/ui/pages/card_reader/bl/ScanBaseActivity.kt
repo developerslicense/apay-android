@@ -1,439 +1,402 @@
-package kz.airbapay.apay_android.ui.pages.card_reader.bl;
+package kz.airbapay.apay_android.ui.pages.card_reader.bl
 
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.RectF;
-import android.hardware.Camera;
-import android.os.Bundle;
-import android.os.SystemClock;
-import android.util.Log;
-import android.view.OrientationEventListener;
-import android.view.Surface;
-import android.view.SurfaceHolder;
-import android.view.SurfaceView;
-import android.view.View;
-import android.view.ViewTreeObserver;
-import android.widget.FrameLayout;
-
-import androidx.annotation.Nullable;
-import androidx.annotation.VisibleForTesting;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.concurrent.Semaphore;
+import android.app.Activity
+import android.app.AlertDialog
+import android.content.Context
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.content.res.Resources
+import android.graphics.Bitmap
+import android.graphics.RectF
+import android.hardware.Camera
+import android.hardware.Camera.AutoFocusCallback
+import android.hardware.Camera.PreviewCallback
+import android.os.Bundle
+import android.os.SystemClock
+import android.util.Log
+import android.view.OrientationEventListener
+import android.view.Surface
+import android.view.SurfaceHolder
+import android.view.SurfaceView
+import android.view.View
+import android.view.ViewTreeObserver
+import android.widget.FrameLayout
+import java.io.IOException
+import java.util.concurrent.Semaphore
 
 /**
  * Any classes that subclass this must:
- * <p>
+ *
+ *
  * (1) set mIsPermissionCheckDone after the permission check is done, which should be sometime
  * before "onResume" is called
- * <p>
+ *
+ *
  * (2) Call setViewIds to set these resource IDs and initalize appropriate handlers
  */
-public abstract class ScanBaseActivity extends Activity implements Camera.PreviewCallback,
-		OnScanListener, OnCameraOpenListener {
+internal abstract class ScanBaseActivity : Activity(), PreviewCallback, OnScanListener,
+    OnCameraOpenListener {
 
-	public static final String RESULT_FATAL_ERROR = "result_fatal_error";
-	public static final String RESULT_CAMERA_OPEN_ERROR = "result_camera_open_error";
+    private var mCamera: Camera? = null
+    private var mOrientationEventListener: OrientationEventListener? = null
+    private val mMachineLearningSemaphore = Semaphore(1)
+    private var mRotation = 0
+    private var mSentResponse = false
+    private var mIsActivityActive = false
+    private var numberResults = HashMap<String, Int>()
+    private var firstResultMs: Long = 0
+    private var mTextureId = 0
+    private var mRoiCenterYRatio = 0f
+    private var mCameraThread: CameraThread? = null
 
-	private Camera mCamera = null;
-	private OrientationEventListener mOrientationEventListener;
-	private static MachineLearningThread machineLearningThread = null;
-	private Semaphore mMachineLearningSemaphore = new Semaphore(1);
-	private int mRotation;
-	private boolean mSentResponse = false;
-	private boolean mIsActivityActive = false;
-	private HashMap<String, Integer> numberResults = new HashMap<>();
-	private long firstResultMs = 0;
-	private int mTextureId;
-	private float mRoiCenterYRatio;
-	private CameraThread mCameraThread = null;
+    // set when this activity posts to the machineLearningThread
+    private var mPredictionStartMs: Long = 0
 
-	// set when this activity posts to the machineLearningThread
-	public long mPredictionStartMs = 0;
-	// Child classes must set to ensure proper flaslight handling
-	public boolean mIsPermissionCheckDone = false;
+    var mIsPermissionCheckDone = false
+    private var errorCorrectionDurationMs: Long = 0
 
-	public long errorCorrectionDurationMs = 0;
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        mOrientationEventListener = object : OrientationEventListener(this) {
+            override fun onOrientationChanged(orientation: Int) {
+                orientationChanged(orientation)
+            }
+        }
+    }
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		
-		mOrientationEventListener = new OrientationEventListener(this) {
-			@Override
-			public void onOrientationChanged(int orientation) {
-				orientationChanged(orientation);
-			}
-		};
-	}
+    internal inner class MyGlobalListenerClass(
+        private val cardRectangleId: Int,
+        private val overlayId: Int
+    ) : ViewTreeObserver.OnGlobalLayoutListener {
 
-	class MyGlobalListenerClass implements ViewTreeObserver.OnGlobalLayoutListener {
-		private final int cardRectangleId;
-		private final int overlayId;
+        override fun onGlobalLayout() {
+            val xy = IntArray(2)
+            val view = findViewById<View>(cardRectangleId)
+            view.getLocationInWindow(xy)
 
-		MyGlobalListenerClass(int cardRectangleId, int overlayId) {
-			this.cardRectangleId = cardRectangleId;
-			this.overlayId = overlayId;
-		}
+            // convert from DP to pixels
+            val radius = (11 * Resources.getSystem().displayMetrics.density).toInt()
+            val rect = RectF(
+                xy[0].toFloat(), xy[1].toFloat(),
+                (xy[0] + view.width).toFloat(),
+                (xy[1] + view.height).toFloat()
+            )
 
-		@Override
-		public void onGlobalLayout() {
-			int[] xy = new int[2];
-			View view = findViewById(cardRectangleId);
-			view.getLocationInWindow(xy);
+            val overlay = findViewById<Overlay>(overlayId)
+            overlay.setCircle(rect, radius)
+            mRoiCenterYRatio = (xy[1] + view.height * 0.5f) / overlay.height
+        }
+    }
 
-			// convert from DP to pixels
-			int radius = (int) (11 * Resources.getSystem().getDisplayMetrics().density);
-			RectF rect = new RectF(xy[0], xy[1],
-					xy[0] + view.getWidth(),
-					xy[1] + view.getHeight());
-			Overlay overlay = findViewById(overlayId);
-			overlay.setCircle(rect, radius);
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
+    ) {
+        if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            mIsPermissionCheckDone = true
+        } else {
+            val builder = AlertDialog.Builder(this)
+            builder.setMessage("Доступ к камере запрещен")
+            val dialog = builder.create()
+            dialog.show()
+        }
+    }
 
-			ScanBaseActivity.this.mRoiCenterYRatio =
-					(xy[1] + view.getHeight() * 0.5f) / overlay.getHeight();
-		}
-	}
+    override fun onCameraOpen(camera: Camera?) {
+        if (camera == null) {
+            val intent = Intent()
+            intent.putExtra(RESULT_CAMERA_OPEN_ERROR, true)
+            setResult(RESULT_CANCELED, intent)
+            finish()
+        } else if (!mIsActivityActive) {
+            camera.release()
+        } else {
+            mCamera = camera
+            setCameraDisplayOrientation(
+                this, Camera.CameraInfo.CAMERA_FACING_BACK,
+                mCamera!!
+            )
+            // Create our Preview view and set it as the content of our activity.
+            val cameraPreview = CameraPreview(this, this)
+            val preview = findViewById<FrameLayout>(mTextureId)
+            preview.addView(cameraPreview)
+            mCamera!!.setPreviewCallback(this)
+        }
+    }
 
-	@Override
-	public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-		if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-			mIsPermissionCheckDone = true;
-		} else {
-			AlertDialog.Builder builder = new AlertDialog.Builder(this);
-			builder.setMessage("Доступ к камере запрещен");
-			AlertDialog dialog = builder.create();
-			dialog.show();
-		}
-	}
+    private fun startCamera() {
+        numberResults = HashMap()
+        firstResultMs = 0
 
-	@Override
-	public void onCameraOpen(@Nullable Camera camera) {
-		if (camera == null) {
-			Intent intent = new Intent();
-			intent.putExtra(RESULT_CAMERA_OPEN_ERROR, true);
-			setResult(RESULT_CANCELED, intent);
-			finish();
-		} else if (!mIsActivityActive) {
-			camera.release();
-		} else {
-			mCamera = camera;
-			setCameraDisplayOrientation(this, Camera.CameraInfo.CAMERA_FACING_BACK,
-					mCamera);
-			// Create our Preview view and set it as the content of our activity.
-			CameraPreview cameraPreview = new CameraPreview(this, this);
-			FrameLayout preview = findViewById(mTextureId);
-			preview.addView(cameraPreview);
-			mCamera.setPreviewCallback(this);
-		}
-	}
+        if (mOrientationEventListener!!.canDetectOrientation()) {
+            mOrientationEventListener!!.enable()
+        }
 
+        try {
+            if (mIsPermissionCheckDone) {
+                if (mCameraThread == null) {
+                    mCameraThread = CameraThread()
+                    mCameraThread!!.start()
+                }
+                mCameraThread!!.startCamera(this)
+            }
+        } catch (e: Exception) {
+            val builder = AlertDialog.Builder(this)
+            val dialog = builder.create()
+            dialog.show()
+        }
+    }
 
-	protected void startCamera() {
-		numberResults = new HashMap<>();
-		firstResultMs = 0;
-		if (mOrientationEventListener.canDetectOrientation()) {
-			mOrientationEventListener.enable();
-		}
+    override fun onPause() {
+        super.onPause()
+        if (mCamera != null) {
+            mCamera!!.stopPreview()
+            mCamera!!.setPreviewCallback(null)
+            mCamera!!.release()
+            mCamera = null
+        }
+        mOrientationEventListener!!.disable()
+        mIsActivityActive = false
+    }
 
-		try {
-			if (mIsPermissionCheckDone) {
-				if (mCameraThread == null) {
-					mCameraThread = new CameraThread();
-					mCameraThread.start();
-				}
+    override fun onResume() {
+        super.onResume()
+        mIsActivityActive = true
+        firstResultMs = 0
+        numberResults = HashMap()
+        mSentResponse = false
+        startCamera()
+    }
 
-				mCameraThread.startCamera(this);
-			}
-		} catch (Exception e) {
-			AlertDialog.Builder builder = new AlertDialog.Builder(this);
-			AlertDialog dialog = builder.create();
-			dialog.show();
-		}
-	}
+    fun setViewIds(cardRectangleId: Int, overlayId: Int, textureId: Int) {
+        mTextureId = textureId
+        findViewById<View>(cardRectangleId).viewTreeObserver
+            .addOnGlobalLayoutListener(MyGlobalListenerClass(cardRectangleId, overlayId))
+    }
 
-	@Override
-	protected void onPause() {
-		super.onPause();
-		if (mCamera != null) {
-			mCamera.stopPreview();
-			mCamera.setPreviewCallback(null);
-			mCamera.release();
-			mCamera = null;
-		}
+    fun orientationChanged(orientation: Int) {
+        var orientation = orientation
+        if (orientation == OrientationEventListener.ORIENTATION_UNKNOWN) return
 
-		mOrientationEventListener.disable();
-		mIsActivityActive = false;
-	}
+        val info = Camera.CameraInfo()
+        Camera.getCameraInfo(Camera.CameraInfo.CAMERA_FACING_BACK, info)
+        orientation = (orientation + 45) / 90 * 90
 
-	@Override
-	protected void onResume() {
-		super.onResume();
+        val rotation: Int = if (info.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
+            (info.orientation - orientation + 360) % 360
+        } else {  // back-facing camera
+            (info.orientation + orientation) % 360
+        }
 
-		mIsActivityActive = true;
-		firstResultMs = 0;
-		numberResults = new HashMap<>();
-		mSentResponse = false;
+        if (mCamera != null) {
+            try {
+                val params = mCamera!!.parameters
+                params.setRotation(rotation)
+                mCamera!!.parameters = params
+            } catch (e: Exception) {
+                // This gets called often so we can just swallow it and wait for the next one
+                e.printStackTrace()
+            } catch (e: Error) {
+                e.printStackTrace()
+            }
+        }
+    }
 
-		startCamera();
-	}
+    private fun setCameraDisplayOrientation(
+        activity: Activity,
+        cameraId: Int, camera: Camera
+    ) {
+        val info = Camera.CameraInfo()
+        Camera.getCameraInfo(cameraId, info)
 
-	public void setViewIds( int cardRectangleId, int overlayId, int textureId) {
-		mTextureId = textureId;
+        val rotation = activity.windowManager.defaultDisplay.rotation
+        var degrees = 0
 
-		findViewById(cardRectangleId).getViewTreeObserver()
-				.addOnGlobalLayoutListener(new MyGlobalListenerClass(cardRectangleId, overlayId));
-	}
+        when (rotation) {
+            Surface.ROTATION_0 -> degrees = 0
+            Surface.ROTATION_90 -> degrees = 90
+            Surface.ROTATION_180 -> degrees = 180
+            Surface.ROTATION_270 -> degrees = 270
+        }
 
-	public void orientationChanged(int orientation) {
-		if (orientation == OrientationEventListener.ORIENTATION_UNKNOWN) return;
-		Camera.CameraInfo info =
-				new Camera.CameraInfo();
-		Camera.getCameraInfo(Camera.CameraInfo.CAMERA_FACING_BACK, info);
-		orientation = (orientation + 45) / 90 * 90;
-		int rotation;
-		if (info.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
-			rotation = (info.orientation - orientation + 360) % 360;
-		} else {  // back-facing camera
-			rotation = (info.orientation + orientation) % 360;
-		}
+        var result: Int
+        if (info.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
+            result = (info.orientation + degrees) % 360
+            result = (360 - result) % 360 // compensate the mirror
+        } else {  // back-facing
+            result = (info.orientation - degrees + 360) % 360
+        }
 
-		if (mCamera != null) {
-			try {
-				Camera.Parameters params = mCamera.getParameters();
-				params.setRotation(rotation);
-				mCamera.setParameters(params);
-			} catch (Exception | Error e) {
-				// This gets called often so we can just swallow it and wait for the next one
-				e.printStackTrace();
-			}
-		}
-	}
+        camera.setDisplayOrientation(result)
+        mRotation = result
+    }
 
-	public void setCameraDisplayOrientation(Activity activity,
-											int cameraId, Camera camera) {
-		Camera.CameraInfo info =
-				new Camera.CameraInfo();
-		Camera.getCameraInfo(cameraId, info);
-		int rotation = activity.getWindowManager().getDefaultDisplay()
-				.getRotation();
-		int degrees = 0;
-		switch (rotation) {
-			case Surface.ROTATION_0:
-				degrees = 0;
-				break;
-			case Surface.ROTATION_90:
-				degrees = 90;
-				break;
-			case Surface.ROTATION_180:
-				degrees = 180;
-				break;
-			case Surface.ROTATION_270:
-				degrees = 270;
-				break;
-		}
+    override fun onPreviewFrame(bytes: ByteArray, camera: Camera) {
+        if (mMachineLearningSemaphore.tryAcquire()) {
+            val mlThread = machineLearningThread
+            val parameters = camera.parameters
+            val width = parameters.previewSize.width
+            val height = parameters.previewSize.height
+            mPredictionStartMs = SystemClock.uptimeMillis()
 
-		int result;
-		if (info.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
-			result = (info.orientation + degrees) % 360;
-			result = (360 - result) % 360;  // compensate the mirror
-		} else {  // back-facing
-			result = (info.orientation - degrees + 360) % 360;
-		}
-		camera.setDisplayOrientation(result);
-		mRotation = result;
-	}
+            // Use the application context here because the machine learning thread's lifecycle
+            // is connected to the application and not this activity
+            mlThread!!.post(
+                bytes, width, height, mRotation, this,
+                this.applicationContext, mRoiCenterYRatio
+            )
+        }
+    }
 
-	static public MachineLearningThread getMachineLearningThread() {
-		if (machineLearningThread == null) {
-			machineLearningThread = new MachineLearningThread();
-			new Thread(machineLearningThread).start();
-		}
+    override fun onBackPressed() {
+        if (!mSentResponse && mIsActivityActive) {
+            mSentResponse = true
+            val intent = Intent()
+            setResult(RESULT_CANCELED, intent)
+            finish()
+        }
+    }
 
-		return machineLearningThread;
-	}
+    fun incrementNumber(number: String) {
+        var currentValue = numberResults[number]
+        if (currentValue == null) {
+            currentValue = 0
+        }
+        numberResults[number] = currentValue + 1
+    }
 
-	@Override
-	public void onPreviewFrame(byte[] bytes, Camera camera) {
-		if (mMachineLearningSemaphore.tryAcquire()) {
+    private val numberResult: String?
+        get() {
+            // Ugg there has to be a better way
+            var result: String? = null
+            var maxValue = 0
+            for (number in numberResults.keys) {
+                var value = 0
+                val count = numberResults[number]
+                if (count != null) {
+                    value = count
+                }
+                if (value > maxValue) {
+                    result = number
+                    maxValue = value
+                }
+            }
+            return result
+        }
 
-			MachineLearningThread mlThread = getMachineLearningThread();
+    protected abstract fun onCardScanned(numberResult: String?)
 
-			Camera.Parameters parameters = camera.getParameters();
-			int width = parameters.getPreviewSize().width;
-			int height = parameters.getPreviewSize().height;
+    override fun onFatalError() {
+        val intent = Intent()
+        intent.putExtra(RESULT_FATAL_ERROR, true)
+        setResult(RESULT_CANCELED, intent)
+        finish()
+    }
 
-			mPredictionStartMs = SystemClock.uptimeMillis();
+    override fun onPrediction(
+        number: String?, bitmap: Bitmap?,
+        digitBoxes: List<DetectedBox?>?
+    ) {
+        if (!mSentResponse && mIsActivityActive) {
+            if (number != null && firstResultMs == 0L) {
+                firstResultMs = SystemClock.uptimeMillis()
+            }
+            number?.let { incrementNumber(it) }
+            val duration = SystemClock.uptimeMillis() - firstResultMs
+            if (firstResultMs != 0L && duration >= errorCorrectionDurationMs) {
+                mSentResponse = true
+                val numberResult = numberResult
+                onCardScanned(numberResult)
+            }
+        }
+        mMachineLearningSemaphore.release()
+    }
 
-			// Use the application context here because the machine learning thread's lifecycle
-			// is connected to the application and not this activity
-			mlThread.post(bytes, width, height, mRotation, this,
-					this.getApplicationContext(), mRoiCenterYRatio);
-		}
-	}
+    /**
+     * A basic Camera preview class
+     */
+    inner class CameraPreview(context: Context?, private val mPreviewCallback: PreviewCallback) :
+        SurfaceView(context), AutoFocusCallback, SurfaceHolder.Callback {
+        private val mHolder: SurfaceHolder = holder
 
-	@Override
-	public void onBackPressed() {
-		if (!mSentResponse && mIsActivityActive) {
-			mSentResponse = true;
-			Intent intent = new Intent();
-			setResult(RESULT_CANCELED, intent);
-			finish();
-		}
-	}
+        init {
 
-	
-	public void incrementNumber(String number) {
-		Integer currentValue = numberResults.get(number);
-		if (currentValue == null) {
-			currentValue = 0;
-		}
+            // Install a SurfaceHolder.Callback so we get notified when the
+            // underlying surface is created and destroyed.
+            mHolder.addCallback(this)
+            // deprecated setting, but required on Android versions prior to 3.0
+            mHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS)
 
-		numberResults.put(number, currentValue + 1);
-	}
-	
-	public String getNumberResult() {
-		// Ugg there has to be a better way
-		String result = null;
-		int maxValue = 0;
+            val params = mCamera!!.parameters
+            val focusModes = params.supportedFocusModes
 
-		for (String number : numberResults.keySet()) {
-			int value = 0;
-			Integer count = numberResults.get(number);
-			if (count != null) {
-				value = count;
-			}
-			if (value > maxValue) {
-				result = number;
-				maxValue = value;
-			}
-		}
+            if (focusModes.contains(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE)) {
+                params.focusMode = Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE
+            } else if (focusModes.contains(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO)) {
+                params.focusMode = Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO
+            }
 
-		return result;
-	}
+            params.setRecordingHint(true)
+            mCamera!!.parameters = params
+        }
 
-	protected abstract void onCardScanned(String numberResult);
+        override fun onAutoFocus(success: Boolean, camera: Camera) {}
+        override fun surfaceCreated(holder: SurfaceHolder) {
+            // The Surface has been created, now tell the camera where to draw the preview.
+            try {
+                if (mCamera == null) return
+                mCamera!!.setPreviewDisplay(holder)
+                mCamera!!.startPreview()
+            } catch (e: IOException) {
+                Log.d("CameraCaptureActivity", "Error setting camera preview: " + e.message)
+            }
+        }
 
-	@Override
-	public void onFatalError() {
-		Intent intent = new Intent();
-		intent.putExtra(RESULT_FATAL_ERROR, true);
-		setResult(RESULT_CANCELED, intent);
-		finish();
-	}
+        override fun surfaceDestroyed(holder: SurfaceHolder) {
+            // empty. Take care of releasing the Camera preview in your activity.
+        }
 
-	@Override
-	public void onPrediction(final String number, final Bitmap bitmap,
-							 final List<DetectedBox> digitBoxes) {
-		if (!mSentResponse && mIsActivityActive) {
-			if (number != null && firstResultMs == 0) {
-				firstResultMs = SystemClock.uptimeMillis();
-			}
+        override fun surfaceChanged(holder: SurfaceHolder, format: Int, w: Int, h: Int) {
+            // If your preview can change or rotate, take care of those events here.
+            // Make sure to stop the preview before resizing or reformatting it.
+            if (mHolder.surface == null) {
+                // preview surface does not exist
+                return
+            }
 
-			if (number != null) {
-				incrementNumber(number);
-			}
+            // stop preview before making changes
+            try {
+                mCamera!!.stopPreview()
+            } catch (e: Exception) {
+                // ignore: tried to stop a non-existent preview
+            }
 
-			long duration = SystemClock.uptimeMillis() - firstResultMs;
+            // set preview size and make any resize, rotate or
+            // reformatting changes here
 
-			if (firstResultMs != 0 && duration >= errorCorrectionDurationMs) {
-				mSentResponse = true;
-				String numberResult = getNumberResult();
+            // start preview with new settings
+            try {
+                mCamera!!.setPreviewDisplay(mHolder)
+                mCamera!!.setPreviewCallback(mPreviewCallback)
+                mCamera!!.startPreview()
+            } catch (e: Exception) {
+                Log.d("CameraCaptureActivity", "Error starting camera preview: " + e.message)
+            }
+        }
+    }
 
-				onCardScanned(numberResult);
-			}
-		}
-
-		mMachineLearningSemaphore.release();
-	}
-
-	/**
-	 * A basic Camera preview class
-	 */
-	public class CameraPreview extends SurfaceView implements Camera.AutoFocusCallback, SurfaceHolder.Callback {
-		private SurfaceHolder mHolder;
-		private Camera.PreviewCallback mPreviewCallback;
-
-		public CameraPreview(Context context, Camera.PreviewCallback previewCallback) {
-			super(context);
-
-			mPreviewCallback = previewCallback;
-
-			// Install a SurfaceHolder.Callback so we get notified when the
-			// underlying surface is created and destroyed.
-			mHolder = getHolder();
-			mHolder.addCallback(this);
-			// deprecated setting, but required on Android versions prior to 3.0
-			mHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
-
-			Camera.Parameters params = mCamera.getParameters();
-			List<String> focusModes = params.getSupportedFocusModes();
-			if (focusModes.contains(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE)) {
-				params.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
-			} else if (focusModes.contains(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO)) {
-				params.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO);
-			}
-			params.setRecordingHint(true);
-			mCamera.setParameters(params);
-		}
-
-		@Override
-		public void onAutoFocus(boolean success, Camera camera) {
-
-		}
-
-		public void surfaceCreated(SurfaceHolder holder) {
-			// The Surface has been created, now tell the camera where to draw the preview.
-			try {
-				if (mCamera == null)
-					return;
-				mCamera.setPreviewDisplay(holder);
-				mCamera.startPreview();
-			} catch (IOException e) {
-				Log.d("CameraCaptureActivity", "Error setting camera preview: " + e.getMessage());
-			}
-		}
-
-		public void surfaceDestroyed(SurfaceHolder holder) {
-			// empty. Take care of releasing the Camera preview in your activity.
-		}
-
-		public void surfaceChanged(SurfaceHolder holder, int format, int w, int h) {
-			// If your preview can change or rotate, take care of those events here.
-			// Make sure to stop the preview before resizing or reformatting it.
-
-			if (mHolder.getSurface() == null) {
-				// preview surface does not exist
-				return;
-			}
-
-			// stop preview before making changes
-			try {
-				mCamera.stopPreview();
-			} catch (Exception e) {
-				// ignore: tried to stop a non-existent preview
-			}
-
-			// set preview size and make any resize, rotate or
-			// reformatting changes here
-
-			// start preview with new settings
-			try {
-				mCamera.setPreviewDisplay(mHolder);
-				mCamera.setPreviewCallback(mPreviewCallback);
-				mCamera.startPreview();
-			} catch (Exception e) {
-				Log.d("CameraCaptureActivity", "Error starting camera preview: " + e.getMessage());
-			}
-		}
-	}
+    companion object {
+        const val RESULT_FATAL_ERROR = "result_fatal_error"
+        const val RESULT_CAMERA_OPEN_ERROR = "result_camera_open_error"
+        var machineLearningThread: MachineLearningThread? = null
+            get() {
+                if (field == null) {
+                    field = MachineLearningThread()
+                    Thread(field).start()
+                }
+                return field
+            }
+            private set
+    }
 }

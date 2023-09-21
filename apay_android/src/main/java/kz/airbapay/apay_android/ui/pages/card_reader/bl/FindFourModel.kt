@@ -51,18 +51,9 @@ internal class FindFourModel(context: Context?) : ImageClassifier(
         return digitConfidence(row, col) >= 0.5
     }
 
-    fun hasExpiry(row: Int, col: Int): Boolean {
-        return expiryConfidence(row, col) >= 0.5
-    }
-
     fun digitConfidence(row: Int, col: Int): Float {
         val digitClass = 1
         return labelProbArray[0][row][col][digitClass]
-    }
-
-    fun expiryConfidence(row: Int, col: Int): Float {
-        val expiryClass = 2
-        return labelProbArray[0][row][col][expiryClass]
     }
 
     @Throws(IOException::class)
