@@ -7,7 +7,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.Resources
-import android.graphics.Bitmap
 import android.graphics.RectF
 import android.hardware.Camera
 import android.hardware.Camera.AutoFocusCallback
@@ -24,10 +23,9 @@ import android.view.ViewTreeObserver
 import android.widget.FrameLayout
 import kz.airbapay.apay_android.R
 import kz.airbapay.apay_android.ui.pages.card_reader.bl.CameraThread
-import kz.airbapay.apay_android.ui.pages.card_reader.bl.DetectedBox
+import kz.airbapay.apay_android.ui.pages.card_reader.bl.ExecutorML
 import kz.airbapay.apay_android.ui.pages.card_reader.bl.MachineLearningThread
 import kz.airbapay.apay_android.ui.pages.card_reader.bl.OnCameraOpenListener
-import kz.airbapay.apay_android.ui.pages.card_reader.bl.OnScanListener
 import kz.airbapay.apay_android.ui.pages.card_reader.bl.Overlay
 import java.io.IOException
 import java.util.concurrent.Semaphore
@@ -42,24 +40,20 @@ import java.util.concurrent.Semaphore
  *
  * (2) Call setViewIds to set these resource IDs and initalize appropriate handlers
  */
-internal class ScanActivity : Activity(), PreviewCallback, OnScanListener,
+internal class ScanActivity : Activity(), PreviewCallback,
     OnCameraOpenListener {
+
+    private var executorML: ExecutorML? = null
 
     private var mCamera: Camera? = null
     private val mMachineLearningSemaphore = Semaphore(1)
     private var mRotation = 0
-    private var mSentResponse = false
-    private var mIsActivityActive = false
-    private var numberResults = HashMap<String, Int>()
-    private var firstResultMs: Long = 0
     private var mRoiCenterYRatio = 0f
     private var mCameraThread: CameraThread? = null
 
     // set when this activity posts to the machineLearningThread
     private var mPredictionStartMs: Long = 0
-
-    var mIsPermissionCheckDone = false
-    private var errorCorrectionDurationMs: Long = 0
+    private var mIsPermissionCheckDone = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -78,14 +72,11 @@ internal class ScanActivity : Activity(), PreviewCallback, OnScanListener,
 
         findViewById<View>(R.id.cardRectangle).viewTreeObserver
             .addOnGlobalLayoutListener(MyGlobalListenerClass(R.id.cardRectangle, R.id.shadedBackground))
-    }
 
-    private fun onCardScanned(numberResult: String?) {
-        println("aaaaa $numberResult")
-        val intent = Intent()
-        intent.putExtra(RESULT_CARD_NUMBER, numberResult)
-        setResult(RESULT_OK, intent)
-        finish()
+        executorML = ExecutorML(
+            activity = this,
+            releaseSemaphore = { mMachineLearningSemaphore.release() }
+        )
     }
 
     internal inner class MyGlobalListenerClass(
@@ -133,7 +124,7 @@ internal class ScanActivity : Activity(), PreviewCallback, OnScanListener,
             intent.putExtra(RESULT_CAMERA_OPEN_ERROR, true)
             setResult(RESULT_CANCELED, intent)
             finish()
-        } else if (!mIsActivityActive) {
+        } else if (!executorML!!.mIsActivityActive) {
             camera.release()
         } else {
             mCamera = camera
@@ -150,8 +141,7 @@ internal class ScanActivity : Activity(), PreviewCallback, OnScanListener,
     }
 
     private fun startCamera() {
-        numberResults = HashMap()
-        firstResultMs = 0
+        executorML?.onStartCamera()
 
         try {
             if (mIsPermissionCheckDone) {
@@ -176,15 +166,12 @@ internal class ScanActivity : Activity(), PreviewCallback, OnScanListener,
             mCamera!!.release()
             mCamera = null
         }
-        mIsActivityActive = false
+        executorML?.mIsActivityActive = false
     }
 
     override fun onResume() {
         super.onResume()
-        mIsActivityActive = true
-        firstResultMs = 0
-        numberResults = HashMap()
-        mSentResponse = false
+        executorML?.onResume()
         startCamera()
     }
 
@@ -228,72 +215,19 @@ internal class ScanActivity : Activity(), PreviewCallback, OnScanListener,
             // Use the application context here because the machine learning thread's lifecycle
             // is connected to the application and not this activity
             mlThread!!.post(
-                bytes, width, height, mRotation, this,
+                bytes, width, height, mRotation, executorML,
                 this.applicationContext, mRoiCenterYRatio
             )
         }
     }
 
     override fun onBackPressed() {
-        if (!mSentResponse && mIsActivityActive) {
-            mSentResponse = true
+        if (!executorML!!.mSentResponse && executorML?.mIsActivityActive == true) {
+            executorML?.mSentResponse = true
             val intent = Intent()
             setResult(RESULT_CANCELED, intent)
             finish()
         }
-    }
-
-    private fun incrementNumber(number: String) {
-        var currentValue = numberResults[number]
-        if (currentValue == null) {
-            currentValue = 0
-        }
-        numberResults[number] = currentValue + 1
-    }
-
-    private val numberResult: String?
-        get() {
-            // Ugg there has to be a better way
-            var result: String? = null
-            var maxValue = 0
-            for (number in numberResults.keys) {
-                var value = 0
-                val count = numberResults[number]
-                if (count != null) {
-                    value = count
-                }
-                if (value > maxValue) {
-                    result = number
-                    maxValue = value
-                }
-            }
-            return result
-        }
-
-    override fun onFatalError() {
-        val intent = Intent()
-        intent.putExtra(RESULT_FATAL_ERROR, true)
-        setResult(RESULT_CANCELED, intent)
-        finish()
-    }
-
-    override fun onPrediction(
-        number: String?, bitmap: Bitmap?,
-        digitBoxes: List<DetectedBox?>?
-    ) {
-        if (!mSentResponse && mIsActivityActive) {
-            if (number != null && firstResultMs == 0L) {
-                firstResultMs = SystemClock.uptimeMillis()
-            }
-            number?.let { incrementNumber(it) }
-            val duration = SystemClock.uptimeMillis() - firstResultMs
-            if (firstResultMs != 0L && duration >= errorCorrectionDurationMs) {
-                mSentResponse = true
-                val numberResult = numberResult
-                onCardScanned(numberResult)
-            }
-        }
-        mMachineLearningSemaphore.release()
     }
 
     /**
