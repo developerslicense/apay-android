@@ -2,7 +2,7 @@ package kz.airbapay.apay_android.ui.pages.card_reader.bl;
 
 import androidx.annotation.NonNull;
 
-class DetectedBox implements Comparable {
+public class DetectedBox implements Comparable {
 
 	private CGRect rect;
 	final int row;

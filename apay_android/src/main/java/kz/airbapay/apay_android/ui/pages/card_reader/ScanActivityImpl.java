@@ -1,21 +1,17 @@
-package kz.airbapay.apay_android.ui.pages.card_reader.bl;
+package kz.airbapay.apay_android.ui.pages.card_reader;
 
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
 
-import java.util.List;
-
 import kz.airbapay.apay_android.R;
+import kz.airbapay.apay_android.ui.pages.card_reader.bl.ScanBaseActivity;
 
 public class ScanActivityImpl extends ScanBaseActivity {
 
 	public static final String RESULT_CARD_NUMBER = "cardNumber";
-	public static final String RESULT_EXPIRY_MONTH = "expiryMonth";
-	public static final String RESULT_EXPIRY_YEAR = "expiryYear";
 
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -36,20 +32,12 @@ public class ScanActivityImpl extends ScanBaseActivity {
 	}
 
 	@Override
-	protected void onCardScanned(String numberResult, String month, String year) {
+	protected void onCardScanned(String numberResult) {
+		System.out.println("aaaaa " + numberResult);
 		Intent intent = new Intent();
 		intent.putExtra(RESULT_CARD_NUMBER, numberResult);
-		intent.putExtra(RESULT_EXPIRY_MONTH, month);
-		intent.putExtra(RESULT_EXPIRY_YEAR, year);
 		setResult(RESULT_OK, intent);
 		finish();
-	}
-
-	@Override
-	public void onPrediction(final String number, final Expiry expiry, final Bitmap bitmap,
-							 final List<DetectedBox> digitBoxes, final DetectedBox expiryBox) {
-
-		super.onPrediction(number, expiry, bitmap, digitBoxes, expiryBox);
 	}
 
 }

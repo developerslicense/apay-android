@@ -112,40 +112,10 @@ abstract class ImageClassifier {
 		}
 	}
 
-	public void useCPU() {
-		tfliteOptions.setUseNNAPI(false);
-		recreateInterpreter();
-	}
-
-	public void useGpu() {
-//		if (gpuDelegate == null) {
-//			gpuDelegate = new GpuDelegate();
-//			tfliteOptions.addDelegate(gpuDelegate);
-//			recreateInterpreter();
-//		}
-	}
-
-	public void useNNAPI() {
-		tfliteOptions.setUseNNAPI(true);
-		recreateInterpreter();
-	}
 
 	public void setNumThreads(int numThreads) {
 		tfliteOptions.setNumThreads(numThreads);
 		recreateInterpreter();
-	}
-
-	/**
-	 * Closes tflite to release resources.
-	 */
-	public void close() {
-		tflite.close();
-		tflite = null;
-//		if (gpuDelegate != null) {
-//			gpuDelegate.close();
-//			gpuDelegate = null;
-//		}
-		tfliteModel = null;
 	}
 
 	/**

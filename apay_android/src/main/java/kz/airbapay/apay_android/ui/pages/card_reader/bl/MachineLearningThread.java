@@ -167,8 +167,7 @@ class MachineLearningThread implements Runnable {
 					if (hadUnrecoverableException) {
 						args.mScanListener.onFatalError();
 					} else {
-						args.mScanListener.onPrediction(number, ocr.expiry, bitmap, ocr.digitBoxes,
-								ocr.expiryBox);
+						args.mScanListener.onPrediction(number, bitmap, ocr.digitBoxes);
 					}
 				}
 			} catch (Error | Exception e) {
