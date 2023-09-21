@@ -1,5 +1,6 @@
-package kz.airbapay.apay_android.ui.pages.card_reader.bl
+package kz.airbapay.apay_android.ui.pages.card_reader
 
+import android.Manifest
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
@@ -11,6 +12,8 @@ import android.graphics.RectF
 import android.hardware.Camera
 import android.hardware.Camera.AutoFocusCallback
 import android.hardware.Camera.PreviewCallback
+import android.os.Build
+import android.os.Bundle
 import android.os.SystemClock
 import android.util.Log
 import android.view.Surface
@@ -19,6 +22,13 @@ import android.view.SurfaceView
 import android.view.View
 import android.view.ViewTreeObserver
 import android.widget.FrameLayout
+import kz.airbapay.apay_android.R
+import kz.airbapay.apay_android.ui.pages.card_reader.bl.CameraThread
+import kz.airbapay.apay_android.ui.pages.card_reader.bl.DetectedBox
+import kz.airbapay.apay_android.ui.pages.card_reader.bl.MachineLearningThread
+import kz.airbapay.apay_android.ui.pages.card_reader.bl.OnCameraOpenListener
+import kz.airbapay.apay_android.ui.pages.card_reader.bl.OnScanListener
+import kz.airbapay.apay_android.ui.pages.card_reader.bl.Overlay
 import java.io.IOException
 import java.util.concurrent.Semaphore
 
@@ -32,7 +42,7 @@ import java.util.concurrent.Semaphore
  *
  * (2) Call setViewIds to set these resource IDs and initalize appropriate handlers
  */
-internal abstract class ScanBaseActivity : Activity(), PreviewCallback, OnScanListener,
+internal class ScanActivity : Activity(), PreviewCallback, OnScanListener,
     OnCameraOpenListener {
 
     private var mCamera: Camera? = null
@@ -51,6 +61,31 @@ internal abstract class ScanBaseActivity : Activity(), PreviewCallback, OnScanLi
 
     var mIsPermissionCheckDone = false
     private var errorCorrectionDurationMs: Long = 0
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.irdcs_activity_scan_card)
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(arrayOf(Manifest.permission.CAMERA), 110)
+            } else {
+                mIsPermissionCheckDone = true
+            }
+        } else {
+            // no permission checks
+            mIsPermissionCheckDone = true
+        }
+        setViewIds(R.id.cardRectangle, R.id.shadedBackground, R.id.texture)
+    }
+
+    private fun onCardScanned(numberResult: String?) {
+        println("aaaaa $numberResult")
+        val intent = Intent()
+        intent.putExtra(RESULT_CARD_NUMBER, numberResult)
+        setResult(RESULT_OK, intent)
+        finish()
+    }
 
     internal inner class MyGlobalListenerClass(
         private val cardRectangleId: Int,
@@ -240,8 +275,6 @@ internal abstract class ScanBaseActivity : Activity(), PreviewCallback, OnScanLi
             return result
         }
 
-    protected abstract fun onCardScanned(numberResult: String?)
-
     override fun onFatalError() {
         val intent = Intent()
         intent.putExtra(RESULT_FATAL_ERROR, true)
@@ -342,6 +375,7 @@ internal abstract class ScanBaseActivity : Activity(), PreviewCallback, OnScanLi
     }
 
     companion object {
+        const val RESULT_CARD_NUMBER = "cardNumber"
         const val RESULT_FATAL_ERROR = "result_fatal_error"
         const val RESULT_CAMERA_OPEN_ERROR = "result_camera_open_error"
         var machineLearningThread: MachineLearningThread? = null

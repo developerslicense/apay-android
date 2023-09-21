@@ -5,11 +5,11 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 
-class CameraThread extends Thread {
+public class CameraThread extends Thread {
 
 	private OnCameraOpenListener listener;
 
-	synchronized void startCamera(OnCameraOpenListener listener) {
+	public synchronized void startCamera(OnCameraOpenListener listener) {
 		this.listener = listener;
 		notify();
 	}

@@ -16,7 +16,7 @@ import android.renderscript.Type;
 
 import java.util.LinkedList;
 
-class MachineLearningThread implements Runnable {
+public class MachineLearningThread implements Runnable {
 
 	class RunArguments {
 
@@ -45,11 +45,11 @@ class MachineLearningThread implements Runnable {
 
 	private LinkedList<RunArguments> queue = new LinkedList<>();
 
-	MachineLearningThread() {
+	public MachineLearningThread() {
 		super();
 	}
 
-	synchronized void post(byte[] bytes, int width, int height, int sensorOrientation,
+	public synchronized void post(byte[] bytes, int width, int height, int sensorOrientation,
 						   OnScanListener scanListener, Context context, float roiCenterYRatio) {
 		RunArguments args = new RunArguments(bytes, width, height, sensorOrientation,
 				scanListener, context, roiCenterYRatio);
