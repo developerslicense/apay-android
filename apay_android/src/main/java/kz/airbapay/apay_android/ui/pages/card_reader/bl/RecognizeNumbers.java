@@ -37,7 +37,7 @@ class RecognizeNumbers {
 
 	private RecognizedDigits cachedDigits(RecognizedDigitsModel model, DetectedBox box) {
 		if (this.recognizedDigits[box.row][box.col] == null) {
-			this.recognizedDigits[box.row][box.col] = RecognizedDigits.from(model, image, box.getRect());
+			this.recognizedDigits[box.row][box.col] = RecognizedDigits.from(model, image, box.rect);
 		}
 
 		return this.recognizedDigits[box.row][box.col];

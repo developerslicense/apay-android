@@ -1,34 +1,39 @@
-package kz.airbapay.apay_android.ui.pages.card_reader.bl;
+package kz.airbapay.apay_android.ui.pages.card_reader.bl
 
-import androidx.annotation.NonNull;
+internal class DetectedBox internal constructor(
+    row: Int,
+    col: Int,
+    confidence: Float,
+    numRows: Int,
+    numCols: Int,
+    boxSize: CGSize,
+    cardSize: CGSize,
+    imageSize: CGSize
+) : Comparable<Any> {
+    @JvmField
+	val rect: CGRect
+    @JvmField
+	val row: Int
+    @JvmField
+	val col: Int
+    private val confidence: Float
 
-public class DetectedBox implements Comparable {
+    init {
+        // Resize the box to transform it from the model's coordinates into
+        // the image's coordinates
+        val w = boxSize.width * imageSize.width / cardSize.width
+        val h = boxSize.height * imageSize.height / cardSize.height
+        val x = (imageSize.width - w) / (numCols - 1).toFloat() * col.toFloat()
+        val y = (imageSize.height - h) / (numRows - 1).toFloat() * row.toFloat()
 
-	private CGRect rect;
-	final int row;
-	final int col;
-	private float confidence;
+        rect = CGRect(x, y, w, h)
 
-	DetectedBox(int row, int col, float confidence, int numRows, int numCols,
-				CGSize boxSize, CGSize cardSize, CGSize imageSize) {
-		// Resize the box to transform it from the model's coordinates into
-		// the image's coordinates
-		float w = boxSize.width * imageSize.width / cardSize.width;
-		float h = boxSize.height * imageSize.height / cardSize.height;
-		float x = (imageSize.width - w) / ((float) (numCols - 1)) * ((float) col);
-		float y = (imageSize.height - h) / ((float) (numRows - 1)) * ((float) row);
-		this.rect = new CGRect(x, y, w, h);
-		this.row = row;
-		this.col = col;
-		this.confidence = confidence;
-	}
+        this.row = row
+        this.col = col
+        this.confidence = confidence
+    }
 
-	@Override
-	public int compareTo(@NonNull Object o) {
-		return Float.compare(this.confidence, ((DetectedBox) o).confidence);
-	}
-
-	public CGRect getRect() {
-		return rect;
-	}
+    override operator fun compareTo(o: Any): Int {
+        return confidence.compareTo((o as DetectedBox).confidence)
+    }
 }
