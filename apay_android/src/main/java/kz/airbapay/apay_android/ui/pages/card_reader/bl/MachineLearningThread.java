@@ -21,7 +21,6 @@ public class MachineLearningThread implements Runnable {
 	class RunArguments {
 
 		private final byte[] mFrameBytes;
-		private final Bitmap mBitmap;
 		private final OnScanListener mScanListener;
 		private final Context mContext;
 		private final int mWidth;
@@ -33,7 +32,6 @@ public class MachineLearningThread implements Runnable {
 					 int sensorOrientation, OnScanListener scanListener, Context context,
 					 float roiCenterYRatio) {
 			mFrameBytes = frameBytes;
-			mBitmap = null;
 			mWidth = width;
 			mHeight = height;
 			mScanListener = scanListener;
@@ -160,6 +158,7 @@ public class MachineLearningThread implements Runnable {
 		final OCR ocr = new OCR();
 		final String number = ocr.predict(bitmap, args.mContext);
 		final boolean hadUnrecoverableException = ocr.hadUnrecoverableException;
+
 		Handler handler = new Handler(Looper.getMainLooper());
 		handler.post(() -> {
 			try {
@@ -180,19 +179,14 @@ public class MachineLearningThread implements Runnable {
 	private void runModel() {
 		final RunArguments args = getNextImage();
 
-		Bitmap bm;
-		if (args.mFrameBytes != null) {
-			bm = getBitmap(args.mFrameBytes, args.mWidth, args.mHeight,
-					args.mSensorOrientation, args.mRoiCenterYRatio, args.mContext);
-		} else if (args.mBitmap != null) {
-			bm = args.mBitmap;
-		} else {
-			bm = Bitmap.createBitmap(480, 302, Bitmap.Config.ARGB_8888);
-			Canvas canvas = new Canvas(bm);
-			Paint paint = new Paint();
-			paint.setColor(Color.GRAY);
-			canvas.drawRect(0.0f, 0.0f, 480.0f, 302.0f, paint);
-		}
+		Bitmap bm = getBitmap(
+				args.mFrameBytes,
+				args.mWidth,
+				args.mHeight,
+				args.mSensorOrientation,
+				args.mRoiCenterYRatio,
+				args.mContext
+		);
 
 		runOcrModel(bm, args);
 	}
