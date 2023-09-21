@@ -12,86 +12,75 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 ==============================================================================*/
+package kz.airbapay.apay_android.ui.pages.card_reader.bl
 
-package kz.airbapay.apay_android.ui.pages.card_reader.bl;
-
-import android.content.Context;
-
-import java.io.IOException;
-import java.nio.MappedByteBuffer;
+import android.content.Context
+import java.io.IOException
+import java.nio.MappedByteBuffer
 
 /**
  * This classifier works with the float MobileNet model.
  */
-class FindFourModel extends ImageClassifier {
+internal class FindFourModel(context: Context?) : ImageClassifier(
+    context!!
+) {
+    @JvmField
+	val rows = 34
+    @JvmField
+	val cols = 51
+    @JvmField
+	val boxSize = CGSize(80f, 36f)
+    @JvmField
+	val cardSize = CGSize(480f, 302f)
 
-	final int rows = 34;
-	final int cols = 51;
-	final CGSize boxSize = new CGSize(80, 36);
-	final CGSize cardSize = new CGSize(480, 302);
+    /**
+     * An array to hold inference results, to be feed into Tensorflow Lite as outputs. This isn't part
+     * of the super class, because we need a primitive array here.
+     */
+    private val labelProbArray: Array<Array<Array<FloatArray>>>
 
-	/**
-	 * An array to hold inference results, to be feed into Tensorflow Lite as outputs. This isn't part
-	 * of the super class, because we need a primitive array here.
-	 */
-	private float[][][][] labelProbArray;
+    /**
+     * Initializes an `ImageClassifierFloatMobileNet`.
+     */
+    init {
+        val classes = 3
+        labelProbArray = Array(1) { Array(rows) { Array(cols) { FloatArray(classes) } } }
+    }
 
-	/**
-	 * Initializes an {@code ImageClassifierFloatMobileNet}.
-	 */
-	FindFourModel(Context context) throws IOException {
-		super(context);
-		int classes = 3;
-		labelProbArray = new float[1][rows][cols][classes];
-	}
+    fun hasDigits(row: Int, col: Int): Boolean {
+        return digitConfidence(row, col) >= 0.5
+    }
 
-	boolean hasDigits(int row, int col) {
-		return this.digitConfidence(row, col) >= 0.5;
-	}
+    fun hasExpiry(row: Int, col: Int): Boolean {
+        return expiryConfidence(row, col) >= 0.5
+    }
 
-	boolean hasExpiry(int row, int col) {
-		return this.expiryConfidence(row, col) >= 0.5;
-	}
+    fun digitConfidence(row: Int, col: Int): Float {
+        val digitClass = 1
+        return labelProbArray[0][row][col][digitClass]
+    }
 
-	float digitConfidence(int row, int col) {
-		int digitClass = 1;
-		return labelProbArray[0][row][col][digitClass];
-	}
+    fun expiryConfidence(row: Int, col: Int): Float {
+        val expiryClass = 2
+        return labelProbArray[0][row][col][expiryClass]
+    }
 
-	float expiryConfidence(int row, int col) {
-		int expiryClass = 2;
-		return labelProbArray[0][row][col][expiryClass];
-	}
+    @Throws(IOException::class)
+    override fun loadModelFile(context: Context?): MappedByteBuffer? {
+        return ResourceModelFactory.getInstance().loadFindFourFile(context)
+    }
 
-	@Override
-	MappedByteBuffer loadModelFile(Context context) throws IOException {
-		return ResourceModelFactory.getInstance().loadFindFourFile(context);
-	}
+    override fun getImageSizeX() = 480
+    override fun getImageSizeY() = 302
+    override fun getNumBytesPerChannel() = 4
 
-	@Override
-	protected int getImageSizeX() {
-		return 480;
-	}
+    override fun addPixelValue(pixelValue: Int) {
+        imgData!!.putFloat((pixelValue shr 16 and 0xFF) / 255f)
+        imgData!!.putFloat((pixelValue shr 8 and 0xFF) / 255f)
+        imgData!!.putFloat((pixelValue and 0xFF) / 255f)
+    }
 
-	@Override
-	protected int getImageSizeY() {
-		return 302;
-	}
-
-	@Override
-	protected int getNumBytesPerChannel() {
-		return 4;
-	}
-
-	@Override
-	protected void addPixelValue(int pixelValue) {
-		imgData.putFloat(((pixelValue >> 16) & 0xFF) / 255.f);
-		imgData.putFloat(((pixelValue >> 8) & 0xFF) / 255.f);
-		imgData.putFloat((pixelValue & 0xFF) / 255.f);
-	}
-
-	@Override
-	protected void runInference() {
-		tflite.run(imgData, labelProbArray);
-	}
+    override fun runInference() {
+        tflite!!.run(imgData, labelProbArray)
+    }
 }

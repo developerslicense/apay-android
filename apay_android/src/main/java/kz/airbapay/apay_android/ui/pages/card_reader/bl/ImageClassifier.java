@@ -29,18 +29,14 @@ import java.nio.MappedByteBuffer;
 /**
  * Classifies images with Tensorflow Lite.
  */
-abstract class ImageClassifier {
 
-	/**
-	 * Tag for the {@link Log}.
-	 */
-	private static final String TAG = "CardScan";
+// todo оставил java из-за того, что в котлин getPixels крашится. так и не выяснил почему
+abstract class ImageClassifier {
 
 	/**
 	 * Dimensions of inputs.
 	 */
 	private static final int DIM_BATCH_SIZE = 1;
-
 	private static final int DIM_PIXEL_SIZE = 3;
 
 	/**
@@ -69,11 +65,6 @@ abstract class ImageClassifier {
 	ByteBuffer imgData = null;
 
 	/**
-	 * holds a gpu delegate
-	 */
-//	private GpuDelegate gpuDelegate = null;
-
-	/**
 	 * Initializes an {@code ImageClassifier}.
 	 */
 	ImageClassifier(Context context) throws IOException {
@@ -97,9 +88,6 @@ abstract class ImageClassifier {
 	 * Classifies a frame from the preview stream.
 	 */
 	void classifyFrame(Bitmap bitmap) {
-		if (tflite == null) {
-			Log.e(TAG, "Image classifier has not been initialized; Skipped.");
-		}
 		convertBitmapToByteBuffer(bitmap);
 		// Here's where the magic happens!!!
 		runInference();
