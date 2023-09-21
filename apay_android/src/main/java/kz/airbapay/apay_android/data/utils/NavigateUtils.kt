@@ -16,7 +16,7 @@ import kz.airbapay.apay_android.data.constant.TEMPLATE_DEEP_LINK_WEB_VIEW
 import kz.airbapay.apay_android.data.constant.TEMPLATE_ROUTES_ERROR
 import kz.airbapay.apay_android.data.constant.TEMPLATE_ROUTES_ERROR_WITH_INSTRUCTION
 import kz.airbapay.apay_android.data.constant.initErrorsCodeByCode
-import kz.airbapay.apay_android.ui.pages.card_reader.bl.ScanActivityImpl
+import kz.airbapay.apay_android.ui.pages.card_reader.ScanActivityImpl
 
 internal fun backToHome(navController: NavController) {
     navController.popBackStack(

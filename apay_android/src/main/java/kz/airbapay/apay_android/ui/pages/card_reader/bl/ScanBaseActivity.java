@@ -52,16 +52,10 @@ public abstract class ScanBaseActivity extends Activity implements Camera.Previe
 	private boolean mSentResponse = false;
 	private boolean mIsActivityActive = false;
 	private HashMap<String, Integer> numberResults = new HashMap<>();
-	private HashMap<Expiry, Integer> expiryResults = new HashMap<>();
 	private long firstResultMs = 0;
 	private int mTextureId;
 	private float mRoiCenterYRatio;
 	private CameraThread mCameraThread = null;
-
-	public boolean wasPermissionDenied = false;
-	public String denyPermissionTitle;
-	public String denyPermissionMessage;
-	public String denyPermissionButton;
 
 	// set when this activity posts to the machineLearningThread
 	public long mPredictionStartMs = 0;
@@ -73,11 +67,7 @@ public abstract class ScanBaseActivity extends Activity implements Camera.Previe
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
-		denyPermissionTitle = "deny_permission_title";
-		denyPermissionMessage = "deny_permission_messag";
-		denyPermissionButton = "eny_permission_button";
-
+		
 		mOrientationEventListener = new OrientationEventListener(this) {
 			@Override
 			public void onOrientationChanged(int orientation) {
@@ -119,15 +109,8 @@ public abstract class ScanBaseActivity extends Activity implements Camera.Previe
 		if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 			mIsPermissionCheckDone = true;
 		} else {
-			wasPermissionDenied = true;
 			AlertDialog.Builder builder = new AlertDialog.Builder(this);
-			builder.setMessage(this.denyPermissionMessage)
-					.setTitle(this.denyPermissionTitle);
-			builder.setPositiveButton(this.denyPermissionButton, new DialogInterface.OnClickListener() {
-				public void onClick(DialogInterface dialog, int id) {
-					// just let the user click on the back button manually
-				}
-			});
+			builder.setMessage("Доступ к камере запрещен");
 			AlertDialog dialog = builder.create();
 			dialog.show();
 		}
@@ -157,7 +140,6 @@ public abstract class ScanBaseActivity extends Activity implements Camera.Previe
 
 	protected void startCamera() {
 		numberResults = new HashMap<>();
-		expiryResults = new HashMap<>();
 		firstResultMs = 0;
 		if (mOrientationEventListener.canDetectOrientation()) {
 			mOrientationEventListener.enable();
@@ -200,7 +182,6 @@ public abstract class ScanBaseActivity extends Activity implements Camera.Previe
 		mIsActivityActive = true;
 		firstResultMs = 0;
 		numberResults = new HashMap<>();
-		expiryResults = new HashMap<>();
 		mSentResponse = false;
 
 		startCamera();
@@ -310,7 +291,7 @@ public abstract class ScanBaseActivity extends Activity implements Camera.Previe
 		}
 	}
 
-	@VisibleForTesting()
+	
 	public void incrementNumber(String number) {
 		Integer currentValue = numberResults.get(number);
 		if (currentValue == null) {
@@ -319,18 +300,7 @@ public abstract class ScanBaseActivity extends Activity implements Camera.Previe
 
 		numberResults.put(number, currentValue + 1);
 	}
-
-	@VisibleForTesting()
-	public void incrementExpiry(Expiry expiry) {
-		Integer currentValue = expiryResults.get(expiry);
-		if (currentValue == null) {
-			currentValue = 0;
-		}
-
-		expiryResults.put(expiry, currentValue + 1);
-	}
-
-	@VisibleForTesting()
+	
 	public String getNumberResult() {
 		// Ugg there has to be a better way
 		String result = null;
@@ -351,27 +321,7 @@ public abstract class ScanBaseActivity extends Activity implements Camera.Previe
 		return result;
 	}
 
-	@VisibleForTesting()
-	public Expiry getExpiryResult() {
-		Expiry result = null;
-		int maxValue = 0;
-
-		for (Expiry expiry : expiryResults.keySet()) {
-			int value = 0;
-			Integer count = expiryResults.get(expiry);
-			if (count != null) {
-				value = count;
-			}
-			if (value > maxValue) {
-				result = expiry;
-				maxValue = value;
-			}
-		}
-
-		return result;
-	}
-
-	protected abstract void onCardScanned(String numberResult, String month, String year);
+	protected abstract void onCardScanned(String numberResult);
 
 	@Override
 	public void onFatalError() {
@@ -382,8 +332,8 @@ public abstract class ScanBaseActivity extends Activity implements Camera.Previe
 	}
 
 	@Override
-	public void onPrediction(final String number, final Expiry expiry, final Bitmap bitmap,
-							 final List<DetectedBox> digitBoxes, final DetectedBox expiryBox) {
+	public void onPrediction(final String number, final Bitmap bitmap,
+							 final List<DetectedBox> digitBoxes) {
 		if (!mSentResponse && mIsActivityActive) {
 			if (number != null && firstResultMs == 0) {
 				firstResultMs = SystemClock.uptimeMillis();
@@ -392,24 +342,14 @@ public abstract class ScanBaseActivity extends Activity implements Camera.Previe
 			if (number != null) {
 				incrementNumber(number);
 			}
-			if (expiry != null) {
-				incrementExpiry(expiry);
-			}
 
 			long duration = SystemClock.uptimeMillis() - firstResultMs;
 
 			if (firstResultMs != 0 && duration >= errorCorrectionDurationMs) {
 				mSentResponse = true;
 				String numberResult = getNumberResult();
-				Expiry expiryResult = getExpiryResult();
-				String month = null;
-				String year = null;
-				if (expiryResult != null) {
-					month = Integer.toString(expiryResult.getMonth());
-					year = Integer.toString(expiryResult.getYear());
-				}
 
-				onCardScanned(numberResult, month, year);
+				onCardScanned(numberResult);
 			}
 		}
 
