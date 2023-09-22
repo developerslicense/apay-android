@@ -19,6 +19,7 @@ import kz.airbapay.apay_android.ui.pages.card_reader.bl.Overlay
 import java.util.concurrent.Semaphore
 
 internal class ScanActivity : Activity() {
+    // todo если возникнут проблемы с камерой, то используй https://github.com/android/camera-samples
 
     var executorML: ExecutorML? = null
     private var executorCamera: ExecutorCamera? = null

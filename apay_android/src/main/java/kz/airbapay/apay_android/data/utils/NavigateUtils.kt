@@ -69,5 +69,6 @@ internal fun openSuccess(navController: NavController?) {
 }
 
 internal fun openCardScanner(activity: AirbaPayActivity) {
+ // todo если возникнут проблемы с камерой, то используй https://github.com/android/camera-samples
     activity.scanResultLauncher?.launch(Intent(activity, ScanActivity::class.java))
 }
