@@ -1,7 +1,9 @@
 package kz.airbapay.apay_android.data.utils
 
+import android.content.Intent
 import androidx.core.net.toUri
 import androidx.navigation.NavController
+import kz.airbapay.apay_android.AirbaPayActivity
 import kz.airbapay.apay_android.data.constant.ARG_ACTION
 import kz.airbapay.apay_android.data.constant.ARG_ERROR_CODE
 import kz.airbapay.apay_android.data.constant.ErrorsCode
@@ -14,6 +16,7 @@ import kz.airbapay.apay_android.data.constant.TEMPLATE_DEEP_LINK_WEB_VIEW
 import kz.airbapay.apay_android.data.constant.TEMPLATE_ROUTES_ERROR
 import kz.airbapay.apay_android.data.constant.TEMPLATE_ROUTES_ERROR_WITH_INSTRUCTION
 import kz.airbapay.apay_android.data.constant.initErrorsCodeByCode
+import kz.airbapay.apay_android.ui.pages.card_reader.ScanActivity
 
 internal fun backToHome(navController: NavController) {
     navController.popBackStack(
@@ -63,4 +66,9 @@ internal fun openWebView(
 
 internal fun openSuccess(navController: NavController?) {
     navController?.navigate(ROUTES_SUCCESS)
+}
+
+internal fun openCardScanner(activity: AirbaPayActivity) {
+ // todo если возникнут проблемы с камерой, то используй https://github.com/android/camera-samples
+    activity.scanResultLauncher?.launch(Intent(activity, ScanActivity::class.java))
 }

@@ -25,6 +25,7 @@ internal fun CardNumberView(
     cardNumberError: MutableState<String?>,
     cardNumberFocusRequester: FocusRequester,
     dateExpiredFocusRequester: FocusRequester,
+    actionClickScanCard: () -> Unit
 ) {
 
     val paySystemIcon = remember { mutableStateOf<Int?>(null) }
@@ -51,7 +52,9 @@ internal fun CardNumberView(
         modifierRoot = Modifier.padding(horizontal = 16.dp),
         actionOnTextChanged = { pan ->
             paySystemIcon.value = getCardTypeFromNumber(pan).icon
-        }
+        },
+        actionClickScanCard = actionClickScanCard,
+        isCardNumberMask = true
     )
 
 }

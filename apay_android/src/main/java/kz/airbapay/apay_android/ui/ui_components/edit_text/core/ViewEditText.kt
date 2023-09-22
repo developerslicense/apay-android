@@ -39,6 +39,7 @@ import kz.airbapay.apay_android.ui.ui_components.InitActionIcon
 internal fun ViewEditText(
     actionOnTextChanged: (String) -> Unit,
     actionClickInfo: (() -> Unit)? = null,
+    actionClickScanCard: (() -> Unit)? = null,
     text: MutableState<TextFieldValue>,
     errorTitle: MutableState<String?>,
     placeholder: String,
@@ -56,7 +57,8 @@ internal fun ViewEditText(
         imeAction = ImeAction.Next
     ),
     visualTransformation: VisualTransformation? = null,
-    isDateExpiredMask: Boolean = false
+    isDateExpiredMask: Boolean = false,
+    isCardNumberMask: Boolean = false
 ) {
 
     val hasFocus = remember {
@@ -99,18 +101,20 @@ internal fun ViewEditText(
                     paySystemIcon = paySystemIcon.value
                 )
 
-                InitIconClear(
+                InitIconEnd(
                     clearIconRef = clearIconRef,
                     hasFocus = hasFocus.value,
                     text = text.value.text,
                     isError = errorTitle.value != null,
+                    isCardNumberMask = isCardNumberMask,
                     actionClickClear = {
                         text.value = TextFieldValue(
                             text = "",
                             selection = TextRange(0)
                         )
                         paySystemIcon.value = null
-                    }
+                    },
+                    actionClickScanCard = actionClickScanCard
                 )
             }
         }
@@ -136,20 +140,38 @@ internal fun ViewEditText(
 }
 
 @Composable
-private fun ConstraintLayoutScope.InitIconClear(
+private fun ConstraintLayoutScope.InitIconEnd(
     isError: Boolean,
+    isCardNumberMask: Boolean,
     text: String,
     hasFocus: Boolean,
     actionClickClear: () -> Unit,
+    actionClickScanCard: (() -> Unit)?,
     clearIconRef: ConstrainedLayoutReference
 ) {
+
     if (
         text.isNotBlank()
         && hasFocus
+        && !isCardNumberMask
     ) {
         InitActionIcon(
             action = actionClickClear,
             iconSrc = R.drawable.ic_close,
+            modifier = Modifier
+                .size(40.dp)
+                .constrainAs(clearIconRef) {
+                    end.linkTo(parent.end)
+                    top.linkTo(parent.top)
+                    bottom.linkTo(parent.bottom)
+                },
+            _outlinedButtonColor = if (isError) ColorsSdk.stateBgError else ColorsSdk.bgBlock
+        )
+
+    } else if (isCardNumberMask) {
+        InitActionIcon(
+            action = { actionClickScanCard?.invoke() },
+            iconSrc = R.drawable.ic_card_scanner,
             modifier = Modifier
                 .size(40.dp)
                 .constrainAs(clearIconRef) {
