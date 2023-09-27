@@ -1,9 +1,11 @@
 package kz.airbapay.apay_android.ui.pages.googlepay
 
+import android.os.Message
 import android.view.ViewGroup
 import android.webkit.WebChromeClient
 import android.webkit.WebSettings
 import android.webkit.WebView
+import android.webkit.WebView.WebViewTransport
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
@@ -56,17 +58,43 @@ internal fun GooglePayPage(
 
                     settings.javaScriptEnabled = true
                     settings.domStorageEnabled = true
-                    settings.layoutAlgorithm = WebSettings.LayoutAlgorithm.SINGLE_COLUMN
+                    settings.layoutAlgorithm = WebSettings.LayoutAlgorithm.NORMAL
                     settings.loadWithOverviewMode = true
-                    settings.useWideViewPort = true
                     settings.setSupportMultipleWindows(true)
                     settings.javaScriptCanOpenWindowsAutomatically = true
 
-                    webChromeClient = WebChromeClient()
                     webViewClient = GooglePayClient(
                         navController = navController,
                         inProgress = inProgress,
                     )
+                    webChromeClient = object : WebChromeClient() {
+                        var newWebView: WebView? = null
+
+                        override fun onCreateWindow(
+                            mWebviewPop: WebView?, isDialog: Boolean,
+                            isUserGesture: Boolean, resultMsg: Message
+                        ): Boolean {
+
+                            newWebView = WebView(context)
+
+                            newWebView!!.settings.javaScriptEnabled = true
+                            newWebView!!.settings.setSupportZoom(true)
+                            newWebView!!.settings.builtInZoomControls = true
+                            newWebView!!.settings.setSupportMultipleWindows(true)
+                            mWebviewPop?.addView(newWebView)
+                            val transport = resultMsg.obj as WebViewTransport
+                            transport.webView = newWebView
+                            resultMsg.sendToTarget()
+
+                            newWebView?.webViewClient = GooglePayClient(
+                                navController = navController,
+                                inProgress = inProgress,
+                            )
+
+                            return true
+                        }
+
+                    }
 
                     loadPage(url)
                 }

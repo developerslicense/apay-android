@@ -12,11 +12,12 @@ import androidx.navigation.NavController
 import kz.airbapay.apay_android.data.utils.DataHolder
 import kz.airbapay.apay_android.data.utils.errorLog
 import kz.airbapay.apay_android.data.utils.messageLog
+import kz.airbapay.apay_android.data.utils.openAcquiring
 import kz.airbapay.apay_android.data.utils.openErrorPageWithCondition
 import kz.airbapay.apay_android.data.utils.openSuccess
 
 internal class GooglePayClient(
-    private val navController: NavController? = null,
+    private val navController: NavController?,
     private val inProgress: MutableState<Boolean>,
 ) : WebViewClient() {
 
@@ -43,11 +44,18 @@ internal class GooglePayClient(
         messageLog("shouldOverrideUrlLoading $url")
 
         when {
+            url.contains("acquiring-api/sdk/api/v1/payments/three-ds") -> {
+                openAcquiring(
+                    redirectUrl = url,
+                    navController = navController!!
+                )
+            }
             url.contains("status=auth")
                     || url.contains("status=success") -> {
                 messageLog("Status success")
                 openSuccess(navController)
             }
+
             url.contains("status=error") -> {
                 messageLog("3D secure status error")
                 try {
@@ -80,8 +88,5 @@ internal class GooglePayClient(
 
         return false
     }
-
 }
-
-
 

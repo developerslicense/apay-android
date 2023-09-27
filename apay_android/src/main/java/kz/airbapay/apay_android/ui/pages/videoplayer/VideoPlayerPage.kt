@@ -27,7 +27,7 @@ internal fun VideoPlayerPage(
 
                 settings.javaScriptEnabled = true
                 settings.domStorageEnabled = true
-                settings.layoutAlgorithm = WebSettings.LayoutAlgorithm.SINGLE_COLUMN
+                settings.layoutAlgorithm = WebSettings.LayoutAlgorithm.NORMAL
                 settings.loadWithOverviewMode = true
                 settings.useWideViewPort = true
 
