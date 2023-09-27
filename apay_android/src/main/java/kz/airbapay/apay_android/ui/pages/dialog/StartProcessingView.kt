@@ -20,6 +20,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
+import kz.airbapay.apay_android.AirbaPayActivity
 import kz.airbapay.apay_android.data.constant.paymentByCard
 import kz.airbapay.apay_android.data.model.BankCard
 import kz.airbapay.apay_android.data.utils.DataHolder
@@ -32,6 +33,7 @@ import kz.airbapay.apay_android.ui.pages.dialog.start_processing_ext.InitErrorSt
 import kz.airbapay.apay_android.ui.pages.dialog.start_processing_ext.InitViewStartProcessingAmount
 import kz.airbapay.apay_android.ui.pages.dialog.start_processing_ext.InitViewStartProcessingButtonNext
 import kz.airbapay.apay_android.ui.pages.dialog.start_processing_ext.InitViewStartProcessingCards
+import kz.airbapay.apay_android.ui.pages.dialog.start_processing_ext.InitViewStartProcessingGPay
 import kz.airbapay.apay_android.ui.resources.ColorsSdk
 import kz.airbapay.apay_android.ui.ui_components.BackHandler
 import kz.airbapay.apay_android.ui.ui_components.InitHeader
@@ -63,7 +65,7 @@ internal fun StartProcessingView(
 
     val isError = remember { mutableStateOf(false) }
     val size = remember { mutableStateOf(IntSize.Zero) }
-    val isLoading  = remember { mutableStateOf(true) }
+    val isLoading = remember { mutableStateOf(true) }
     val selectedCard = remember { mutableStateOf<BankCard?>(null) }
 
     val savedCards = remember {
@@ -81,7 +83,7 @@ internal fun StartProcessingView(
             .onSizeChanged {
                 size.value = it
             },
-        elevation = if(isBottomSheetType) 5.dp else 0.dp
+        elevation = if (isBottomSheetType) 5.dp else 0.dp
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally
@@ -102,12 +104,21 @@ internal fun StartProcessingView(
 
             } else {
                 InitViewStartProcessingAmount(purchaseAmount.value)
-//                InitViewStartProcessingGPay() //todo временно закоментировал
+                InitViewStartProcessingGPay(
+                    openGooglePay = {
+                        actionClose()
+                        AirbaPayActivity.init(
+                            context = context,
+                            customSuccessPage = customSuccessPage,
+                            isGooglePay = true
+                        )
+                    }
+                )
 
                 if (savedCards.value.isNotEmpty()
                     && isAuthenticated.value
                 ) {
-                    InitViewStartProcessingCards( // todo внутри есть закоментированное
+                    InitViewStartProcessingCards(
                         savedCards = savedCards.value,
                         selectedCard = selectedCard,
                         actionClose = actionClose,
@@ -126,7 +137,7 @@ internal fun StartProcessingView(
             }
         }
 
-        if (isLoading .value
+        if (isLoading.value
             && needShowProgressBar
         ) {
             ProgressBarView(
@@ -144,14 +155,14 @@ internal fun StartProcessingView(
                 authRepository = authRepository,
                 onError = {
                     isError.value = true
-                    isLoading .value = false
+                    isLoading.value = false
                     actionOnLoadingCompleted()
                 },
                 onResult = {
                     cardRepository.getCards(
                         phone = DataHolder.userPhone,
                         error = {
-                            isLoading .value = false
+                            isLoading.value = false
                             actionOnLoadingCompleted()
                         },
                         result = {

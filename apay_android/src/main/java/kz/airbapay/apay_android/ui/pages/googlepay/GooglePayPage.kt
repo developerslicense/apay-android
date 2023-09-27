@@ -1,4 +1,4 @@
-package kz.airbapay.apay_android.ui.pages.webview
+package kz.airbapay.apay_android.ui.pages.googlepay
 
 import android.view.ViewGroup
 import android.webkit.WebChromeClient
@@ -18,7 +18,7 @@ import kz.airbapay.apay_android.ui.ui_components.BackHandler
 import kz.airbapay.apay_android.ui.ui_components.ViewToolbar
 
 @Composable
-internal fun WebViewPage(
+internal fun GooglePayPage(
     url: String?,
     navController: NavController
 ) {
@@ -40,7 +40,7 @@ internal fun WebViewPage(
             title = "",
             backIcon = R.drawable.cancel,
             actionBack = {
-
+                showDialogExit.value = true
             }
         )
 
@@ -59,9 +59,11 @@ internal fun WebViewPage(
                     settings.layoutAlgorithm = WebSettings.LayoutAlgorithm.SINGLE_COLUMN
                     settings.loadWithOverviewMode = true
                     settings.useWideViewPort = true
+                    settings.setSupportMultipleWindows(true)
+                    settings.javaScriptCanOpenWindowsAutomatically = true
 
                     webChromeClient = WebChromeClient()
-                    webViewClient = WebViewClientCompose(
+                    webViewClient = GooglePayClient(
                         navController = navController,
                         inProgress = inProgress,
                     )

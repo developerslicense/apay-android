@@ -12,7 +12,8 @@ import kz.airbapay.apay_android.data.constant.ROUTES_ERROR_SOMETHING_WRONG
 import kz.airbapay.apay_android.data.constant.ROUTES_HOME
 import kz.airbapay.apay_android.data.constant.ROUTES_REPEAT
 import kz.airbapay.apay_android.data.constant.ROUTES_SUCCESS
-import kz.airbapay.apay_android.data.constant.TEMPLATE_DEEP_LINK_WEB_VIEW
+import kz.airbapay.apay_android.data.constant.TEMPLATE_DEEP_LINK_ACQUIRING
+import kz.airbapay.apay_android.data.constant.TEMPLATE_DEEP_LINK_GOOGLE_PAY
 import kz.airbapay.apay_android.data.constant.TEMPLATE_ROUTES_ERROR
 import kz.airbapay.apay_android.data.constant.TEMPLATE_ROUTES_ERROR_WITH_INSTRUCTION
 import kz.airbapay.apay_android.data.constant.initErrorsCodeByCode
@@ -54,11 +55,21 @@ internal fun openErrorPageWithCondition(
     }
 }
 
-internal fun openWebView(
+internal fun openAcquiring(
     redirectUrl: String?,
     navController: NavController
 ) {
-    val deepLink = TEMPLATE_DEEP_LINK_WEB_VIEW +
+    val deepLink = TEMPLATE_DEEP_LINK_ACQUIRING +
+            "?$ARG_ACTION=${redirectUrl}".toUri()
+
+    navController.navigate(deepLink)
+}
+
+internal fun openGooglePay(
+    redirectUrl: String?,
+    navController: NavController
+) {
+    val deepLink = TEMPLATE_DEEP_LINK_GOOGLE_PAY +
             "?$ARG_ACTION=${redirectUrl}".toUri()
 
     navController.navigate(deepLink)

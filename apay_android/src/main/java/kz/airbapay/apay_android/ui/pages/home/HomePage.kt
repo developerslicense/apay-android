@@ -45,10 +45,12 @@ import kz.airbapay.apay_android.data.utils.DataHolder
 import kz.airbapay.apay_android.data.utils.openCardScanner
 import kz.airbapay.apay_android.network.repository.AuthRepository
 import kz.airbapay.apay_android.network.repository.CardRepository
+import kz.airbapay.apay_android.network.repository.GooglePayRepository
 import kz.airbapay.apay_android.network.repository.PaymentsRepository
 import kz.airbapay.apay_android.ui.pages.dialog.InitDialogExit
 import kz.airbapay.apay_android.ui.pages.home.bl.checkValid
 import kz.airbapay.apay_android.ui.pages.home.bl.startPaymentProcessing
+import kz.airbapay.apay_android.ui.pages.home.bl.startPaymentProcessingGooglePay
 import kz.airbapay.apay_android.ui.pages.home.presentation.BottomImages
 import kz.airbapay.apay_android.ui.pages.home.presentation.CardNumberView
 import kz.airbapay.apay_android.ui.pages.home.presentation.CvvBottomSheet
@@ -69,7 +71,9 @@ internal fun HomePage(
     authRepository: AuthRepository,
     cardRepository: CardRepository,
     paymentsRepository: PaymentsRepository,
+    googlePayRepository: GooglePayRepository,
     selectedCardId: String?,
+    isGooglePay: Boolean,
     coroutineScope: CoroutineScope = rememberCoroutineScope(),
     scrollState: ScrollState = rememberScrollState()
 
@@ -270,10 +274,19 @@ internal fun HomePage(
                 cardId = selectedCardId
             )
 
+        } else if (isGooglePay) {
+            startPaymentProcessingGooglePay(
+                navController = navController,
+                isLoading = isLoading,
+                coroutineScope = coroutineScope,
+                paymentsRepository = paymentsRepository,
+                googlePayRepository = googlePayRepository,
+                authRepository = authRepository
+            )
+
         } else {
             isLoading.value = false
         }
     }
 }
-
 

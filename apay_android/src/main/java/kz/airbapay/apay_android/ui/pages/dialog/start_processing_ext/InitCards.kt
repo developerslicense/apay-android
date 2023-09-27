@@ -17,13 +17,14 @@ import androidx.compose.material.Card
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import kz.airbapay.apay_android.AirbaPayActivity
+import kz.airbapay.apay_android.data.constant.orPayWithCard
 import kz.airbapay.apay_android.data.model.BankCard
 import kz.airbapay.apay_android.ui.resources.ColorsSdk
 import kz.airbapay.apay_android.ui.resources.LocalFonts
@@ -39,14 +40,14 @@ internal fun InitViewStartProcessingCards(
 ) {
     val context = LocalContext.current
     val selected = remember {
-        mutableStateOf(0)
+        mutableIntStateOf(0)
     }
 
-    /*Spacer(modifier = Modifier.height(32.dp)) //todo временно
+    Spacer(modifier = Modifier.height(32.dp))
     Text(
         style = LocalFonts.current.regular,
         text = orPayWithCard()
-    )*/
+    )
     Spacer(modifier = Modifier.height(16.dp))
 
     LazyColumn(

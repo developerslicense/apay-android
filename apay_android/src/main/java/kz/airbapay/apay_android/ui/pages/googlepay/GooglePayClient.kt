@@ -1,4 +1,4 @@
-package kz.airbapay.apay_android.ui.pages.webview
+package kz.airbapay.apay_android.ui.pages.googlepay
 
 import android.annotation.SuppressLint
 import android.graphics.Bitmap
@@ -15,7 +15,7 @@ import kz.airbapay.apay_android.data.utils.messageLog
 import kz.airbapay.apay_android.data.utils.openErrorPageWithCondition
 import kz.airbapay.apay_android.data.utils.openSuccess
 
-internal class WebViewClientCompose(
+internal class GooglePayClient(
     private val navController: NavController? = null,
     private val inProgress: MutableState<Boolean>,
 ) : WebViewClient() {

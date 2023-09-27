@@ -21,30 +21,34 @@ import androidx.navigation.navDeepLink
 import kz.airbapay.apay_android.data.constant.ARG_ACTION
 import kz.airbapay.apay_android.data.constant.ARG_CARD_ID
 import kz.airbapay.apay_android.data.constant.ARG_ERROR_CODE
+import kz.airbapay.apay_android.data.constant.ARG_IS_GOOGLE_PAY
+import kz.airbapay.apay_android.data.constant.ROUTES_ACQUIRING
 import kz.airbapay.apay_android.data.constant.ROUTES_ERROR
 import kz.airbapay.apay_android.data.constant.ROUTES_ERROR_FINAL
 import kz.airbapay.apay_android.data.constant.ROUTES_ERROR_SOMETHING_WRONG
 import kz.airbapay.apay_android.data.constant.ROUTES_ERROR_WITH_INSTRUCTION
+import kz.airbapay.apay_android.data.constant.ROUTES_GOOGLE_PAY
 import kz.airbapay.apay_android.data.constant.ROUTES_HOME
 import kz.airbapay.apay_android.data.constant.ROUTES_REPEAT
 import kz.airbapay.apay_android.data.constant.ROUTES_SUCCESS
-import kz.airbapay.apay_android.data.constant.ROUTES_WEB_VIEW
 import kz.airbapay.apay_android.data.constant.initErrorsCodeByCode
 import kz.airbapay.apay_android.data.utils.MaskUtils
 import kz.airbapay.apay_android.network.api.Api
 import kz.airbapay.apay_android.network.base.ClientConnector
 import kz.airbapay.apay_android.network.repository.AuthRepository
 import kz.airbapay.apay_android.network.repository.CardRepository
+import kz.airbapay.apay_android.network.repository.GooglePayRepository
 import kz.airbapay.apay_android.network.repository.PaymentsRepository
+import kz.airbapay.apay_android.ui.pages.acquiring.AcquiringPage
 import kz.airbapay.apay_android.ui.pages.card_reader.ScanActivity
 import kz.airbapay.apay_android.ui.pages.error.ErrorFinalPage
 import kz.airbapay.apay_android.ui.pages.error.ErrorPage
 import kz.airbapay.apay_android.ui.pages.error.ErrorSomethingWrongPage
 import kz.airbapay.apay_android.ui.pages.error.ErrorWithInstructionPage
 import kz.airbapay.apay_android.ui.pages.error.RepeatPage
+import kz.airbapay.apay_android.ui.pages.googlepay.GooglePayPage
 import kz.airbapay.apay_android.ui.pages.home.HomePage
 import kz.airbapay.apay_android.ui.pages.success.SuccessPage
-import kz.airbapay.apay_android.ui.pages.webview.WebViewPage
 import java.lang.ref.WeakReference
 
 class AirbaPayActivity : ComponentActivity() {
@@ -58,12 +62,16 @@ class AirbaPayActivity : ComponentActivity() {
         fun init(
             context: Context,
             cardId: String? = null,
+            isGooglePay: Boolean = false,
             customSuccessPage: @Composable (() -> Unit)?
         ) {
             val intent = Intent(context, AirbaPayActivity::class.java)
+
             if (cardId != null) {
                 intent.putExtra(ARG_CARD_ID, cardId)
             }
+            intent.putExtra(ARG_IS_GOOGLE_PAY, isGooglePay)
+
             this.customSuccessPage = WeakReference(customSuccessPage)
             context.startActivity(intent)
         }
@@ -78,8 +86,10 @@ class AirbaPayActivity : ComponentActivity() {
         val authRepository = AuthRepository(api)
         val paymentsRepository = PaymentsRepository(api)
         val cardRepository = CardRepository(api)
+        val googlePayRepository = GooglePayRepository(api)
 
         val selectedCardId: String? = intent.getStringExtra(ARG_CARD_ID)
+        val isGooglePay: Boolean = intent.getBooleanExtra(ARG_IS_GOOGLE_PAY, false)
 
         val localSuccessCustomPage: @Composable (() -> Unit)? = customSuccessPage?.get()
         customSuccessPage = null
@@ -112,8 +122,10 @@ class AirbaPayActivity : ComponentActivity() {
                         navController = navController,
                         authRepository = authRepository,
                         paymentsRepository = paymentsRepository,
+                        googlePayRepository = googlePayRepository,
                         cardRepository = cardRepository,
-                        selectedCardId = selectedCardId
+                        selectedCardId = selectedCardId,
+                        isGooglePay = isGooglePay
                     )
                 }
 
@@ -171,9 +183,9 @@ class AirbaPayActivity : ComponentActivity() {
                 }
 
                 composable(
-                    route = ROUTES_WEB_VIEW,
+                    route = ROUTES_ACQUIRING,
                     deepLinks = listOf(
-                        navDeepLink { uriPattern = ROUTES_WEB_VIEW }
+                        navDeepLink { uriPattern = ROUTES_ACQUIRING }
                     ),
                     arguments = listOf(
                         navArgument(ARG_ACTION) {
@@ -181,7 +193,24 @@ class AirbaPayActivity : ComponentActivity() {
                         }
                     )
                 ) { backStackEntry ->
-                    WebViewPage(
+                    AcquiringPage(
+                        url = backStackEntry.arguments?.getString(ARG_ACTION).orEmpty(),
+                        navController = navController
+                    )
+                }
+
+                composable(
+                    route = ROUTES_GOOGLE_PAY,
+                    deepLinks = listOf(
+                        navDeepLink { uriPattern = ROUTES_GOOGLE_PAY }
+                    ),
+                    arguments = listOf(
+                        navArgument(ARG_ACTION) {
+                            type = NavType.StringType
+                        }
+                    )
+                ) { backStackEntry ->
+                    GooglePayPage(
                         url = backStackEntry.arguments?.getString(ARG_ACTION).orEmpty(),
                         navController = navController
                     )
