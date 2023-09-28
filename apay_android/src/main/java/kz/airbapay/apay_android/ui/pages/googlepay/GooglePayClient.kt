@@ -14,9 +14,11 @@ import kz.airbapay.apay_android.data.utils.errorLog
 import kz.airbapay.apay_android.data.utils.messageLog
 import kz.airbapay.apay_android.data.utils.openAcquiring
 import kz.airbapay.apay_android.data.utils.openErrorPageWithCondition
+import kz.airbapay.apay_android.data.utils.openGooglePay
 import kz.airbapay.apay_android.data.utils.openSuccess
 
 internal class GooglePayClient(
+    private val redirectUrl: String?,
     private val navController: NavController?,
     private val inProgress: MutableState<Boolean>,
 ) : WebViewClient() {
@@ -37,6 +39,13 @@ internal class GooglePayClient(
         super.onPageFinished(view, url)
         messageLog("onPageFinished, $url")
         inProgress.value = false
+
+        if (url?.contains("https://accounts.youtube.com/accounts/") == true) {
+            openGooglePay(
+                redirectUrl = redirectUrl,
+                navController = navController!!
+            )
+        }
     }
 
     override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {

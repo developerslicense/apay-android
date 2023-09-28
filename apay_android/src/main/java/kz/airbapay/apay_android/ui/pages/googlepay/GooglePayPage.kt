@@ -66,6 +66,7 @@ internal fun GooglePayPage(
                     webViewClient = GooglePayClient(
                         navController = navController,
                         inProgress = inProgress,
+                        redirectUrl = url
                     )
                     webChromeClient = object : WebChromeClient() {
                         var newWebView: WebView? = null
@@ -89,6 +90,7 @@ internal fun GooglePayPage(
                             newWebView?.webViewClient = GooglePayClient(
                                 navController = navController,
                                 inProgress = inProgress,
+                                redirectUrl = url
                             )
 
                             return true
