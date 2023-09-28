@@ -6,6 +6,7 @@ import kz.airbapay.apay_android.data.model.CardAddRequest
 import kz.airbapay.apay_android.data.model.CardAddResponse
 import kz.airbapay.apay_android.data.model.CardsGetResponse
 import kz.airbapay.apay_android.data.model.CardsPanResponse
+import kz.airbapay.apay_android.data.model.GooglePayButtonResponse
 import kz.airbapay.apay_android.data.model.PaymentCreateResponse
 import kz.airbapay.apay_android.data.model.PaymentEntryRequest
 import kz.airbapay.apay_android.data.model.PaymentEntryResponse
@@ -37,6 +38,11 @@ internal interface Api {
 
     @GET("api/v1/cards/info-by-pan/{pan}")
     suspend fun getCardsBank(@Path("pan") pan: String): Response<CardsPanResponse>
+
+    // google pay
+
+    @GET("api/v1/wallets/google-pay/button")
+    suspend fun getGooglePay(): Response<GooglePayButtonResponse>
 
     // payments
 

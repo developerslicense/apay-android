@@ -1,4 +1,4 @@
-package kz.airbapay.apay_android.ui.pages.webview
+package kz.airbapay.apay_android.ui.pages.videoplayer
 
 import android.view.ViewGroup
 import android.webkit.WebChromeClient
@@ -27,12 +27,12 @@ internal fun VideoPlayerPage(
 
                 settings.javaScriptEnabled = true
                 settings.domStorageEnabled = true
-                settings.layoutAlgorithm = WebSettings.LayoutAlgorithm.SINGLE_COLUMN
+                settings.layoutAlgorithm = WebSettings.LayoutAlgorithm.NORMAL
                 settings.loadWithOverviewMode = true
                 settings.useWideViewPort = true
 
                 webChromeClient = WebChromeClient()
-                webViewClient = WebViewClientCompose(
+                webViewClient = VideoPlayerClient(
                     inProgress = inProgress
                 )
 

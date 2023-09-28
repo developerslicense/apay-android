@@ -20,9 +20,9 @@ import kotlinx.coroutines.launch
 import kz.airbapay.apay_android.data.constant.ErrorsCode
 import kz.airbapay.apay_android.data.constant.thisNeedSomeTime
 import kz.airbapay.apay_android.data.constant.weRepeatYourPayment
+import kz.airbapay.apay_android.data.utils.openAcquiring
 import kz.airbapay.apay_android.data.utils.openErrorPageWithCondition
 import kz.airbapay.apay_android.data.utils.openSuccess
-import kz.airbapay.apay_android.data.utils.openWebView
 import kz.airbapay.apay_android.network.repository.PaymentsRepository
 import kz.airbapay.apay_android.ui.resources.ColorsSdk
 import kz.airbapay.apay_android.ui.resources.LocalFonts
@@ -109,7 +109,7 @@ private fun onStart(
     paymentsRepository.paymentAccountEntryRetry(
         result = { response ->
             if (response.isSecure3D == true) {
-                openWebView(
+                openAcquiring(
                     redirectUrl = response.secure3D?.action,
                     navController = navController
                 )

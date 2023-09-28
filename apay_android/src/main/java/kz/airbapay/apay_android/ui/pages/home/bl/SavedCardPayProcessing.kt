@@ -7,7 +7,7 @@ import kotlinx.coroutines.launch
 import kz.airbapay.apay_android.data.constant.ErrorsCode
 import kz.airbapay.apay_android.data.utils.openErrorPageWithCondition
 import kz.airbapay.apay_android.data.utils.openSuccess
-import kz.airbapay.apay_android.data.utils.openWebView
+import kz.airbapay.apay_android.data.utils.openAcquiring
 import kz.airbapay.apay_android.network.repository.PaymentsRepository
 
 internal fun startPaymentProcessing(
@@ -26,7 +26,7 @@ internal fun startPaymentProcessing(
             isLoading = isLoading,
             paymentsRepository = paymentsRepository,
             on3DS = { redirectUrl ->
-                openWebView(
+                openAcquiring(
                     redirectUrl = redirectUrl,
                     navController = navController
                 )

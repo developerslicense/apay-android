@@ -1,6 +1,7 @@
 package kz.airbapay.apay_android.ui.pages.dialog.start_processing_ext
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -16,7 +17,9 @@ import kz.airbapay.apay_android.ui.resources.ColorsSdk
 import kz.airbapay.apay_android.ui.ui_components.LoadImageSrc
 
 @Composable
-internal fun InitViewStartProcessingGPay() {
+internal fun InitViewStartProcessingGPay(
+    openGooglePay: () -> Unit
+) {
     Spacer(modifier = Modifier.height(16.dp))
 
     Column(
@@ -33,8 +36,12 @@ internal fun InitViewStartProcessingGPay() {
                     bottomStart = 8.dp
                 )
             )
-            .padding(16.dp)
+            .padding(10.dp)
+            .clickable {
+                openGooglePay()
+            }
     ) {
         LoadImageSrc(imageSrc = R.drawable.g_pay)
     }
 }
+

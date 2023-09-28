@@ -16,46 +16,26 @@ internal class PaymentsRepository(
 ) : BaseCoroutine by BaseCoroutineDelegate() {
 
     fun createPayment(
-        saveCard: Boolean,
-        result: (PaymentCreateResponse) -> Unit,
-        error: (Response<*>) -> Unit
-    ) {
-
-        val param = initParamsForCreatePayment(saveCard)
-
-        launch(
-            requestFlow = {
-                safeApiFlowCall {
-                    api.createPayment(param)
-                }
-            },
-            result = { body ->
-                body.body()?.let {
-                    result(it)
-                } ?: error(Unit)
-            },
-            error = error
-        )
-    }
-
-    fun createPayment(
-        cardId: String,
+        saveCard: Boolean? = null,
+        cardId: String? = null,
         result: (PaymentCreateResponse) -> Unit,
         error: (Response<*>) -> Unit
     ) {
 
         val param = initParamsForCreatePayment(
-            saveCard = null,
+            saveCard = saveCard,
             cardId = cardId
         )
 
         launch(
             requestFlow = {
                 safeApiFlowCall {
-                    api.createPayment(
-                        param = param,
-                        cardId = cardId
-                    )
+                    cardId?.let {
+                        api.createPayment(
+                            param = param,
+                            cardId = cardId
+                        )
+                    } ?: api.createPayment(param = param)
                 }
             },
             result = { body ->

@@ -36,7 +36,7 @@ import kz.airbapay.apay_android.data.constant.forChangeLimitInKaspi
 import kz.airbapay.apay_android.data.constant.message
 import kz.airbapay.apay_android.data.utils.DataHolder
 import kz.airbapay.apay_android.ui.pages.dialog.InitDialogExit
-import kz.airbapay.apay_android.ui.pages.webview.VideoPlayerPage
+import kz.airbapay.apay_android.ui.pages.videoplayer.VideoPlayerPage
 import kz.airbapay.apay_android.ui.resources.ColorsSdk
 import kz.airbapay.apay_android.ui.resources.LocalFonts
 import kz.airbapay.apay_android.ui.ui_components.BackHandler

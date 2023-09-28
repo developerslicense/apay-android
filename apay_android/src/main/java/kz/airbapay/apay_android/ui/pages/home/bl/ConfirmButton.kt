@@ -17,9 +17,9 @@ import kz.airbapay.apay_android.data.utils.DataHolder
 import kz.airbapay.apay_android.data.utils.card_utils.isDateValid
 import kz.airbapay.apay_android.data.utils.card_utils.validateCardNumWithLuhnAlgorithm
 import kz.airbapay.apay_android.data.utils.getNumberCleared
+import kz.airbapay.apay_android.data.utils.openAcquiring
 import kz.airbapay.apay_android.data.utils.openErrorPageWithCondition
 import kz.airbapay.apay_android.data.utils.openSuccess
-import kz.airbapay.apay_android.data.utils.openWebView
 import kz.airbapay.apay_android.network.repository.AuthRepository
 import kz.airbapay.apay_android.network.repository.PaymentsRepository
 import kz.airbapay.apay_android.network.repository.startAuth
@@ -41,15 +41,15 @@ internal fun checkValid(
 ): Boolean {
     var hasError = false
 
-   /* if (emailStateSwitched // todo оставил на всякий случай
-        && (email.isNullOrBlank() || !email.contains(Regex(RegexConst.emailValidation)))
-    ) {
-        hasError = true
-        emailError.value = wrongEmail()
+    /* if (emailStateSwitched // todo оставил на всякий случай
+         && (email.isNullOrBlank() || !email.contains(Regex(RegexConst.emailValidation)))
+     ) {
+         hasError = true
+         emailError.value = wrongEmail()
 
-    } else {
-        emailError.value = null
-    }*/
+     } else {
+         emailError.value = null
+     }*/
 
     if (cardNumber.isNullOrBlank()) {
         hasError = true
@@ -92,7 +92,7 @@ internal fun checkValid(
 
 internal fun startPaymentProcessing(
     navController: NavController,
-    isLoading : MutableState<Boolean>,
+    isLoading: MutableState<Boolean>,
     saveCard: Boolean = false,
     cardNumber: String,
     dateExpired: String? = null,
@@ -101,7 +101,7 @@ internal fun startPaymentProcessing(
     paymentsRepository: PaymentsRepository,
     coroutineScope: CoroutineScope
 ) {
-    isLoading .value = true
+    isLoading.value = true
 
     val cardSaved = BankCard(
         pan = getNumberCleared(cardNumber),
@@ -118,7 +118,7 @@ internal fun startPaymentProcessing(
             paymentsRepository = paymentsRepository,
             authRepository = authRepository,
             on3DS = { secure3D ->
-                openWebView(
+                openAcquiring(
                     redirectUrl = secure3D?.action,
                     navController = navController
                 )
