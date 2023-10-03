@@ -112,7 +112,6 @@ dependencies {
     // Coroutines
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesCore"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutinesCore"
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-play-services:$coroutines"
 
     // Coil
     implementation "io.coil-kt:coil:$coilVersion"

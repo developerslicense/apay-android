@@ -3,7 +3,7 @@ package kz.airbapay.apay_android.ui.resources
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.graphics.Color
 
-internal object ColorsSdk {// todo надо предоставить внешнему пользователю возможность изменить некоторые цвета
+internal object ColorsSdk {
     /** добавил MS к некоторым на конец для того,
      * чтоб понятно было, какие цвета редактируются для внешнего пользователя*/
 
