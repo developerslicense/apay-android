@@ -21,6 +21,7 @@ internal class GooglePayClient(
     private val redirectUrl: String?,
     private val navController: NavController?,
     private val inProgress: MutableState<Boolean>,
+    private val isAfterAuthenticate: Boolean = false
 ) : WebViewClient() {
 
     @SuppressLint("WebViewClientOnReceivedSslError")
@@ -38,14 +39,38 @@ internal class GooglePayClient(
     override fun onPageFinished(view: WebView?, url: String?) {
         super.onPageFinished(view, url)
         messageLog("onPageFinished, $url")
-        inProgress.value = false
 
         if (url?.contains("https://accounts.youtube.com/accounts/") == true) {
             openGooglePay(
                 redirectUrl = redirectUrl,
                 navController = navController!!
             )
+            inProgress.value = false
+
+        } else if (url?.contains("https://spf.airbapay.kz/sdk/google-pay-button") == true) {
+            loadJs(view)
+
+            if (isAfterAuthenticate) {
+                inProgress.value = false
+            }
+
+        } else {
+
+            inProgress.value = false
         }
+    }
+
+    private fun loadJs(webView: WebView?) {
+        webView?.loadUrl(
+            """javascript:(function f() {
+                var btns = document.getElementsByTagName('button');
+                for (var i = 0, n = btns.length; i < n; i++) {
+                  if (btns[i].getAttribute('aria-label') === 'Google Pay') {
+                    btns[i].click();
+                  }
+                }
+              })()"""
+        )
     }
 
     override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
