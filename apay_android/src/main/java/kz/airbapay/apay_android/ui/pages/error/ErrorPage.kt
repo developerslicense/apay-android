@@ -30,6 +30,7 @@ import kz.airbapay.apay_android.data.constant.clickOnBottom
 import kz.airbapay.apay_android.data.constant.clickOnTop
 import kz.airbapay.apay_android.data.constant.description
 import kz.airbapay.apay_android.data.constant.message
+import kz.airbapay.apay_android.data.utils.DataHolder
 import kz.airbapay.apay_android.ui.pages.dialog.InitDialogExit
 import kz.airbapay.apay_android.ui.resources.ColorsSdk
 import kz.airbapay.apay_android.ui.resources.LocalFonts
@@ -132,7 +133,10 @@ internal fun ErrorPage(
                 actionClick = {
                     errorCode.clickOnBottom(
                         navController = navController,
-                        finish = { (context as Activity).finish() }
+                        finish = {
+                            (context as Activity).finish()
+                            DataHolder.frontendCallback?.invoke(false)
+                        }
                     )
                 }
             )

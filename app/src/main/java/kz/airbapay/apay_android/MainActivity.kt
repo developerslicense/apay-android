@@ -1,6 +1,7 @@
 package kz.airbapay.apay_android
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
@@ -26,7 +27,7 @@ import java.util.Date
 
 class MainActivity : ComponentActivity() {
 
-    private val isBottomSheet = true
+    private val isBottomSheet = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -174,6 +175,12 @@ class MainActivity : ComponentActivity() {
             orderNumber = someOrderNumber.toString(),
             goods = goods,
             settlementPayments = settlementPayment //todo исправь насчет опциональности в документации
-        )
+        ) {
+            if (it) {
+                Log.e("AirbaPaySdk", "initProcessing success");
+            } else {
+                Log.e("AirbaPaySdk", "initProcessing error");
+            }
+        }
     }
 }
