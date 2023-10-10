@@ -16,6 +16,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.navigation.NavController
 import kz.airbapay.apay_android.R
+import kz.airbapay.apay_android.data.constant.confirmPayment
 import kz.airbapay.apay_android.ui.pages.dialog.InitDialogExit
 import kz.airbapay.apay_android.ui.ui_components.BackHandler
 import kz.airbapay.apay_android.ui.ui_components.ProgressBarView
@@ -27,6 +28,7 @@ internal fun GooglePayPage(
     navController: NavController
 ) {
     val inProgress = remember { mutableStateOf(true) }
+    val needTitle = remember { mutableStateOf(false) }
 
     val showDialogExit = remember {
         mutableStateOf(false)
@@ -43,7 +45,7 @@ internal fun GooglePayPage(
         ) {
 
             ViewToolbar(
-                title = "",
+                title = if (needTitle.value) confirmPayment() else "",
                 backIcon = R.drawable.cancel,
                 actionBack = {
                     showDialogExit.value = true
@@ -70,7 +72,8 @@ internal fun GooglePayPage(
                         webViewClient = GooglePayClient(
                             navController = navController,
                             inProgress = inProgress,
-                            redirectUrl = url
+                            redirectUrl = url,
+                            needTitle = needTitle
                         )
                         webChromeClient = object : WebChromeClient() {
                             var newWebView: WebView? = null
@@ -95,7 +98,8 @@ internal fun GooglePayPage(
                                     navController = navController,
                                     inProgress = inProgress,
                                     redirectUrl = url,
-                                    isAfterAuthenticate = true
+                                    isAfterAuthenticate = true,
+                                    needTitle = needTitle
                                 )
 
                                 return true

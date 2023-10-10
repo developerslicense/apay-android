@@ -40,7 +40,7 @@ class MainActivity : ComponentActivity() {
             terminalId = "64216e7ccc4a48db060dd689",
             failureCallback = "https://site.kz/failure-clb",
             successCallback = "https://site.kz/success-clb",
-            userEmail = "test@test.com",//todo исправь насчет опциональности в документации
+            userEmail = "test@test.com",
 //            colorBrandMain = Color.Red
         )
 

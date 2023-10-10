@@ -48,7 +48,7 @@ internal fun ViewToolbar(
                 overflow = TextOverflow.Ellipsis,
                 maxLines = 1,
                 modifier = Modifier
-                    .fillMaxWidth(0.7f)
+                    .fillMaxWidth()
                     .padding(start = 10.dp)
             )
         }

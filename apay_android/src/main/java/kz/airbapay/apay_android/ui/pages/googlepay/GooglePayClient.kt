@@ -3,6 +3,7 @@ package kz.airbapay.apay_android.ui.pages.googlepay
 import android.annotation.SuppressLint
 import android.graphics.Bitmap
 import android.net.http.SslError
+import android.os.CountDownTimer
 import android.webkit.SslErrorHandler
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
@@ -21,8 +22,23 @@ internal class GooglePayClient(
     private val redirectUrl: String?,
     private val navController: NavController?,
     private val inProgress: MutableState<Boolean>,
+    private val needTitle: MutableState<Boolean>,
     private val isAfterAuthenticate: Boolean = false
 ) : WebViewClient() {
+
+    private val timer = object: CountDownTimer(20000, 1000) {
+        override fun onTick(millisUntilFinished: Long) {}
+
+        override fun onFinish() {
+            try {
+                inProgress.value = false
+            } catch (e: Exception) {}
+        }
+    }
+
+    init {
+        timer.start()
+    }
 
     @SuppressLint("WebViewClientOnReceivedSslError")
     override fun onReceivedSslError(view: WebView, handler: SslErrorHandler, error: SslError) {
@@ -45,9 +61,11 @@ internal class GooglePayClient(
                 redirectUrl = redirectUrl,
                 navController = navController!!
             )
+            needTitle.value = false
             inProgress.value = false
 
         } else if (url?.contains("https://spf.airbapay.kz/sdk/google-pay-button") == true) {
+            needTitle.value = true
             loadJs(view)
 
             if (isAfterAuthenticate) {
@@ -55,7 +73,7 @@ internal class GooglePayClient(
             }
 
         } else {
-
+            needTitle.value = false
             inProgress.value = false
         }
     }

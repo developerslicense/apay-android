@@ -36,7 +36,7 @@ internal fun ProgressBarView(
                     )
                 }
             )
-            .background(ColorsSdk.bgMain)
+            .background(ColorsSdk.bgBlock)
             .clipToBounds()
     ) {
 
