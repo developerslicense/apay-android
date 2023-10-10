@@ -21,24 +21,10 @@ import kz.airbapay.apay_android.data.utils.openSuccess
 internal class GooglePayClient(
     private val redirectUrl: String?,
     private val navController: NavController?,
-    private val inProgress: MutableState<Boolean>,
-    private val needTitle: MutableState<Boolean>,
-    private val isAfterAuthenticate: Boolean = false
+    private val inProgress: MutableState<Boolean>
 ) : WebViewClient() {
 
-    private val timer = object: CountDownTimer(20000, 1000) {
-        override fun onTick(millisUntilFinished: Long) {}
-
-        override fun onFinish() {
-            try {
-                inProgress.value = false
-            } catch (e: Exception) {}
-        }
-    }
-
-    init {
-        timer.start()
-    }
+    private var timer: CountDownTimer? = null
 
     @SuppressLint("WebViewClientOnReceivedSslError")
     override fun onReceivedSslError(view: WebView, handler: SslErrorHandler, error: SslError) {
@@ -61,19 +47,23 @@ internal class GooglePayClient(
                 redirectUrl = redirectUrl,
                 navController = navController!!
             )
-            needTitle.value = false
             inProgress.value = false
 
         } else if (url?.contains("https://spf.airbapay.kz/sdk/google-pay-button") == true) {
-            needTitle.value = true
-            loadJs(view)
+            timer?.cancel()
+            timer = object: CountDownTimer(5000, 1000) {
+                override fun onTick(millisUntilFinished: Long) {}
 
-            if (isAfterAuthenticate) {
-                inProgress.value = false
+                override fun onFinish() {
+                    try {
+                        loadJs(view)
+
+                    } catch (e: Exception) {}
+                }
             }
+            timer?.start()
 
         } else {
-            needTitle.value = false
             inProgress.value = false
         }
     }
@@ -84,7 +74,7 @@ internal class GooglePayClient(
                 var btns = document.getElementsByTagName('button');
                 for (var i = 0, n = btns.length; i < n; i++) {
                   if (btns[i].getAttribute('aria-label') === 'Google Pay') {
-                    btns[i].click();
+                    btns[i].click();  
                   }
                 }
               })()"""
