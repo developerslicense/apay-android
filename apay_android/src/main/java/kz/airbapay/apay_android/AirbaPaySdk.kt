@@ -162,6 +162,7 @@ fun AirbaPaySdkProcessingBottomSheet(
                     coroutineScope.launch { sheetState.show() }
                 },
                 onError = {
+                    isAuthenticated.value = false
                     coroutineScope.launch { sheetState.show() }
                 }
             )

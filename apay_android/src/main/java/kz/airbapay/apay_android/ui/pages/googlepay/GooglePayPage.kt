@@ -13,10 +13,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.navigation.NavController
 import kz.airbapay.apay_android.R
 import kz.airbapay.apay_android.ui.pages.dialog.InitDialogExit
 import kz.airbapay.apay_android.ui.ui_components.BackHandler
+import kz.airbapay.apay_android.ui.ui_components.ProgressBarView
 import kz.airbapay.apay_android.ui.ui_components.ViewToolbar
 
 @Composable
@@ -34,77 +36,86 @@ internal fun GooglePayPage(
         showDialogExit.value = true
     }
 
-    Column(
-        modifier = Modifier.fillMaxSize()
-    ) {
+    ConstraintLayout {
 
-        ViewToolbar(
-            title = "",
-            backIcon = R.drawable.cancel,
-            actionBack = {
-                showDialogExit.value = true
-            }
-        )
+        Column(
+            modifier = Modifier.fillMaxSize()
+        ) {
 
-        AndroidView(
-            factory = {
-                WebView(it).apply {
-                    layoutParams = ViewGroup.LayoutParams(
-                        ViewGroup.LayoutParams.MATCH_PARENT,
-                        ViewGroup.LayoutParams.MATCH_PARENT
-                    )
+            ViewToolbar(
+                title = "",
+                backIcon = R.drawable.cancel,
+                actionBack = {
+                    showDialogExit.value = true
+                }
+            )
 
-                    clearCache(true)
+            AndroidView(
+                factory = {
+                    WebView(it).apply {
 
-                    settings.javaScriptEnabled = true
-                    settings.domStorageEnabled = true
-                    settings.layoutAlgorithm = WebSettings.LayoutAlgorithm.NORMAL
-                    settings.loadWithOverviewMode = true
-                    settings.setSupportMultipleWindows(true)
-                    settings.javaScriptCanOpenWindowsAutomatically = true
+                        layoutParams = ViewGroup.LayoutParams(
+                            ViewGroup.LayoutParams.MATCH_PARENT,
+                            ViewGroup.LayoutParams.MATCH_PARENT
+                        )
 
-                    webViewClient = GooglePayClient(
-                        navController = navController,
-                        inProgress = inProgress,
-                        redirectUrl = url
-                    )
-                    webChromeClient = object : WebChromeClient() {
-                        var newWebView: WebView? = null
+                        clearCache(true)
 
-                        override fun onCreateWindow(
-                            mWebviewPop: WebView?, isDialog: Boolean,
-                            isUserGesture: Boolean, resultMsg: Message
-                        ): Boolean {
+                        settings.javaScriptEnabled = true
+                        settings.domStorageEnabled = true
+                        settings.layoutAlgorithm = WebSettings.LayoutAlgorithm.NORMAL
+                        settings.loadWithOverviewMode = true
+                        settings.setSupportMultipleWindows(true)
+                        settings.javaScriptCanOpenWindowsAutomatically = true
 
-                            newWebView = WebView(context)
+                        webViewClient = GooglePayClient(
+                            navController = navController,
+                            inProgress = inProgress,
+                            redirectUrl = url
+                        )
+                        webChromeClient = object : WebChromeClient() {
+                            var newWebView: WebView? = null
 
-                            newWebView!!.settings.javaScriptEnabled = true
-                            newWebView!!.settings.setSupportZoom(true)
-                            newWebView!!.settings.builtInZoomControls = true
-                            newWebView!!.settings.setSupportMultipleWindows(true)
-                            mWebviewPop?.addView(newWebView)
-                            val transport = resultMsg.obj as WebViewTransport
-                            transport.webView = newWebView
-                            resultMsg.sendToTarget()
+                            override fun onCreateWindow(
+                                mWebviewPop: WebView?, isDialog: Boolean,
+                                isUserGesture: Boolean, resultMsg: Message
+                            ): Boolean {
 
-                            newWebView?.webViewClient = GooglePayClient(
-                                navController = navController,
-                                inProgress = inProgress,
-                                redirectUrl = url
-                            )
+                                newWebView = WebView(context)
 
-                            return true
+                                newWebView!!.settings.javaScriptEnabled = true
+                                newWebView!!.settings.setSupportZoom(true)
+                                newWebView!!.settings.builtInZoomControls = true
+                                newWebView!!.settings.setSupportMultipleWindows(true)
+
+                                mWebviewPop?.addView(newWebView)
+                                val transport = resultMsg.obj as WebViewTransport
+                                transport.webView = newWebView
+                                resultMsg.sendToTarget()
+
+                                newWebView?.webViewClient = GooglePayClient(
+                                    navController = navController,
+                                    inProgress = inProgress,
+                                    redirectUrl = url
+                                )
+
+                                return true
+                            }
+
                         }
 
+                        loadPage(url)
                     }
-
-                    loadPage(url)
+                },
+                update = {
+                    it.loadPage(url)
                 }
-            },
-            update = {
-                it.loadPage(url)
-            }
-        )
+            )
+        }
+
+        if (inProgress.value) {
+            ProgressBarView()
+        }
     }
 
     if (showDialogExit.value) {

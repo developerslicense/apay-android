@@ -1,5 +1,6 @@
 package kz.airbapay.apay_android.ui.ui_components.edit_text.core
 
+import android.os.Build
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardActions
@@ -40,7 +41,9 @@ internal fun CoreEditText(
     isDateExpiredMask: Boolean = false
 ) {
 
-    val maskUtils: MaskUtils? = if (mask == null) null else MaskUtils(mask, isDateExpiredMask)
+    val maskUtils: MaskUtils? =
+        if (mask == null || Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) null
+        else MaskUtils(mask, isDateExpiredMask)
 
     val onTextChanged: ((TextFieldValue) -> Unit) = {
         if (maskUtils != null
@@ -54,7 +57,7 @@ internal fun CoreEditText(
 
             text.value = TextFieldValue(
                 text = maskUtils.format(result),
-                selection = TextRange(maskUtils.getNextCursorPosition(it.selection.end) ?: 0)
+                selection = TextRange(maskUtils.getNextCursorPosition(it.selection.end))
             )
 
         } else {

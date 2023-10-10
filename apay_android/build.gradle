@@ -107,12 +107,11 @@ dependencies {
     implementation "androidx.constraintlayout:constraintlayout-compose:$constraintCompose"
 
     // CoreLibraryDesugaring
-    coreLibraryDesugaring "com.android.tools:desugar_jdk_libs:$desugarJdkLibs"//добавляет поддержку в старые версии андроида новые апи java
+//    coreLibraryDesugaring "com.android.tools:desugar_jdk_libs:$desugarJdkLibs"//добавляет поддержку в старые версии андроида новые апи java
 
     // Coroutines
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesCore"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutinesCore"
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-play-services:$coroutines"
 
     // Coil
     implementation "io.coil-kt:coil:$coilVersion"
@@ -173,7 +172,7 @@ dependencies {
 }
 
 group 'kz.airbapay' // this is your groupId
-version '1.0.5' // this is your version
+version '1.0.7' // this is your version
 
 ext { // this are variables
     pomGroupId = group

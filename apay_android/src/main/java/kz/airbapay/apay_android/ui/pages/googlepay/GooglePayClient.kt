@@ -3,6 +3,7 @@ package kz.airbapay.apay_android.ui.pages.googlepay
 import android.annotation.SuppressLint
 import android.graphics.Bitmap
 import android.net.http.SslError
+import android.os.CountDownTimer
 import android.webkit.SslErrorHandler
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
@@ -20,8 +21,10 @@ import kz.airbapay.apay_android.data.utils.openSuccess
 internal class GooglePayClient(
     private val redirectUrl: String?,
     private val navController: NavController?,
-    private val inProgress: MutableState<Boolean>,
+    private val inProgress: MutableState<Boolean>
 ) : WebViewClient() {
+
+    private var timer: CountDownTimer? = null
 
     @SuppressLint("WebViewClientOnReceivedSslError")
     override fun onReceivedSslError(view: WebView, handler: SslErrorHandler, error: SslError) {
@@ -38,14 +41,44 @@ internal class GooglePayClient(
     override fun onPageFinished(view: WebView?, url: String?) {
         super.onPageFinished(view, url)
         messageLog("onPageFinished, $url")
-        inProgress.value = false
 
         if (url?.contains("https://accounts.youtube.com/accounts/") == true) {
             openGooglePay(
                 redirectUrl = redirectUrl,
                 navController = navController!!
             )
+            inProgress.value = false
+
+        } else if (url?.contains("https://spf.airbapay.kz/sdk/google-pay-button") == true) {
+            timer?.cancel()
+            timer = object: CountDownTimer(5000, 1000) {
+                override fun onTick(millisUntilFinished: Long) {}
+
+                override fun onFinish() {
+                    try {
+                        loadJs(view)
+
+                    } catch (e: Exception) {}
+                }
+            }
+            timer?.start()
+
+        } else {
+            inProgress.value = false
         }
+    }
+
+    private fun loadJs(webView: WebView?) {
+        webView?.loadUrl(
+            """javascript:(function f() {
+                var btns = document.getElementsByTagName('button');
+                for (var i = 0, n = btns.length; i < n; i++) {
+                  if (btns[i].getAttribute('aria-label') === 'Google Pay') {
+                    btns[i].click();  
+                  }
+                }
+              })()"""
+        )
     }
 
     override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {

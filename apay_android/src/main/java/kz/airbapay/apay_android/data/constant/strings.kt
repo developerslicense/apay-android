@@ -162,4 +162,9 @@ internal fun textCancel() = getStrFromRes(
     "Бас тарту"
 )
 
+internal fun confirmPayment() = getStrFromRes(
+    "Кликните для подтверждения",
+    "Растау үшін басыңыз"
+)
+
 
