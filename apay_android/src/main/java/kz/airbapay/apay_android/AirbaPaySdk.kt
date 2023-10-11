@@ -107,7 +107,8 @@ class AirbaPaySdk {
             invoiceId: String,
             orderNumber: String,
             goods: List<Goods>,
-            settlementPayments: List<SettlementPayment>? = null // параметр, нужный, если несколько айдишников компаний
+            settlementPayments: List<SettlementPayment>? = null, // параметр, нужный, если несколько айдишников компаний
+            onProcessingResult: ((Boolean) -> Unit)? = null
         ) {
             DataHolder.purchaseAmount = purchaseAmount.toString()
             DataHolder.orderNumber = orderNumber
@@ -116,6 +117,13 @@ class AirbaPaySdk {
             DataHolder.settlementPayments = settlementPayments
 
             DataHolder.purchaseAmountFormatted.value = Money.initLong(purchaseAmount).getFormatted()
+
+            onProcessingResult?.let {
+                DataHolder.frontendCallback = { result ->
+                    it(result)
+                    DataHolder.frontendCallback = null
+                }
+            }
         }
     }
 }
