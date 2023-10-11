@@ -27,7 +27,7 @@ import java.util.Date
 
 class MainActivity : ComponentActivity() {
 
-    private val isBottomSheet = false
+    private val isBottomSheet = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -174,13 +174,14 @@ class MainActivity : ComponentActivity() {
             invoiceId = someInvoiceId.toString(),
             orderNumber = someOrderNumber.toString(),
             goods = goods,
-            settlementPayments = settlementPayment //todo исправь насчет опциональности в документации
-        ) {
-            if (it) {
-                Log.e("AirbaPaySdk", "initProcessing success");
-            } else {
-                Log.e("AirbaPaySdk", "initProcessing error");
+            settlementPayments = settlementPayment,
+            onProcessingResult = {
+                if (it) {
+                    Log.e("AirbaPaySdk", "initProcessing success");
+                } else {
+                    Log.e("AirbaPaySdk", "initProcessing error");
+                }
             }
-        }
+        )
     }
 }
