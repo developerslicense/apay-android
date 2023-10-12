@@ -172,7 +172,10 @@ internal fun ErrorWithInstructionPage(
                 actionClick = {
                     errorCode.clickOnBottom(
                         navController = navController,
-                        finish = { (context as Activity).finish() }
+                        finish = {
+                            (context as Activity).finish()
+                            DataHolder.frontendCallback?.invoke(false)
+                        }
                     )
                 }
             )
