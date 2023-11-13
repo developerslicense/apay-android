@@ -156,9 +156,10 @@ fun AirbaPaySdkProcessingBottomSheet(
         sheetBackgroundColor = ColorsSdk.transparent,
         sheetContent = {
             StartProcessingView(
-                actionClose = { coroutineScope.launch { sheetState.hide() } },
                 isAuthenticated = isAuthenticated,
-                customSuccessPage = customSuccessPage
+                customSuccessPage = customSuccessPage,
+                actionClose = { coroutineScope.launch { sheetState.hide() } },
+                sheetStateVisible = sheetState.isVisible
             )
         },
         modifier = Modifier.fillMaxSize()
@@ -203,7 +204,8 @@ fun AirbaPaySdkProcessingView(
         isBottomSheetType = false,
         backgroundColor = backgroundColor,
         isAuthenticated = isAuthenticated,
-        customSuccessPage = customSuccessPage
+        customSuccessPage = customSuccessPage,
+        sheetStateVisible = false
     )
 
     LaunchedEffect("Authenticate") {

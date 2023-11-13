@@ -47,7 +47,8 @@ internal fun StartProcessingView(
     isBottomSheetType: Boolean = true,
     backgroundColor: Color = ColorsSdk.bgBlock,
     isAuthenticated: MutableState<Boolean>,
-    customSuccessPage: @Composable (() -> Unit)? = null
+    customSuccessPage: @Composable (() -> Unit)? = null,
+    sheetStateVisible: Boolean
 ) {
     val context = LocalContext.current
     val clientConnector = ClientConnector(context)
@@ -55,7 +56,7 @@ internal fun StartProcessingView(
     val cardRepository = CardRepository(api)
     val authRepository = AuthRepository(api)
 
-    if (isBottomSheetType) {
+    if (isBottomSheetType && sheetStateVisible) {
         BackHandler {
             actionClose()
         }
