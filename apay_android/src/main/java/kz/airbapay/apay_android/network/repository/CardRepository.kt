@@ -19,14 +19,14 @@ internal class CardRepository(
 ) : BaseCoroutine by BaseCoroutineDelegate() {
 
     fun getCards(
-        phone: String,
+        accountId: String,
         result: (List<BankCard>) -> Unit,
         error: (Response<*>) -> Unit
     ) {
         launch(
             requestFlow = {
                 safeApiFlowCall {
-                    api.getCards(phone)
+                    api.getCards(accountId)
                 }
             },
             result = { body ->

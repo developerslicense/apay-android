@@ -19,6 +19,7 @@ internal object DataHolder {
   var invoiceId = ""
   var shopId = ""
   var userEmail: String? = null
+  var accountId = ""
   var userPhone = ""
   var password = ""
   var terminalId  = ""

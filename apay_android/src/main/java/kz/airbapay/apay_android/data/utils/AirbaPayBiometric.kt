@@ -66,7 +66,7 @@ internal class AirbaPayBiometric(
                 }
             }
         } else {
-            notifyUser(accessToCardRestricted())
+//            notifyUser(accessToCardRestricted())
             onError()
         }
     }

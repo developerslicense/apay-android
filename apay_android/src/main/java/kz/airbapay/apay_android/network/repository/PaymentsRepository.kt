@@ -56,7 +56,7 @@ internal class PaymentsRepository(
         }
 
         val param = HashMap<String, Any?>().apply {
-            put("account_id", DataHolder.userPhone)
+            put("account_id", DataHolder.accountId)
             put("amount", DataHolder.purchaseAmount.toDouble())
             saveCard?.let { put("card_save", saveCard) }
             put("cart", cart)
