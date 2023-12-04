@@ -31,7 +31,7 @@ internal class AirbaPayBiometric(
                     .setDescription(authenticateFingerprint())
                     .setNegativeButton(textCancel(), context.mainExecutor) { dialog, which ->
                         onError()
-                        notifyUser(accessToCardRestricted())
+//                        notifyUser(accessToCardRestricted())
                     }.build()
 
                 biometricPrompt.authenticate(

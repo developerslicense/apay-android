@@ -47,6 +47,4 @@ internal fun BottomImages() {
             modifier = Modifier.height(32.dp)
         )
     }
-
-    Spacer(modifier = Modifier.height(350.dp))
 }
