@@ -37,7 +37,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kz.airbapay.apay_android.AirbaPayActivity
 import kz.airbapay.apay_android.R
-import kz.airbapay.apay_android.data.constant.cardDataSaved
 import kz.airbapay.apay_android.data.constant.payAmount
 import kz.airbapay.apay_android.data.constant.paymentOfPurchase
 import kz.airbapay.apay_android.data.constant.saveCardData
@@ -248,14 +247,14 @@ internal fun HomePage(
                 }
             }
 
-            if (switchSaveCard.value) {
+         /*   if (switchSaveCard.value) {
                 LaunchedEffect("snackBar") {
                     scaffoldState.snackbarHostState.showSnackbar(
                         message = cardDataSaved(),
                         actionLabel = null
                     )
                 }
-            }
+            }*/
 
             if (isLoading.value) {
                 ProgressBarView()
