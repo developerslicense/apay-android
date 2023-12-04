@@ -34,6 +34,7 @@ class MainActivity : ComponentActivity() {
 
         AirbaPaySdk.initOnCreate(
             isProd = false,
+            accountId = "77051111111",
             phone = "77051111111",
             shopId = "test-merchant",
             lang = AirbaPaySdk.Lang.RU,

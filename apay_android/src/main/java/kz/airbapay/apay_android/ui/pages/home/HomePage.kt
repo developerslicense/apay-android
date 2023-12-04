@@ -1,7 +1,6 @@
 package kz.airbapay.apay_android.ui.pages.home
 
 import android.app.Activity
-import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -10,8 +9,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ModalBottomSheetLayout
 import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.Scaffold
@@ -25,19 +22,18 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
+import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.navigation.NavController
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kz.airbapay.apay_android.AirbaPayActivity
 import kz.airbapay.apay_android.R
-import kz.airbapay.apay_android.data.constant.cardDataSaved
 import kz.airbapay.apay_android.data.constant.payAmount
 import kz.airbapay.apay_android.data.constant.paymentOfPurchase
 import kz.airbapay.apay_android.data.constant.saveCardData
@@ -74,9 +70,7 @@ internal fun HomePage(
     googlePayRepository: GooglePayRepository,
     selectedCardId: String?,
     isGooglePay: Boolean,
-    coroutineScope: CoroutineScope = rememberCoroutineScope(),
-    scrollState: ScrollState = rememberScrollState()
-
+    coroutineScope: CoroutineScope = rememberCoroutineScope()
 ) {
     val activity = LocalContext.current as Activity
     val scaffoldState: ScaffoldState = rememberScaffoldState()
@@ -125,27 +119,22 @@ internal fun HomePage(
             },
             modifier = Modifier.fillMaxSize()
         ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(ColorsSdk.bgBlock)
-            ) {
-                ViewToolbar(
-                    title = paymentOfPurchase(),
-                    backIcon = R.drawable.ic_arrow_back,
-                    actionBack = {
-                        showDialogExit.value = true
-                    }
-                )
+            ConstraintLayout {
+                val buttonRef = createRef()
 
                 Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier
                         .fillMaxSize()
-                        .verticalScroll(scrollState)
                         .background(ColorsSdk.bgBlock)
-                        .weight(1f)
                 ) {
+                    ViewToolbar(
+                        title = paymentOfPurchase(),
+                        backIcon = R.drawable.ic_arrow_back,
+                        actionBack = {
+                            showDialogExit.value = true
+                        }
+                    )
+
                     TopInfoView(purchaseAmount.value)
 
                     Spacer(modifier = Modifier.height(16.dp))
@@ -237,25 +226,31 @@ internal fun HomePage(
                     modifierRoot = Modifier
                         .padding(horizontal = 16.dp)
                         .padding(bottom = 16.dp)
-                )
-
-                if (showDialogExit.value) {
-                    InitDialogExit(
-                        onDismissRequest = {
-                            showDialogExit.value = false
+                        .constrainAs(buttonRef) {
+                            bottom.linkTo(parent.bottom)
+                            start.linkTo(parent.start)
+                            end.linkTo(parent.end)
                         }
-                    )
-                }
+                )
             }
 
-            if (switchSaveCard.value) {
+            if (showDialogExit.value) {
+                InitDialogExit(
+                    onDismissRequest = {
+                        showDialogExit.value = false
+                    }
+                )
+            }
+
+
+            /*   if (switchSaveCard.value) {
                 LaunchedEffect("snackBar") {
                     scaffoldState.snackbarHostState.showSnackbar(
                         message = cardDataSaved(),
                         actionLabel = null
                     )
                 }
-            }
+            }*/
 
             if (isLoading.value) {
                 ProgressBarView()

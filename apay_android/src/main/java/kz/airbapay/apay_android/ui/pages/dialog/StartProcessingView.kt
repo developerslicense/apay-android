@@ -161,7 +161,7 @@ internal fun StartProcessingView(
                 },
                 onResult = {
                     cardRepository.getCards(
-                        phone = DataHolder.userPhone,
+                        accountId = DataHolder.accountId,
                         error = {
                             isLoading.value = false
                             actionOnLoadingCompleted()

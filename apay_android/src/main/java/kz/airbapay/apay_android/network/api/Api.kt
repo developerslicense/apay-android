@@ -30,8 +30,8 @@ internal interface Api {
     @POST("api/v1/cards")
     suspend fun cardAdd(@Body param: CardAddRequest): Response<CardAddResponse>
 
-    @GET("api/v1/cards/{phone}")
-    suspend fun getCards(@Path("phone") phone: String): Response<CardsGetResponse>
+    @GET("api/v1/cards/{accountId}")
+    suspend fun getCards(@Path("accountId") accountId: String): Response<CardsGetResponse>
 
     @DELETE("api/v1/cards/{id}")
     suspend fun deleteCard(@Path("id") cardId: String): Response<Any>

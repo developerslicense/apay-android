@@ -59,6 +59,7 @@ class AirbaPaySdk {
         fun initOnCreate(
             isProd: Boolean,
             lang: Lang,
+            accountId: String,
             phone: String,
             shopId: String,
             password: String,
@@ -84,6 +85,7 @@ class AirbaPaySdk {
             DataHolder.baseUrl = if (DataHolder.isProd) "https://ps.airbapay.kz/acquiring-api/sdk/"
             else "https://sps.airbapay.kz/acquiring-api/sdk/"
 
+            DataHolder.accountId = accountId
             DataHolder.userPhone = phone
             DataHolder.userEmail = userEmail
 
