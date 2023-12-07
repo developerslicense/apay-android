@@ -34,7 +34,7 @@ import kz.airbapay.apay_android.data.constant.ROUTES_SUCCESS
 import kz.airbapay.apay_android.data.constant.initErrorsCodeByCode
 import kz.airbapay.apay_android.data.utils.MaskUtils
 import kz.airbapay.apay_android.network.api.Api
-import kz.airbapay.apay_android.network.base.ClientConnector
+import kz.airbapay.apay_android.network.base.provideRetrofit
 import kz.airbapay.apay_android.network.repository.AuthRepository
 import kz.airbapay.apay_android.network.repository.CardRepository
 import kz.airbapay.apay_android.network.repository.GooglePayRepository
@@ -80,8 +80,11 @@ class AirbaPayActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val clientConnector = ClientConnector(this)
-        val api = clientConnector.retrofit.create(Api::class.java)
+        val retrofit = provideRetrofit(this)
+        if (retrofit == null) {
+            finish()
+        }
+        val api = retrofit!!.create(Api::class.java)
 
         val authRepository = AuthRepository(api)
         val paymentsRepository = PaymentsRepository(api)
