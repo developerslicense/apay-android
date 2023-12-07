@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "826068544852",
+    "project_id": "airbapaysdkandroid",
+    "storage_bucket": "airbapaysdkandroid.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:826068544852:android:2ff86af8e9acd6f67e6cc1",
+        "android_client_info": {
+          "package_name": "kz.airbapayandroid.composesdkstand"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "826068544852-nmpq1jrhc7l7h77frobch03a1nct3gnr.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBJumN-t45SlwAZcXjfGvxJRWQHjSzMbg4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "826068544852-nmpq1jrhc7l7h77frobch03a1nct3gnr.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

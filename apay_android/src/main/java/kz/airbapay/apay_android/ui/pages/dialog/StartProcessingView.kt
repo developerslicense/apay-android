@@ -25,7 +25,7 @@ import kz.airbapay.apay_android.data.constant.paymentByCard
 import kz.airbapay.apay_android.data.model.BankCard
 import kz.airbapay.apay_android.data.utils.DataHolder
 import kz.airbapay.apay_android.network.api.Api
-import kz.airbapay.apay_android.network.base.ClientConnector
+import kz.airbapay.apay_android.network.base.provideRetrofit
 import kz.airbapay.apay_android.network.repository.AuthRepository
 import kz.airbapay.apay_android.network.repository.CardRepository
 import kz.airbapay.apay_android.network.repository.startAuth
@@ -51,132 +51,162 @@ internal fun StartProcessingView(
     sheetStateVisible: Boolean
 ) {
     val context = LocalContext.current
-    val clientConnector = ClientConnector(context)
-    val api = clientConnector.retrofit.create(Api::class.java)
-    val cardRepository = CardRepository(api)
-    val authRepository = AuthRepository(api)
+    val retrofit = provideRetrofit(context)
 
-    if (isBottomSheetType && sheetStateVisible) {
-        BackHandler {
-            actionClose()
-        }
-    }
+    if (retrofit != null) {
+        val api = retrofit.create(Api::class.java)
+        val cardRepository = CardRepository(api)
+        val authRepository = AuthRepository(api)
 
-    val purchaseAmount = DataHolder.purchaseAmountFormatted.collectAsState()
-
-    val isError = remember { mutableStateOf(false) }
-    val size = remember { mutableStateOf(IntSize.Zero) }
-    val isLoading = remember { mutableStateOf(true) }
-    val selectedCard = remember { mutableStateOf<BankCard?>(null) }
-
-    val savedCards = remember {
-        mutableStateOf<List<BankCard>>(emptyList())
-    }
-
-    Card(
-        backgroundColor = backgroundColor,
-        shape = RoundedCornerShape(
-            topStart = if (isBottomSheetType) 12.dp else 0.dp,
-            topEnd = if (isBottomSheetType) 12.dp else 0.dp
-        ),
-        modifier = Modifier
-            .fillMaxWidth()
-            .onSizeChanged {
-                size.value = it
-            },
-        elevation = if (isBottomSheetType) 5.dp else 0.dp
-    ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-
-            if (isBottomSheetType) {
-                InitHeader(
-                    title = paymentByCard(),
-                    actionClose = actionClose,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(ColorsSdk.gray0)
-                )
+        if (isBottomSheetType && sheetStateVisible) {
+            BackHandler {
+                actionClose()
             }
+        }
 
-            if (isError.value) {
-                InitErrorState()
+        val purchaseAmount = DataHolder.purchaseAmountFormatted.collectAsState()
 
-            } else {
-                InitViewStartProcessingAmount(purchaseAmount.value)
-                InitViewStartProcessingGPay(
-                    openGooglePay = {
-                        actionClose()
-                        AirbaPayActivity.init(
-                            context = context,
-                            customSuccessPage = customSuccessPage,
-                            isGooglePay = true
+        val isError = remember { mutableStateOf(false) }
+        val size = remember { mutableStateOf(IntSize.Zero) }
+        val isLoading = remember { mutableStateOf(true) }
+        val selectedCard = remember { mutableStateOf<BankCard?>(null) }
+
+        val savedCards = remember {
+            mutableStateOf<List<BankCard>>(emptyList())
+        }
+
+        Card(
+            backgroundColor = backgroundColor,
+            shape = RoundedCornerShape(
+                topStart = if (isBottomSheetType) 12.dp else 0.dp,
+                topEnd = if (isBottomSheetType) 12.dp else 0.dp
+            ),
+            modifier = Modifier
+                .fillMaxWidth()
+                .onSizeChanged {
+                    size.value = it
+                },
+            elevation = if (isBottomSheetType) 5.dp else 0.dp
+        ) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+
+                if (isBottomSheetType) {
+                    InitHeader(
+                        title = paymentByCard(),
+                        actionClose = actionClose,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(ColorsSdk.gray0)
+                    )
+                }
+
+                if (isError.value) {
+                    InitErrorState()
+
+                } else {
+                    InitViewStartProcessingAmount(purchaseAmount.value)
+                    InitViewStartProcessingGPay(
+                        openGooglePay = {
+                            actionClose()
+                            AirbaPayActivity.init(
+                                context = context,
+                                customSuccessPage = customSuccessPage,
+                                isGooglePay = true
+                            )
+                        }
+                    )
+
+                    if (savedCards.value.isNotEmpty()
+                        && isAuthenticated.value
+                    ) {
+                        InitViewStartProcessingCards(
+                            savedCards = savedCards.value,
+                            selectedCard = selectedCard,
+                            actionClose = actionClose,
+                            customSuccessPage = customSuccessPage
                         )
                     }
-                )
 
-                if (savedCards.value.isNotEmpty()
-                    && isAuthenticated.value
-                ) {
-                    InitViewStartProcessingCards(
+                    InitViewStartProcessingButtonNext(
                         savedCards = savedCards.value,
-                        selectedCard = selectedCard,
                         actionClose = actionClose,
+                        purchaseAmount = purchaseAmount.value,
+                        isAuthenticated = isAuthenticated.value,
+                        selectedCard = selectedCard,
                         customSuccessPage = customSuccessPage
                     )
                 }
+            }
 
-                InitViewStartProcessingButtonNext(
-                    savedCards = savedCards.value,
-                    actionClose = actionClose,
-                    purchaseAmount = purchaseAmount.value,
-                    isAuthenticated = isAuthenticated.value,
-                    selectedCard = selectedCard,
-                    customSuccessPage = customSuccessPage
+            if (isLoading.value
+                && needShowProgressBar
+            ) {
+                ProgressBarView(
+                    size = size,
+                    modifier = Modifier.wrapContentHeight()
                 )
             }
         }
 
-        if (isLoading.value
-            && needShowProgressBar
-        ) {
-            ProgressBarView(
-                size = size,
-                modifier = Modifier.wrapContentHeight()
-            )
-        }
-    }
+        LaunchedEffect("CardRepository") {
+            launch {
+                isError.value = false
 
-    LaunchedEffect("CardRepository") {
-        launch {
-            isError.value = false
-
-            startAuth(
-                authRepository = authRepository,
-                onError = {
-                    isError.value = true
-                    isLoading.value = false
-                    actionOnLoadingCompleted()
-                },
-                onResult = {
-                    cardRepository.getCards(
-                        accountId = DataHolder.accountId,
-                        error = {
-                            isLoading.value = false
-                            actionOnLoadingCompleted()
-                        },
-                        result = {
-                            isLoading.value = false
-                            savedCards.value = it
-                            actionOnLoadingCompleted()
-                            if (it.isNotEmpty()) {
-                                selectedCard.value = it[0]
+                startAuth(
+                    authRepository = authRepository,
+                    onError = {
+                        isError.value = true
+                        isLoading.value = false
+                        actionOnLoadingCompleted()
+                    },
+                    onResult = {
+                        cardRepository.getCards(
+                            accountId = DataHolder.accountId,
+                            error = {
+                                isLoading.value = false
+                                actionOnLoadingCompleted()
+                            },
+                            result = {
+                                isLoading.value = false
+                                savedCards.value = it
+                                actionOnLoadingCompleted()
+                                if (it.isNotEmpty()) {
+                                    selectedCard.value = it[0]
+                                }
                             }
-                        }
+                        )
+                    }
+                )
+            }
+        }
+
+    } else {
+        Card(
+            backgroundColor = backgroundColor,
+            shape = RoundedCornerShape(
+                topStart = if (isBottomSheetType) 12.dp else 0.dp,
+                topEnd = if (isBottomSheetType) 12.dp else 0.dp
+            ),
+            modifier = Modifier.fillMaxWidth(),
+            elevation = if (isBottomSheetType) 5.dp else 0.dp
+        ) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+
+                if (isBottomSheetType) {
+                    InitHeader(
+                        title = paymentByCard(),
+                        actionClose = actionClose,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(ColorsSdk.gray0)
                     )
                 }
-            )
+                InitErrorState()
+            }
         }
     }
 }

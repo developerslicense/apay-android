@@ -1,5 +1,7 @@
 package kz.airbapay.apay_android.network.base
 
+import android.content.Context
+import android.util.Log
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import kz.airbapay.apay_android.data.utils.DataHolder
@@ -91,6 +93,19 @@ private fun initOkHttpBuilder(
     }
 
 internal fun provideRetrofit(
+    context: Context
+): Retrofit? {
+    if (DataHolder.baseUrl.isBlank()) {
+        Log.e("AirbaPay", "ВНИМАНИЕ! Не была выполнена функция initOnCreate()")
+        return null
+    }
+    val interceptor = BaseInterceptor(context)
+    val gson = provideGson()
+    val clientCoroutines: OkHttpClient = createOkHttpClientCoroutine(interceptor)
+    return provideRetrofit(clientCoroutines, gson)
+}
+
+private fun provideRetrofit(
     client: OkHttpClient,
     gson: Gson
 ): Retrofit {
@@ -102,5 +117,6 @@ internal fun provideRetrofit(
 }
 
 internal fun provideGson(): Gson = GsonBuilder().create()
+
 
 
