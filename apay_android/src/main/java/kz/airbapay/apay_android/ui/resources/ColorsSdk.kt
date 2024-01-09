@@ -12,7 +12,7 @@ internal object ColorsSdk {
 
     // block
     val bgBlock = Color(0xFFFFFFFF)
-    val bgMain = Color(0xF3F4FBFF)
+    val bgMain = Color(0xFFF3F4FB)
     val bgAccent = Color(0xFF10142D)
     val bgSecondaryAccent = Color(0xFFFFF3C8)
     val bgElements = Color(0xFFFCFCFF)

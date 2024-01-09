@@ -43,7 +43,7 @@ class MainActivity : ComponentActivity() {
             failureCallback = "https://site.kz/failure-clb",
             successCallback = "https://site.kz/success-clb",
             userEmail = "test@test.com",
-//            colorBrandMain = Color.Red
+            colorBrandMain = Color(0xFFFC6B3F)
         )
 
         if (!isBottomSheet) {
