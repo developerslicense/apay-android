@@ -126,7 +126,7 @@ private fun InitCard(
             if (isSelected) {
                 Card(
                     shape = RoundedCornerShape(45.dp),
-                    backgroundColor = ColorsSdk.colorBrandMainMS.value,
+                    backgroundColor = ColorsSdk.colorBrand,
                     modifier = Modifier.size(20.dp),
                     elevation = 0.dp
                 ) {

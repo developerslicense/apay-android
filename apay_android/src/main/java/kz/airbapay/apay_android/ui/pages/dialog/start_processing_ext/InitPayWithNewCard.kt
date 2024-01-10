@@ -61,12 +61,12 @@ internal fun InitViewStartProcessingPayWithNewCard(
                         bottom.linkTo(parent.bottom)
                         end.linkTo(titleRef.start, margin = 12.dp)
                     },
-                colorFilter = ColorFilter.tint(color = ColorsSdk.colorBrandMainMS.value)
+                colorFilter = ColorFilter.tint(color = ColorsSdk.colorBrand)
             )
 
             Text(
                 text = payAnotherCard(),
-                color = ColorsSdk.colorBrandMainMS.value,
+                color = ColorsSdk.colorBrand,
                 style = LocalFonts.current.semiBold,
                 modifier = Modifier
                     .constrainAs(titleRef) {

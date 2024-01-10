@@ -77,10 +77,10 @@ internal fun CoreEditText(
         colors = TextFieldDefaults.outlinedTextFieldColors(
             backgroundColor = if (isError) ColorsSdk.stateBgError else ColorsSdk.bgBlock,
             textColor = if (isError) ColorsSdk.stateError else ColorsSdk.textMain,
-            focusedLabelColor = if (isError) ColorsSdk.stateError else ColorsSdk.colorBrandMainMS.value,
+            focusedLabelColor = if (isError) ColorsSdk.stateError else ColorsSdk.colorBrand,
             unfocusedLabelColor = if (isError) ColorsSdk.stateError else ColorsSdk.textLight,
             focusedBorderColor = ColorsSdk.transparent,
-            cursorColor = ColorsSdk.colorBrandMainMS.value,
+            cursorColor = ColorsSdk.colorBrand,
             unfocusedBorderColor = ColorsSdk.transparent,
         ),
         modifier = Modifier

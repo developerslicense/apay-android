@@ -43,7 +43,7 @@ internal fun ProgressBarView(
         val (progressRef) = createRefs()
 
         CircularProgressIndicator(
-            color = ColorsSdk.colorBrandMainMS.value,
+            color = ColorsSdk.colorBrand,
             modifier = Modifier
                 .fillMaxWidth(0.3f)
                 .constrainAs(progressRef) {

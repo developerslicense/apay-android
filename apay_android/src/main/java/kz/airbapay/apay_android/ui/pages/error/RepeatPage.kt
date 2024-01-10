@@ -79,7 +79,7 @@ internal fun RepeatPage(
         )
 
         CircularProgressIndicator(
-            color = ColorsSdk.colorBrandMainMS.value,
+            color = ColorsSdk.colorBrand,
             modifier = Modifier
                 .padding(top = 24.dp)
                 .fillMaxWidth(0.3f)
