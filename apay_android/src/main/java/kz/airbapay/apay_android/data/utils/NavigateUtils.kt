@@ -32,47 +32,47 @@ internal fun openRepeat(navController: NavController) {
 
 internal fun openErrorPageWithCondition(
     errorCode: Int?,
-    navController: NavController
+    navController: NavController?
 ) {
     val error = initErrorsCodeByCode(errorCode ?: 1)
 
     if (error == ErrorsCode.error_1) {
-        navController.navigate(ROUTES_ERROR_SOMETHING_WRONG)
+        navController?.navigate(ROUTES_ERROR_SOMETHING_WRONG)
 
     } else if (error.code == ErrorsCode.error_5020.code || errorCode == null) {
-        navController.navigate(ROUTES_ERROR_FINAL)
+        navController?.navigate(ROUTES_ERROR_FINAL)
 
     } else if (error.code== ErrorsCode.error_5999.code && DataHolder.bankCode?.isNotBlank() == true) {
         val deepLink = TEMPLATE_ROUTES_ERROR_WITH_INSTRUCTION +
                 "?${ARG_ERROR_CODE}=${error.code}".toUri()
-        navController.navigate(deepLink)
+        navController?.navigate(deepLink)
 
     } else {
         val deepLink = TEMPLATE_ROUTES_ERROR +
                 "?${ARG_ERROR_CODE}=${error.code}".toUri()
 
-        navController.navigate(deepLink)
+        navController?.navigate(deepLink)
     }
 }
 
 internal fun openAcquiring(
     redirectUrl: String?,
-    navController: NavController
+    navController: NavController?
 ) {
     val deepLink = TEMPLATE_DEEP_LINK_ACQUIRING +
             "?$ARG_ACTION=${redirectUrl}".toUri()
 
-    navController.navigate(deepLink)
+    navController?.navigate(deepLink)
 }
 
 internal fun openGooglePay(
     redirectUrl: String?,
-    navController: NavController
+    navController: NavController?
 ) {
     val deepLink = TEMPLATE_DEEP_LINK_GOOGLE_PAY +
             "?$ARG_ACTION=${redirectUrl}".toUri()
 
-    navController.navigate(deepLink)
+    navController?.navigate(deepLink)
 }
 
 internal fun openSuccess(navController: NavController?) {

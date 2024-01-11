@@ -1,5 +1,6 @@
 package kz.airbapay.apay_android.ui.pages.googlepay
 
+import android.annotation.SuppressLint
 import android.os.Message
 import android.view.ViewGroup
 import android.webkit.WebChromeClient
@@ -7,20 +8,20 @@ import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebView.WebViewTransport
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.navigation.NavController
-import kz.airbapay.apay_android.R
 import kz.airbapay.apay_android.ui.pages.dialog.InitDialogExit
 import kz.airbapay.apay_android.ui.ui_components.BackHandler
 import kz.airbapay.apay_android.ui.ui_components.ProgressBarView
-import kz.airbapay.apay_android.ui.ui_components.ViewToolbar
 
+@SuppressLint("SetJavaScriptEnabled")
 @Composable
 internal fun GooglePayPage(
     url: String?,
@@ -39,16 +40,16 @@ internal fun GooglePayPage(
     ConstraintLayout {
 
         Column(
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.height(100.dp) //.fillMaxSize()
         ) {
 
-            ViewToolbar(
+      /*      ViewToolbar(
                 title = "",
                 backIcon = R.drawable.cancel,
                 actionBack = {
                     showDialogExit.value = true
                 }
-            )
+            )*/
 
             AndroidView(
                 factory = {
