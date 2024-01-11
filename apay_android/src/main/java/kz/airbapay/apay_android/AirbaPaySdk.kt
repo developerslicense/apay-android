@@ -1,23 +1,11 @@
 package kz.airbapay.apay_android
 
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.ModalBottomSheetLayout
-import androidx.compose.material.ModalBottomSheetValue
-import androidx.compose.material.rememberModalBottomSheetState
+import android.content.Context
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import com.google.gson.annotations.SerializedName
-import kotlinx.coroutines.launch
-import kz.airbapay.apay_android.data.utils.AirbaPayBiometric
 import kz.airbapay.apay_android.data.utils.DataHolder
 import kz.airbapay.apay_android.data.utils.Money
-import kz.airbapay.apay_android.ui.pages.dialog.StartProcessingView
 import kz.airbapay.apay_android.ui.resources.ColorsSdk
 
 class AirbaPaySdk {
@@ -130,92 +118,13 @@ class AirbaPaySdk {
     }
 }
 
-/**
- * Первый вариант имплементации Compose. Здесь все выполняется на стороне sdk
- * */
-@Composable
-fun AirbaPaySdkProcessingBottomSheet(
-    content: @Composable (actionShowBottomSheet: () -> Unit) -> Unit,
+fun startAirbaPay(
+    context: Context,
     customSuccessPage: @Composable (() -> Unit)? = null
 ) {
 
-    val coroutineScope = rememberCoroutineScope()
-    val context = LocalContext.current
-    val airbaPayBiometric = AirbaPayBiometric(context)
-
-    val sheetState = rememberModalBottomSheetState(
-        initialValue = ModalBottomSheetValue.Hidden,
-        confirmValueChange = { it != ModalBottomSheetValue.HalfExpanded },
-        skipHalfExpanded = true
+    AirbaPayActivity.init(
+        context = context,
+        customSuccessPage = customSuccessPage
     )
-
-    val isAuthenticated = rememberSaveable {
-        mutableStateOf(false)
-    }
-
-    ModalBottomSheetLayout(
-        sheetState = sheetState,
-        sheetBackgroundColor = ColorsSdk.transparent,
-        sheetContent = {
-            StartProcessingView(
-                isAuthenticated = isAuthenticated,
-                customSuccessPage = customSuccessPage,
-                actionClose = { coroutineScope.launch { sheetState.hide() } },
-                sheetStateVisible = sheetState.isVisible
-            )
-        },
-        modifier = Modifier.fillMaxSize()
-    ) {
-        content {
-            airbaPayBiometric.authenticate(
-                onSuccess = {
-                    isAuthenticated.value = true
-                    coroutineScope.launch { sheetState.show() }
-                },
-                onError = {
-                    isAuthenticated.value = false
-                    coroutineScope.launch { sheetState.show() }
-                }
-            )
-        }
-    }
-}
-
-/**
- * Второй вариант имплементации Compose. Здесь все выполняется на стороне клиента
- * */
-@Composable
-fun AirbaPaySdkProcessingView(
-    actionOnLoadingCompleted: () -> Unit = {},
-    needShowProgressBar: Boolean = true,
-    backgroundColor: Color = ColorsSdk.bgBlock,
-    customSuccessPage: @Composable (() -> Unit)? = null
-) {
-
-    val context = LocalContext.current
-    val airbaPayBiometric = AirbaPayBiometric(context)
-
-    val isAuthenticated = rememberSaveable {
-        mutableStateOf(false)
-    }
-
-    StartProcessingView(
-        needShowProgressBar = needShowProgressBar,
-        actionClose = {},
-        actionOnLoadingCompleted = actionOnLoadingCompleted,
-        isBottomSheetType = false,
-        backgroundColor = backgroundColor,
-        isAuthenticated = isAuthenticated,
-        customSuccessPage = customSuccessPage,
-        sheetStateVisible = false
-    )
-
-    LaunchedEffect("Authenticate") {
-        airbaPayBiometric.authenticate(
-            onSuccess = {
-                isAuthenticated.value = true
-            },
-            onError = {}
-        )
-    }
 }

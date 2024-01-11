@@ -27,11 +27,12 @@ import kz.airbapay.apay_android.data.constant.ROUTES_ERROR
 import kz.airbapay.apay_android.data.constant.ROUTES_ERROR_FINAL
 import kz.airbapay.apay_android.data.constant.ROUTES_ERROR_SOMETHING_WRONG
 import kz.airbapay.apay_android.data.constant.ROUTES_ERROR_WITH_INSTRUCTION
-import kz.airbapay.apay_android.data.constant.ROUTES_GOOGLE_PAY
 import kz.airbapay.apay_android.data.constant.ROUTES_HOME
 import kz.airbapay.apay_android.data.constant.ROUTES_REPEAT
+import kz.airbapay.apay_android.data.constant.ROUTES_START_PROCESSING
 import kz.airbapay.apay_android.data.constant.ROUTES_SUCCESS
 import kz.airbapay.apay_android.data.constant.initErrorsCodeByCode
+import kz.airbapay.apay_android.data.utils.AirbaPayBiometric
 import kz.airbapay.apay_android.data.utils.MaskUtils
 import kz.airbapay.apay_android.network.api.Api
 import kz.airbapay.apay_android.network.base.provideRetrofit
@@ -41,12 +42,12 @@ import kz.airbapay.apay_android.network.repository.GooglePayRepository
 import kz.airbapay.apay_android.network.repository.PaymentsRepository
 import kz.airbapay.apay_android.ui.pages.acquiring.AcquiringPage
 import kz.airbapay.apay_android.ui.pages.card_reader.ScanActivity
+import kz.airbapay.apay_android.ui.pages.dialog.StartProcessingView
 import kz.airbapay.apay_android.ui.pages.error.ErrorFinalPage
 import kz.airbapay.apay_android.ui.pages.error.ErrorPage
 import kz.airbapay.apay_android.ui.pages.error.ErrorSomethingWrongPage
 import kz.airbapay.apay_android.ui.pages.error.ErrorWithInstructionPage
 import kz.airbapay.apay_android.ui.pages.error.RepeatPage
-import kz.airbapay.apay_android.ui.pages.googlepay.GooglePayPage
 import kz.airbapay.apay_android.ui.pages.home.HomePage
 import kz.airbapay.apay_android.ui.pages.success.SuccessPage
 import java.lang.ref.WeakReference
@@ -55,14 +56,13 @@ class AirbaPayActivity : ComponentActivity() {
 
     var scanResultLauncher: ActivityResultLauncher<Intent>? = null
     private val cardNumberText = mutableStateOf(TextFieldValue())
+    private val isAuthenticated = mutableStateOf(false)
 
     companion object {
         private var customSuccessPage: WeakReference<@Composable () -> Unit>? = null
 
         fun init(
             context: Context,
-            cardId: String? = null,
-            isGooglePay: Boolean = false,
             customSuccessPage: @Composable (() -> Unit)?
         ) {
             val intent = Intent(context, AirbaPayActivity::class.java)
@@ -100,25 +100,44 @@ class AirbaPayActivity : ComponentActivity() {
         scanResultLauncher = registerForActivityResult(
             ActivityResultContracts.StartActivityForResult()
         ) { result ->
-                if (result.resultCode == Activity.RESULT_OK) {
-                    val data = result.data
-                    val cardNumber = data?.extras?.getString(ScanActivity.RESULT_CARD_NUMBER)
-                    val maskUtils = MaskUtils("AAAA AAAA AAAA AAAA")
+            if (result.resultCode == Activity.RESULT_OK) {
+                val data = result.data
+                val cardNumber = data?.extras?.getString(ScanActivity.RESULT_CARD_NUMBER)
+                val maskUtils = MaskUtils("AAAA AAAA AAAA AAAA")
 
-                    cardNumberText.value = TextFieldValue(
-                        text = maskUtils.format(cardNumber ?: ""),
-                        selection = TextRange(cardNumber?.length ?: 0)
-                    )
-                }
+                cardNumberText.value = TextFieldValue(
+                    text = maskUtils.format(cardNumber ?: ""),
+                    selection = TextRange(cardNumber?.length ?: 0)
+                )
             }
+        }
+
+        val airbaPayBiometric = AirbaPayBiometric(this)
+        airbaPayBiometric.authenticate(
+            onSuccess = {
+                isAuthenticated.value = true
+            },
+            onError = {
+                isAuthenticated.value = false
+            }
+        )
 
         setContent {
             val navController = rememberNavController()
 
             NavHost(
                 navController = navController,
-                startDestination = ROUTES_HOME
+                startDestination = ROUTES_START_PROCESSING
             ) {
+                composable(ROUTES_START_PROCESSING) {
+                    StartProcessingView(
+                        isAuthenticated = isAuthenticated,
+                        customSuccessPage = localSuccessCustomPage,
+                        navController = navController,
+                        actionClose = { this@AirbaPayActivity.finish() }
+                    )
+                }
+
                 composable(ROUTES_HOME) {
                     HomePage(
                         cardNumberText = cardNumberText,

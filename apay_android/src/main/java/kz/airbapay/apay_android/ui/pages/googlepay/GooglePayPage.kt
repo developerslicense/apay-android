@@ -25,7 +25,7 @@ import kz.airbapay.apay_android.ui.ui_components.ProgressBarView
 @Composable
 internal fun GooglePayPage(
     url: String?,
-    navController: NavController
+    navController: NavController?
 ) {
     val inProgress = remember { mutableStateOf(true) }
 
@@ -42,14 +42,6 @@ internal fun GooglePayPage(
         Column(
             modifier = Modifier.height(100.dp) //.fillMaxSize()
         ) {
-
-      /*      ViewToolbar(
-                title = "",
-                backIcon = R.drawable.cancel,
-                actionBack = {
-                    showDialogExit.value = true
-                }
-            )*/
 
             AndroidView(
                 factory = {

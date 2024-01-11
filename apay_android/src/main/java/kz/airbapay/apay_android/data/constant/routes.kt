@@ -5,6 +5,7 @@ internal const val ARG_ACTION = "action"
 internal const val ARG_CARD_ID = "cardId"
 internal const val ARG_IS_GOOGLE_PAY = "isGooglePay"
 
+internal const val ROUTES_START_PROCESSING = "start_processing_page"
 internal const val ROUTES_HOME = "home_page"
 internal const val ROUTES_SUCCESS = "success"
 internal const val ROUTES_REPEAT = "repeat"

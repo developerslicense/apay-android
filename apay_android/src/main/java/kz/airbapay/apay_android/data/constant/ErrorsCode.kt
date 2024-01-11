@@ -3,7 +3,7 @@ package kz.airbapay.apay_android.data.constant
 import androidx.navigation.NavController
 import kz.airbapay.apay_android.AirbaPaySdk
 import kz.airbapay.apay_android.data.utils.DataHolder
-import kz.airbapay.apay_android.data.utils.backToHome
+import kz.airbapay.apay_android.data.utils.backToStartPage
 import kz.airbapay.apay_android.data.utils.openRepeat
 
 internal enum class ErrorsCode(
@@ -140,9 +140,9 @@ internal fun ErrorsCode.clickOnTop(
     finish: () -> Unit
 ) {
     when (code) {
-        5002 -> { backToHome(navController) }
-        5003 -> { backToHome(navController) }
-        5006 -> { backToHome(navController) }
+        5002 -> { backToStartPage(navController) }
+        5003 -> { backToStartPage(navController) }
+        5006 -> { backToStartPage(navController) }
         5007 -> { openRepeat(navController) }
         5008 -> { openRepeat(navController) }
         5009 -> { openRepeat(navController) }
@@ -156,8 +156,8 @@ internal fun ErrorsCode.clickOnBottom(
     finish: () -> Unit
 ) {
     when (code) {
-        5008 -> { backToHome(navController) }
-        5999 -> { backToHome(navController) }
+        5008 -> { backToStartPage(navController) }
+        5999 -> { backToStartPage(navController) }
         else -> { finish() }
     }
 }

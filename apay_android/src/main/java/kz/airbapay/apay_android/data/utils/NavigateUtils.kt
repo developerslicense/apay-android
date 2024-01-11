@@ -11,6 +11,7 @@ import kz.airbapay.apay_android.data.constant.ROUTES_ERROR_FINAL
 import kz.airbapay.apay_android.data.constant.ROUTES_ERROR_SOMETHING_WRONG
 import kz.airbapay.apay_android.data.constant.ROUTES_HOME
 import kz.airbapay.apay_android.data.constant.ROUTES_REPEAT
+import kz.airbapay.apay_android.data.constant.ROUTES_START_PROCESSING
 import kz.airbapay.apay_android.data.constant.ROUTES_SUCCESS
 import kz.airbapay.apay_android.data.constant.TEMPLATE_DEEP_LINK_ACQUIRING
 import kz.airbapay.apay_android.data.constant.TEMPLATE_DEEP_LINK_GOOGLE_PAY
@@ -19,11 +20,15 @@ import kz.airbapay.apay_android.data.constant.TEMPLATE_ROUTES_ERROR_WITH_INSTRUC
 import kz.airbapay.apay_android.data.constant.initErrorsCodeByCode
 import kz.airbapay.apay_android.ui.pages.card_reader.ScanActivity
 
-internal fun backToHome(navController: NavController) {
+internal fun backToStartPage(navController: NavController) {
     navController.popBackStack(
-        route = ROUTES_HOME,
+        route = ROUTES_START_PROCESSING,
         inclusive = false
     )
+}
+
+internal fun openHome(navController: NavController) {
+    navController.navigate(route = ROUTES_HOME)
 }
 
 internal fun openRepeat(navController: NavController) {
