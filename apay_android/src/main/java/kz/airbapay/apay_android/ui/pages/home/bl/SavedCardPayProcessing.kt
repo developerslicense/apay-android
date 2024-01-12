@@ -1,17 +1,17 @@
 package kz.airbapay.apay_android.ui.pages.home.bl
 
+import android.app.Activity
 import androidx.compose.runtime.MutableState
-import androidx.navigation.NavController
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kz.airbapay.apay_android.data.constant.ErrorsCode
+import kz.airbapay.apay_android.data.utils.openAcquiring
 import kz.airbapay.apay_android.data.utils.openErrorPageWithCondition
 import kz.airbapay.apay_android.data.utils.openSuccess
-import kz.airbapay.apay_android.data.utils.openAcquiring
 import kz.airbapay.apay_android.network.repository.PaymentsRepository
 
 internal fun startPaymentProcessing(
-    navController: NavController,
+    activity: Activity,
     isLoading : MutableState<Boolean>,
     cardId: String,
     paymentsRepository: PaymentsRepository,
@@ -28,17 +28,17 @@ internal fun startPaymentProcessing(
             on3DS = { redirectUrl ->
                 openAcquiring(
                     redirectUrl = redirectUrl,
-                    navController = navController
+                    activity = activity
                 )
             },
             onError = { errorCode ->
                 openErrorPageWithCondition(
                     errorCode = errorCode.code,
-                    navController = navController
+                    activity = activity
                 )
             },
             onSuccess = {
-                openSuccess(navController)
+                openSuccess(activity)
             }
         )
     }

@@ -1,73 +1,59 @@
 package kz.airbapay.apay_android.data.utils
 
+import android.app.Activity
 import android.content.Intent
-import androidx.core.net.toUri
 import androidx.navigation.NavController
-import kz.airbapay.apay_android.AirbaPayActivity
 import kz.airbapay.apay_android.data.constant.ARG_ACTION
+import kz.airbapay.apay_android.data.constant.ARG_CARD_ID
 import kz.airbapay.apay_android.data.constant.ARG_ERROR_CODE
-import kz.airbapay.apay_android.data.constant.ErrorsCode
-import kz.airbapay.apay_android.data.constant.ROUTES_ERROR_FINAL
-import kz.airbapay.apay_android.data.constant.ROUTES_ERROR_SOMETHING_WRONG
-import kz.airbapay.apay_android.data.constant.ROUTES_HOME
-import kz.airbapay.apay_android.data.constant.ROUTES_REPEAT
-import kz.airbapay.apay_android.data.constant.ROUTES_START_PROCESSING
-import kz.airbapay.apay_android.data.constant.ROUTES_SUCCESS
-import kz.airbapay.apay_android.data.constant.TEMPLATE_DEEP_LINK_ACQUIRING
-import kz.airbapay.apay_android.data.constant.TEMPLATE_DEEP_LINK_GOOGLE_PAY
-import kz.airbapay.apay_android.data.constant.TEMPLATE_ROUTES_ERROR
-import kz.airbapay.apay_android.data.constant.TEMPLATE_ROUTES_ERROR_WITH_INSTRUCTION
-import kz.airbapay.apay_android.data.constant.initErrorsCodeByCode
+import kz.airbapay.apay_android.ui.pages.acquiring.AcquiringActivity
 import kz.airbapay.apay_android.ui.pages.card_reader.ScanActivity
+import kz.airbapay.apay_android.ui.pages.error.ErrorActivity
+import kz.airbapay.apay_android.ui.pages.error.RepeatActivity
+import kz.airbapay.apay_android.ui.pages.home.HomeActivity
+import kz.airbapay.apay_android.ui.pages.startview.StartProcessingActivity
+import kz.airbapay.apay_android.ui.pages.success.SuccessActivity
 
-internal fun backToStartPage(navController: NavController) {
-    navController.popBackStack(
-        route = ROUTES_START_PROCESSING,
-        inclusive = false
-    )
+internal fun backToStartPage(activity: Activity) {
+    val intent = Intent(activity, StartProcessingActivity::class.java)
+    activity.startActivity(intent)
+    activity.finish()
 }
 
-internal fun openHome(navController: NavController) {
-    navController.navigate(route = ROUTES_HOME)
+internal fun openHome( //todo ??? finish
+    activity: Activity,
+    cardId: String? = null
+) {
+    val intent = Intent(activity, HomeActivity::class.java)
+    intent.putExtra(ARG_CARD_ID, cardId)
+    activity.startActivity(intent)
+    activity.finish()
 }
 
-internal fun openRepeat(navController: NavController) {
-    navController.navigate(route = ROUTES_REPEAT)
+internal fun openRepeat(activity: Activity) {
+    val intent = Intent(activity, RepeatActivity::class.java)
+    activity.startActivity(intent)
+    activity.finish()
 }
 
 internal fun openErrorPageWithCondition(
     errorCode: Int?,
-    navController: NavController?
+    activity: Activity
 ) {
-    val error = initErrorsCodeByCode(errorCode ?: 1)
-
-    if (error == ErrorsCode.error_1) {
-        navController?.navigate(ROUTES_ERROR_SOMETHING_WRONG)
-
-    } else if (error.code == ErrorsCode.error_5020.code || errorCode == null) {
-        navController?.navigate(ROUTES_ERROR_FINAL)
-
-    } else if (error.code== ErrorsCode.error_5999.code && DataHolder.bankCode?.isNotBlank() == true) {
-        val deepLink = TEMPLATE_ROUTES_ERROR_WITH_INSTRUCTION +
-                "?${ARG_ERROR_CODE}=${error.code}".toUri()
-        navController?.navigate(deepLink)
-
-    } else {
-        val deepLink = TEMPLATE_ROUTES_ERROR +
-                "?${ARG_ERROR_CODE}=${error.code}".toUri()
-
-        navController?.navigate(deepLink)
-    }
+    val intent = Intent(activity, ErrorActivity::class.java)
+    intent.putExtra(ARG_ERROR_CODE, errorCode)
+    activity.startActivity(intent)
+    activity.finish()
 }
 
 internal fun openAcquiring(
     redirectUrl: String?,
-    navController: NavController?
+    activity: Activity
 ) {
-    val deepLink = TEMPLATE_DEEP_LINK_ACQUIRING +
-            "?$ARG_ACTION=${redirectUrl}".toUri()
-
-    navController?.navigate(deepLink)
+    val intent = Intent(activity, AcquiringActivity::class.java)
+    intent.putExtra(ARG_ACTION, redirectUrl)
+    activity.startActivity(intent)
+    activity.finish()
 }
 
 internal fun openGooglePay(
@@ -80,11 +66,13 @@ internal fun openGooglePay(
     navController?.navigate(deepLink)
 }
 
-internal fun openSuccess(navController: NavController?) {
-    navController?.navigate(ROUTES_SUCCESS)
+internal fun openSuccess(activity: Activity) {
+    val intent = Intent(activity, SuccessActivity::class.java)
+    activity.startActivity(intent)
+    activity.finish()
 }
 
-internal fun openCardScanner(activity: AirbaPayActivity) {
- // todo если возникнут проблемы с камерой, то используй https://github.com/android/camera-samples
+internal fun openCardScanner(activity: HomeActivity) {
+    // todo если возникнут проблемы с камерой, то используй https://github.com/android/camera-samples
     activity.scanResultLauncher?.launch(Intent(activity, ScanActivity::class.java))
 }

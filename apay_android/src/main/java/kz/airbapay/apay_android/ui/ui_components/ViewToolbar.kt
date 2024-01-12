@@ -10,6 +10,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import kz.airbapay.apay_android.data.utils.recomposeHighlighter
 import kz.airbapay.apay_android.ui.resources.ColorsSdk
 import kz.airbapay.apay_android.ui.resources.LocalFonts
 
@@ -17,14 +18,14 @@ import kz.airbapay.apay_android.ui.resources.LocalFonts
 internal fun ViewToolbar(
     title: String? = null,
     actionBack: (() -> Unit)? = null,
-    backIcon: Int,
-    modifier: Modifier = Modifier
+    backIcon: Int
 ) {
 
     actionBack?.let {
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            modifier = modifier
+            modifier = Modifier
+                .recomposeHighlighter()
                 .fillMaxWidth()
                 .defaultMinSize(minHeight = 56.dp)
                 .padding(
@@ -39,7 +40,8 @@ internal fun ViewToolbar(
                 action = actionBack,
                 _outlinedButtonColor = ColorsSdk.bgBlock,
                 iconSrc = backIcon,
-                modifier = modifier
+                modifier = Modifier
+                    .recomposeHighlighter()
             )
 
             Text(
@@ -48,6 +50,7 @@ internal fun ViewToolbar(
                 overflow = TextOverflow.Ellipsis,
                 maxLines = 1,
                 modifier = Modifier
+                    .recomposeHighlighter()
                     .fillMaxWidth()
                     .padding(start = 10.dp)
             )

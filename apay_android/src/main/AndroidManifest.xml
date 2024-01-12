@@ -10,14 +10,36 @@
     <uses-feature android:name="android.hardware.camera" />
     <uses-feature android:name="android.hardware.camera.any" />
 
+<!--TODO почему куча активити, вместо навигации композа?
+        Это из-за того, что обнаружил проблемы с оптимизацией.
+        Создание экрана с несколькими полями ввода занимает до 7 секунд в дебаг сборке,
+        тогда как в активити всего 2 секунды.
+        Почему не фргаменты? До этого уже несколько раз переделывали флоу и в каких-то случаях был первым bottomSheet,
+        а это усложняет работу с навигацией и, на случай повторных переделок, решил облегчить задачу
+        -->
 
     <application>
         <activity
-            android:name=".AirbaPayActivity"
+            android:name="kz.airbapay.apay_android.ui.pages.startview.StartProcessingActivity"
             android:exported="true"
             android:windowSoftInputMode="adjustResize"/>
 
         <activity android:name=".ui.pages.card_reader.ScanActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity android:name=".ui.pages.home.HomeActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity android:name=".ui.pages.acquiring.AcquiringActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity android:name=".ui.pages.success.SuccessActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity android:name=".ui.pages.error.RepeatActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity android:name=".ui.pages.error.ErrorActivity"
             android:screenOrientation="portrait"/>
     </application>
 

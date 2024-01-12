@@ -1,6 +1,7 @@
 package kz.airbapay.apay_android.ui.pages.googlepay
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.graphics.Bitmap
 import android.net.http.SslError
 import android.webkit.SslErrorHandler
@@ -8,18 +9,16 @@ import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.compose.runtime.MutableState
-import androidx.navigation.NavController
 import kz.airbapay.apay_android.data.utils.DataHolder
 import kz.airbapay.apay_android.data.utils.errorLog
 import kz.airbapay.apay_android.data.utils.messageLog
 import kz.airbapay.apay_android.data.utils.openAcquiring
 import kz.airbapay.apay_android.data.utils.openErrorPageWithCondition
-import kz.airbapay.apay_android.data.utils.openGooglePay
 import kz.airbapay.apay_android.data.utils.openSuccess
 
 internal class GooglePayClient(
     private val redirectUrl: String?,
-    private val navController: NavController?,
+    private val activity: Activity,
     private val inProgress: MutableState<Boolean>
 ) : WebViewClient() {
 
@@ -46,9 +45,6 @@ internal class GooglePayClient(
             )
             inProgress.value = false
 
-        } else {
-            inProgress.value = false
-        }
     }
 
     override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
@@ -59,13 +55,13 @@ internal class GooglePayClient(
             url.contains("acquiring-api/sdk/api/v1/payments/three-ds") -> {
                 openAcquiring(
                     redirectUrl = url,
-                    navController = navController
+                    activity = activity
                 )
             }
             url.contains("status=auth")
                     || url.contains("status=success") -> {
                 messageLog("Status success")
-                openSuccess(navController)
+                openSuccess(activity)
             }
 
             url.contains("status=error") -> {
@@ -81,14 +77,14 @@ internal class GooglePayClient(
 
                     openErrorPageWithCondition(
                         errorCode = code,
-                        navController = navController
+                        activity = activity
                     )
 
                 } catch (e: Exception) {
                     errorLog(e)
                     openErrorPageWithCondition(
                             errorCode = 0,
-                            navController = navController
+                            activity = activity
                     )
                 }
             }

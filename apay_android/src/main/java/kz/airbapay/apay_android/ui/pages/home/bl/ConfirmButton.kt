@@ -1,7 +1,7 @@
 package kz.airbapay.apay_android.ui.pages.home.bl
 
+import android.app.Activity
 import androidx.compose.runtime.MutableState
-import androidx.navigation.NavController
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kz.airbapay.apay_android.data.constant.ErrorsCode
@@ -91,7 +91,7 @@ internal fun checkValid(
 }
 
 internal fun startPaymentProcessing(
-    navController: NavController,
+    activity: Activity,
     isLoading: MutableState<Boolean>,
     saveCard: Boolean = false,
     cardNumber: String,
@@ -120,17 +120,17 @@ internal fun startPaymentProcessing(
             on3DS = { secure3D ->
                 openAcquiring(
                     redirectUrl = secure3D?.action,
-                    navController = navController
+                    activity = activity
                 )
             },
             onError = { errorCode ->
                 openErrorPageWithCondition(
                     errorCode = errorCode.code,
-                    navController = navController
+                    activity = activity
                 )
             },
             onSuccess = {
-                openSuccess(navController)
+                openSuccess(activity)
             }
         )
     }

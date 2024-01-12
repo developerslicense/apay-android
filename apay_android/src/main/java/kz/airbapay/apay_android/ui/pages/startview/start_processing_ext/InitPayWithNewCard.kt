@@ -1,4 +1,4 @@
-package kz.airbapay.apay_android.ui.pages.dialog.start_processing_ext
+package kz.airbapay.apay_android.ui.pages.startview.start_processing_ext
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image

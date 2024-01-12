@@ -1,6 +1,7 @@
 package kz.airbapay.apay_android.ui.pages.googlepay
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.os.Message
 import android.view.ViewGroup
 import android.webkit.WebChromeClient
@@ -13,20 +14,20 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.navigation.NavController
-import kz.airbapay.apay_android.ui.pages.dialog.InitDialogExit
+import kz.airbapay.apay_android.ui.pages.dialogs.InitDialogExit
 import kz.airbapay.apay_android.ui.ui_components.BackHandler
 import kz.airbapay.apay_android.ui.ui_components.ProgressBarView
 
 @SuppressLint("SetJavaScriptEnabled")
 @Composable
 internal fun GooglePayPage(
-    url: String?,
-    navController: NavController?
+    url: String?
 ) {
+    val activity = LocalContext.current as Activity
     val inProgress = remember { mutableStateOf(true) }
 
     val showDialogExit = remember {
@@ -62,7 +63,7 @@ internal fun GooglePayPage(
                         settings.javaScriptCanOpenWindowsAutomatically = true
 
                         webViewClient = GooglePayClient(
-                            navController = navController,
+                            activity = activity,
                             inProgress = inProgress,
                             redirectUrl = url
                         )
@@ -87,7 +88,7 @@ internal fun GooglePayPage(
                                 resultMsg.sendToTarget()
 
                                 newWebView?.webViewClient = GooglePayClient(
-                                    navController = navController,
+                                    activity = activity,
                                     inProgress = inProgress,
                                     redirectUrl = url
                                 )

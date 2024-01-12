@@ -1,4 +1,4 @@
-package kz.airbapay.apay_android.ui.pages.dialog.start_processing_ext
+package kz.airbapay.apay_android.ui.pages.startview.start_processing_ext
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import kz.airbapay.apay_android.data.constant.amountOfPurchase
+import kz.airbapay.apay_android.data.utils.recomposeHighlighter
 import kz.airbapay.apay_android.ui.resources.ColorsSdk
 import kz.airbapay.apay_android.ui.resources.LocalFonts
 
@@ -25,6 +26,7 @@ internal fun InitViewStartProcessingAmount(
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
+            .recomposeHighlighter()
             .padding(horizontal = 16.dp)
             .padding(top = 24.dp)
             .fillMaxWidth()
@@ -41,7 +43,9 @@ internal fun InitViewStartProcessingAmount(
     ) {
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .recomposeHighlighter()
+                .fillMaxWidth()
         ) {
             Text(
                 text = amountOfPurchase(),
@@ -51,7 +55,8 @@ internal fun InitViewStartProcessingAmount(
             Text(
                 text = purchaseAmount.orEmpty(),
                 textAlign = TextAlign.End,
-                style = LocalFonts.current.semiBold
+                style = LocalFonts.current.semiBold,
+                modifier = Modifier.recomposeHighlighter()
             )
         }
     }

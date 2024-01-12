@@ -45,11 +45,11 @@ ext {
     androidxTest = '1.5.0'
     androidxTestRunner = '1.5.2'
     androidxCore = '1.12.0'
-    activityKtx = '1.7.2'
+    activityKtx = '1.8.2'//'1.7.2'
 
     biometricLibraryVersion = '1.1.0'
 
-    camerax = '1.3.0-rc01'
+    camerax = '1.3.1' //'1.3.0-rc01'
     constraint = '2.1.4'
     constraintCompose = '1.0.1'
     desugarJdkLibs = '1.1.1'
@@ -64,12 +64,12 @@ ext {
     jetpackComposeAccompanist = '0.28.0'
     jetpackComposeFoundation = '1.4.3'
 
-    lifecycle = '2.5.2'
+    lifecycle = '2.7.0' //'2.5.2'
     lifecycleTesting = '2.2.0'
 
-    material = '1.9.0'
+    material = '1.11.0'//'1.9.0'
 
-    navigationComponent = '2.7.2'
+    navigationComponent = '2.7.6'//'2.7.2'
 
     okhttp = '4.2.2'
     okhttpInterceptor = '4.9.2'

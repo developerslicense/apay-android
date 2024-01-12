@@ -1,4 +1,4 @@
-package kz.airbapay.apay_android.ui.pages.dialog.start_processing_ext
+package kz.airbapay.apay_android.ui.pages.startview.start_processing_ext
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -23,9 +23,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import kz.airbapay.apay_android.AirbaPayActivity
 import kz.airbapay.apay_android.data.constant.orPayWithCard
 import kz.airbapay.apay_android.data.model.BankCard
+import kz.airbapay.apay_android.data.utils.recomposeHighlighter
 import kz.airbapay.apay_android.ui.resources.ColorsSdk
 import kz.airbapay.apay_android.ui.resources.LocalFonts
 import kz.airbapay.apay_android.ui.ui_components.LineDecorator
@@ -35,8 +35,8 @@ import kz.airbapay.apay_android.ui.ui_components.LoadImageSrc
 internal fun InitViewStartProcessingCards(
     savedCards: List<BankCard>,
     selectedCard: MutableState<BankCard?>,
-    actionClose: () -> Unit,
-    customSuccessPage: @Composable (() -> Unit)?
+    actionClose: () -> Unit
+//    customSuccessPage: @Composable (() -> Unit)?
 ) {
     val context = LocalContext.current
     val selected = remember {
@@ -52,6 +52,7 @@ internal fun InitViewStartProcessingCards(
 
     LazyColumn(
         modifier = Modifier
+            .recomposeHighlighter()
             .fillMaxWidth()
             .wrapContentHeight()
     ) {
@@ -98,6 +99,7 @@ private fun InitCard(
 
     Column(
         modifier = Modifier
+            .recomposeHighlighter()
             .clickable { clickOnCard() }
     ) {
 
@@ -105,13 +107,15 @@ private fun InitCard(
 
         Row(
             modifier = Modifier
+                .recomposeHighlighter()
                 .padding(horizontal = 16.dp)
                 .fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
             Row(
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.recomposeHighlighter()
             ) {
                 LoadImageSrc(imageSrc = card.typeIcon)
 
@@ -119,7 +123,8 @@ private fun InitCard(
 
                 Text(
                     style = LocalFonts.current.semiBold,
-                    text = card.getMaskedPanCleared()
+                    text = card.getMaskedPanCleared(),
+                    modifier = Modifier.recomposeHighlighter()
                 )
             }
 
@@ -127,13 +132,17 @@ private fun InitCard(
                 Card(
                     shape = RoundedCornerShape(45.dp),
                     backgroundColor = ColorsSdk.colorBrand,
-                    modifier = Modifier.size(20.dp),
-                    elevation = 0.dp
+                    elevation = 0.dp,
+                    modifier = Modifier
+                        .recomposeHighlighter()
+                        .size(20.dp)
                 ) {
                     Card(
                         shape = RoundedCornerShape(45.dp),
                         backgroundColor = ColorsSdk.bgBlock,
-                        modifier = Modifier.padding(6.dp)
+                        modifier = Modifier
+                            .recomposeHighlighter()
+                            .padding(6.dp)
                     ) {}
                 }
 
@@ -141,13 +150,17 @@ private fun InitCard(
                 Card(
                     shape = RoundedCornerShape(45.dp),
                     backgroundColor = ColorsSdk.gray15,
-                    modifier = Modifier.size(20.dp),
-                    elevation = 0.dp
+                    elevation = 0.dp,
+                    modifier = Modifier
+                        .recomposeHighlighter()
+                        .size(20.dp)
                 ) {
                     Card(
                         shape = RoundedCornerShape(45.dp),
                         backgroundColor = ColorsSdk.bgBlock,
-                        modifier = Modifier.padding(2.dp)
+                        modifier = Modifier
+                            .recomposeHighlighter()
+                            .padding(2.dp)
                     ) {}
                 }
             }

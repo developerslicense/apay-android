@@ -1,11 +1,14 @@
 package kz.airbapay.apay_android
 
-import android.content.Context
-import androidx.compose.runtime.Composable
+import android.app.Activity
+import android.app.Application
+import android.content.Intent
 import androidx.compose.ui.graphics.Color
 import com.google.gson.annotations.SerializedName
 import kz.airbapay.apay_android.data.utils.DataHolder
 import kz.airbapay.apay_android.data.utils.Money
+import kz.airbapay.apay_android.network.repository.Repository
+import kz.airbapay.apay_android.ui.pages.startview.StartProcessingActivity
 import kz.airbapay.apay_android.ui.resources.ColorsSdk
 
 class AirbaPaySdk {
@@ -45,6 +48,7 @@ class AirbaPaySdk {
          * @settlementPayments - не обязательный параметр, нужно присылать, если есть необходимость в разделении счетов по компаниям
          * */
         fun initOnCreate(
+            context: Application,
             isProd: Boolean,
             lang: Lang,
             accountId: String,
@@ -90,6 +94,9 @@ class AirbaPaySdk {
             DataHolder.terminalId = terminalId
 
             DataHolder.currentLang = lang.lang
+
+            // не переносить
+            Repository.initRepositories(context)
         }
 
         fun initProcessing(
@@ -119,12 +126,9 @@ class AirbaPaySdk {
 }
 
 fun startAirbaPay(
-    context: Context,
-    customSuccessPage: @Composable (() -> Unit)? = null
+    activity: Activity,
+    redirectToCustomSuccessPage: (() -> Unit)? = null
 ) {
-
-    AirbaPayActivity.init(
-        context = context,
-        customSuccessPage = customSuccessPage
-    )
+    DataHolder.redirectToCustomSuccessPage = redirectToCustomSuccessPage
+    activity.startActivity(Intent(activity, StartProcessingActivity::class.java))
 }

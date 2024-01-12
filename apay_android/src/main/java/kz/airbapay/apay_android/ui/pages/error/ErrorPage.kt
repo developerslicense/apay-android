@@ -21,7 +21,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.navigation.NavController
 import kz.airbapay.apay_android.R
 import kz.airbapay.apay_android.data.constant.ErrorsCode
 import kz.airbapay.apay_android.data.constant.buttonBottom
@@ -31,7 +30,7 @@ import kz.airbapay.apay_android.data.constant.clickOnTop
 import kz.airbapay.apay_android.data.constant.description
 import kz.airbapay.apay_android.data.constant.message
 import kz.airbapay.apay_android.data.utils.DataHolder
-import kz.airbapay.apay_android.ui.pages.dialog.InitDialogExit
+import kz.airbapay.apay_android.ui.pages.dialogs.InitDialogExit
 import kz.airbapay.apay_android.ui.resources.ColorsSdk
 import kz.airbapay.apay_android.ui.resources.LocalFonts
 import kz.airbapay.apay_android.ui.ui_components.BackHandler
@@ -39,11 +38,10 @@ import kz.airbapay.apay_android.ui.ui_components.ViewButton
 
 @Composable
 internal fun ErrorPage(
-    errorCode: ErrorsCode,
-    navController: NavController
+    errorCode: ErrorsCode
 ) {
 
-    val context = LocalContext.current
+    val activity = LocalContext.current as Activity
     val showDialogExit = remember {
         mutableStateOf(false)
     }
@@ -119,8 +117,8 @@ internal fun ErrorPage(
                 title = errorCode.buttonTop(),
                 actionClick = {
                     errorCode.clickOnTop(
-                        navController = navController,
-                        finish = { (context as Activity).finish() }
+                        activity = activity,
+                        finish = { activity.finish() }
                     )
                 }
             )
@@ -132,9 +130,9 @@ internal fun ErrorPage(
                 isMainBrand = false,
                 actionClick = {
                     errorCode.clickOnBottom(
-                        navController = navController,
+                        activity = activity,
                         finish = {
-                            (context as Activity).finish()
+                            activity.finish()
                             DataHolder.frontendCallback?.invoke(false)
                         }
                     )

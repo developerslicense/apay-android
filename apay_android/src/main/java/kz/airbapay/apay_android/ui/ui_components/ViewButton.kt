@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstrainedLayoutReference
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintLayoutScope
+import kz.airbapay.apay_android.data.utils.recomposeHighlighter
 import kz.airbapay.apay_android.ui.resources.ColorsSdk
 import kz.airbapay.apay_android.ui.resources.LocalFonts
 
@@ -82,6 +83,7 @@ private fun initButtonTextColor(
 
 private fun Modifier.initConstraintModifier() =
     this
+        .recomposeHighlighter()
         .fillMaxWidth()
         .padding(
             13.dp,

@@ -23,6 +23,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         AirbaPaySdk.initOnCreate(
+            context = this.application,
             isProd = false,
             accountId = "77051111111",
             phone = "77051111111",
@@ -50,9 +51,10 @@ class MainActivity : ComponentActivity() {
                         onClick = {
                             initProcessing()
                             startAirbaPay(
-                                context = this@MainActivity,
-                                /*customSuccessPage = {
-                                    Text("SUCCESS PAGE CUSTOM")
+                                activity = this@MainActivity,
+                                /*redirectToCustomSuccessPage = { //todo
+                                    activity.startActivity(Intent(activity, CustomSuccessActivity::java.class))
+                                    activity.finish()
                                 }*/
                             )
                         }

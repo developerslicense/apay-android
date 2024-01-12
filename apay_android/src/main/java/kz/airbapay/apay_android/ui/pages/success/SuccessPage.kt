@@ -1,6 +1,9 @@
 package kz.airbapay.apay_android.ui.pages.success
 
 import android.app.Activity
+import android.os.Bundle
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Spacer
@@ -25,6 +28,18 @@ import kz.airbapay.apay_android.ui.resources.ColorsSdk
 import kz.airbapay.apay_android.ui.resources.LocalFonts
 import kz.airbapay.apay_android.ui.ui_components.BackHandler
 import kz.airbapay.apay_android.ui.ui_components.ViewButton
+
+internal class SuccessActivity: ComponentActivity() {
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContent {
+            SuccessPage(
+                customSuccessPage = null //todo
+            )
+        }
+    }
+}
 
 @Composable
 internal fun SuccessPage(
