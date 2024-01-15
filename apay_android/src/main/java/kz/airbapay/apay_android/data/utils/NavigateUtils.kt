@@ -2,9 +2,10 @@ package kz.airbapay.apay_android.data.utils
 
 import android.app.Activity
 import android.content.Intent
-import androidx.navigation.NavController
 import kz.airbapay.apay_android.data.constant.ARG_ACTION
+import kz.airbapay.apay_android.data.constant.ARG_CARD_DATE_EXPIRED
 import kz.airbapay.apay_android.data.constant.ARG_CARD_ID
+import kz.airbapay.apay_android.data.constant.ARG_CARD_PAN
 import kz.airbapay.apay_android.data.constant.ARG_ERROR_CODE
 import kz.airbapay.apay_android.ui.pages.acquiring.AcquiringActivity
 import kz.airbapay.apay_android.ui.pages.card_reader.ScanActivity
@@ -22,10 +23,15 @@ internal fun backToStartPage(activity: Activity) {
 
 internal fun openHome( //todo ??? finish
     activity: Activity,
-    cardId: String? = null
+    cardId: String? = null,
+    cardPan: String? = null,
+    cardDateExpired: String? = null
 ) {
     val intent = Intent(activity, HomeActivity::class.java)
     intent.putExtra(ARG_CARD_ID, cardId)
+    intent.putExtra(ARG_CARD_PAN, cardPan)
+    intent.putExtra(ARG_CARD_DATE_EXPIRED, cardDateExpired)
+
     activity.startActivity(intent)
     activity.finish()
 }
@@ -54,16 +60,6 @@ internal fun openAcquiring(
     intent.putExtra(ARG_ACTION, redirectUrl)
     activity.startActivity(intent)
     activity.finish()
-}
-
-internal fun openGooglePay(
-    redirectUrl: String?,
-    navController: NavController?
-) {
-    val deepLink = TEMPLATE_DEEP_LINK_GOOGLE_PAY +
-            "?$ARG_ACTION=${redirectUrl}".toUri()
-
-    navController?.navigate(deepLink)
 }
 
 internal fun openSuccess(activity: Activity) {

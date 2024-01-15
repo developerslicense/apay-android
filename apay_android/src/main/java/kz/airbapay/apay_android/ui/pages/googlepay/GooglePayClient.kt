@@ -39,11 +39,13 @@ internal class GooglePayClient(
         messageLog("onPageFinished, $url")
 
         if (url?.contains("https://accounts.youtube.com/accounts/") == true) {
-            openGooglePay(
+            openAcquiring(
                 redirectUrl = redirectUrl,
-                navController = navController
+                activity = activity
             )
-            inProgress.value = false
+        }
+
+        inProgress.value = false
 
     }
 

@@ -12,6 +12,7 @@ import kz.airbapay.apay_android.data.constant.paymentByCard2
 import kz.airbapay.apay_android.data.model.BankCard
 import kz.airbapay.apay_android.data.utils.openHome
 import kz.airbapay.apay_android.data.utils.recomposeHighlighter
+import kz.airbapay.apay_android.ui.pages.startview.bl.startSavedCard
 import kz.airbapay.apay_android.ui.ui_components.ViewButton
 
 @Composable
@@ -19,6 +20,7 @@ internal fun InitViewStartProcessingButtonNext(
     savedCards: List<BankCard>,
     purchaseAmount: String?,
     isAuthenticated: Boolean,
+    isLoading: MutableState<Boolean>,
     selectedCard: MutableState<BankCard?>
 ) {
     val activity = LocalContext.current as Activity
@@ -35,9 +37,10 @@ internal fun InitViewStartProcessingButtonNext(
         ViewButton(
             title = "${payAmount()} $purchaseAmount",
             actionClick = {
-                openHome(
+                isLoading.value = true
+                startSavedCard(
                     activity = activity,
-                    cardId = selectedCard.value?.id
+                    card = selectedCard.value
                 )
             },
             modifierRoot = buttonModifier
@@ -47,7 +50,7 @@ internal fun InitViewStartProcessingButtonNext(
         ViewButton(
             title = paymentByCard2(),
             actionClick = {
-                openHome(activity = activity)
+                openHome(activity)
             },
             modifierRoot = buttonModifier
         )

@@ -1,5 +1,6 @@
 package kz.airbapay.apay_android.ui.pages.startview
 
+import android.app.Activity
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -14,11 +15,11 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
@@ -30,7 +31,8 @@ import kz.airbapay.apay_android.data.utils.DataHolder
 import kz.airbapay.apay_android.data.utils.recomposeHighlighter
 import kz.airbapay.apay_android.network.repository.Repository
 import kz.airbapay.apay_android.network.repository.startAuth
-import kz.airbapay.apay_android.ui.pages.home.bl.startPaymentProcessingGooglePay
+import kz.airbapay.apay_android.ui.pages.googlepay.GooglePayPage
+import kz.airbapay.apay_android.ui.pages.startview.bl.initPayments
 import kz.airbapay.apay_android.ui.pages.startview.start_processing_ext.InitErrorState
 import kz.airbapay.apay_android.ui.pages.startview.start_processing_ext.InitViewStartProcessingAmount
 import kz.airbapay.apay_android.ui.pages.startview.start_processing_ext.InitViewStartProcessingButtonNext
@@ -68,12 +70,11 @@ internal class StartProcessingActivity: ComponentActivity() {
 @Composable
 internal fun StartProcessingPage(
     actionClose: () -> Unit,
-    actionOnLoadingCompleted: () -> Unit = {},
     backgroundColor: Color = ColorsSdk.bgBlock,
     isAuthenticated: MutableState<Boolean>
 ) {
-    val coroutineScope = rememberCoroutineScope()
-    val redirectUrl = remember {
+    val activity = LocalContext.current as Activity
+    val googlePayRedirectUrl = remember {
         mutableStateOf<String?>(null)
     }
 
@@ -124,12 +125,11 @@ internal fun StartProcessingPage(
                 } else {
                     InitViewStartProcessingAmount(purchaseAmount.value)
 
-                    /*  if (redirectUrl.value != null) {
+                      if (googlePayRedirectUrl.value != null) {
                           GooglePayPage(
-                              url = redirectUrl.value,
-                              navController = navController
+                              url = googlePayRedirectUrl.value
                           )
-                      }*/
+                      }
 
                     if (savedCards.value.isNotEmpty()
                         && isAuthenticated.value
@@ -142,6 +142,7 @@ internal fun StartProcessingPage(
                     }
 
                     InitViewStartProcessingButtonNext(
+                        isLoading = isLoading,
                         savedCards = savedCards.value,
                         purchaseAmount = purchaseAmount.value,
                         isAuthenticated = isAuthenticated.value,
@@ -168,37 +169,35 @@ internal fun StartProcessingPage(
                 onError = {
                     isError.value = true
                     isLoading.value = false
-                    actionOnLoadingCompleted()
                 },
                 onResult = {
-                    startPaymentProcessingGooglePay(
-                        redirectUrl = redirectUrl,
-                        coroutineScope = coroutineScope,
-                        paymentsRepository = Repository.paymentsRepository!!,
-                        googlePayRepository = Repository.googlePayRepository!!,
-                        authRepository = Repository.authRepository!!
-                    )
 
                     Repository.cardRepository?.getCards(
                         accountId = DataHolder.accountId,
                         error = {
                             isLoading.value = false
-                            actionOnLoadingCompleted()
                         },
                         result = {
                             isLoading.value = false
                             savedCards.value = it
-                            actionOnLoadingCompleted()
+
                             if (it.isNotEmpty()) {
                                 selectedCard.value = it[0]
                             }
+                        }
+                    )
+
+                    initPayments(
+                        activity = activity,
+                        isLoading = isLoading,
+                        onGooglePayLoadSuccess = { url ->
+                            googlePayRedirectUrl.value = url
                         }
                     )
                 }
             )
         }
     }
-
 }
 
 
