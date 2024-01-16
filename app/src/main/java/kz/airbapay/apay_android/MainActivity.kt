@@ -46,7 +46,10 @@ class MainActivity : ComponentActivity() {
                     verticalArrangement = Arrangement.Center,
                     modifier = Modifier.fillMaxSize()
                 ) {
-                    Text("Для теста сохраненной карты с вводом CVV\n 4111 1111 1111 1616 cvv 333")
+                    Text(
+                        text = "Для теста сохраненной карты с вводом CVV\n 4111 1111 1111 1616 cvv 333",
+                        modifier = Modifier.padding(16.dp)
+                    )
                     Spacer(modifier = Modifier.height(10.dp))
 
                     Button(

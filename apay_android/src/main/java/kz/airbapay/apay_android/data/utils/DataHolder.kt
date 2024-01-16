@@ -37,4 +37,5 @@ internal object DataHolder {
   var frontendCallback: ((paymentSubmittingResult: Boolean) -> Unit)? = null
 
   var redirectToCustomSuccessPage: (() -> Unit)? = null
+  var isAuthenticated: Boolean = false
 }

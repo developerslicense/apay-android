@@ -2,6 +2,7 @@ package kz.airbapay.apay_android.ui.pages.startview.bl
 
 import android.app.Activity
 import androidx.compose.runtime.MutableState
+import kz.airbapay.apay_android.data.constant.wrongCvv
 import kz.airbapay.apay_android.data.utils.openAcquiring
 import kz.airbapay.apay_android.data.utils.openSuccess
 import kz.airbapay.apay_android.network.repository.Repository
@@ -10,10 +11,10 @@ internal fun startSavedCard(
     activity: Activity,
     cardId: String,
     cvv: String?,
-    needCvv: MutableState<Boolean>,
-    isError: MutableState<Boolean>
+    showCvv: () -> Unit,
+    isError: MutableState<String?>
 ) {
-    isError.value = false
+    isError.value = null
 
     Repository.paymentsRepository?.startPaymentSavedCard(
         cardId = cardId,
@@ -21,7 +22,7 @@ internal fun startSavedCard(
         result = {
             when (it.status) {
                 "new" -> {
-                    needCvv.value = true
+                    showCvv()
                 }
 
                 "success",
@@ -31,15 +32,15 @@ internal fun startSavedCard(
 
                 "secure3D" -> {
                     openAcquiring(
-                        redirectUrl = it.redirectURL,
+                        redirectUrl = it.secure3D?.action,
                         activity = activity
                     )
                 }
             }
         },
         error = {
-            needCvv.value = true
-            isError.value = true
+            showCvv()
+            isError.value = wrongCvv()
         }
     )
 }

@@ -9,12 +9,16 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
+import androidx.compose.material.ModalBottomSheetLayout
+import androidx.compose.material.ModalBottomSheetValue
+import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -33,6 +37,7 @@ import kz.airbapay.apay_android.network.repository.Repository
 import kz.airbapay.apay_android.network.repository.startAuth
 import kz.airbapay.apay_android.ui.pages.googlepay.GooglePayPage
 import kz.airbapay.apay_android.ui.pages.startview.bl.initPayments
+import kz.airbapay.apay_android.ui.pages.startview.start_processing_ext.EnterCvvBottomSheet
 import kz.airbapay.apay_android.ui.pages.startview.start_processing_ext.InitErrorState
 import kz.airbapay.apay_android.ui.pages.startview.start_processing_ext.InitViewStartProcessingAmount
 import kz.airbapay.apay_android.ui.pages.startview.start_processing_ext.InitViewStartProcessingButtonNext
@@ -43,20 +48,24 @@ import kz.airbapay.apay_android.ui.ui_components.ProgressBarView
 import kz.airbapay.apay_android.ui.ui_components.ViewToolbar
 
 internal class StartProcessingActivity: ComponentActivity() {
-    private val isAuthenticated = mutableStateOf(false)
+    private val isAuthenticated = mutableStateOf(DataHolder.isAuthenticated)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val airbaPayBiometric = AirbaPayBiometric(this)
-        airbaPayBiometric.authenticate(
-            onSuccess = {
-                isAuthenticated.value = true
-            },
-            onError = {
-                isAuthenticated.value = false
-            }
-        )
+        if (!DataHolder.isAuthenticated) {
+            val airbaPayBiometric = AirbaPayBiometric(this)
+            airbaPayBiometric.authenticate(
+                onSuccess = {
+                    DataHolder.isAuthenticated = true
+                    isAuthenticated.value = true
+                },
+                onError = {
+                    DataHolder.isAuthenticated = false
+                    isAuthenticated.value = false
+                }
+            )
+        }
 
         setContent {
             StartProcessingPage(
@@ -73,18 +82,26 @@ internal fun StartProcessingPage(
     backgroundColor: Color = ColorsSdk.bgBlock,
     isAuthenticated: MutableState<Boolean>
 ) {
+    val sheetState = rememberModalBottomSheetState(
+        initialValue = ModalBottomSheetValue.Hidden,
+        confirmValueChange = { it != ModalBottomSheetValue.HalfExpanded },
+    )
+
+    val coroutineScope = rememberCoroutineScope()
     val activity = LocalContext.current as Activity
-    val googlePayRedirectUrl = remember {
-        mutableStateOf<String?>(null)
-    }
+    val googlePayRedirectUrl = remember { mutableStateOf<String?>(null) }
 
     BackHandler {
-        actionClose()
+        coroutineScope.launch {
+            if (sheetState.isVisible) sheetState.hide()
+            else actionClose()
+        }
     }
 
     val purchaseAmount = DataHolder.purchaseAmountFormatted.collectAsState()
 
     val isError = remember { mutableStateOf(false) }
+    val isErrorCvv = remember { mutableStateOf<String?>(null) }
     val size = remember { mutableStateOf(IntSize.Zero) }
     val isLoading = remember { mutableStateOf(true) }
     val selectedCard = remember { mutableStateOf<BankCard?>(null) }
@@ -93,109 +110,126 @@ internal fun StartProcessingPage(
         mutableStateOf<List<BankCard>>(emptyList())
     }
 
-    Card(
-        backgroundColor = backgroundColor,
-        shape = RoundedCornerShape(
-            topStart = 0.dp,
-            topEnd = 0.dp
-        ),
-        modifier = Modifier
-            .recomposeHighlighter()
-            .fillMaxSize()
-            .onSizeChanged {
-                size.value = it
-            },
-        elevation = 0.dp
+    ModalBottomSheetLayout(
+        sheetState = sheetState,
+        sheetBackgroundColor = ColorsSdk.transparent,
+        sheetContent = {
+            EnterCvvBottomSheet(
+                actionClose = { coroutineScope.launch { sheetState.hide() } },
+                cvvError = isErrorCvv
+            )
+        },
+        modifier = Modifier.fillMaxSize()
     ) {
-        if (!isLoading.value) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier.recomposeHighlighter()
-            ) {
+        Card(
+            backgroundColor = backgroundColor,
+            shape = RoundedCornerShape(
+                topStart = 0.dp,
+                topEnd = 0.dp
+            ),
+            modifier = Modifier
+                .recomposeHighlighter()
+                .fillMaxSize()
+                .onSizeChanged {
+                    size.value = it
+                },
+            elevation = 0.dp
+        ) {
+            if (!isLoading.value) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.recomposeHighlighter()
+                ) {
 
-                ViewToolbar(
-                    title = paymentByCard(),
-                    backIcon = R.drawable.ic_arrow_back,
-                    actionBack = actionClose
-                )
+                    ViewToolbar(
+                        title = paymentByCard(),
+                        backIcon = R.drawable.ic_arrow_back,
+                        actionBack = actionClose
+                    )
 
-                if (isError.value) {
-                    InitErrorState()
+                    if (isError.value) {
+                        InitErrorState()
 
-                } else {
-                    InitViewStartProcessingAmount(purchaseAmount.value)
+                    } else {
+                        InitViewStartProcessingAmount(purchaseAmount.value)
 
-                      if (googlePayRedirectUrl.value != null) {
-                          GooglePayPage(
-                              url = googlePayRedirectUrl.value
-                          )
-                      }
+                        if (googlePayRedirectUrl.value != null) {
+                            GooglePayPage(
+                                url = googlePayRedirectUrl.value
+                            )
+                        }
 
-                    if (savedCards.value.isNotEmpty()
-                        && isAuthenticated.value
-                    ) {
-                        InitViewStartProcessingCards(
+                        if (savedCards.value.isNotEmpty()
+                            && isAuthenticated.value
+                        ) {
+                            InitViewStartProcessingCards(
+                                savedCards = savedCards.value,
+                                selectedCard = selectedCard
+                            )
+                        }
+
+                        InitViewStartProcessingButtonNext(
+                            isLoading = isLoading,
                             savedCards = savedCards.value,
+                            purchaseAmount = purchaseAmount.value,
+                            isAuthenticated = isAuthenticated.value,
                             selectedCard = selectedCard,
-                            actionClose = actionClose
+                            isError = isErrorCvv,
+                            showCvv = {
+                                coroutineScope.launch {
+                                    sheetState.show()
+                                }
+                            }
                         )
                     }
-
-                    InitViewStartProcessingButtonNext(
-                        isLoading = isLoading,
-                        savedCards = savedCards.value,
-                        purchaseAmount = purchaseAmount.value,
-                        isAuthenticated = isAuthenticated.value,
-                        selectedCard = selectedCard
-                    )
                 }
+            }
+
+            if (isLoading.value) {
+                ProgressBarView(
+                    size = size,
+                    modifier = Modifier.wrapContentHeight()
+                )
             }
         }
 
-        if (isLoading.value) {
-            ProgressBarView(
-                size = size,
-                modifier = Modifier.wrapContentHeight()
-            )
-        }
-    }
+        LaunchedEffect("CardRepository") {
+            launch {
+                isError.value = false
 
-    LaunchedEffect("CardRepository") {
-        launch {
-            isError.value = false
+                startAuth(
+                    authRepository = Repository.authRepository!!,
+                    onError = {
+                        isError.value = true
+                        isLoading.value = false
+                    },
+                    onResult = {
 
-            startAuth(
-                authRepository = Repository.authRepository!!,
-                onError = {
-                    isError.value = true
-                    isLoading.value = false
-                },
-                onResult = {
+                        Repository.cardRepository?.getCards(
+                            accountId = DataHolder.accountId,
+                            error = {
+                                isLoading.value = false
+                            },
+                            result = {
+                                isLoading.value = false
+                                savedCards.value = it
 
-                    Repository.cardRepository?.getCards(
-                        accountId = DataHolder.accountId,
-                        error = {
-                            isLoading.value = false
-                        },
-                        result = {
-                            isLoading.value = false
-                            savedCards.value = it
-
-                            if (it.isNotEmpty()) {
-                                selectedCard.value = it[0]
+                                if (it.isNotEmpty()) {
+                                    selectedCard.value = it[0]
+                                }
                             }
-                        }
-                    )
+                        )
 
-                    initPayments(
-                        activity = activity,
-                        isLoading = isLoading,
-                        onGooglePayLoadSuccess = { url ->
-                            googlePayRedirectUrl.value = url
-                        }
-                    )
-                }
-            )
+                        initPayments(
+                            activity = activity,
+                            isLoading = isLoading,
+                            onGooglePayLoadSuccess = { url ->
+                                googlePayRedirectUrl.value = url
+                            }
+                        )
+                    }
+                )
+            }
         }
     }
 }

@@ -1,5 +1,6 @@
 package kz.airbapay.apay_android.ui.pages.startview.start_processing_ext
 
+import android.app.Activity
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -21,9 +22,11 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import kz.airbapay.apay_android.data.constant.orPayWithCard
 import kz.airbapay.apay_android.data.model.BankCard
+import kz.airbapay.apay_android.data.utils.openHome
 import kz.airbapay.apay_android.data.utils.recomposeHighlighter
 import kz.airbapay.apay_android.ui.resources.ColorsSdk
 import kz.airbapay.apay_android.ui.resources.LocalFonts
@@ -33,9 +36,9 @@ import kz.airbapay.apay_android.ui.ui_components.LoadImageSrc
 @Composable
 internal fun InitViewStartProcessingCards(
     savedCards: List<BankCard>,
-    selectedCard: MutableState<BankCard?>,
-    actionClose: () -> Unit
+    selectedCard: MutableState<BankCard?>
 ) {
+    val activity = LocalContext.current as Activity
     val selected = remember {
         mutableIntStateOf(0)
     }
@@ -74,7 +77,7 @@ internal fun InitViewStartProcessingCards(
     Spacer(modifier = Modifier.height(32.dp))
     InitViewStartProcessingPayWithNewCard(
         actionClick = {
-            actionClose()
+            openHome(activity)
         }
     )
 }
