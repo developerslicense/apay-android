@@ -72,6 +72,7 @@ internal fun StartProcessingPage(
     val sheetState = rememberModalBottomSheetState(
         initialValue = ModalBottomSheetValue.Hidden,
         confirmValueChange = { it != ModalBottomSheetValue.HalfExpanded },
+        skipHalfExpanded = true
     )
 
     val coroutineScope = rememberCoroutineScope()
