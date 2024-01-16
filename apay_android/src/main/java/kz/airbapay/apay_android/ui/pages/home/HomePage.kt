@@ -40,6 +40,7 @@ import kz.airbapay.apay_android.data.constant.paymentOfPurchase
 import kz.airbapay.apay_android.data.constant.saveCardData
 import kz.airbapay.apay_android.data.utils.DataHolder
 import kz.airbapay.apay_android.data.utils.MaskUtils
+import kz.airbapay.apay_android.data.utils.backToStartPage
 import kz.airbapay.apay_android.data.utils.openCardScanner
 import kz.airbapay.apay_android.network.repository.Repository
 import kz.airbapay.apay_android.ui.pages.card_reader.ScanActivity
@@ -123,7 +124,12 @@ internal fun HomePage(
     BackHandler {
         coroutineScope.launch {
             if (sheetState.isVisible) sheetState.hide()
-            else showDialogExit.value = true
+            else if (
+                dateExpiredText.value.text.isNotBlank()
+                || cardNumberText.value.text.isNotBlank()
+                || cvvText.value.text.isNotBlank()
+            ) showDialogExit.value = true
+            else backToStartPage(activity)
         }
     }
 
@@ -148,7 +154,12 @@ internal fun HomePage(
                     title = paymentOfPurchase(),
                     backIcon = R.drawable.ic_arrow_back,
                     actionBack = {
-                        showDialogExit.value = true
+                        if (
+                            dateExpiredText.value.text.isNotBlank()
+                            || cardNumberText.value.text.isNotBlank()
+                            || cvvText.value.text.isNotBlank()
+                        ) showDialogExit.value = true
+                        else backToStartPage(activity)
                     }
                 )
 
