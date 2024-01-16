@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.graphics.Bitmap
 import android.net.http.SslError
+import android.os.CountDownTimer
 import android.webkit.SslErrorHandler
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
@@ -14,6 +15,7 @@ import kz.airbapay.apay_android.data.utils.errorLog
 import kz.airbapay.apay_android.data.utils.messageLog
 import kz.airbapay.apay_android.data.utils.openAcquiring
 import kz.airbapay.apay_android.data.utils.openErrorPageWithCondition
+import kz.airbapay.apay_android.data.utils.openGooglePay
 import kz.airbapay.apay_android.data.utils.openSuccess
 
 internal class GooglePayClient(
@@ -21,6 +23,8 @@ internal class GooglePayClient(
     private val activity: Activity,
     private val inProgress: MutableState<Boolean>
 ) : WebViewClient() {
+
+    private var timer: CountDownTimer? = null
 
     @SuppressLint("WebViewClientOnReceivedSslError")
     override fun onReceivedSslError(view: WebView, handler: SslErrorHandler, error: SslError) {
@@ -39,17 +43,47 @@ internal class GooglePayClient(
         messageLog("onPageFinished, $url")
 
         if (url?.contains("https://accounts.youtube.com/accounts/") == true) {
-            openAcquiring(
+            openGooglePay(
                 redirectUrl = redirectUrl,
                 activity = activity
             )
-        }
+        } else if (url?.contains("https://spf.airbapay.kz/sdk/google-pay-button") == true) {
+            timer?.cancel()
+            timer = object : CountDownTimer(5000, 1000) {
+                override fun onTick(millisUntilFinished: Long) {}
 
-        inProgress.value = false
+                override fun onFinish() {
+                    try {
+                        loadJs(view)
+
+                    } catch (e: Exception) {
+                    }
+                }
+            }
+            timer?.start()
+        } else {
+            inProgress.value = false
+        }
 
     }
 
-    override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
+    private fun loadJs(webView: WebView?) {
+        webView?.loadUrl(
+            """javascript:(function f() {
+                            var btns = document.getElementsByTagName('button');
+                            for (var i = 0, n = btns.length; i < n; i++) {
+                              if (btns[i].getAttribute('aria-label') === 'Google Pay') {
+                                btns[i].click();  
+                              }
+                            }
+                          })()"""
+        )
+    }
+
+    override fun shouldOverrideUrlLoading(
+        view: WebView?,
+        request: WebResourceRequest?
+    ): Boolean {
         val url = request?.url?.toString() ?: ""
         messageLog("shouldOverrideUrlLoading $url")
 
@@ -60,6 +94,7 @@ internal class GooglePayClient(
                     activity = activity
                 )
             }
+
             url.contains("status=auth")
                     || url.contains("status=success") -> {
                 messageLog("Status success")
@@ -85,8 +120,8 @@ internal class GooglePayClient(
                 } catch (e: Exception) {
                     errorLog(e)
                     openErrorPageWithCondition(
-                            errorCode = 0,
-                            activity = activity
+                        errorCode = 0,
+                        activity = activity
                     )
                 }
             }

@@ -32,40 +32,27 @@ import kz.airbapay.apay_android.data.constant.paymentByCard
 import kz.airbapay.apay_android.data.model.BankCard
 import kz.airbapay.apay_android.data.utils.AirbaPayBiometric
 import kz.airbapay.apay_android.data.utils.DataHolder
+import kz.airbapay.apay_android.data.utils.openGooglePay
 import kz.airbapay.apay_android.data.utils.recomposeHighlighter
 import kz.airbapay.apay_android.network.repository.Repository
 import kz.airbapay.apay_android.network.repository.startAuth
-import kz.airbapay.apay_android.ui.pages.googlepay.GooglePayPage
 import kz.airbapay.apay_android.ui.pages.startview.bl.initPayments
 import kz.airbapay.apay_android.ui.pages.startview.start_processing_ext.EnterCvvBottomSheet
 import kz.airbapay.apay_android.ui.pages.startview.start_processing_ext.InitErrorState
 import kz.airbapay.apay_android.ui.pages.startview.start_processing_ext.InitViewStartProcessingAmount
 import kz.airbapay.apay_android.ui.pages.startview.start_processing_ext.InitViewStartProcessingButtonNext
 import kz.airbapay.apay_android.ui.pages.startview.start_processing_ext.InitViewStartProcessingCards
+import kz.airbapay.apay_android.ui.pages.startview.start_processing_ext.InitViewStartProcessingGPay
 import kz.airbapay.apay_android.ui.resources.ColorsSdk
 import kz.airbapay.apay_android.ui.ui_components.BackHandler
 import kz.airbapay.apay_android.ui.ui_components.ProgressBarView
 import kz.airbapay.apay_android.ui.ui_components.ViewToolbar
 
-internal class StartProcessingActivity: ComponentActivity() {
+internal class StartProcessingActivity : ComponentActivity() {
     private val isAuthenticated = mutableStateOf(DataHolder.isAuthenticated)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        if (!DataHolder.isAuthenticated) {
-            val airbaPayBiometric = AirbaPayBiometric(this)
-            airbaPayBiometric.authenticate(
-                onSuccess = {
-                    DataHolder.isAuthenticated = true
-                    isAuthenticated.value = true
-                },
-                onError = {
-                    DataHolder.isAuthenticated = false
-                    isAuthenticated.value = false
-                }
-            )
-        }
 
         setContent {
             StartProcessingPage(
@@ -153,11 +140,14 @@ internal fun StartProcessingPage(
                     } else {
                         InitViewStartProcessingAmount(purchaseAmount.value)
 
-                        if (googlePayRedirectUrl.value != null) {
-                            GooglePayPage(
-                                url = googlePayRedirectUrl.value
-                            )
-                        }
+                        InitViewStartProcessingGPay(
+                            openGooglePay = {
+                                openGooglePay(
+                                    redirectUrl = googlePayRedirectUrl.value,
+                                    activity = activity
+                                )
+                            }
+                        )
 
                         if (savedCards.value.isNotEmpty()
                             && isAuthenticated.value
@@ -194,6 +184,21 @@ internal fun StartProcessingPage(
         }
 
         LaunchedEffect("CardRepository") {
+
+            if (!DataHolder.isAuthenticated) {
+                val airbaPayBiometric = AirbaPayBiometric(activity)
+                airbaPayBiometric.authenticate(
+                    onSuccess = {
+                        DataHolder.isAuthenticated = true
+                        isAuthenticated.value = true
+                    },
+                    onError = {
+                        DataHolder.isAuthenticated = false
+                        isAuthenticated.value = false
+                    }
+                )
+            }
+
             launch {
                 isError.value = false
 

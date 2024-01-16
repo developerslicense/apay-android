@@ -8,6 +8,7 @@ import kz.airbapay.apay_android.ui.pages.acquiring.AcquiringActivity
 import kz.airbapay.apay_android.ui.pages.card_reader.ScanActivity
 import kz.airbapay.apay_android.ui.pages.error.ErrorActivity
 import kz.airbapay.apay_android.ui.pages.error.RepeatActivity
+import kz.airbapay.apay_android.ui.pages.googlepay.GooglePayActivity
 import kz.airbapay.apay_android.ui.pages.home.HomeActivity
 import kz.airbapay.apay_android.ui.pages.startview.StartProcessingActivity
 import kz.airbapay.apay_android.ui.pages.success.SuccessActivity
@@ -52,10 +53,20 @@ internal fun openAcquiring(
     activity.finish()
 }
 
+internal fun openGooglePay(
+    redirectUrl: String?,
+    activity: Activity
+) {
+    val intent = Intent(activity, GooglePayActivity::class.java)
+    intent.putExtra(ARG_ACTION, redirectUrl)
+    activity.startActivity(intent)
+    activity.finish()
+}
+
 internal fun openSuccess(activity: Activity) {
     val intent = Intent(activity, SuccessActivity::class.java)
     activity.startActivity(intent)
-    activity.finish()
+    activity.finishAffinity()
 }
 
 internal fun openCardScanner(activity: HomeActivity) {

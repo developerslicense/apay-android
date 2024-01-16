@@ -105,7 +105,7 @@ class AirbaPaySdk {
             orderNumber: String,
             goods: List<Goods>,
             settlementPayments: List<SettlementPayment>? = null, // параметр, нужный, если несколько айдишников компаний
-            onProcessingResult: ((Boolean) -> Unit)? = null
+            onProcessingResult: ((Boolean) -> Unit)?
         ) {
             DataHolder.purchaseAmount = purchaseAmount.toString()
             DataHolder.orderNumber = orderNumber

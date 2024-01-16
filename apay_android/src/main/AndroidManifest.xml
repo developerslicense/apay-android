@@ -33,6 +33,9 @@
         <activity android:name=".ui.pages.acquiring.AcquiringActivity"
             android:screenOrientation="portrait"/>
 
+        <activity android:name=".ui.pages.googlepay.GooglePayActivity"
+            android:screenOrientation="portrait"/>
+
         <activity android:name=".ui.pages.success.SuccessActivity"
             android:screenOrientation="portrait"/>
 

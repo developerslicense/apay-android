@@ -1,5 +1,6 @@
 package kz.airbapay.apay_android
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -118,6 +119,7 @@ class MainActivity : ComponentActivity() {
                 } else {
                     Log.e("AirbaPaySdk", "initProcessing error");
                 }
+                startActivity(Intent(this, MainActivity::class.java))
             }
         )
     }
