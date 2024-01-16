@@ -42,12 +42,12 @@ internal fun EnterCvvBottomSheet(
     cardMasked: String?,
     cardId: String?,
     isLoading: MutableState<Boolean>,
-    cvvError: MutableState<String?>
+    cvvError: MutableState<String?>,
+    cvvFocusRequester: FocusRequester
 ) {
 
     val activity = LocalContext.current as Activity
     val cvvText = remember { mutableStateOf(TextFieldValue("")) }
-    val cvvFocusRequester = FocusRequester()
 
     Card(
         shape = RoundedCornerShape(

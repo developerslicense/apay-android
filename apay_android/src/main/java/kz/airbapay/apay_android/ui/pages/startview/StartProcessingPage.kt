@@ -21,6 +21,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
@@ -98,6 +99,8 @@ internal fun StartProcessingPage(
         mutableStateOf<List<BankCard>>(emptyList())
     }
 
+    val cvvFocusRequester = FocusRequester()
+
     ModalBottomSheetLayout(
         sheetState = sheetState,
         sheetBackgroundColor = ColorsSdk.transparent,
@@ -108,6 +111,7 @@ internal fun StartProcessingPage(
                 cardMasked = selectedCard.value?.getMaskedPanClearedWithPoint(),
                 isLoading = isLoading,
                 cardId = selectedCard.value?.id,
+                cvvFocusRequester = cvvFocusRequester,
                 showCvv = {
                     coroutineScope.launch { sheetState.show() }
                 }
@@ -176,6 +180,7 @@ internal fun StartProcessingPage(
                                 isLoading.value = false
                                 coroutineScope.launch {
                                     sheetState.show()
+                                    cvvFocusRequester.requestFocus()
                                 }
                             }
                         )
