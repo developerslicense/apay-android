@@ -64,9 +64,14 @@ internal fun openGooglePay(
 }
 
 internal fun openSuccess(activity: Activity) {
-    val intent = Intent(activity, SuccessActivity::class.java)
-    activity.startActivity(intent)
-    activity.finishAffinity()
+    if (DataHolder.redirectToCustomSuccessPage != null) {
+        DataHolder.redirectToCustomSuccessPage?.invoke()
+
+    } else {
+        val intent = Intent(activity, SuccessActivity::class.java)
+        activity.startActivity(intent)
+        activity.finishAffinity()
+    }
 }
 
 internal fun openCardScanner(activity: HomeActivity) {

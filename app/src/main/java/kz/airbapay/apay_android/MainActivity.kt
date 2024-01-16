@@ -61,10 +61,10 @@ class MainActivity : ComponentActivity() {
                             initProcessing()
                             startAirbaPay(
                                 activity = this@MainActivity,
-                                /*redirectToCustomSuccessPage = { //todo
-                                    activity.startActivity(Intent(activity, CustomSuccessActivity::java.class))
-                                    activity.finish()
-                                }*/
+                                redirectToCustomSuccessPage = { //todo
+//                                    activity.startActivity(Intent(activity, CustomSuccessActivity::java.class))
+//                                    activity.finish()
+                                }
                             )
                         }
                     ) {
