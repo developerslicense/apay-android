@@ -8,7 +8,7 @@ import kz.airbapay.apay_android.data.constant.wrongDate
 import kz.airbapay.apay_android.data.utils.card_utils.isDateValid
 import kz.airbapay.apay_android.data.utils.card_utils.validateCardNumWithLuhnAlgorithm
 
-internal fun checkValid(//todo * на точку  и игнор точки
+internal fun checkValid(
     cardNumber: String?,
     cardNumberError: MutableState<String?>,
 
@@ -16,9 +16,9 @@ internal fun checkValid(//todo * на точку  и игнор точки
     dateExpiredError: MutableState<String?>,
 
     cvv: String?,
-    cvvError: MutableState<String?>,
+    cvvError: MutableState<String?>
 
-    ): Boolean {
+): Boolean {
     var hasError = false
 
     if (cardNumber.isNullOrBlank()) {

@@ -3,9 +3,6 @@ package kz.airbapay.apay_android.data.utils
 import android.app.Activity
 import android.content.Intent
 import kz.airbapay.apay_android.data.constant.ARG_ACTION
-import kz.airbapay.apay_android.data.constant.ARG_CARD_DATE_EXPIRED
-import kz.airbapay.apay_android.data.constant.ARG_CARD_ID
-import kz.airbapay.apay_android.data.constant.ARG_CARD_PAN
 import kz.airbapay.apay_android.data.constant.ARG_ERROR_CODE
 import kz.airbapay.apay_android.ui.pages.acquiring.AcquiringActivity
 import kz.airbapay.apay_android.ui.pages.card_reader.ScanActivity
@@ -22,16 +19,9 @@ internal fun backToStartPage(activity: Activity) {
 }
 
 internal fun openHome( //todo ??? finish
-    activity: Activity,
-    cardId: String? = null,
-    cardPan: String? = null,
-    cardDateExpired: String? = null
+    activity: Activity
 ) {
     val intent = Intent(activity, HomeActivity::class.java)
-    intent.putExtra(ARG_CARD_ID, cardId)
-    intent.putExtra(ARG_CARD_PAN, cardPan)
-    intent.putExtra(ARG_CARD_DATE_EXPIRED, cardDateExpired)
-
     activity.startActivity(intent)
     activity.finish()
 }

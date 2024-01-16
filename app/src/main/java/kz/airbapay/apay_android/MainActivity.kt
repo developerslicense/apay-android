@@ -6,8 +6,10 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
@@ -44,6 +46,9 @@ class MainActivity : ComponentActivity() {
                     verticalArrangement = Arrangement.Center,
                     modifier = Modifier.fillMaxSize()
                 ) {
+                    Text("Для теста сохраненной карты с вводом CVV\n 4111 1111 1111 1616 cvv 333")
+                    Spacer(modifier = Modifier.height(10.dp))
+
                     Button(
                         modifier = Modifier
                             .fillMaxWidth()

@@ -14,7 +14,6 @@ internal fun initPayments(
     onGooglePayLoadSuccess: (String?) -> Unit
 ) {
     Repository.paymentsRepository?.createPayment(
-        cardId = null,
         error = {
             isLoading.value = false
             openErrorPageWithCondition(

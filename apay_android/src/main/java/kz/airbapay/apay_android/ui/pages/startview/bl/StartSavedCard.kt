@@ -1,29 +1,27 @@
 package kz.airbapay.apay_android.ui.pages.startview.bl
 
 import android.app.Activity
-import kz.airbapay.apay_android.data.constant.ErrorsCode
-import kz.airbapay.apay_android.data.model.BankCard
+import androidx.compose.runtime.MutableState
 import kz.airbapay.apay_android.data.utils.openAcquiring
-import kz.airbapay.apay_android.data.utils.openErrorPageWithCondition
-import kz.airbapay.apay_android.data.utils.openHome
 import kz.airbapay.apay_android.data.utils.openSuccess
 import kz.airbapay.apay_android.network.repository.Repository
 
 internal fun startSavedCard(
     activity: Activity,
-    card: BankCard?
+    cardId: String,
+    cvv: String?,
+    needCvv: MutableState<Boolean>,
+    isError: MutableState<Boolean>
 ) {
-    Repository.paymentsRepository?.createPayment(
-        cardId = card?.id,
+    isError.value = false
+
+    Repository.paymentsRepository?.startPaymentSavedCard(
+        cardId = cardId,
+        cvv = cvv,
         result = {
             when (it.status) {
                 "new" -> {
-                    openHome(
-                        activity = activity,
-                        cardId = it.id,
-                        cardDateExpired = card?.expiry,
-                        cardPan = card?.maskedPan
-                    )
+                    needCvv.value = true
                 }
 
                 "success",
@@ -40,10 +38,8 @@ internal fun startSavedCard(
             }
         },
         error = {
-            openErrorPageWithCondition(
-                errorCode = ErrorsCode.error_1.code,
-                activity = activity
-            )
+            needCvv.value = true
+            isError.value = true
         }
     )
 }

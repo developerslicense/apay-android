@@ -4,8 +4,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kz.airbapay.apay_android.data.model.BankCard
-import kz.airbapay.apay_android.data.model.CardAddRequest
-import kz.airbapay.apay_android.data.model.CardAddResponse
 import kz.airbapay.apay_android.data.utils.DataHolder
 import kz.airbapay.apay_android.data.utils.card_utils.CardType
 import kz.airbapay.apay_android.network.api.Api
@@ -63,45 +61,5 @@ internal class CardRepository(
             DataHolder.bankCode = result.body()?.bankCode
             next()
         }
-    }
-
-    fun cardAdd(
-        param: CardAddRequest,
-        result: (CardAddResponse) -> Unit,
-        error: (Response<*>) -> Unit
-    ) {
-        launch(
-            requestFlow = {
-                safeApiFlowCall {
-                    api.cardAdd(param)
-                }
-            },
-            result = { body ->
-                body.body()?.let {
-                    result(it)
-                } ?: error(Unit)
-            },
-            error = error
-        )
-    }
-
-    fun deleteCard(
-        cardId: String,
-        result: (Any) -> Unit,
-        error: (Response<*>) -> Unit
-    ) {
-        launch(
-            requestFlow = {
-                safeApiFlowCall {
-                    api.deleteCard(cardId)
-                }
-            },
-            result = { body ->
-                body.body()?.let {
-                    result(it)
-                } ?: error(Unit)
-            },
-            error = error
-        )
     }
 }
