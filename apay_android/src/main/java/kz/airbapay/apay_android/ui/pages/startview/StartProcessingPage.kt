@@ -25,6 +25,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
@@ -72,7 +73,8 @@ internal fun StartProcessingPage(
 ) {
     val sheetState = rememberModalBottomSheetState(
         initialValue = ModalBottomSheetValue.Hidden,
-        confirmValueChange = { it != ModalBottomSheetValue.HalfExpanded },
+        confirmValueChange = { false },
+//        confirmValueChange = { it != ModalBottomSheetValue.HalfExpanded },
         skipHalfExpanded = true
     )
 
@@ -100,20 +102,29 @@ internal fun StartProcessingPage(
     }
 
     val cvvFocusRequester = FocusRequester()
+    val focusManager = LocalFocusManager.current
 
     ModalBottomSheetLayout(
         sheetState = sheetState,
         sheetBackgroundColor = ColorsSdk.transparent,
+        sheetGesturesEnabled = false,
         sheetContent = {
             EnterCvvBottomSheet(
-                actionClose = { coroutineScope.launch { sheetState.hide() } },
+                actionClose = {
+                    focusManager.clearFocus()
+                    coroutineScope.launch {
+                        sheetState.hide()
+                    }
+                },
                 cvvError = isErrorCvv,
                 cardMasked = selectedCard.value?.getMaskedPanClearedWithPoint(),
                 isLoading = isLoading,
                 cardId = selectedCard.value?.id,
                 cvvFocusRequester = cvvFocusRequester,
                 showCvv = {
-                    coroutineScope.launch { sheetState.show() }
+                    coroutineScope.launch {
+                        sheetState.show()
+                    }
                 }
             )
         },
@@ -137,6 +148,7 @@ internal fun StartProcessingPage(
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier.recomposeHighlighter()
+
                 ) {
 
                     ViewToolbar(
