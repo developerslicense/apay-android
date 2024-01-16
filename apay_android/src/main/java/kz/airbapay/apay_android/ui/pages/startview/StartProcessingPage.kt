@@ -103,7 +103,8 @@ internal fun StartProcessingPage(
         sheetContent = {
             EnterCvvBottomSheet(
                 actionClose = { coroutineScope.launch { sheetState.hide() } },
-                cvvError = isErrorCvv
+                cvvError = isErrorCvv,
+                cardMasked = selectedCard.value?.getMaskedPanClearedWithPoint()
             )
         },
         modifier = Modifier.fillMaxSize()

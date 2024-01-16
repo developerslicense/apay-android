@@ -167,4 +167,9 @@ internal fun confirmPayment() = getStrFromRes(
     "Растау үшін басыңыз"
 )
 
+internal fun cvvEnter() = getStrFromRes(
+    "Ввод CVV",
+    "CVV енгізу"
+)
+
 
