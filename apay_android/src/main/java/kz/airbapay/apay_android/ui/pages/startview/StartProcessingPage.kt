@@ -167,6 +167,7 @@ internal fun StartProcessingPage(
                             selectedCard = selectedCard,
                             isError = isErrorCvv,
                             showCvv = {
+                                isLoading.value = false
                                 coroutineScope.launch {
                                     sheetState.show()
                                 }

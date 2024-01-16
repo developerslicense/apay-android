@@ -5,9 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
@@ -27,6 +25,7 @@ import kz.airbapay.apay_android.data.constant.cardNumber
 import kz.airbapay.apay_android.data.constant.cvvEnter
 import kz.airbapay.apay_android.data.constant.payAmount
 import kz.airbapay.apay_android.data.utils.DataHolder
+import kz.airbapay.apay_android.data.utils.getMoneyFormatted
 import kz.airbapay.apay_android.data.utils.recomposeHighlighter
 import kz.airbapay.apay_android.ui.pages.home.presentation.CvvView
 import kz.airbapay.apay_android.ui.resources.ColorsSdk
@@ -99,7 +98,6 @@ internal fun EnterCvvBottomSheet(
                 }
             }
 
-            Spacer(modifier = Modifier.height(24.dp))
             CvvView(
                 cvvError = cvvError,
                 cvvFocusRequester = cvvFocusRequester,
@@ -110,13 +108,13 @@ internal fun EnterCvvBottomSheet(
                     }*/
                 },
                 modifier = Modifier
-                    .weight(0.5f)
+                    .padding(top = 24.dp)
                     .padding(horizontal = 16.dp)
             )
 
 
             ViewButton(
-                title = "${payAmount()} ${DataHolder.purchaseAmountFormatted}",
+                title = "${payAmount()} ${getMoneyFormatted(DataHolder.purchaseAmount)}",
                 actionClick = {
 //                    isLoading.value = true
                     /*  startSavedCard(
@@ -130,7 +128,7 @@ internal fun EnterCvvBottomSheet(
                 modifierRoot = Modifier
                     .recomposeHighlighter()
                     .padding(horizontal = 16.dp)
-                    .padding(top = 16.dp)
+                    .padding(top = 24.dp)
                     .padding(bottom = 32.dp)
             )
             /* Text(
