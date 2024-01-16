@@ -24,10 +24,12 @@ import androidx.compose.ui.unit.dp
 import kz.airbapay.apay_android.data.constant.cardNumber
 import kz.airbapay.apay_android.data.constant.cvvEnter
 import kz.airbapay.apay_android.data.constant.payAmount
+import kz.airbapay.apay_android.data.constant.wrongCvv
 import kz.airbapay.apay_android.data.utils.DataHolder
 import kz.airbapay.apay_android.data.utils.getMoneyFormatted
 import kz.airbapay.apay_android.data.utils.recomposeHighlighter
 import kz.airbapay.apay_android.ui.pages.home.presentation.CvvView
+import kz.airbapay.apay_android.ui.pages.startview.bl.startSavedCard
 import kz.airbapay.apay_android.ui.resources.ColorsSdk
 import kz.airbapay.apay_android.ui.resources.LocalFonts
 import kz.airbapay.apay_android.ui.ui_components.InitHeader
@@ -36,7 +38,10 @@ import kz.airbapay.apay_android.ui.ui_components.ViewButton
 @Composable
 internal fun EnterCvvBottomSheet(
     actionClose: () -> Unit,
+    showCvv: () -> Unit,
     cardMasked: String?,
+    cardId: String?,
+    isLoading: MutableState<Boolean>,
     cvvError: MutableState<String?>
 ) {
 
@@ -52,9 +57,8 @@ internal fun EnterCvvBottomSheet(
         modifier = Modifier.fillMaxWidth()
     ) {
         Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-
-            ) {
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
 
             InitHeader(
                 title = cvvEnter(),
@@ -116,14 +120,21 @@ internal fun EnterCvvBottomSheet(
             ViewButton(
                 title = "${payAmount()} ${getMoneyFormatted(DataHolder.purchaseAmount)}",
                 actionClick = {
-//                    isLoading.value = true
-                    /*  startSavedCard(
-                        activity = activity,
-                        cardId = selectedCard.value?.id ?: "",
-                        cvv = selectedCard.value?.cvv,
-                        showCvv = showCvv,
-                        isError = isError
-                    )*/
+                    if (cvvText.value.text.length == 3) {
+                        cvvError.value = null
+                        actionClose()
+                        isLoading.value = true
+                        startSavedCard(
+                            activity = activity,
+                            cardId = cardId ?: "",
+                            cvv = cvvText.value.text,
+                            showCvv = showCvv,
+                            isError = cvvError,
+                            isLoading = isLoading
+                        )
+                    } else {
+                        cvvError.value = wrongCvv()
+                    }
                 },
                 modifierRoot = Modifier
                     .recomposeHighlighter()

@@ -12,7 +12,8 @@ internal fun startSavedCard(
     cardId: String,
     cvv: String?,
     showCvv: () -> Unit,
-    isError: MutableState<String?>
+    isError: MutableState<String?>,
+    isLoading: MutableState<Boolean>? = null
 ) {
     isError.value = null
 
@@ -22,6 +23,7 @@ internal fun startSavedCard(
         result = {
             when (it.status) {
                 "new" -> {
+                    isLoading?.value = false
                     showCvv()
                 }
 
@@ -36,9 +38,16 @@ internal fun startSavedCard(
                         activity = activity
                     )
                 }
+
+                "error" -> {
+                    isLoading?.value = false
+                    showCvv()
+                    isError.value = wrongCvv()
+                }
             }
         },
         error = {
+            isLoading?.value = false
             showCvv()
             isError.value = wrongCvv()
         }
