@@ -172,7 +172,7 @@ dependencies {
 }
 
 group 'kz.airbapay' // this is your groupId
-version '1.0.12' // this is your version
+version '1.0.13' // this is your version
 
 ext { // this are variables
     pomGroupId = group
