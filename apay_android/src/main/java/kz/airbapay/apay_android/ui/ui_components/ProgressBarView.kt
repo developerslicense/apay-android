@@ -14,6 +14,7 @@ import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.IntSize
 import androidx.constraintlayout.compose.ConstraintLayout
+import kz.airbapay.apay_android.data.utils.recomposeHighlighter
 import kz.airbapay.apay_android.ui.resources.ColorsSdk
 
 @Composable
@@ -28,6 +29,7 @@ internal fun ProgressBarView(
 
     ConstraintLayout(
         modifier = modifier
+            .recomposeHighlighter()
             .then(
                 with(LocalDensity.current) {
                     Modifier.size(
@@ -43,7 +45,7 @@ internal fun ProgressBarView(
         val (progressRef) = createRefs()
 
         CircularProgressIndicator(
-            color = ColorsSdk.colorBrandMainMS.value,
+            color = ColorsSdk.colorBrand,
             modifier = Modifier
                 .fillMaxWidth(0.3f)
                 .constrainAs(progressRef) {

@@ -1,38 +1,32 @@
 package kz.airbapay.apay_android
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import androidx.constraintlayout.compose.ConstraintLayout
 import kz.airbapay.apay_android.ui.theme.Apay_androidTheme
 import java.util.Date
 
 class MainActivity : ComponentActivity() {
 
-    private val isBottomSheet = true
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         AirbaPaySdk.initOnCreate(
+            context = this.application,
             isProd = false,
             accountId = "77051111111",
             phone = "77051111111",
@@ -43,97 +37,40 @@ class MainActivity : ComponentActivity() {
             failureCallback = "https://site.kz/failure-clb",
             successCallback = "https://site.kz/success-clb",
             userEmail = "test@test.com",
-//            colorBrandMain = Color.Red
+            colorBrandMain = Color(0xFFFC6B3F)
         )
-
-        if (!isBottomSheet) {
-            initProcessing()
-        }
 
         setContent {
 
             Apay_androidTheme {
-                if (isBottomSheet) {
-                    AirbaPaySdkProcessingBottomSheet(
-                        content = { actionShowBottomSheet ->
-                            PageContentForBottomSheet(actionShowBottomSheet)
-                        },
-//                        customSuccessPage = {
-//                            Text("SUCCESS PAGE CUSTOM")
-//                        }
+                Column(
+                    verticalArrangement = Arrangement.Center,
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    Text(
+                        text = "Для теста сохраненной карты с вводом CVV\n 4111 1111 1111 1616 cvv 333",
+                        modifier = Modifier.padding(16.dp)
                     )
+                    Spacer(modifier = Modifier.height(10.dp))
 
-                } else {
-                    PageContentForView()
-                }
-            }
-        }
-    }
-
-    @Composable
-    private fun PageContentForBottomSheet(
-        actionShowBottomSheet: () -> Unit
-    ) {
-        Column(
-            verticalArrangement = Arrangement.Center,
-            modifier = Modifier.fillMaxSize()
-        ) {
-            Button(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 50.dp, horizontal = 50.dp),
-                onClick = {
-                    initProcessing()
-                    actionShowBottomSheet()
-                }
-            ) {
-                Text("переход на эквайринг")
-            }
-        }
-    }
-
-    @OptIn(ExperimentalMaterial3Api::class)
-    @Composable
-    private fun PageContentForView() {
-        ConstraintLayout(
-            modifier = Modifier.fillMaxSize()
-        ) {
-            val isLoading = remember { mutableStateOf(true) }
-
-            Column(
-                verticalArrangement = Arrangement.Top,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(Color.White)
-            ) {
-                TopAppBar(
-                    title = { Text("Оплата заказа") }
-                )
-
-                AirbaPaySdkProcessingView(
-                    actionOnLoadingCompleted = { isLoading.value = false },
-                    needShowProgressBar = false,
-                    backgroundColor = Color.White,
-                    customSuccessPage = {
-                        Text("SUCCESS PAGE CUSTOM")
-                    }
-                )
-            }
-
-            val (progressRef) = createRefs()
-
-            if (isLoading.value) {
-                CircularProgressIndicator(
-                    color = Color.Blue,
-                    modifier = Modifier
-                        .fillMaxWidth(0.3f)
-                        .constrainAs(progressRef) {
-                            top.linkTo(parent.top)
-                            bottom.linkTo(parent.bottom)
-                            start.linkTo(parent.start)
-                            end.linkTo(parent.end)
+                    Button(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 50.dp, horizontal = 50.dp),
+                        onClick = {
+                            initProcessing()
+                            startAirbaPay(
+                                activity = this@MainActivity,
+                                redirectToCustomSuccessPage = null//{
+//                                    activity.startActivity(Intent(activity, CustomSuccessActivity::java.class))
+//                                    activity.finish()
+                              //  }
+                            )
                         }
-                )
+                    ) {
+                        Text("переход на эквайринг")
+                    }
+                }
             }
         }
     }
@@ -182,6 +119,7 @@ class MainActivity : ComponentActivity() {
                 } else {
                     Log.e("AirbaPaySdk", "initProcessing error");
                 }
+                startActivity(Intent(this, MainActivity::class.java))
             }
         )
     }

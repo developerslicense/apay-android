@@ -1,5 +1,9 @@
 package kz.airbapay.apay_android.ui.pages.error
 
+import android.app.Activity
+import android.os.Bundle
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -12,10 +16,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.navigation.NavController
 import kotlinx.coroutines.launch
 import kz.airbapay.apay_android.data.constant.ErrorsCode
 import kz.airbapay.apay_android.data.constant.thisNeedSomeTime
@@ -24,16 +28,26 @@ import kz.airbapay.apay_android.data.utils.openAcquiring
 import kz.airbapay.apay_android.data.utils.openErrorPageWithCondition
 import kz.airbapay.apay_android.data.utils.openSuccess
 import kz.airbapay.apay_android.network.repository.PaymentsRepository
+import kz.airbapay.apay_android.network.repository.Repository
 import kz.airbapay.apay_android.ui.resources.ColorsSdk
 import kz.airbapay.apay_android.ui.resources.LocalFonts
 import kz.airbapay.apay_android.ui.ui_components.BackHandler
 
+internal class RepeatActivity: ComponentActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        setContent {
+            RepeatPage(paymentsRepository = Repository.paymentsRepository)
+        }
+    }
+}
+
 @Composable
 internal fun RepeatPage(
-    navController: NavController,
-    paymentsRepository: PaymentsRepository
+    paymentsRepository: PaymentsRepository?
 ) {
-
+    val activity = LocalContext.current as Activity
     BackHandler {}
 
     ConstraintLayout(
@@ -79,7 +93,7 @@ internal fun RepeatPage(
         )
 
         CircularProgressIndicator(
-            color = ColorsSdk.colorBrandMainMS.value,
+            color = ColorsSdk.colorBrand,
             modifier = Modifier
                 .padding(top = 24.dp)
                 .fillMaxWidth(0.3f)
@@ -94,7 +108,7 @@ internal fun RepeatPage(
     LaunchedEffect("onStart") {
         launch {
             onStart(
-                navController = navController,
+                activity = activity,
                 paymentsRepository = paymentsRepository
             )
         }
@@ -102,32 +116,32 @@ internal fun RepeatPage(
 }
 
 private fun onStart(
-    navController: NavController,
-    paymentsRepository: PaymentsRepository
+    activity: Activity,
+    paymentsRepository: PaymentsRepository?
 ) {
 
-    paymentsRepository.paymentAccountEntryRetry(
+    paymentsRepository?.paymentAccountEntryRetry(
         result = { response ->
             if (response.isSecure3D == true) {
                 openAcquiring(
                     redirectUrl = response.secure3D?.action,
-                    navController = navController
+                    activity = activity
                 )
 
             } else if (response.errorCode != "0") {
                 openErrorPageWithCondition(
                     errorCode = response.errorCode?.toInt() ?: 0,
-                    navController = navController
+                    activity = activity
                 )
 
             } else {
-                openSuccess(navController)
+                openSuccess(activity)
             }
         },
         error = {
             openErrorPageWithCondition(
                 errorCode = ErrorsCode.error_1.code,
-                navController = navController
+                activity = activity
             )
         }
     )

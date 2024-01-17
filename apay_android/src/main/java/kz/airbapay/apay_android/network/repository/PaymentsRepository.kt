@@ -1,9 +1,7 @@
 package kz.airbapay.apay_android.network.repository
 
 import kz.airbapay.apay_android.data.model.PaymentCreateResponse
-import kz.airbapay.apay_android.data.model.PaymentEntryRequest
 import kz.airbapay.apay_android.data.model.PaymentEntryResponse
-import kz.airbapay.apay_android.data.model.PaymentInfoResponse
 import kz.airbapay.apay_android.data.utils.DataHolder
 import kz.airbapay.apay_android.network.api.Api
 import kz.airbapay.apay_android.network.base.safeApiFlowCall
@@ -15,28 +13,17 @@ internal class PaymentsRepository(
     private val api: Api
 ) : BaseCoroutine by BaseCoroutineDelegate() {
 
-    fun createPayment(
+    fun createPayment( // только один раз вызывается
         saveCard: Boolean? = null,
-        cardId: String? = null,
         result: (PaymentCreateResponse) -> Unit,
         error: (Response<*>) -> Unit
     ) {
 
-        val param = initParamsForCreatePayment(
-            saveCard = saveCard,
-            cardId = cardId
-        )
+        val param = initParamsForCreatePayment(saveCard)
 
         launch(
             requestFlow = {
-                safeApiFlowCall {
-                    cardId?.let {
-                        api.createPayment(
-                            param = param,
-                            cardId = cardId
-                        )
-                    } ?: api.createPayment(param = param)
-                }
+                safeApiFlowCall { api.createPayment(param) }
             },
             result = { body ->
                 body.body()?.let {
@@ -48,8 +35,7 @@ internal class PaymentsRepository(
     }
 
     private fun initParamsForCreatePayment(
-        saveCard: Boolean? = null,
-        cardId: String? = null
+        saveCard: Boolean? = null
     ): HashMap<String, Any?> {
         val cart = HashMap<String, Any?>().apply {
             put("goods", DataHolder.goods)
@@ -69,7 +55,6 @@ internal class PaymentsRepository(
             put("language", DataHolder.currentLang)
             put("order_number", DataHolder.orderNumber)
             put("phone", DataHolder.userPhone)
-            cardId?.let { put("card_id", cardId) }
             put("auto_charge", 0)
             put("failure_back_url", DataHolder.failureBackUrl)
             put("failure_callback", DataHolder.failureCallback)
@@ -86,16 +71,33 @@ internal class PaymentsRepository(
         return param
     }
 
-    fun getPaymentInfo(
-        result: (PaymentInfoResponse) -> Unit,
+    fun startPaymentDefault(
+        cvv: String,
+        expiry: String,
+        pan: String,
+        cardSave: Boolean,
+        result: (PaymentEntryResponse) -> Unit,
         error: (Response<*>) -> Unit
     ) {
 
+        val param = HashMap<String, Any?>().apply {
+            val card = HashMap<String, Any?>().apply {
+                put("cvv", cvv)
+                put("expiry", expiry)
+                put("pan", pan)
+                put("card_name", "Card Holder")
+            }
+
+            put("card", card)
+            put("card_save", cardSave)
+            put("email", DataHolder.userEmail)
+            put("send_receipt", true)
+
+        }
+
         launch(
             requestFlow = {
-                safeApiFlowCall {
-                    api.getPaymentInfo()
-                }
+                safeApiFlowCall { api.putPayment(param) }
             },
             result = { body ->
                 body.body()?.let {
@@ -106,16 +108,24 @@ internal class PaymentsRepository(
         )
     }
 
-    fun paymentAccountEntry(
-        param: PaymentEntryRequest,
+    fun startPaymentSavedCard(
+        cardId: String,
+        cvv: String?,
         result: (PaymentEntryResponse) -> Unit,
         error: (Response<*>) -> Unit
     ) {
 
+        val param = HashMap<String, Any?>().apply {
+            put("cvv", cvv ?: "")
+        }
+
         launch(
             requestFlow = {
                 safeApiFlowCall {
-                    api.paymentAccountEntry(param)
+                    api.putPayment(
+                        cardId = cardId,
+                        param = param
+                    )
                 }
             },
             result = { body ->

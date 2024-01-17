@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import kz.airbapay.apay_android.R
+import kz.airbapay.apay_android.data.utils.recomposeHighlighter
 import kz.airbapay.apay_android.ui.ui_components.LoadImageSrc
 
 @Composable
@@ -26,25 +27,33 @@ internal fun BottomImages() {
 
         LoadImageSrc(
             imageSrc = R.drawable.pci_express_black,
-            modifier = Modifier.height(32.dp)
+            modifier = Modifier
+                .recomposeHighlighter()
+                .height(32.dp)
         )
 
         Spacer(modifier = Modifier.width(16.dp))
         LoadImageSrc(
             imageSrc = R.drawable.master_card_black,
-            modifier = Modifier.height(32.dp)
+            modifier = Modifier
+                .recomposeHighlighter()
+                .height(32.dp)
         )
 
         Spacer(modifier = Modifier.width(16.dp))
         LoadImageSrc(
             imageSrc = R.drawable.visa_black,
-            modifier = Modifier.height(32.dp)
+            modifier = Modifier
+                .recomposeHighlighter()
+                .height(32.dp)
         )
 
         Spacer(modifier = Modifier.width(16.dp))
         LoadImageSrc(
             imageSrc = R.drawable.american_express_black,
-            modifier = Modifier.height(32.dp)
+            modifier = Modifier
+                .recomposeHighlighter()
+                .height(32.dp)
         )
     }
 }

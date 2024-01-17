@@ -1,9 +1,9 @@
 package kz.airbapay.apay_android.data.constant
 
-import androidx.navigation.NavController
+import android.app.Activity
 import kz.airbapay.apay_android.AirbaPaySdk
 import kz.airbapay.apay_android.data.utils.DataHolder
-import kz.airbapay.apay_android.data.utils.backToHome
+import kz.airbapay.apay_android.data.utils.backToStartPage
 import kz.airbapay.apay_android.data.utils.openRepeat
 
 internal enum class ErrorsCode(
@@ -136,28 +136,28 @@ internal fun ErrorsCode.buttonBottom() = if (DataHolder.currentLang == AirbaPayS
 
 
 internal fun ErrorsCode.clickOnTop(
-    navController: NavController,
+    activity: Activity,
     finish: () -> Unit
 ) {
     when (code) {
-        5002 -> { backToHome(navController) }
-        5003 -> { backToHome(navController) }
-        5006 -> { backToHome(navController) }
-        5007 -> { openRepeat(navController) }
-        5008 -> { openRepeat(navController) }
-        5009 -> { openRepeat(navController) }
-        5999 -> { openRepeat(navController) }
+        5002 -> { backToStartPage(activity) }
+        5003 -> { backToStartPage(activity) }
+        5006 -> { backToStartPage(activity) }
+        5007 -> { openRepeat(activity) }
+        5008 -> { openRepeat(activity) }
+        5009 -> { openRepeat(activity) }
+        5999 -> { openRepeat(activity) }
         else -> { finish() }
     }
 }
 
 internal fun ErrorsCode.clickOnBottom(
-    navController: NavController,
+    activity: Activity,
     finish: () -> Unit
 ) {
     when (code) {
-        5008 -> { backToHome(navController) }
-        5999 -> { backToHome(navController) }
+        5008 -> { backToStartPage(activity) }
+        5999 -> { backToStartPage(activity) }
         else -> { finish() }
     }
 }

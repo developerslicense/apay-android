@@ -1,6 +1,7 @@
 package kz.airbapay.apay_android.ui.pages.acquiring
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.graphics.Bitmap
 import android.net.http.SslError
 import android.webkit.SslErrorHandler
@@ -8,7 +9,6 @@ import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.compose.runtime.MutableState
-import androidx.navigation.NavController
 import kz.airbapay.apay_android.data.utils.DataHolder
 import kz.airbapay.apay_android.data.utils.errorLog
 import kz.airbapay.apay_android.data.utils.messageLog
@@ -16,7 +16,7 @@ import kz.airbapay.apay_android.data.utils.openErrorPageWithCondition
 import kz.airbapay.apay_android.data.utils.openSuccess
 
 internal class AcquiringClient(
-    private val navController: NavController? = null,
+    private val activity: Activity,
     private val inProgress: MutableState<Boolean>,
 ) : WebViewClient() {
 
@@ -46,7 +46,7 @@ internal class AcquiringClient(
             url.contains("status=auth")
                     || url.contains("status=success") -> {
                 messageLog("Status success")
-                openSuccess(navController)
+                openSuccess(activity)
             }
             url.contains("status=error") -> {
                 messageLog("3D secure status error")
@@ -61,17 +61,15 @@ internal class AcquiringClient(
 
                     openErrorPageWithCondition(
                         errorCode = code,
-                        navController = navController!!
+                        activity = activity
                     )
 
                 } catch (e: Exception) {
                     errorLog(e)
-                    if (navController != null) {
-                        openErrorPageWithCondition(
-                            errorCode = 0,
-                            navController = navController
-                        )
-                    }
+                    openErrorPageWithCondition(
+                        errorCode = 0,
+                        activity = activity
+                    )
                 }
             }
 

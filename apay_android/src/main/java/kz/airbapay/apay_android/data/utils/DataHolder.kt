@@ -35,4 +35,7 @@ internal object DataHolder {
   val purchaseAmountFormatted = MutableStateFlow("")
 
   var frontendCallback: ((paymentSubmittingResult: Boolean) -> Unit)? = null
+
+  var redirectToCustomSuccessPage: (() -> Unit)? = null
+  var isAuthenticated: Boolean = false
 }

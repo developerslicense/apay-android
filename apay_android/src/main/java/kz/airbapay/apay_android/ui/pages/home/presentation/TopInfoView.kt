@@ -18,6 +18,7 @@ import androidx.compose.ui.unit.dp
 import kz.airbapay.apay_android.data.constant.amountOfPurchase
 import kz.airbapay.apay_android.data.constant.numberOfPurchase
 import kz.airbapay.apay_android.data.utils.DataHolder
+import kz.airbapay.apay_android.data.utils.recomposeHighlighter
 import kz.airbapay.apay_android.ui.resources.ColorsSdk
 import kz.airbapay.apay_android.ui.resources.LocalFonts
 
@@ -29,6 +30,7 @@ internal fun TopInfoView(
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
+            .recomposeHighlighter()
             .padding(horizontal = 16.dp)
             .padding(top = 24.dp)
             .fillMaxWidth()
@@ -45,7 +47,7 @@ internal fun TopInfoView(
     ) {
         InitRow(
             textStart = amountOfPurchase(),
-            textEnd = purchaseAmount.orEmpty()
+            textEnd = purchaseAmount.orEmpty(),
         )
         Spacer(modifier = Modifier.height(8.dp))
         InitRow(
@@ -62,17 +64,21 @@ private fun InitRow(
 ) {
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier
+            .recomposeHighlighter()
+            .fillMaxWidth()
     ) {
         Text(
             text = textStart,
             textAlign = TextAlign.Start,
-            style = LocalFonts.current.regular
+            style = LocalFonts.current.regular,
+            modifier = Modifier.recomposeHighlighter()
         )
         Text(
             text = textEnd,
             textAlign = TextAlign.End,
-            style = LocalFonts.current.semiBold
+            style = LocalFonts.current.semiBold,
+            modifier = Modifier.recomposeHighlighter()
         )
     }
 }

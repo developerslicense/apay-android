@@ -49,7 +49,7 @@ internal fun caption400() = TextStyle(
 
 internal fun subtitleBold() = TextStyle(
     color = ColorsSdk.textMain,
-    fontFamily = regular,
+    fontFamily = bold,
     fontWeight = FontWeight.W700,
     fontSize = 16.sp,
     lineHeight = 24.sp

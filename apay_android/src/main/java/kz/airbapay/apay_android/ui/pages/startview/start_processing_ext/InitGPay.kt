@@ -1,7 +1,8 @@
-package kz.airbapay.apay_android.ui.pages.dialog.start_processing_ext
+package kz.airbapay.apay_android.ui.pages.startview.start_processing_ext
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -24,9 +25,11 @@ internal fun InitViewStartProcessingGPay(
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
         modifier = Modifier
             .padding(horizontal = 16.dp)
             .fillMaxWidth()
+            .height(48.dp)
             .background(
                 color = ColorsSdk.bgGPAY,
                 shape = RoundedCornerShape(
@@ -36,7 +39,6 @@ internal fun InitViewStartProcessingGPay(
                     bottomStart = 8.dp
                 )
             )
-            .padding(10.dp)
             .clickable {
                 openGooglePay()
             }
@@ -44,4 +46,3 @@ internal fun InitViewStartProcessingGPay(
         LoadImageSrc(imageSrc = R.drawable.g_pay)
     }
 }
-

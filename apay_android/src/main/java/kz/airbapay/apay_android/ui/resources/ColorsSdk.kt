@@ -7,12 +7,13 @@ internal object ColorsSdk {
     /** добавил MS к некоторым на конец для того,
      * чтоб понятно было, какие цвета редактируются для внешнего пользователя*/
 
+    val colorBrand = Color(0xFF319CF3)
     val colorBrandMainMS = mutableStateOf(Color(0xFF319CF3)) //можно будет изменять
     val colorBrandInversionMS = mutableStateOf(Color(0xFFFCFCFD)) //можно будет изменять
 
     // block
     val bgBlock = Color(0xFFFFFFFF)
-    val bgMain = Color(0xF3F4FBFF)
+    val bgMain = Color(0xFFF3F4FB)
     val bgAccent = Color(0xFF10142D)
     val bgSecondaryAccent = Color(0xFFFFF3C8)
     val bgElements = Color(0xFFFCFCFF)

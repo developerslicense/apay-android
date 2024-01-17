@@ -21,7 +21,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.navigation.NavController
 import kz.airbapay.apay_android.AirbaPaySdk
 import kz.airbapay.apay_android.R
 import kz.airbapay.apay_android.data.constant.BanksName
@@ -35,7 +34,7 @@ import kz.airbapay.apay_android.data.constant.forChangeLimitInHomebank
 import kz.airbapay.apay_android.data.constant.forChangeLimitInKaspi
 import kz.airbapay.apay_android.data.constant.message
 import kz.airbapay.apay_android.data.utils.DataHolder
-import kz.airbapay.apay_android.ui.pages.dialog.InitDialogExit
+import kz.airbapay.apay_android.ui.pages.dialogs.InitDialogExit
 import kz.airbapay.apay_android.ui.pages.videoplayer.VideoPlayerPage
 import kz.airbapay.apay_android.ui.resources.ColorsSdk
 import kz.airbapay.apay_android.ui.resources.LocalFonts
@@ -44,10 +43,8 @@ import kz.airbapay.apay_android.ui.ui_components.ViewButton
 
 @Composable
 internal fun ErrorWithInstructionPage(
-    errorCode: ErrorsCode,
-    navController: NavController
+    errorCode: ErrorsCode
 ) {
-
     val faqUrl = when (DataHolder.bankCode) {
         BanksName.kaspibank.name -> {
             if (DataHolder.currentLang == AirbaPaySdk.Lang.KZ.lang)
@@ -61,7 +58,7 @@ internal fun ErrorWithInstructionPage(
         }
     }
 
-    val context = LocalContext.current
+    val activity = LocalContext.current as Activity
 
     val showDialogExit = remember {
         mutableStateOf(false)
@@ -158,8 +155,8 @@ internal fun ErrorWithInstructionPage(
                 title = errorCode.buttonTop(),
                 actionClick = {
                     errorCode.clickOnTop(
-                        navController = navController,
-                        finish = { (context as Activity).finish() }
+                        activity = activity,
+                        finish = { activity.finish() }
                     )
                 }
             )
@@ -171,9 +168,9 @@ internal fun ErrorWithInstructionPage(
                 isMainBrand = false,
                 actionClick = {
                     errorCode.clickOnBottom(
-                        navController = navController,
+                        activity = activity,
                         finish = {
-                            (context as Activity).finish()
+                            activity.finish()
                             DataHolder.frontendCallback?.invoke(false)
                         }
                     )

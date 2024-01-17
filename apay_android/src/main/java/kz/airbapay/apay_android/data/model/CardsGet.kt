@@ -39,4 +39,5 @@ internal data class BankCard(
 
 ) {
     fun getMaskedPanCleared() = maskedPan?.takeLast(6).orEmpty()
+    fun getMaskedPanClearedWithPoint() = maskedPan?.takeLast(6)?.replace("*", "•").orEmpty()
  }

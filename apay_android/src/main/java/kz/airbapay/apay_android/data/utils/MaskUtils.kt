@@ -10,7 +10,6 @@ class MaskUtils(
     private val pattern: String,
     private val isDateExpiredMask: Boolean = false
 ) {
-    private val patternArr = mutableListOf<String>()
 
     fun getNextCursorPosition(
         newPosition: Int
@@ -33,27 +32,21 @@ class MaskUtils(
 
     fun format(
         text: String,
-        optionForTest: Boolean = false
     ): String {
 
         val textArr = mutableListOf<String>()
         var textI = 0
 
-        if (optionForTest) {
-            patternArr.clear()
-        }
-
-        if (patternArr.isEmpty()
-            || optionForTest) {
-            pattern
-                .split("")
-                .forEach { ch -> patternArr.add(ch) }
-        }
+        val patternArr = mutableListOf<String>()
+        pattern
+            .split("")
+            .forEach { ch -> patternArr.add(ch) }
 
         if (isDateExpiredMask
             && text.isNotBlank()
             && text.first().toString() != "1"
-            && text.first().toString() != "0") {
+            && text.first().toString() != "0"
+        ) {
 
             textArr.add("0")
         }

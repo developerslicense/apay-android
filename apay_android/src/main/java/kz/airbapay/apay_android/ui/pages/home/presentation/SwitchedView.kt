@@ -46,7 +46,7 @@ internal fun SwitchedView(
                     switchCheckedState.value = !switchCheckedState.value
                 }
                 .background(
-                    color = if (switchCheckedState.value) ColorsSdk.colorBrandMainMS.value else ColorsSdk.gray25,
+                    color = if (switchCheckedState.value) ColorsSdk.colorBrand else ColorsSdk.gray25,
                     shape = RoundedCornerShape(
                         topStart = 12.dp,
                         topEnd = 12.dp,

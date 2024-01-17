@@ -23,6 +23,9 @@ internal data class PaymentEntryResponse(
     @SerializedName("error_code")
     val errorCode: String?,
 
+    @SerializedName("status")
+    val status: String?,
+
     @SerializedName("error_message")
     val errorMessage: String?,
 

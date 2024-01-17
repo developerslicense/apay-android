@@ -1,6 +1,9 @@
 package kz.airbapay.apay_android.ui.pages.success
 
 import android.app.Activity
+import android.os.Bundle
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Spacer
@@ -26,10 +29,18 @@ import kz.airbapay.apay_android.ui.resources.LocalFonts
 import kz.airbapay.apay_android.ui.ui_components.BackHandler
 import kz.airbapay.apay_android.ui.ui_components.ViewButton
 
+internal class SuccessActivity : ComponentActivity() {
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContent {
+            SuccessPage()
+        }
+    }
+}
+
 @Composable
-internal fun SuccessPage(
-    customSuccessPage: @Composable (() -> Unit)?
-) {
+internal fun SuccessPage() {
     val context = LocalContext.current
 
     BackHandler {
@@ -47,41 +58,36 @@ internal fun SuccessPage(
 
         val (spaceRef, iconRef, textRef, buttonRef) = createRefs()
 
-        if (customSuccessPage != null) {
-            customSuccessPage()
+        Spacer(
+            modifier = Modifier
+                .fillMaxHeight(0.25f)
+                .constrainAs(spaceRef) {
+                    top.linkTo(parent.top)
+                }
+        )
+        Image(
+            painter = painterResource(R.drawable.pay_success),
+            contentDescription = "pay_success",
+            modifier = Modifier
+                .fillMaxWidth(0.5f)
+                .constrainAs(iconRef) {
+                    top.linkTo(spaceRef.bottom)
+                    start.linkTo(parent.start)
+                    end.linkTo(parent.end)
+                }
+        )
 
-        } else {
-            Spacer(
-                modifier = Modifier
-                    .fillMaxHeight(0.25f)
-                    .constrainAs(spaceRef) {
-                        top.linkTo(parent.top)
-                    }
-            )
-            Image(
-                painter = painterResource(R.drawable.pay_success),
-                contentDescription = "pay_success",
-                modifier = Modifier
-                    .fillMaxWidth(0.5f)
-                    .constrainAs(iconRef) {
-                        top.linkTo(spaceRef.bottom)
-                        start.linkTo(parent.start)
-                        end.linkTo(parent.end)
-                    }
-            )
-
-            Text(
-                text = paySuccess(),
-                style = LocalFonts.current.h3,
-                textAlign = TextAlign.Center,
-                modifier = Modifier
-                    .constrainAs(textRef) {
-                        top.linkTo(iconRef.bottom, margin = 24.dp)
-                        start.linkTo(parent.start)
-                        end.linkTo(parent.end)
-                    }
-            )
-        }
+        Text(
+            text = paySuccess(),
+            style = LocalFonts.current.h3,
+            textAlign = TextAlign.Center,
+            modifier = Modifier
+                .constrainAs(textRef) {
+                    top.linkTo(iconRef.bottom, margin = 24.dp)
+                    start.linkTo(parent.start)
+                    end.linkTo(parent.end)
+                }
+        )
 
         ViewButton(
             title = goToMarker(),
@@ -99,5 +105,4 @@ internal fun SuccessPage(
                 }
         )
     }
-
 }

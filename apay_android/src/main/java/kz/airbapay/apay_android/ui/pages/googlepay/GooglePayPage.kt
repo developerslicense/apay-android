@@ -1,31 +1,52 @@
 package kz.airbapay.apay_android.ui.pages.googlepay
 
+import android.annotation.SuppressLint
+import android.app.Activity
+import android.os.Bundle
 import android.os.Message
 import android.view.ViewGroup
 import android.webkit.WebChromeClient
 import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebView.WebViewTransport
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.navigation.NavController
 import kz.airbapay.apay_android.R
-import kz.airbapay.apay_android.ui.pages.dialog.InitDialogExit
+import kz.airbapay.apay_android.data.constant.ARG_ACTION
+import kz.airbapay.apay_android.data.utils.backToStartPage
+import kz.airbapay.apay_android.ui.pages.dialogs.InitDialogExit
 import kz.airbapay.apay_android.ui.ui_components.BackHandler
 import kz.airbapay.apay_android.ui.ui_components.ProgressBarView
 import kz.airbapay.apay_android.ui.ui_components.ViewToolbar
 
+internal class GooglePayActivity: ComponentActivity() {
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        val url = intent.getStringExtra(ARG_ACTION)
+        setContent {
+            GooglePayPage(url = url)
+        }
+    }
+}
+
+
+@SuppressLint("SetJavaScriptEnabled")
 @Composable
 internal fun GooglePayPage(
-    url: String?,
-    navController: NavController
+    url: String?
 ) {
+    val activity = LocalContext.current as Activity
     val inProgress = remember { mutableStateOf(true) }
 
     val showDialogExit = remember {
@@ -46,7 +67,7 @@ internal fun GooglePayPage(
                 title = "",
                 backIcon = R.drawable.cancel,
                 actionBack = {
-                    showDialogExit.value = true
+                    backToStartPage(activity)
                 }
             )
 
@@ -69,7 +90,7 @@ internal fun GooglePayPage(
                         settings.javaScriptCanOpenWindowsAutomatically = true
 
                         webViewClient = GooglePayClient(
-                            navController = navController,
+                            activity = activity,
                             inProgress = inProgress,
                             redirectUrl = url
                         )
@@ -94,7 +115,7 @@ internal fun GooglePayPage(
                                 resultMsg.sendToTarget()
 
                                 newWebView?.webViewClient = GooglePayClient(
-                                    navController = navController,
+                                    activity = activity,
                                     inProgress = inProgress,
                                     redirectUrl = url
                                 )

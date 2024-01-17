@@ -1,5 +1,6 @@
-package kz.airbapay.apay_android.ui.pages.dialog.start_processing_ext
+package kz.airbapay.apay_android.ui.pages.startview.start_processing_ext
 
+import android.app.Activity
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -16,16 +17,16 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableIntState
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import kz.airbapay.apay_android.AirbaPayActivity
 import kz.airbapay.apay_android.data.constant.orPayWithCard
 import kz.airbapay.apay_android.data.model.BankCard
+import kz.airbapay.apay_android.data.utils.openHome
+import kz.airbapay.apay_android.data.utils.recomposeHighlighter
 import kz.airbapay.apay_android.ui.resources.ColorsSdk
 import kz.airbapay.apay_android.ui.resources.LocalFonts
 import kz.airbapay.apay_android.ui.ui_components.LineDecorator
@@ -35,13 +36,9 @@ import kz.airbapay.apay_android.ui.ui_components.LoadImageSrc
 internal fun InitViewStartProcessingCards(
     savedCards: List<BankCard>,
     selectedCard: MutableState<BankCard?>,
-    actionClose: () -> Unit,
-    customSuccessPage: @Composable (() -> Unit)?
+    selectedIndex: MutableIntState,
 ) {
-    val context = LocalContext.current
-    val selected = remember {
-        mutableIntStateOf(0)
-    }
+    val activity = LocalContext.current as Activity
 
     Spacer(modifier = Modifier.height(32.dp))
     Text(
@@ -52,6 +49,7 @@ internal fun InitViewStartProcessingCards(
 
     LazyColumn(
         modifier = Modifier
+            .recomposeHighlighter()
             .fillMaxWidth()
             .wrapContentHeight()
     ) {
@@ -61,10 +59,10 @@ internal fun InitViewStartProcessingCards(
                 val card = savedCards[index]
                 InitCard(
                     card = card,
-                    isSelected = index == selected.value,
+                    isSelected = index == selectedIndex.intValue,
                     isFirst = index == 0,
                     clickOnCard = {
-                        selected.value = index
+                        selectedIndex.intValue = index
                         selectedCard.value = card
                     }
                 )
@@ -76,11 +74,7 @@ internal fun InitViewStartProcessingCards(
     Spacer(modifier = Modifier.height(32.dp))
     InitViewStartProcessingPayWithNewCard(
         actionClick = {
-            actionClose()
-            AirbaPayActivity.init(
-                context = context,
-                customSuccessPage = customSuccessPage
-            )
+            openHome(activity)
         }
     )
 }
@@ -98,6 +92,7 @@ private fun InitCard(
 
     Column(
         modifier = Modifier
+            .recomposeHighlighter()
             .clickable { clickOnCard() }
     ) {
 
@@ -105,13 +100,15 @@ private fun InitCard(
 
         Row(
             modifier = Modifier
+                .recomposeHighlighter()
                 .padding(horizontal = 16.dp)
                 .fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
             Row(
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.recomposeHighlighter()
             ) {
                 LoadImageSrc(imageSrc = card.typeIcon)
 
@@ -119,21 +116,26 @@ private fun InitCard(
 
                 Text(
                     style = LocalFonts.current.semiBold,
-                    text = card.getMaskedPanCleared()
+                    text = card.getMaskedPanCleared(),
+                    modifier = Modifier.recomposeHighlighter()
                 )
             }
 
             if (isSelected) {
                 Card(
                     shape = RoundedCornerShape(45.dp),
-                    backgroundColor = ColorsSdk.colorBrandMainMS.value,
-                    modifier = Modifier.size(20.dp),
-                    elevation = 0.dp
+                    backgroundColor = ColorsSdk.colorBrand,
+                    elevation = 0.dp,
+                    modifier = Modifier
+                        .recomposeHighlighter()
+                        .size(20.dp)
                 ) {
                     Card(
                         shape = RoundedCornerShape(45.dp),
                         backgroundColor = ColorsSdk.bgBlock,
-                        modifier = Modifier.padding(6.dp)
+                        modifier = Modifier
+                            .recomposeHighlighter()
+                            .padding(6.dp)
                     ) {}
                 }
 
@@ -141,13 +143,17 @@ private fun InitCard(
                 Card(
                     shape = RoundedCornerShape(45.dp),
                     backgroundColor = ColorsSdk.gray15,
-                    modifier = Modifier.size(20.dp),
-                    elevation = 0.dp
+                    elevation = 0.dp,
+                    modifier = Modifier
+                        .recomposeHighlighter()
+                        .size(20.dp)
                 ) {
                     Card(
                         shape = RoundedCornerShape(45.dp),
                         backgroundColor = ColorsSdk.bgBlock,
-                        modifier = Modifier.padding(2.dp)
+                        modifier = Modifier
+                            .recomposeHighlighter()
+                            .padding(2.dp)
                     ) {}
                 }
             }

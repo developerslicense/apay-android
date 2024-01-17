@@ -1,4 +1,4 @@
-package kz.airbapay.apay_android.ui.pages.dialog.start_processing_ext
+package kz.airbapay.apay_android.ui.pages.startview.start_processing_ext
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
@@ -61,12 +61,12 @@ internal fun InitViewStartProcessingPayWithNewCard(
                         bottom.linkTo(parent.bottom)
                         end.linkTo(titleRef.start, margin = 12.dp)
                     },
-                colorFilter = ColorFilter.tint(color = ColorsSdk.colorBrandMainMS.value)
+                colorFilter = ColorFilter.tint(color = ColorsSdk.colorBrand)
             )
 
             Text(
                 text = payAnotherCard(),
-                color = ColorsSdk.colorBrandMainMS.value,
+                color = ColorsSdk.colorBrand,
                 style = LocalFonts.current.semiBold,
                 modifier = Modifier
                     .constrainAs(titleRef) {

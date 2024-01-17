@@ -1,4 +1,4 @@
-package kz.airbapay.apay_android.ui.pages.dialog
+package kz.airbapay.apay_android.ui.pages.dialogs
 
 import android.app.Activity
 import androidx.compose.foundation.Image
