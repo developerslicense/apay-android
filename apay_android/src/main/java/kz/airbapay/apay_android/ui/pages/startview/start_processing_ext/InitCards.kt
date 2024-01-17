@@ -17,9 +17,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableIntState
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -36,12 +35,10 @@ import kz.airbapay.apay_android.ui.ui_components.LoadImageSrc
 @Composable
 internal fun InitViewStartProcessingCards(
     savedCards: List<BankCard>,
-    selectedCard: MutableState<BankCard?>
+    selectedCard: MutableState<BankCard?>,
+    selectedIndex: MutableIntState,
 ) {
     val activity = LocalContext.current as Activity
-    val selected = remember {
-        mutableIntStateOf(0)
-    }
 
     Spacer(modifier = Modifier.height(32.dp))
     Text(
@@ -62,10 +59,10 @@ internal fun InitViewStartProcessingCards(
                 val card = savedCards[index]
                 InitCard(
                     card = card,
-                    isSelected = index == selected.value,
+                    isSelected = index == selectedIndex.intValue,
                     isFirst = index == 0,
                     clickOnCard = {
-                        selected.value = index
+                        selectedIndex.intValue = index
                         selectedCard.value = card
                     }
                 )

@@ -16,9 +16,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -95,10 +97,14 @@ internal fun StartProcessingPage(
     val isErrorCvv = remember { mutableStateOf<String?>(null) }
     val size = remember { mutableStateOf(IntSize.Zero) }
     val isLoading = remember { mutableStateOf(true) }
-    val selectedCard = remember { mutableStateOf<BankCard?>(null) }
+    val selectedCard = rememberSaveable { mutableStateOf<BankCard?>(null) }
 
-    val savedCards = remember {
+    val savedCards = rememberSaveable {
         mutableStateOf<List<BankCard>>(emptyList())
+    }
+
+    val selectedIndex = rememberSaveable {
+        mutableIntStateOf(0)
     }
 
     val cvvFocusRequester = FocusRequester()
@@ -177,7 +183,8 @@ internal fun StartProcessingPage(
                         ) {
                             InitViewStartProcessingCards(
                                 savedCards = savedCards.value,
-                                selectedCard = selectedCard
+                                selectedCard = selectedCard,
+                                selectedIndex = selectedIndex
                             )
                         }
 
@@ -225,6 +232,7 @@ internal fun StartProcessingPage(
             }
 
             launch {
+                println("rrrrrrrrr")
                 isError.value = false
 
                 startAuth(
