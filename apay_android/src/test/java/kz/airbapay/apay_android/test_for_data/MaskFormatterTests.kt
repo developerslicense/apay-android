@@ -67,7 +67,7 @@ class MaskFormatterTests {
         val maskFormatterPhone = initMaskFormatter("+7 (AAA)-AAA-AA-AA")
 
         val cleared = getNumberCleared(text, isPhoneNumber = true)
-        val phone = maskFormatterPhone.format(cleared, true)
+        val phone = maskFormatterPhone.format(cleared)
 
         isAssert(phone, "+7 (705)-123-45-67")
     }
@@ -75,7 +75,7 @@ class MaskFormatterTests {
     private fun initMaskFormatterAndFormat(
         pattern: String,
         text: String
-    ) = initMaskFormatter(pattern).format(text, true)
+    ) = initMaskFormatter(pattern).format(text)
 
 
     private fun initMaskFormatter(
