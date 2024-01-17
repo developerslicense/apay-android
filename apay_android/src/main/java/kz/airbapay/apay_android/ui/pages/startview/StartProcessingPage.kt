@@ -6,12 +6,15 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.ModalBottomSheetLayout
 import androidx.compose.material.ModalBottomSheetValue
+import androidx.compose.material.Scaffold
 import androidx.compose.material.rememberModalBottomSheetState
+import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
@@ -30,8 +33,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kz.airbapay.apay_android.R
+import kz.airbapay.apay_android.data.constant.cvvInfo
 import kz.airbapay.apay_android.data.constant.paymentByCard
 import kz.airbapay.apay_android.data.model.BankCard
 import kz.airbapay.apay_android.data.utils.AirbaPayBiometric
@@ -109,164 +115,182 @@ internal fun StartProcessingPage(
 
     val cvvFocusRequester = FocusRequester()
     val focusManager = LocalFocusManager.current
+    val scaffoldState = rememberScaffoldState()
 
-    ModalBottomSheetLayout(
-        sheetState = sheetState,
-        sheetBackgroundColor = ColorsSdk.transparent,
-        sheetGesturesEnabled = false,
-        sheetContent = {
-            EnterCvvBottomSheet(
-                actionClose = {
-                    focusManager.clearFocus()
-                    coroutineScope.launch {
-                        sheetState.hide()
-                    }
-                },
-                cvvError = isErrorCvv,
-                cardMasked = selectedCard.value?.getMaskedPanClearedWithPoint(),
-                isLoading = isLoading,
-                cardId = selectedCard.value?.id,
-                cvvFocusRequester = cvvFocusRequester,
-                showCvv = {
-                    coroutineScope.launch {
-                        sheetState.show()
-                    }
-                }
-            )
-        },
-        modifier = Modifier.fillMaxSize()
-    ) {
-        Card(
-            backgroundColor = backgroundColor,
-            shape = RoundedCornerShape(
-                topStart = 0.dp,
-                topEnd = 0.dp
-            ),
-            modifier = Modifier
-                .recomposeHighlighter()
-                .fillMaxSize()
-                .onSizeChanged {
-                    size.value = it
-                },
-            elevation = 0.dp
-        ) {
-            if (!isLoading.value) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier.recomposeHighlighter()
+    Scaffold(
+        scaffoldState = scaffoldState
+    ) { padding ->
 
-                ) {
-
-                    ViewToolbar(
-                        title = paymentByCard(),
-                        backIcon = R.drawable.ic_arrow_back,
-                        actionBack = actionClose
-                    )
-
-                    if (isError.value) {
-                        InitErrorState()
-
-                    } else {
-                        InitViewStartProcessingAmount(purchaseAmount.value)
-
-                        InitViewStartProcessingGPay(
-                            openGooglePay = {
-                                openGooglePay(
-                                    redirectUrl = googlePayRedirectUrl.value,
-                                    activity = activity
-                                )
-                            }
-                        )
-
-                        if (savedCards.value.isNotEmpty()
-                            && isAuthenticated.value
-                        ) {
-                            InitViewStartProcessingCards(
-                                savedCards = savedCards.value,
-                                selectedCard = selectedCard,
-                                selectedIndex = selectedIndex
+        ModalBottomSheetLayout(
+            sheetState = sheetState,
+            sheetBackgroundColor = ColorsSdk.transparent,
+            sheetGesturesEnabled = false,
+            sheetContent = {
+                EnterCvvBottomSheet(
+                    actionClose = {
+                        focusManager.clearFocus()
+                        coroutineScope.launch {
+                            sheetState.hide()
+                        }
+                    },
+                    cvvError = isErrorCvv,
+                    cardMasked = selectedCard.value?.getMaskedPanClearedWithPoint(),
+                    isLoading = isLoading,
+                    cardId = selectedCard.value?.id,
+                    cvvFocusRequester = cvvFocusRequester,
+                    showCvvInfo = {
+                        coroutineScope.launch {
+                            scaffoldState.snackbarHostState.showSnackbar(
+                                message = cvvInfo()
                             )
                         }
-
-                        InitViewStartProcessingButtonNext(
-                            isLoading = isLoading,
-                            savedCards = savedCards.value,
-                            purchaseAmount = purchaseAmount.value,
-                            isAuthenticated = isAuthenticated.value,
-                            selectedCard = selectedCard,
-                            isError = isErrorCvv,
-                            showCvv = {
-                                isLoading.value = false
-                                coroutineScope.launch {
-                                    sheetState.show()
-                                    cvvFocusRequester.requestFocus()
-                                }
-                            }
-                        )
+                    },
+                    showCvv = {
+                        coroutineScope.launch {
+                            sheetState.show()
+                        }
                     }
+                )
+            },
+            modifier = Modifier.fillMaxSize()
+        ) {
+            Card(
+                backgroundColor = backgroundColor,
+                shape = RoundedCornerShape(
+                    topStart = 0.dp,
+                    topEnd = 0.dp
+                ),
+                modifier = Modifier
+                    .recomposeHighlighter()
+                    .fillMaxSize()
+                    .padding(padding)
+                    .onSizeChanged {
+                        size.value = it
+                    },
+                elevation = 0.dp,
+            ) {
+                if (!isLoading.value) {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier.recomposeHighlighter()
+
+                    ) {
+
+                        ViewToolbar(
+                            title = paymentByCard(),
+                            backIcon = R.drawable.ic_arrow_back,
+                            actionBack = actionClose
+                        )
+
+                        if (isError.value) {
+                            InitErrorState()
+
+                        } else {
+                            InitViewStartProcessingAmount(purchaseAmount.value)
+
+                            InitViewStartProcessingGPay(
+                                openGooglePay = {
+                                    openGooglePay(
+                                        redirectUrl = googlePayRedirectUrl.value,
+                                        activity = activity
+                                    )
+                                }
+                            )
+
+                            if (savedCards.value.isNotEmpty()
+                                && isAuthenticated.value
+                            ) {
+                                InitViewStartProcessingCards(
+                                    savedCards = savedCards.value,
+                                    selectedCard = selectedCard,
+                                    selectedIndex = selectedIndex
+                                )
+                            }
+
+                            InitViewStartProcessingButtonNext(
+                                isLoading = isLoading,
+                                savedCards = savedCards.value,
+                                purchaseAmount = purchaseAmount.value,
+                                isAuthenticated = isAuthenticated.value,
+                                selectedCard = selectedCard,
+                                isError = isErrorCvv,
+                                showCvv = {
+                                    coroutineScope.launch {
+                                        sheetState.show()
+                                        cvvFocusRequester.requestFocus()
+
+                                        val def = coroutineScope.async(IO) {
+                                            Thread.sleep(1000)
+                                            isLoading.value = false
+                                        }
+                                        def.start()
+                                    }
+                                }
+                            )
+                        }
+                    }
+                }
+
+                if (isLoading.value) {
+                    ProgressBarView(
+                        size = size,
+                        modifier = Modifier.wrapContentHeight()
+                    )
                 }
             }
 
-            if (isLoading.value) {
-                ProgressBarView(
-                    size = size,
-                    modifier = Modifier.wrapContentHeight()
-                )
-            }
-        }
+            LaunchedEffect("CardRepository") {
 
-        LaunchedEffect("CardRepository") {
+                if (!DataHolder.isAuthenticated) {
+                    val airbaPayBiometric = AirbaPayBiometric(activity)
+                    airbaPayBiometric.authenticate(
+                        onSuccess = {
+                            DataHolder.isAuthenticated = true
+                            isAuthenticated.value = true
+                        },
+                        onError = {
+                            DataHolder.isAuthenticated = false
+                            isAuthenticated.value = false
+                        }
+                    )
+                }
 
-            if (!DataHolder.isAuthenticated) {
-                val airbaPayBiometric = AirbaPayBiometric(activity)
-                airbaPayBiometric.authenticate(
-                    onSuccess = {
-                        DataHolder.isAuthenticated = true
-                        isAuthenticated.value = true
-                    },
-                    onError = {
-                        DataHolder.isAuthenticated = false
-                        isAuthenticated.value = false
-                    }
-                )
-            }
+                launch {
+                    isError.value = false
 
-            launch {
-                println("rrrrrrrrr")
-                isError.value = false
+                    startAuth(
+                        authRepository = Repository.authRepository!!,
+                        onError = {
+                            isError.value = true
+                            isLoading.value = false
+                        },
+                        onResult = {
 
-                startAuth(
-                    authRepository = Repository.authRepository!!,
-                    onError = {
-                        isError.value = true
-                        isLoading.value = false
-                    },
-                    onResult = {
+                            Repository.cardRepository?.getCards(
+                                accountId = DataHolder.accountId,
+                                error = {
+                                    isLoading.value = false
+                                },
+                                result = {
+                                    isLoading.value = false
+                                    savedCards.value = it
 
-                        Repository.cardRepository?.getCards(
-                            accountId = DataHolder.accountId,
-                            error = {
-                                isLoading.value = false
-                            },
-                            result = {
-                                isLoading.value = false
-                                savedCards.value = it
-
-                                if (it.isNotEmpty()) {
-                                    selectedCard.value = it[0]
+                                    if (it.isNotEmpty()) {
+                                        selectedCard.value = it[0]
+                                    }
                                 }
-                            }
-                        )
+                            )
 
-                        initPayments(
-                            activity = activity,
-                            isLoading = isLoading,
-                            onGooglePayLoadSuccess = { url ->
-                                googlePayRedirectUrl.value = url
-                            }
-                        )
-                    }
-                )
+                            initPayments(
+                                activity = activity,
+                                isLoading = isLoading,
+                                onGooglePayLoadSuccess = { url ->
+                                    googlePayRedirectUrl.value = url
+                                }
+                            )
+                        }
+                    )
+                }
             }
         }
     }

@@ -39,6 +39,7 @@ import kz.airbapay.apay_android.ui.ui_components.ViewButton
 internal fun EnterCvvBottomSheet(
     actionClose: () -> Unit,
     showCvv: () -> Unit,
+    showCvvInfo: () -> Unit,
     cardMasked: String?,
     cardId: String?,
     isLoading: MutableState<Boolean>,
@@ -106,10 +107,8 @@ internal fun EnterCvvBottomSheet(
                 cvvError = cvvError,
                 cvvFocusRequester = cvvFocusRequester,
                 cvvText = cvvText,
-                actionClickInfo = { //todo
-                    /*coroutineScope.launch {
-                        sheetState.show()
-                    }*/
+                actionClickInfo = {
+                    showCvvInfo()
                 },
                 modifier = Modifier
                     .padding(top = 24.dp)
@@ -142,14 +141,6 @@ internal fun EnterCvvBottomSheet(
                     .padding(top = 24.dp)
                     .padding(bottom = 32.dp)
             )
-            /* Text(
-                text = cvvInfo(),
-                style = LocalFonts.current.regular,
-                modifier = Modifier
-                    .padding(horizontal = 16.dp)
-                    .padding(bottom = 32.dp)
-                    .padding(top = 22.dp)
-            )*/
         }
     }
 }
