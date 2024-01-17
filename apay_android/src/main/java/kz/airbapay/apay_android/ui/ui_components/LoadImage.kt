@@ -1,5 +1,6 @@
 package kz.airbapay.apay_android.ui.ui_components
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
@@ -15,26 +16,19 @@ import com.skydoves.landscapist.coil.CoilImage
 @Composable
 fun LoadImageSrc(
     imageSrc: Int?,
-    circularImage: Boolean = false,
     modifier: Modifier = Modifier,
-    contentScaleStandard: ContentScale = ContentScale.Crop,
-    imageBackgroundColor: Color? = null
 ) {
     imageSrc?.let {
-        LoadImageUrl(
-            null,
-            circularImage,
-            imageSrc,
-            imageSrc,
-            modifier,
-            contentScaleStandard,
-            imageBackgroundColor
+        Image(
+            painter = painterResource(imageSrc),
+            contentDescription = imageSrc.toString(),
+            modifier = modifier
         )
     }
 }
 
 @Composable
-fun LoadImageUrl(
+fun LoadImageUrl( // todo выяснилось, что коил не оптимизирован ((((
     imageUrl: String?,
     circularImage: Boolean = false,
     progressImageSrc: Int? /*= R.drawable.placeholder_product*/,
