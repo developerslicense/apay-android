@@ -100,7 +100,6 @@ internal fun StartProcessingPage(
     val purchaseAmount = DataHolder.purchaseAmountFormatted.collectAsState()
 
     val isError = remember { mutableStateOf(false) }
-    val isErrorCvv = remember { mutableStateOf<String?>(null) }
     val size = remember { mutableStateOf(IntSize.Zero) }
     val isLoading = remember { mutableStateOf(true) }
     val selectedCard = rememberSaveable { mutableStateOf<BankCard?>(null) }
@@ -133,7 +132,6 @@ internal fun StartProcessingPage(
                             sheetState.hide()
                         }
                     },
-                    cvvError = isErrorCvv,
                     cardMasked = selectedCard.value?.getMaskedPanClearedWithPoint(),
                     isLoading = isLoading,
                     cardId = selectedCard.value?.id,
@@ -213,7 +211,6 @@ internal fun StartProcessingPage(
                                 purchaseAmount = purchaseAmount.value,
                                 isAuthenticated = isAuthenticated.value,
                                 selectedCard = selectedCard,
-                                isError = isErrorCvv,
                                 showCvv = {
                                     coroutineScope.launch {
                                         sheetState.show()
