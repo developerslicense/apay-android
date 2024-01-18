@@ -22,8 +22,7 @@ internal fun InitViewStartProcessingButtonNext(
     isAuthenticated: Boolean,
     isLoading: MutableState<Boolean>,
     selectedCard: MutableState<BankCard?>,
-    showCvv: () -> Unit,
-    isError: MutableState<String?>,
+    showCvv: () -> Unit
 ) {
     val activity = LocalContext.current as Activity
 
@@ -44,8 +43,7 @@ internal fun InitViewStartProcessingButtonNext(
                     activity = activity,
                     cardId = selectedCard.value?.id ?: "",
                     cvv = selectedCard.value?.cvv,
-                    showCvv = showCvv,
-                    isError = isError
+                    showCvv = showCvv
                 )
             },
             modifierRoot = buttonModifier
