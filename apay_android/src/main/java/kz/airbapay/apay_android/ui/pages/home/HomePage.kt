@@ -58,7 +58,7 @@ import kz.airbapay.apay_android.ui.resources.ColorsSdk
 import kz.airbapay.apay_android.ui.ui_components.BackHandler
 import kz.airbapay.apay_android.ui.ui_components.ViewButton
 import kz.airbapay.apay_android.ui.ui_components.ViewToolbar
-//??
+
 internal class HomeActivity : ComponentActivity() {
 
     private val cardNumberText = mutableStateOf(TextFieldValue())
