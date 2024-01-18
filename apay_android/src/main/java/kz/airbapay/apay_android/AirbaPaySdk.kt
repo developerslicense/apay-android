@@ -1,7 +1,7 @@
 package kz.airbapay.apay_android
 
 import android.app.Activity
-import android.app.Application
+import android.content.Context
 import android.content.Intent
 import androidx.compose.ui.graphics.Color
 import com.google.gson.annotations.SerializedName
@@ -48,7 +48,7 @@ class AirbaPaySdk {
          * @settlementPayments - не обязательный параметр, нужно присылать, если есть необходимость в разделении счетов по компаниям
          * */
         fun initOnCreate(
-            context: Application,
+            context: Context,
             isProd: Boolean,
             lang: Lang,
             accountId: String,
@@ -96,7 +96,7 @@ class AirbaPaySdk {
             DataHolder.currentLang = lang.lang
 
             // не переносить
-            Repository.initRepositories(context)
+            Repository.initRepositories(context.applicationContext)
         }
 
         fun initProcessing(

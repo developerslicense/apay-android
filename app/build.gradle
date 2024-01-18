@@ -8,8 +8,8 @@ android {
     compileSdk airbaPayCompileSdk
 
     defaultConfig {
-//        applicationId "kz.airbapay.apay_android"
-         applicationId "kz.airbapayandroid.composesdkstand" // для заливки тестовой сборки в firebase
+        applicationId "kz.airbapay.apay_android"
+//         applicationId "kz.airbapayandroid.composesdkstand" // для заливки тестовой сборки в firebase
         minSdk 21
         targetSdk airbaPayCompileSdk
         versionCode 3
