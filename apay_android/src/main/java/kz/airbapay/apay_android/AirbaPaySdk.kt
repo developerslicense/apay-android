@@ -129,6 +129,10 @@ fun startAirbaPay(
     activity: Activity,
     redirectToCustomSuccessPage: (() -> Unit)? = null
 ) {
-    DataHolder.redirectToCustomSuccessPage = redirectToCustomSuccessPage
-    activity.startActivity(Intent(activity, StartProcessingActivity::class.java))
+    if (DataHolder.baseUrl.isNotEmpty()) {
+        DataHolder.redirectToCustomSuccessPage = redirectToCustomSuccessPage
+        activity.startActivity(Intent(activity, StartProcessingActivity::class.java))
+    } else {
+        println("Не выполнено initOnCreate")
+    }
 }
