@@ -92,7 +92,6 @@ internal fun SuccessPage() {
         ViewButton(
             title = goToMarker(),
             actionClick = {
-                (context as Activity).finish()
                 DataHolder.frontendCallback?.invoke(true)
             },
             modifierRoot = Modifier

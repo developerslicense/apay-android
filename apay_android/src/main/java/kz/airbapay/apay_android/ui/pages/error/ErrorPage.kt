@@ -132,7 +132,6 @@ internal fun ErrorPage(
                     errorCode.clickOnBottom(
                         activity = activity,
                         finish = {
-                            activity.finish()
                             DataHolder.frontendCallback?.invoke(false)
                         }
                     )
