@@ -21,6 +21,7 @@ import kz.airbapay.apay_android.R
 import kz.airbapay.apay_android.data.constant.goToMarker
 import kz.airbapay.apay_android.data.constant.somethingWentWrong
 import kz.airbapay.apay_android.data.constant.somethingWentWrongDescription
+import kz.airbapay.apay_android.data.utils.DataHolder
 import kz.airbapay.apay_android.ui.resources.ColorsSdk
 import kz.airbapay.apay_android.ui.resources.LocalFonts
 import kz.airbapay.apay_android.ui.ui_components.BackHandler
@@ -89,7 +90,7 @@ internal fun ErrorSomethingWrongPage() {
         ViewButton(
             title = goToMarker(),
             actionClick = {
-                (context as Activity).finish()
+                DataHolder.frontendCallback?.invoke(false)
             },
             modifierRoot = Modifier
                 .padding(horizontal = 16.dp)
