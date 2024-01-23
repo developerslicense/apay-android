@@ -113,13 +113,13 @@ class MainActivity : ComponentActivity() {
             orderNumber = someOrderNumber.toString(),
             goods = goods,
             settlementPayments = settlementPayment,
-            onProcessingResult = {
-                if (it) {
+            onProcessingResult = { activity, result ->
+                if (result) {
                     Log.e("AirbaPaySdk", "initProcessing success");
                 } else {
                     Log.e("AirbaPaySdk", "initProcessing error");
                 }
-                startActivity(Intent(this, MainActivity::class.java))
+                startActivity(Intent(activity, MainActivity::class.java))
             }
         )
     }

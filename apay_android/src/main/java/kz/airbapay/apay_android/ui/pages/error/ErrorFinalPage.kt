@@ -29,10 +29,10 @@ import kz.airbapay.apay_android.ui.ui_components.ViewButton
 
 @Composable
 internal fun ErrorFinalPage() {
-    val context = LocalContext.current
+    val activity = LocalContext.current as Activity
 
     BackHandler {
-        (context as Activity).finish()
+        activity.finish()
     }
 
     ConstraintLayout(
@@ -90,7 +90,8 @@ internal fun ErrorFinalPage() {
         ViewButton(
             title = goToMarker(),
             actionClick = {
-                DataHolder.frontendCallback?.invoke(false)
+                DataHolder.frontendCallback?.invoke(activity, false)
+                DataHolder.frontendCallback = null
             },
             modifierRoot = Modifier
                 .padding(horizontal = 16.dp)

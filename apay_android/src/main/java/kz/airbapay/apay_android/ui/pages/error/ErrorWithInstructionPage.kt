@@ -170,7 +170,8 @@ internal fun ErrorWithInstructionPage(
                     errorCode.clickOnBottom(
                         activity = activity,
                         finish = {
-                            DataHolder.frontendCallback?.invoke(false)
+                            DataHolder.frontendCallback?.invoke(activity, false)
+                            DataHolder.frontendCallback = null
                         }
                     )
                 }
