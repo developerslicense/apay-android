@@ -28,7 +28,7 @@ class MainActivity : ComponentActivity() {
         AirbaPaySdk.initOnCreate(
             context = this.application,
             isProd = false,
-            accountId = "77051111117",
+            accountId = "77051111118",
             phone = "77051111117",
             shopId = "test-merchant",
             lang = AirbaPaySdk.Lang.RU,

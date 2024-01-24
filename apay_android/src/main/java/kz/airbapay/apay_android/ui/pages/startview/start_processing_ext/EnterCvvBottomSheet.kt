@@ -38,7 +38,6 @@ import kz.airbapay.apay_android.ui.ui_components.ViewButton
 @Composable
 internal fun EnterCvvBottomSheet(
     actionClose: () -> Unit,
-    showCvv: () -> Unit,
     showCvvInfo: () -> Unit,
     cardMasked: String?,
     cardId: String?,
@@ -127,7 +126,6 @@ internal fun EnterCvvBottomSheet(
                             activity = activity,
                             cardId = cardId ?: "",
                             cvv = cvvText.value.text,
-                            showCvv = showCvv,
                             isLoading = isLoading
                         )
                     } else {

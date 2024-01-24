@@ -1,5 +1,6 @@
 package kz.airbapay.apay_android.network.repository
 
+import kz.airbapay.apay_android.data.model.GetCvvResponse
 import kz.airbapay.apay_android.data.model.PaymentCreateResponse
 import kz.airbapay.apay_android.data.model.PaymentEntryResponse
 import kz.airbapay.apay_android.data.utils.DataHolder
@@ -146,6 +147,27 @@ internal class PaymentsRepository(
             requestFlow = {
                 safeApiFlowCall {
                     api.paymentAccountEntryRetry()
+                }
+            },
+            result = { body ->
+                body.body()?.let {
+                    result(it)
+                } ?: error(Unit)
+            },
+            error = error
+        )
+    }
+
+    fun paymentGetCvv(
+        cardId: String,
+        result: (GetCvvResponse) -> Unit,
+        error: (Response<*>) -> Unit
+    ) {
+
+        launch(
+            requestFlow = {
+                safeApiFlowCall {
+                    api.getCvv(cardId)
                 }
             },
             result = { body ->
