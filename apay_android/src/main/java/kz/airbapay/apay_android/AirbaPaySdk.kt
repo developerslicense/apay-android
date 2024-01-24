@@ -105,7 +105,7 @@ class AirbaPaySdk {
             orderNumber: String,
             goods: List<Goods>,
             settlementPayments: List<SettlementPayment>? = null, // параметр, нужный, если несколько айдишников компаний
-            onProcessingResult: ((Boolean) -> Unit)?
+            onProcessingResult: ((Activity, Boolean) -> Unit)?
         ) {
             DataHolder.purchaseAmount = purchaseAmount.toString()
             DataHolder.orderNumber = orderNumber
@@ -116,10 +116,7 @@ class AirbaPaySdk {
             DataHolder.purchaseAmountFormatted.value = Money.initLong(purchaseAmount).getFormatted()
 
             onProcessingResult?.let {
-                DataHolder.frontendCallback = { result ->
-                    it(result)
-                    DataHolder.frontendCallback = null
-                }
+                DataHolder.frontendCallback = it
             }
         }
     }

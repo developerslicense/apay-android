@@ -4,6 +4,7 @@ import kz.airbapay.apay_android.data.model.AuthRequest
 import kz.airbapay.apay_android.data.model.AuthResponse
 import kz.airbapay.apay_android.data.model.CardsGetResponse
 import kz.airbapay.apay_android.data.model.CardsPanResponse
+import kz.airbapay.apay_android.data.model.GetCvvResponse
 import kz.airbapay.apay_android.data.model.GooglePayButtonResponse
 import kz.airbapay.apay_android.data.model.PaymentCreateResponse
 import kz.airbapay.apay_android.data.model.PaymentEntryResponse
@@ -54,4 +55,8 @@ internal interface Api {
     @PUT("api/v1/payments/retry") // проводка без ввода данных карты
     suspend fun paymentAccountEntryRetry(): Response<PaymentEntryResponse>
 
+    @GET("api/v1/payments/cvv/{cardId}")
+    suspend fun getCvv(
+        @Path("cardId") cardId: String
+    ): Response<GetCvvResponse>
 }

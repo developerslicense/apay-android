@@ -41,10 +41,9 @@ internal class SuccessActivity : ComponentActivity() {
 
 @Composable
 internal fun SuccessPage() {
-    val context = LocalContext.current
+    val activity = LocalContext.current as Activity
 
     BackHandler {
-        val activity = (context as Activity)
         activity.setResult(Activity.RESULT_CANCELED)
         activity.finish()
     }
@@ -92,7 +91,8 @@ internal fun SuccessPage() {
         ViewButton(
             title = goToMarker(),
             actionClick = {
-                DataHolder.frontendCallback?.invoke(true)
+                DataHolder.frontendCallback?.invoke(activity, true)
+                DataHolder.frontendCallback = null
             },
             modifierRoot = Modifier
                 .padding(horizontal = 16.dp)

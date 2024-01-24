@@ -12,7 +12,7 @@ import kz.airbapay.apay_android.data.constant.paymentByCard2
 import kz.airbapay.apay_android.data.model.BankCard
 import kz.airbapay.apay_android.data.utils.openHome
 import kz.airbapay.apay_android.data.utils.recomposeHighlighter
-import kz.airbapay.apay_android.ui.pages.startview.bl.startSavedCard
+import kz.airbapay.apay_android.ui.pages.startview.bl.checkNeedCvv
 import kz.airbapay.apay_android.ui.ui_components.ViewButton
 
 @Composable
@@ -39,11 +39,11 @@ internal fun InitViewStartProcessingButtonNext(
             title = "${payAmount()} $purchaseAmount",
             actionClick = {
                 isLoading.value = true
-                startSavedCard(
+                checkNeedCvv(
                     activity = activity,
                     cardId = selectedCard.value?.id ?: "",
-                    cvv = selectedCard.value?.cvv,
-                    showCvv = showCvv
+                    showCvv = showCvv,
+                    isLoading = isLoading
                 )
             },
             modifierRoot = buttonModifier

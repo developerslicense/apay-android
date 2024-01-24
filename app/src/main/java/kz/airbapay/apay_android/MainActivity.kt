@@ -28,7 +28,7 @@ class MainActivity : ComponentActivity() {
         AirbaPaySdk.initOnCreate(
             context = this.application,
             isProd = false,
-            accountId = "77051111117",
+            accountId = "77051111118",
             phone = "77051111117",
             shopId = "test-merchant",
             lang = AirbaPaySdk.Lang.RU,
@@ -113,13 +113,13 @@ class MainActivity : ComponentActivity() {
             orderNumber = someOrderNumber.toString(),
             goods = goods,
             settlementPayments = settlementPayment,
-            onProcessingResult = {
-                if (it) {
+            onProcessingResult = { activity, result ->
+                if (result) {
                     Log.e("AirbaPaySdk", "initProcessing success");
                 } else {
                     Log.e("AirbaPaySdk", "initProcessing error");
                 }
-                startActivity(Intent(this, MainActivity::class.java))
+                startActivity(Intent(activity, MainActivity::class.java))
             }
         )
     }

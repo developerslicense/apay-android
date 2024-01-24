@@ -142,11 +142,6 @@ internal fun StartProcessingPage(
                                 message = cvvInfo()
                             )
                         }
-                    },
-                    showCvv = {
-                        coroutineScope.launch {
-                            sheetState.show()
-                        }
                     }
                 )
             },
