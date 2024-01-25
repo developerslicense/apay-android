@@ -41,6 +41,7 @@ import kz.airbapay.apay_android.data.constant.saveCardData
 import kz.airbapay.apay_android.data.utils.DataHolder
 import kz.airbapay.apay_android.data.utils.MaskUtils
 import kz.airbapay.apay_android.data.utils.backToStartPage
+import kz.airbapay.apay_android.data.utils.card_utils.getCardTypeFromNumber
 import kz.airbapay.apay_android.data.utils.openCardScanner
 import kz.airbapay.apay_android.network.repository.Repository
 import kz.airbapay.apay_android.ui.pages.card_reader.ScanActivity
@@ -62,6 +63,7 @@ import kz.airbapay.apay_android.ui.ui_components.ViewToolbar
 internal class HomeActivity : ComponentActivity() {
 
     private val cardNumberText = mutableStateOf(TextFieldValue())
+    private val paySystemIcon = mutableStateOf<Int?>(null)
     var scanResultLauncher: ActivityResultLauncher<Intent>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -74,17 +76,21 @@ internal class HomeActivity : ComponentActivity() {
                 val data = result.data
                 val cardNumber = data?.extras?.getString(ScanActivity.RESULT_CARD_NUMBER)
                 val maskUtils = MaskUtils("AAAA AAAA AAAA AAAA")
+                val pan = maskUtils.format(cardNumber ?: "")
 
                 cardNumberText.value = TextFieldValue(
-                    text = maskUtils.format(cardNumber ?: ""),
+                    text = pan,
                     selection = TextRange(cardNumber?.length ?: 0)
                 )
+
+                paySystemIcon.value = getCardTypeFromNumber(pan).icon
             }
         }
 
         setContent {
             HomePage(
-                cardNumberText = cardNumberText
+                cardNumberText = cardNumberText,
+                paySystemIcon = paySystemIcon
             )
         }
     }
@@ -93,6 +99,7 @@ internal class HomeActivity : ComponentActivity() {
 @Composable
 internal fun HomePage(
     cardNumberText: MutableState<TextFieldValue>,
+    paySystemIcon: MutableState<Int?>,
     coroutineScope: CoroutineScope = rememberCoroutineScope()
 ) {
     val activity = LocalContext.current as Activity
@@ -174,7 +181,8 @@ internal fun HomePage(
                     dateExpiredFocusRequester = dateExpiredFocusRequester,
                     actionClickScanCard = {
                         openCardScanner(activity as HomeActivity)
-                    }
+                    },
+                    paySystemIcon = paySystemIcon
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))

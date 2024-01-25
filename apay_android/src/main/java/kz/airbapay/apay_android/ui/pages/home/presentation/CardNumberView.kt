@@ -5,8 +5,6 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.text.input.ImeAction
@@ -25,10 +23,10 @@ internal fun CardNumberView(
     cardNumberError: MutableState<String?>,
     cardNumberFocusRequester: FocusRequester,
     dateExpiredFocusRequester: FocusRequester,
-    actionClickScanCard: () -> Unit
-) {
+    actionClickScanCard: () -> Unit,
+    paySystemIcon: MutableState<Int?>
 
-    val paySystemIcon = remember { mutableStateOf<Int?>(null) }
+) {
 
     ViewEditText(
         mask = "AAAA AAAA AAAA AAAA",
