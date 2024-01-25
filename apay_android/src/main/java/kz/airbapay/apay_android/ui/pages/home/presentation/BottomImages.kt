@@ -27,6 +27,7 @@ internal fun BottomImages() {
 
         LoadImageSrc(
             imageSrc = R.drawable.pci_express_black,
+            alpha = 0.5f,
             modifier = Modifier
                 .recomposeHighlighter()
                 .height(32.dp)
@@ -35,6 +36,7 @@ internal fun BottomImages() {
         Spacer(modifier = Modifier.width(16.dp))
         LoadImageSrc(
             imageSrc = R.drawable.master_card_black,
+            alpha = 0.5f,
             modifier = Modifier
                 .recomposeHighlighter()
                 .height(32.dp)
@@ -43,6 +45,7 @@ internal fun BottomImages() {
         Spacer(modifier = Modifier.width(16.dp))
         LoadImageSrc(
             imageSrc = R.drawable.visa_black,
+            alpha = 0.5f,
             modifier = Modifier
                 .recomposeHighlighter()
                 .height(32.dp)
@@ -51,6 +54,7 @@ internal fun BottomImages() {
         Spacer(modifier = Modifier.width(16.dp))
         LoadImageSrc(
             imageSrc = R.drawable.american_express_black,
+            alpha = 0.5f,
             modifier = Modifier
                 .recomposeHighlighter()
                 .height(32.dp)

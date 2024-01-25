@@ -17,13 +17,24 @@ import com.skydoves.landscapist.coil.CoilImage
 fun LoadImageSrc(
     imageSrc: Int?,
     modifier: Modifier = Modifier,
+    alpha: Float? = null
 ) {
     imageSrc?.let {
-        Image(
-            painter = painterResource(imageSrc),
-            contentDescription = imageSrc.toString(),
-            modifier = modifier
-        )
+        if (alpha != null) {
+            Image(
+                painter = painterResource(imageSrc),
+                contentDescription = imageSrc.toString(),
+                modifier = modifier,
+                alpha = alpha
+            )
+
+        } else {
+            Image(
+                painter = painterResource(imageSrc),
+                contentDescription = imageSrc.toString(),
+                modifier = modifier
+            )
+        }
     }
 }
 
