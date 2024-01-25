@@ -89,7 +89,7 @@ internal fun h2() = TextStyle(
 
 internal fun h3() = TextStyle(
     color = ColorsSdk.textMain,
-    fontFamily = regular,
+    fontFamily = bold,
     fontWeight = FontWeight.W700,
     fontSize = 20.sp,
     lineHeight = 30.sp

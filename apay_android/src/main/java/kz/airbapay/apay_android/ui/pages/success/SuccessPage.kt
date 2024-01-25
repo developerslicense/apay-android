@@ -50,7 +50,7 @@ internal fun SuccessPage() {
 
     ConstraintLayout(
         modifier = Modifier
-            .background(ColorsSdk.bgMain)
+            .background(ColorsSdk.bgBlock)
             .clipToBounds()
             .fillMaxSize()
     ) {
@@ -68,7 +68,7 @@ internal fun SuccessPage() {
             painter = painterResource(R.drawable.pay_success),
             contentDescription = "pay_success",
             modifier = Modifier
-                .fillMaxWidth(0.5f)
+                .fillMaxWidth(0.58f)
                 .constrainAs(iconRef) {
                     top.linkTo(spaceRef.bottom)
                     start.linkTo(parent.start)
