@@ -43,7 +43,8 @@ internal fun InitViewStartProcessingCards(
     Spacer(modifier = Modifier.height(32.dp))
     Text(
         style = LocalFonts.current.regular,
-        text = orPayWithCard()
+        text = orPayWithCard(),
+        color = ColorsSdk.textLight
     )
     Spacer(modifier = Modifier.height(16.dp))
 
@@ -71,7 +72,7 @@ internal fun InitViewStartProcessingCards(
         )
     }
 
-    Spacer(modifier = Modifier.height(32.dp))
+    Spacer(modifier = Modifier.height(16.dp))
     InitViewStartProcessingPayWithNewCard(
         actionClick = {
             openHome(activity)
@@ -116,7 +117,7 @@ private fun InitCard(
 
                 Text(
                     style = LocalFonts.current.semiBold,
-                    text = card.getMaskedPanCleared(),
+                    text = card.getMaskedPanClearedWithPoint(),
                     modifier = Modifier.recomposeHighlighter()
                 )
             }
