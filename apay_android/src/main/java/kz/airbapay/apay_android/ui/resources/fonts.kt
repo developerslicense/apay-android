@@ -113,9 +113,9 @@ internal fun note() = TextStyle(
 
 internal fun button() = TextStyle(
     color = ColorsSdk.textMain,
-    fontFamily = regular,
+    fontFamily = semibold,
     fontWeight = FontWeight.W600,
-    fontSize = 15.sp,
+    fontSize = 16.sp,
     lineHeight = 24.sp
 )
 
