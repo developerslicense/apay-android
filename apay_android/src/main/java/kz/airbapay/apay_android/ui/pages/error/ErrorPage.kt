@@ -69,7 +69,7 @@ internal fun ErrorPage(
             painter = painterResource(R.drawable.pay_failed),
             contentDescription = "pay_failed",
             modifier = Modifier
-                .fillMaxWidth(0.5f)
+                .fillMaxWidth(0.58f)
                 .constrainAs(iconRef) {
                     top.linkTo(spaceRef.bottom)
                     start.linkTo(parent.start)
