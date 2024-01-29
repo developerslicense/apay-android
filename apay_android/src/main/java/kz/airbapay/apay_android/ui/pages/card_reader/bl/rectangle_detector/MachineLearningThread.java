@@ -1,11 +1,8 @@
-package kz.airbapay.apay_android.ui.pages.card_reader.bl;
+package kz.airbapay.apay_android.ui.pages.card_reader.bl.rectangle_detector;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Matrix;
-import android.graphics.Paint;
 import android.os.Handler;
 import android.os.Looper;
 import android.renderscript.Allocation;

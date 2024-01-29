@@ -1,4 +1,4 @@
-package kz.airbapay.apay_android.ui.pages.card_reader.bl
+package kz.airbapay.apay_android.ui.pages.card_reader.bl.rectangle_detector
 
 internal class CGRect(
     @JvmField val x: Float,

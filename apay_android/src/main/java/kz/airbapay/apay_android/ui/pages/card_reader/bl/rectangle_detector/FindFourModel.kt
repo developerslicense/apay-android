@@ -12,7 +12,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 ==============================================================================*/
-package kz.airbapay.apay_android.ui.pages.card_reader.bl
+package kz.airbapay.apay_android.ui.pages.card_reader.bl.rectangle_detector
 
 import android.content.Context
 import java.io.IOException

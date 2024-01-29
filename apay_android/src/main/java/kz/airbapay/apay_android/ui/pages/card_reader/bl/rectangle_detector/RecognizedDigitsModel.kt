@@ -1,4 +1,4 @@
-package kz.airbapay.apay_android.ui.pages.card_reader.bl
+package kz.airbapay.apay_android.ui.pages.card_reader.bl.rectangle_detector
 
 import android.content.Context
 import java.io.IOException
