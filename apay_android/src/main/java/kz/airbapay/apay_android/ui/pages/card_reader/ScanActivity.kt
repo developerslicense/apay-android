@@ -12,10 +12,10 @@ import android.os.Bundle
 import android.view.View
 import android.view.ViewTreeObserver
 import kz.airbapay.apay_android.R
-import kz.airbapay.apay_android.ui.pages.card_reader.bl.rectangle_detector.ExecutorCamera
-import kz.airbapay.apay_android.ui.pages.card_reader.bl.rectangle_detector.ExecutorML
-import kz.airbapay.apay_android.ui.pages.card_reader.bl.rectangle_detector.MachineLearningThread
-import kz.airbapay.apay_android.ui.pages.card_reader.bl.rectangle_detector.Overlay
+import kz.airbapay.apay_android.ui.pages.card_reader.bl.card_number_detection.ExecutorCamera
+import kz.airbapay.apay_android.ui.pages.card_reader.bl.card_number_detection.ExecutorML
+import kz.airbapay.apay_android.ui.pages.card_reader.bl.card_number_detection.MachineLearningThread
+import kz.airbapay.apay_android.ui.pages.card_reader.bl.card_number_detection.Overlay
 import java.util.concurrent.Semaphore
 
 internal class ScanActivity : Activity() {

@@ -1,4 +1,4 @@
-package kz.airbapay.apay_android.ui.pages.card_reader.bl.rectangle_detector
+package kz.airbapay.apay_android.ui.pages.card_reader.bl.card_number_detection
 
 import android.graphics.Bitmap
 

@@ -13,11 +13,10 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ==============================================================================*/
 
-package kz.airbapay.apay_android.ui.pages.card_reader.bl.rectangle_detector;
+package kz.airbapay.apay_android.ui.pages.card_reader.bl.card_number_detection;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.util.Log;
 
 import org.tensorflow.lite.Interpreter;
 
