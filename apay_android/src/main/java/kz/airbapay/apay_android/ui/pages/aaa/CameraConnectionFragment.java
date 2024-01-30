@@ -258,18 +258,6 @@ public class CameraConnectionFragment extends Fragment {
     return new CameraConnectionFragment(callback, imageListener, layout, inputSize);
   }
 
-  /**
-   * Shows a {@link Toast} on the UI thread.
-   *
-   * @param text The message to show
-   */
-  private void showToast(final String text) {
-    final Activity activity = getActivity();
-    if (activity != null) {
-      activity.runOnUiThread(
-              () -> Toast.makeText(activity, text, Toast.LENGTH_SHORT).show());
-    }
-  }
 
   @Override
   public View onCreateView(
@@ -475,7 +463,7 @@ public class CameraConnectionFragment extends Fragment {
 
             @Override
             public void onConfigureFailed(final CameraCaptureSession cameraCaptureSession) {
-              showToast("Failed");
+              Log.v("Log", "error onConfigureFailed");
             }
           },
           null);

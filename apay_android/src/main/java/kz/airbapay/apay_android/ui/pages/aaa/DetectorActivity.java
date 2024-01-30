@@ -64,11 +64,9 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
   private static final boolean SAVE_PREVIEW_BITMAP = false;
   private static final float TEXT_SIZE_DIP = 10;
   OverlayView trackingOverlay;
-  private Integer sensorOrientation;
 
   private Classifier detector;
 
-  private long lastProcessingTimeMs;
   private Bitmap rgbFrameBitmap = null;
   private Bitmap croppedBitmap = null;
   private Bitmap cropCopyBitmap = null;
@@ -82,15 +80,9 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
 
   private MultiBoxTracker tracker;
 
-  private BorderedText borderedText;
 
   @Override
   public void onPreviewSizeChosen(final Size size, final int rotation) {
-    final float textSizePx =
-        TypedValue.applyDimension(
-            TypedValue.COMPLEX_UNIT_DIP, TEXT_SIZE_DIP, getResources().getDisplayMetrics());
-    borderedText = new BorderedText(textSizePx);
-    borderedText.setTypeface(Typeface.MONOSPACE);
 
     tracker = new MultiBoxTracker();
 
@@ -118,7 +110,7 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
     previewWidth = size.getWidth();
     previewHeight = size.getHeight();
 
-    sensorOrientation = rotation - getScreenOrientation();
+    Integer sensorOrientation = rotation - getScreenOrientation();
     Log.i("Log","Camera orientation relative to screen canvas: " + sensorOrientation);
 
     Log.i("Log", "Initializing at size " + previewWidth + " " + previewHeight);
@@ -129,7 +121,7 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
         ImageUtils.getTransformationMatrix(
             previewWidth, previewHeight,
             cropSize, cropSize,
-            sensorOrientation, MAINTAIN_ASPECT);
+                sensorOrientation, MAINTAIN_ASPECT);
 
     cropToFrameTransform = new Matrix();
     frameToCropTransform.invert(cropToFrameTransform);
@@ -169,9 +161,7 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
     runInBackground(
             () -> {
               Log.i("Log", "Running detection on image " + currTimestamp);
-              final long startTime = SystemClock.uptimeMillis();
               final List<Classifier.Recognition> results = detector.recognizeImage(croppedBitmap);
-              lastProcessingTimeMs = SystemClock.uptimeMillis() - startTime;
 
               cropCopyBitmap = Bitmap.createBitmap(croppedBitmap);
               final Canvas canvas1 = new Canvas(cropCopyBitmap);
@@ -188,7 +178,7 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
               }
 
               final List<Classifier.Recognition> mappedRecognitions =
-                  new LinkedList<Classifier.Recognition>();
+                      new LinkedList<>();
 
               for (final Classifier.Recognition result : results) {
                 final RectF location = result.getLocation();
@@ -206,16 +196,6 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
               trackingOverlay.postInvalidate();
 
               computingDetection = false;
-
-              runOnUiThread(
-                  new Runnable() {
-                    @Override
-                    public void run() {
-                      showFrameInfo(previewWidth + "x" + previewHeight);
-                      showCropInfo(cropCopyBitmap.getWidth() + "x" + cropCopyBitmap.getHeight());
-                      showInference(lastProcessingTimeMs + "ms");
-                    }
-                  });
             });
   }
 
@@ -235,13 +215,4 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
     TF_OD_API;
   }
 
-  @Override
-  protected void setUseNNAPI(final boolean isChecked) {
-//    runInBackground(() -> detector.setUseNNAPI(isChecked));
-  }
-
-  @Override
-  protected void setNumThreads(final int numThreads) {
-    runInBackground(() -> detector.setNumThreads(numThreads));
-  }
 }
