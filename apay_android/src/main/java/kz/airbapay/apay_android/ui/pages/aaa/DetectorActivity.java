@@ -27,6 +27,7 @@ import android.graphics.RectF;
 import android.graphics.Typeface;
 import android.media.ImageReader.OnImageAvailableListener;
 import android.os.SystemClock;
+import android.util.Log;
 import android.util.Size;
 import android.util.TypedValue;
 import android.widget.Toast;
@@ -49,7 +50,6 @@ import kz.airbapay.apay_android.ui.pages.card_reader.bl.rectangle_detection.trac
  * objects.
  */
 public class DetectorActivity extends CameraActivity implements OnImageAvailableListener {
-  private static final Logger LOGGER = new Logger();
 
   // Configuration values for the prepackaged SSD model.
   private static final int TF_OD_API_INPUT_SIZE = 300;
@@ -107,7 +107,7 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
       cropSize = TF_OD_API_INPUT_SIZE;
     } catch (final IOException e) {
       e.printStackTrace();
-      LOGGER.e(e, "Exception initializing classifier!");
+      Log.i("Log", "Exception initializing classifier! " + e);
       Toast toast =
           Toast.makeText(
               getApplicationContext(), "Classifier could not be initialized", Toast.LENGTH_SHORT);
@@ -119,9 +119,9 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
     previewHeight = size.getHeight();
 
     sensorOrientation = rotation - getScreenOrientation();
-    LOGGER.i("Camera orientation relative to screen canvas: %d", sensorOrientation);
+    Log.i("Log","Camera orientation relative to screen canvas: " + sensorOrientation);
 
-    LOGGER.i("Initializing at size %dx%d", previewWidth, previewHeight);
+    Log.i("Log", "Initializing at size " + previewWidth + " " + previewHeight);
     rgbFrameBitmap = Bitmap.createBitmap(previewWidth, previewHeight, Config.ARGB_8888);
     croppedBitmap = Bitmap.createBitmap(cropSize, cropSize, Config.ARGB_8888);
 
@@ -136,12 +136,7 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
 
     trackingOverlay = (OverlayView) findViewById(R.id.tracking_overlay);
     trackingOverlay.addCallback(
-        new OverlayView.DrawCallback() {
-          @Override
-          public void drawCallback(final Canvas canvas) {
-            tracker.draw(canvas);
-          }
-        });
+            canvas -> tracker.draw(canvas));
 
     tracker.setFrameConfiguration(previewWidth, previewHeight, sensorOrientation);
   }
@@ -158,7 +153,7 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
       return;
     }
     computingDetection = true;
-    LOGGER.i("Preparing image " + currTimestamp + " for detection in bg thread.");
+    Log.i("Log", "Preparing image " + currTimestamp + " for detection in bg thread.");
 
     rgbFrameBitmap.setPixels(getRgbBytes(), 0, previewWidth, 0, 0, previewWidth, previewHeight);
 
@@ -172,59 +167,56 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
     }
 
     runInBackground(
-        new Runnable() {
-          @Override
-          public void run() {
-            LOGGER.i("Running detection on image " + currTimestamp);
-            final long startTime = SystemClock.uptimeMillis();
-            final List<Classifier.Recognition> results = detector.recognizeImage(croppedBitmap);
-            lastProcessingTimeMs = SystemClock.uptimeMillis() - startTime;
+            () -> {
+              Log.i("Log", "Running detection on image " + currTimestamp);
+              final long startTime = SystemClock.uptimeMillis();
+              final List<Classifier.Recognition> results = detector.recognizeImage(croppedBitmap);
+              lastProcessingTimeMs = SystemClock.uptimeMillis() - startTime;
 
-            cropCopyBitmap = Bitmap.createBitmap(croppedBitmap);
-            final Canvas canvas = new Canvas(cropCopyBitmap);
-            final Paint paint = new Paint();
-            paint.setColor(Color.RED);
-            paint.setStyle(Style.STROKE);
-            paint.setStrokeWidth(2.0f);
+              cropCopyBitmap = Bitmap.createBitmap(croppedBitmap);
+              final Canvas canvas1 = new Canvas(cropCopyBitmap);
+              final Paint paint = new Paint();
+              paint.setColor(Color.RED);
+              paint.setStyle(Style.STROKE);
+              paint.setStrokeWidth(2.0f);
 
-            float minimumConfidence = MINIMUM_CONFIDENCE_TF_OD_API;
-            switch (MODE) {
-              case TF_OD_API:
-                minimumConfidence = MINIMUM_CONFIDENCE_TF_OD_API;
-                break;
-            }
-
-            final List<Classifier.Recognition> mappedRecognitions =
-                new LinkedList<Classifier.Recognition>();
-
-            for (final Classifier.Recognition result : results) {
-              final RectF location = result.getLocation();
-              if (location != null && result.getConfidence() >= minimumConfidence) {
-                canvas.drawRect(location, paint);
-
-                cropToFrameTransform.mapRect(location);
-
-                result.setLocation(location);
-                mappedRecognitions.add(result);
+              float minimumConfidence = MINIMUM_CONFIDENCE_TF_OD_API;
+              switch (MODE) {
+                case TF_OD_API:
+                  minimumConfidence = MINIMUM_CONFIDENCE_TF_OD_API;
+                  break;
               }
-            }
 
-            tracker.trackResults(mappedRecognitions, currTimestamp);
-            trackingOverlay.postInvalidate();
+              final List<Classifier.Recognition> mappedRecognitions =
+                  new LinkedList<Classifier.Recognition>();
 
-            computingDetection = false;
+              for (final Classifier.Recognition result : results) {
+                final RectF location = result.getLocation();
+                if (location != null && result.getConfidence() >= minimumConfidence) {
+                  canvas1.drawRect(location, paint);
 
-            runOnUiThread(
-                new Runnable() {
-                  @Override
-                  public void run() {
-                    showFrameInfo(previewWidth + "x" + previewHeight);
-                    showCropInfo(cropCopyBitmap.getWidth() + "x" + cropCopyBitmap.getHeight());
-                    showInference(lastProcessingTimeMs + "ms");
-                  }
-                });
-          }
-        });
+                  cropToFrameTransform.mapRect(location);
+
+                  result.setLocation(location);
+                  mappedRecognitions.add(result);
+                }
+              }
+
+              tracker.trackResults(mappedRecognitions, currTimestamp);
+              trackingOverlay.postInvalidate();
+
+              computingDetection = false;
+
+              runOnUiThread(
+                  new Runnable() {
+                    @Override
+                    public void run() {
+                      showFrameInfo(previewWidth + "x" + previewHeight);
+                      showCropInfo(cropCopyBitmap.getWidth() + "x" + cropCopyBitmap.getHeight());
+                      showInference(lastProcessingTimeMs + "ms");
+                    }
+                  });
+            });
   }
 
   @Override

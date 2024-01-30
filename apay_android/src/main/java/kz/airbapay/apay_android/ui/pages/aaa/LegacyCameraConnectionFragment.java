@@ -40,7 +40,6 @@ import kz.airbapay.apay_android.ui.pages.card_reader.AutoFitTextureView;
 import kz.airbapay.apay_android.ui.pages.card_reader.bl.rectangle_detection.env.ImageUtils;
 
 public class LegacyCameraConnectionFragment extends Fragment {
-  private static final Logger LOGGER = new Logger();
   /** Conversion from screen rotation to JPEG orientation. */
   private static final SparseIntArray ORIENTATIONS = new SparseIntArray();
 
@@ -178,7 +177,7 @@ public class LegacyCameraConnectionFragment extends Fragment {
       backgroundThread.join();
       backgroundThread = null;
     } catch (final InterruptedException e) {
-      LOGGER.e(e, "Exception!");
+      e.printStackTrace();
     }
   }
 
