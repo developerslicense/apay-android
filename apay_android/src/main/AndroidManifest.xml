@@ -22,10 +22,9 @@
         <!--todo del-->
         <activity
             android:name="kz.airbapay.apay_android.ui.pages.aaa.DetectorActivity"
-            android:label="@string/tfe_od_app_name"
             android:screenOrientation="portrait"
             android:exported="true"
-            android:theme="@style/AppTheme.ObjectDetection">
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar">
         </activity>
         <activity
             android:name="kz.airbapay.apay_android.ui.pages.startview.StartProcessingActivity"
