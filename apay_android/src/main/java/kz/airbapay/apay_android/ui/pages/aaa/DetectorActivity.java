@@ -36,7 +36,6 @@ import java.util.List;
 
 import kz.airbapay.apay_android.R;
 import kz.airbapay.apay_android.ui.pages.card_reader.bl.rectangle_detection.OverlayView;
-import kz.airbapay.apay_android.ui.pages.card_reader.bl.rectangle_detection.env.BorderedText;
 import kz.airbapay.apay_android.ui.pages.card_reader.bl.rectangle_detection.env.ImageUtils;
 import kz.airbapay.apay_android.ui.pages.card_reader.bl.rectangle_detection.tflite.Classifier;
 import kz.airbapay.apay_android.ui.pages.card_reader.bl.rectangle_detection.tflite.TFLiteObjectDetectionAPIModel;
