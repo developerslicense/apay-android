@@ -69,10 +69,8 @@ public abstract class CameraActivity extends AppCompatActivity
     private static final String PERMISSION_CAMERA = Manifest.permission.CAMERA;
     protected int previewWidth = 0;
     protected int previewHeight = 0;
-    private boolean debug = false;
     private Handler handler;
     private HandlerThread handlerThread;
-    private boolean useCamera2API;
     private boolean isProcessingFrame = false;
     private byte[][] yuvBytes = new byte[3][];
     private int[] rgbBytes = null;
@@ -381,14 +379,6 @@ public abstract class CameraActivity extends AppCompatActivity
                     continue;
                 }
 
-                // Fallback to camera1 API for internal cameras that don't have full support.
-                // This should help with legacy situations where using the camera2 API causes
-                // distorted or otherwise broken previews.
-                useCamera2API =
-                        (facing == CameraCharacteristics.LENS_FACING_EXTERNAL)
-                                || isHardwareLevelSupported(
-                                characteristics, CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL_FULL);
-
                 return cameraId;
             }
         } catch (CameraAccessException e) {
@@ -402,27 +392,19 @@ public abstract class CameraActivity extends AppCompatActivity
         String cameraId = chooseCamera();
 
         Fragment fragment;
-        if (useCamera2API) {
-            CameraConnectionFragment camera2Fragment =
-                    CameraConnectionFragment.newInstance(
-                            new CameraConnectionFragment.ConnectionCallback() {
-                                @Override
-                                public void onPreviewSizeChosen(final Size size, final int rotation) {
-                                    previewHeight = size.getHeight();
-                                    previewWidth = size.getWidth();
-                                    CameraActivity.this.onPreviewSizeChosen(size, rotation);
-                                }
-                            },
-                            this,
-                            getLayoutId(),
-                            getDesiredPreviewFrameSize());
+        CameraConnectionFragment camera2Fragment =
+                CameraConnectionFragment.newInstance(
+                        (size, rotation) -> {
+                            previewHeight = size.getHeight();
+                            previewWidth = size.getWidth();
+                            CameraActivity.this.onPreviewSizeChosen(size, rotation);
+                        },
+                        this,
+                        getLayoutId(),
+                        getDesiredPreviewFrameSize());
 
-            camera2Fragment.setCamera(cameraId);
-            fragment = camera2Fragment;
-        } else {
-            fragment =
-                    new LegacyCameraConnectionFragment(this, getLayoutId(), getDesiredPreviewFrameSize());
-        }
+        camera2Fragment.setCamera(cameraId);
+        fragment = camera2Fragment;
 
         getFragmentManager().beginTransaction().replace(R.id.container, fragment).commit();
     }
