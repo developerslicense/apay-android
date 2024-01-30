@@ -75,18 +75,6 @@ public class CameraConnectionFragment extends Fragment {
    */
   private static final int MINIMUM_PREVIEW_SIZE = 320;
 
-  /** Conversion from screen rotation to JPEG orientation. */
-  private static final SparseIntArray ORIENTATIONS = new SparseIntArray();
-
-  private static final String FRAGMENT_DIALOG = "dialog";
-
-  static {
-    ORIENTATIONS.append(Surface.ROTATION_0, 90);
-    ORIENTATIONS.append(Surface.ROTATION_90, 0);
-    ORIENTATIONS.append(Surface.ROTATION_180, 270);
-    ORIENTATIONS.append(Surface.ROTATION_270, 180);
-  }
-
   /** A {@link Semaphore} to prevent the app from exiting before closing the camera. */
   private final Semaphore cameraOpenCloseLock = new Semaphore(1);
   /** A {@link OnImageAvailableListener} to receive frames as they are available. */
