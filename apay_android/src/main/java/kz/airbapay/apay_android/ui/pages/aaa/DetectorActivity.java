@@ -52,13 +52,9 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
   private static final boolean TF_OD_API_IS_QUANTIZED = true;
   private static final String TF_OD_API_MODEL_FILE = "detect.tflite";
   private static final String TF_OD_API_LABELS_FILE = "file:///android_asset/labelmap.txt";
-  private static final DetectorMode MODE = DetectorMode.TF_OD_API;
-  // Minimum detection confidence to track a detection.
+
   private static final float MINIMUM_CONFIDENCE_TF_OD_API = 0.5f;
   private static final boolean MAINTAIN_ASPECT = false;
-  private static final Size DESIRED_PREVIEW_SIZE = new Size(640, 480);
-  private static final boolean SAVE_PREVIEW_BITMAP = false;
-  private static final float TEXT_SIZE_DIP = 10;
   OverlayView trackingOverlay;
 
   private Classifier detector;
@@ -92,7 +88,6 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
               TF_OD_API_LABELS_FILE,
               TF_OD_API_INPUT_SIZE,
               TF_OD_API_IS_QUANTIZED);
-      cropSize = TF_OD_API_INPUT_SIZE;
     } catch (final IOException e) {
       e.printStackTrace();
       Log.i("Log", "Exception initializing classifier! " + e);
@@ -141,7 +136,6 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
       return;
     }
     computingDetection = true;
-    Log.i("Log", "Preparing image " + currTimestamp + " for detection in bg thread.");
 
     rgbFrameBitmap.setPixels(getRgbBytes(), 0, previewWidth, 0, 0, previewWidth, previewHeight);
 
@@ -149,10 +143,6 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
 
     final Canvas canvas = new Canvas(croppedBitmap);
     canvas.drawBitmap(rgbFrameBitmap, frameToCropTransform, null);
-    // For examining the actual TF input.
-    if (SAVE_PREVIEW_BITMAP) {
-      ImageUtils.saveBitmap(croppedBitmap);
-    }
 
     runInBackground(
             () -> {
@@ -166,19 +156,12 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
               paint.setStyle(Style.STROKE);
               paint.setStrokeWidth(2.0f);
 
-              float minimumConfidence = MINIMUM_CONFIDENCE_TF_OD_API;
-              switch (MODE) {
-                case TF_OD_API:
-                  minimumConfidence = MINIMUM_CONFIDENCE_TF_OD_API;
-                  break;
-              }
-
               final List<Classifier.Recognition> mappedRecognitions =
                       new LinkedList<>();
 
               for (final Classifier.Recognition result : results) {
                 final RectF location = result.getLocation();
-                if (location != null && result.getConfidence() >= minimumConfidence) {
+                if (location != null && result.getConfidence() >= MINIMUM_CONFIDENCE_TF_OD_API) {
                   canvas1.drawRect(location, paint);
 
                   cropToFrameTransform.mapRect(location);
@@ -198,17 +181,6 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
   @Override
   protected int getLayoutId() {
     return R.layout.tfe_od_camera_connection_fragment_tracking;
-  }
-
-  @Override
-  protected Size getDesiredPreviewFrameSize() {
-    return DESIRED_PREVIEW_SIZE;
-  }
-
-  // Which detection model to use: by default uses Tensorflow Object Detection API frozen
-  // checkpoints.
-  private enum DetectorMode {
-    TF_OD_API;
   }
 
 }

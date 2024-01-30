@@ -339,6 +339,8 @@ public abstract class CameraActivity extends AppCompatActivity
 
     protected abstract int getLayoutId();
 
-    protected abstract Size getDesiredPreviewFrameSize();
+    protected Size getDesiredPreviewFrameSize() {
+        return new Size(640, 480);
+    }
 
 }
