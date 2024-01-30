@@ -7,8 +7,8 @@ import android.os.SystemClock
 import kz.airbapay.apay_android.ui.pages.card_reader.ScanActivity
 
 internal class ExecutorML(
-    private val activity: Activity,
-    private val releaseSemaphore: () -> Unit
+    private val activity: Activity?,
+    private val releaseSemaphore: (() -> Unit)?
 ) : OnScanListener {
 
     var mSentResponse = false
@@ -43,8 +43,8 @@ internal class ExecutorML(
     override fun onFatalError() {
         val intent = Intent()
         intent.putExtra(ScanActivity.RESULT_FATAL_ERROR, true)
-        activity.setResult(Activity.RESULT_CANCELED, intent)
-        activity.finish()
+        activity?.setResult(Activity.RESULT_CANCELED, intent)
+        activity?.finish()
     }
 
     override fun onPrediction(
@@ -64,7 +64,7 @@ internal class ExecutorML(
             }
         }
 
-        releaseSemaphore()
+        releaseSemaphore?.invoke()
     }
 
     fun onResume() {
@@ -78,8 +78,8 @@ internal class ExecutorML(
         println("aaaaa $numberResult")
         val intent = Intent()
         intent.putExtra(ScanActivity.RESULT_CARD_NUMBER, numberResult)
-        activity.setResult(Activity.RESULT_OK, intent)
-        activity.finish()
+        activity?.setResult(Activity.RESULT_OK, intent)
+        activity?.finish()
     }
 
     private fun incrementNumber(number: String) {

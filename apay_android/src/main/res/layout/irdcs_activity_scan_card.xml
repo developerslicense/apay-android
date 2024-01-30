@@ -54,6 +54,9 @@
         app:layout_constraintStart_toStartOf="@+id/cardRectangle"
         app:layout_constraintTop_toTopOf="parent" />
 
-
+    <kz.airbapay.apay_android.ui.pages.card_reader.bl.rectangle_detection.OverlayView
+        android:id="@+id/tracking_overlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
