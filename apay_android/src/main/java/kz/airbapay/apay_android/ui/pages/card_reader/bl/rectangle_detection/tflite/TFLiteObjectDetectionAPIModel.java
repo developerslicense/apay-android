@@ -76,6 +76,12 @@ public class TFLiteObjectDetectionAPIModel implements Classifier {
 
   private TFLiteObjectDetectionAPIModel() {}
 
+  static final int IMAGE_SIZE_X = 192;
+  static final int IMAGE_SIZE_Y = 192;
+  static final int DIM_BATCH_SIZE = 1;
+  static final int DIM_PIXEL_SIZE = 3;
+  static final int NUM_BYTES_PER_CHANNEL = 1;
+
   /** Memory-map the model file in Assets. */
   private static MappedByteBuffer loadModelFile(AssetManager assets, String modelFilename)
       throws IOException {
@@ -132,11 +138,13 @@ public class TFLiteObjectDetectionAPIModel implements Classifier {
     } else {
       numBytesPerChannel = 4; // Floating point
     }
-    d.imgData = ByteBuffer.allocateDirect(1 * d.inputSize * d.inputSize * 3 * numBytesPerChannel);
+    d.imgData = ByteBuffer.allocateDirect(DIM_BATCH_SIZE * d.inputSize * d.inputSize * DIM_PIXEL_SIZE * NUM_BYTES_PER_CHANNEL);
+//    d.imgData = ByteBuffer.allocateDirect(1 * d.inputSize * d.inputSize * 3 * numBytesPerChannel);
     d.imgData.order(ByteOrder.nativeOrder());
+//    d.intValues = new int[IMAGE_SIZE_X * IMAGE_SIZE_Y];
     d.intValues = new int[d.inputSize * d.inputSize];
 
-    d.tfLite.setNumThreads(NUM_THREADS);
+//    d.tfLite.setNumThreads(NUM_THREADS);
     d.outputLocations = new float[1][NUM_DETECTIONS][4];
     d.outputClasses = new float[1][NUM_DETECTIONS];
     d.outputScores = new float[1][NUM_DETECTIONS];
@@ -229,6 +237,6 @@ public class TFLiteObjectDetectionAPIModel implements Classifier {
   public void close() {}
 
   public void setNumThreads(int num_threads) {
-    if (tfLite != null) tfLite.setNumThreads(num_threads);
+//    if (tfLite != null) tfLite.setNumThreads(num_threads);
   }
 }
