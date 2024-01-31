@@ -6,25 +6,28 @@ import android.app.AlertDialog
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.Resources
+import android.graphics.Bitmap
 import android.graphics.RectF
 import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.view.ViewTreeObserver
+import android.widget.ImageView
 import kz.airbapay.apay_android.R
 import kz.airbapay.apay_android.ui.pages.card_reader.bl.camera.ExecutorCamera
+import kz.airbapay.apay_android.ui.pages.card_reader.bl.camera.OnRectangleListener
 import kz.airbapay.apay_android.ui.pages.card_reader.bl.card_number_detection.ExecutorML
 import kz.airbapay.apay_android.ui.pages.card_reader.bl.card_number_detection.MachineLearningThread
 import kz.airbapay.apay_android.ui.pages.card_reader.bl.rectangle_detection.RectangleDetector
 import java.util.concurrent.Semaphore
 
-internal class ScanActivity : Activity() {
+internal class ScanActivity : Activity(), OnRectangleListener {
     // todo если возникнут проблемы с камерой, то используй https://github.com/android/camera-samples
 
     var executorML: ExecutorML? = null
     private var executorCamera: ExecutorCamera? = null
     private val mMachineLearningSemaphore = Semaphore(1)
-    var rectangleDetector: RectangleDetector = RectangleDetector()
+    internal var rectangleDetector: RectangleDetector? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,6 +45,7 @@ internal class ScanActivity : Activity() {
             activity = this,
             tryAcquire = { mMachineLearningSemaphore.tryAcquire() }
         )
+        rectangleDetector = RectangleDetector(this)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
@@ -52,6 +56,11 @@ internal class ScanActivity : Activity() {
         } else {
             executorCamera?.mIsPermissionCheckDone = true
         }
+    }
+
+    override fun onRectangleFound(mutable: Bitmap) {
+        println("aaaa aaaaa aaaaa ")
+        findViewById<ImageView>(R.id.rectangleDetector)?.setImageBitmap(mutable)
     }
 
     internal inner class MyGlobalListenerClass(

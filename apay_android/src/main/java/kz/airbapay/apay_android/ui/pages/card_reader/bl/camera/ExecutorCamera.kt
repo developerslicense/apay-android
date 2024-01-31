@@ -13,6 +13,7 @@ import android.view.SurfaceView
 import android.widget.FrameLayout
 import kz.airbapay.apay_android.R
 import kz.airbapay.apay_android.ui.pages.card_reader.ScanActivity
+import kz.airbapay.apay_android.ui.pages.card_reader.bl.image.ImageConverterUtils
 import java.io.IOException
 
 internal class ExecutorCamera(
@@ -116,12 +117,25 @@ internal class ExecutorCamera(
 
             // Use the application context here because the machine learning thread's lifecycle
             // is connected to the application and not this activity
-            mlThread!!.post(
+
+            System.out.println("aaaaaaaaaaaaaaaaaaaaaaaa onPreviewFrame")
+            val image = ImageConverterUtils.getBitmap(
+                bytes,
+                width,
+                height,
+                mRotation,
+                mRoiCenterYRatio,
+                activity.applicationContext
+            )
+
+            activity.rectangleDetector?.doObjectDetection(image)
+           /* mlThread!!.post(
                 bytes, width, height, mRotation, activity.executorML,
                 activity.applicationContext, mRoiCenterYRatio
-            )
+            )*/
         }
     }
+
 
     /**
      * A basic Camera preview class
@@ -199,4 +213,5 @@ internal class ExecutorCamera(
             }
         }
     }
+
 }
