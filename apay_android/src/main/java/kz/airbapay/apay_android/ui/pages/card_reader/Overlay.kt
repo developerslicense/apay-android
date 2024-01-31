@@ -1,4 +1,4 @@
-package kz.airbapay.apay_android.ui.pages.card_reader.bl.card_number_detection
+package kz.airbapay.apay_android.ui.pages.card_reader
 
 import android.content.Context
 import android.content.res.Resources

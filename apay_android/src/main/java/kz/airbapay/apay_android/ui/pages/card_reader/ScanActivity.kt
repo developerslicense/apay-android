@@ -12,10 +12,10 @@ import android.os.Bundle
 import android.view.View
 import android.view.ViewTreeObserver
 import kz.airbapay.apay_android.R
-import kz.airbapay.apay_android.ui.pages.card_reader.bl.card_number_detection.ExecutorCamera
+import kz.airbapay.apay_android.ui.pages.card_reader.bl.camera.ExecutorCamera
 import kz.airbapay.apay_android.ui.pages.card_reader.bl.card_number_detection.ExecutorML
 import kz.airbapay.apay_android.ui.pages.card_reader.bl.card_number_detection.MachineLearningThread
-import kz.airbapay.apay_android.ui.pages.card_reader.bl.card_number_detection.Overlay
+import kz.airbapay.apay_android.ui.pages.card_reader.bl.rectangle_detection.RectangleDetector
 import java.util.concurrent.Semaphore
 
 internal class ScanActivity : Activity() {
@@ -24,6 +24,7 @@ internal class ScanActivity : Activity() {
     var executorML: ExecutorML? = null
     private var executorCamera: ExecutorCamera? = null
     private val mMachineLearningSemaphore = Semaphore(1)
+    var rectangleDetector: RectangleDetector = RectangleDetector()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

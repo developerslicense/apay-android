@@ -4,6 +4,7 @@ plugins {
 
     id 'maven-publish'
     id 'signing'
+    id "com.google.gms.google-services"
 }
 
 android {
@@ -60,6 +61,8 @@ ext {
 
     espressoCore = '3.5.0'
 
+    firebase = '32.3.1'
+
     junit = '4.13.2'
     jetpackComposeAccompanist = '0.28.0'
     jetpackComposeFoundation = '1.4.3'
@@ -68,7 +71,8 @@ ext {
     lifecycleTesting = '2.2.0'
 
     material = '1.11.0'//'1.9.0'
-
+    mlkit = '17.0.0'
+    
     navigationComponent = '2.7.6'//'2.7.2'
 
     okhttp = '4.2.2'
@@ -119,6 +123,9 @@ dependencies {
     implementation "io.coil-kt:coil-svg:$coilVersion"
     implementation "com.github.skydoves:landscapist-coil:$coilComposeVersion"// обертка для coil для композа https://github.com/skydoves/landscapist#coil
 
+    // Firebase
+    implementation(platform("com.google.firebase:firebase-bom:$firebase"))
+
     // Jetpack compose
     def composeBom = platform("androidx.compose:compose-bom:$airbaPayJetpackCompose") // https://developer.android.com/jetpack/compose/setup#bom-version-mapping
     implementation composeBom
@@ -147,6 +154,9 @@ dependencies {
 
     // Material
     implementation "com.google.android.material:material:$material"
+
+    // MlKit
+    implementation "com.google.mlkit:object-detection:$mlkit"
 
     // Navigation
     implementation "androidx.navigation:navigation-compose:$navigationComponent"

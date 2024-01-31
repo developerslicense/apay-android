@@ -1,4 +1,4 @@
-package kz.airbapay.apay_android.ui.pages.card_reader.bl.card_number_detection
+package kz.airbapay.apay_android.ui.pages.card_reader.bl.camera
 
 import android.app.Activity
 import android.app.AlertDialog
@@ -13,6 +13,7 @@ import android.view.SurfaceView
 import android.widget.FrameLayout
 import kz.airbapay.apay_android.R
 import kz.airbapay.apay_android.ui.pages.card_reader.ScanActivity
+import kz.airbapay.apay_android.ui.pages.card_reader.bl.card_number_detection.OnCameraOpenListener
 import java.io.IOException
 
 internal class ExecutorCamera(
@@ -64,7 +65,8 @@ internal class ExecutorCamera(
         try {
             if (mIsPermissionCheckDone) {
                 if (mCameraThread == null) {
-                    mCameraThread = CameraThread()
+                    mCameraThread =
+                        CameraThread()
                     mCameraThread!!.start()
                 }
                 mCameraThread!!.startCamera(this)
