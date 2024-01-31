@@ -5,8 +5,6 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 
-import kz.airbapay.apay_android.ui.pages.card_reader.bl.card_number_detection.OnCameraOpenListener;
-
 public class CameraThread extends Thread {
 
 	private OnCameraOpenListener listener;

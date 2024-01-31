@@ -5,6 +5,7 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.os.SystemClock
 import kz.airbapay.apay_android.ui.pages.card_reader.ScanActivity
+import kz.airbapay.apay_android.ui.pages.card_reader.bl.camera.OnScanListener
 
 internal class ExecutorML(
     private val activity: Activity,

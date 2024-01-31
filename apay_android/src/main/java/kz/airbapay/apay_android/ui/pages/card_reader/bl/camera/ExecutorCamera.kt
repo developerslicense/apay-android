@@ -13,7 +13,6 @@ import android.view.SurfaceView
 import android.widget.FrameLayout
 import kz.airbapay.apay_android.R
 import kz.airbapay.apay_android.ui.pages.card_reader.ScanActivity
-import kz.airbapay.apay_android.ui.pages.card_reader.bl.card_number_detection.OnCameraOpenListener
 import java.io.IOException
 
 internal class ExecutorCamera(

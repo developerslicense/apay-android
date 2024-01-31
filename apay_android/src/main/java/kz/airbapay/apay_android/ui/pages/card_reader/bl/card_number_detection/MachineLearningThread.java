@@ -13,6 +13,8 @@ import android.renderscript.Type;
 
 import java.util.LinkedList;
 
+import kz.airbapay.apay_android.ui.pages.card_reader.bl.camera.OnScanListener;
+
 public class MachineLearningThread implements Runnable {
 
 	class RunArguments {
