@@ -1,5 +1,6 @@
 package kz.airbapay.apay_android.ui.ui_components.edit_text.core
 
+import android.os.Build
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -106,7 +107,7 @@ internal fun ViewEditText(
                     hasFocus = hasFocus.value,
                     text = text.value.text,
                     isError = errorTitle.value != null,
-                    isCardNumberMask = isCardNumberMask,
+                    needCardScanner = isCardNumberMask && (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P),
                     actionClickClear = {
                         text.value = TextFieldValue(
                             text = "",
@@ -142,7 +143,7 @@ internal fun ViewEditText(
 @Composable
 private fun ConstraintLayoutScope.InitIconEnd(
     isError: Boolean,
-    isCardNumberMask: Boolean,
+    needCardScanner: Boolean,
     text: String,
     hasFocus: Boolean,
     actionClickClear: () -> Unit,
@@ -153,7 +154,7 @@ private fun ConstraintLayoutScope.InitIconEnd(
     if (
         text.isNotBlank()
         && hasFocus
-        && !isCardNumberMask
+        && !needCardScanner
     ) {
         InitActionIcon(
             action = actionClickClear,
@@ -168,7 +169,7 @@ private fun ConstraintLayoutScope.InitIconEnd(
             _outlinedButtonColor = if (isError) ColorsSdk.stateBgError else ColorsSdk.bgBlock
         )
 
-    } else if (isCardNumberMask) {
+    } else if (needCardScanner) {
         InitActionIcon(
             action = { actionClickScanCard?.invoke() },
             iconSrc = R.drawable.ic_card_scanner,

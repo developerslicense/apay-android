@@ -29,6 +29,11 @@
             android:noHistory="true"
             android:screenOrientation="portrait"/>
 
+        <activity android:name=".ui.pages.card_scanner.DetectorActivity"
+            android:noHistory="true"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+            android:screenOrientation="portrait"/>
+
         <activity android:name=".ui.pages.home.HomeActivity"
             android:screenOrientation="portrait"/>
 
