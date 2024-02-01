@@ -1,362 +1,307 @@
-package kz.airbapay.apay_android.ui.pages.card_scanner;
+package kz.airbapay.apay_android.ui.pages.card_scanner
 
-import android.Manifest;
-import android.content.Context;
-import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Matrix;
-import android.graphics.Paint;
-import android.graphics.RectF;
-import android.hardware.Camera;
-import android.hardware.camera2.CameraAccessException;
-import android.hardware.camera2.CameraCharacteristics;
-import android.hardware.camera2.CameraManager;
-import android.hardware.camera2.params.StreamConfigurationMap;
-import android.media.Image;
-import android.media.Image.Plane;
-import android.media.ImageReader;
-import android.media.ImageReader.OnImageAvailableListener;
-import android.os.Build;
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.HandlerThread;
-import android.os.Trace;
-import android.util.Size;
-import android.view.Surface;
-import android.view.WindowManager;
-import android.widget.Toast;
+import android.Manifest
+import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Matrix
+import android.graphics.Paint
+import android.hardware.Camera
+import android.hardware.Camera.PreviewCallback
+import android.hardware.camera2.CameraAccessException
+import android.hardware.camera2.CameraCharacteristics
+import android.hardware.camera2.CameraManager
+import android.media.Image.Plane
+import android.media.ImageReader
+import android.os.Build
+import android.os.Bundle
+import android.os.Handler
+import android.os.HandlerThread
+import android.os.Trace
+import android.util.Size
+import android.view.Surface
+import android.view.View
+import android.view.WindowManager
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
+import kz.airbapay.apay_android.R
+import kz.airbapay.apay_android.ui.pages.card_scanner.CameraConnectionFragment.Companion.newInstance
+import kz.airbapay.apay_android.ui.pages.card_scanner.rectangle_detector.Classifier
+import kz.airbapay.apay_android.ui.pages.card_scanner.rectangle_detector.Classifier.Recognition
+import kz.airbapay.apay_android.ui.pages.card_scanner.rectangle_detector.MultiBoxTracker
+import kz.airbapay.apay_android.ui.pages.card_scanner.utils.ImageUtils
+import kz.airbapay.apay_android.ui.pages.card_scanner.view.OverlayView
+import java.util.LinkedList
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
+class CameraActivity : AppCompatActivity(), ImageReader.OnImageAvailableListener, PreviewCallback {
+    private var previewWidth = 0
+    private var previewHeight = 0
+    private var handler: Handler? = null
+    private var handlerThread: HandlerThread? = null
+    private var isProcessingFrame = false
+    private val yuvBytes = arrayOfNulls<ByteArray>(3)
+    private var rgbBytes: IntArray? = null
+    private var yRowStride = 0
+    private var postInferenceCallback: Runnable? = null
+    private var imageConverter: Runnable? = null
+    private var trackingOverlay: OverlayView? = null
+    private val detector: Classifier? = null
+    private var rgbFrameBitmap: Bitmap? = null
+    private var croppedBitmap: Bitmap? = null
+    private var cropCopyBitmap: Bitmap? = null
+    private var computingDetection = false
+    private var timestamp: Long = 0
+    private var frameToCropTransform: Matrix? = null
+    private var cropToFrameTransform: Matrix? = null
+    private var tracker: MultiBoxTracker? = null
+    private val layoutId = R.layout.tfe_od_camera_connection_fragment_tracking
 
-import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-
-import kz.airbapay.apay_android.R;
-import kz.airbapay.apay_android.ui.pages.card_scanner.rectangle_detector.Classifier;
-import kz.airbapay.apay_android.ui.pages.card_scanner.rectangle_detector.MultiBoxTracker;
-import kz.airbapay.apay_android.ui.pages.card_scanner.utils.ImageUtils;
-import kz.airbapay.apay_android.ui.pages.card_scanner.view.OverlayView;
-
-public class CameraActivity extends AppCompatActivity
-        implements OnImageAvailableListener,
-        Camera.PreviewCallback {
-
-    private static final int PERMISSIONS_REQUEST = 1;
-
-    private static final String PERMISSION_CAMERA = Manifest.permission.CAMERA;
-    protected int previewWidth = 0;
-    protected int previewHeight = 0;
-    private Handler handler;
-    private HandlerThread handlerThread;
-    private boolean isProcessingFrame = false;
-    private byte[][] yuvBytes = new byte[3][];
-    private int[] rgbBytes = null;
-    private int yRowStride;
-    private Runnable postInferenceCallback;
-    private Runnable imageConverter;
-
-    private static final int TF_OD_API_INPUT_SIZE = 300;
-    private static final float MINIMUM_CONFIDENCE_TF_OD_API = 0.5f;
-    private static final boolean MAINTAIN_ASPECT = false;
-    private static final Size DESIRED_PREVIEW_SIZE = new Size(640, 480);
-    private static final boolean SAVE_PREVIEW_BITMAP = false;
-    OverlayView trackingOverlay;
-
-    private Classifier detector;
-
-    private Bitmap rgbFrameBitmap = null;
-    private Bitmap croppedBitmap = null;
-    private Bitmap cropCopyBitmap = null;
-
-    private boolean computingDetection = false;
-
-    private long timestamp = 0;
-
-    private Matrix frameToCropTransform;
-    private Matrix cropToFrameTransform;
-
-    private MultiBoxTracker tracker;
-
-    @Override
-    protected void onCreate(final Bundle savedInstanceState) {
-        super.onCreate(null);
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-
-        setContentView(R.layout.tfe_od_activity_camera);
-
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(null)
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        setContentView(R.layout.tfe_od_activity_camera)
         if (hasPermission()) {
-            setFragment();
+            setFragment()
         } else {
-            requestPermission();
+            requestPermission()
         }
     }
 
-    protected int[] getRgbBytes() {
-        imageConverter.run();
-        return rgbBytes;
+    private fun getRgbBytes(): IntArray? {
+        imageConverter!!.run()
+        return rgbBytes
     }
 
     /**
      * Callback for android.hardware.Camera API
      */
-    @Override
-    public void onPreviewFrame(final byte[] bytes, final Camera camera) {
-
+    override fun onPreviewFrame(bytes: ByteArray, camera: Camera) {
         try {
             // Initialize the storage bitmaps once when the resolution is known.
             if (rgbBytes == null) {
-                Camera.Size previewSize = camera.getParameters().getPreviewSize();
-                previewHeight = previewSize.height;
-                previewWidth = previewSize.width;
-                rgbBytes = new int[previewWidth * previewHeight];
-                onPreviewSizeChosen(new Size(previewSize.width, previewSize.height), 90);
+                val previewSize = camera.parameters.previewSize
+                previewHeight = previewSize.height
+                previewWidth = previewSize.width
+                rgbBytes = IntArray(previewWidth * previewHeight)
+                onPreviewSizeChosen(Size(previewSize.width, previewSize.height), 90)
             }
-        } catch (final Exception e) {
-            e.printStackTrace();
-            return;
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return
         }
-
-        isProcessingFrame = true;
-        yuvBytes[0] = bytes;
-        yRowStride = previewWidth;
-
-        imageConverter =
-                () -> ImageUtils.convertYUV420SPToARGB8888(bytes, previewWidth, previewHeight, rgbBytes);
-
-        postInferenceCallback =
-                () -> {
-                    camera.addCallbackBuffer(bytes);
-                    isProcessingFrame = false;
-                };
-        processImage();
+        isProcessingFrame = true
+        yuvBytes[0] = bytes
+        yRowStride = previewWidth
+        imageConverter = Runnable {
+            ImageUtils.convertYUV420SPToARGB8888(
+                bytes,
+                previewWidth,
+                previewHeight,
+                rgbBytes
+            )
+        }
+        postInferenceCallback = Runnable {
+            camera.addCallbackBuffer(bytes)
+            isProcessingFrame = false
+        }
+        processImage()
     }
 
     /**
      * Callback for Camera2 API
      */
-    @Override
-    public void onImageAvailable(final ImageReader reader) {
+    override fun onImageAvailable(reader: ImageReader) {
         // We need wait until we have some size from onPreviewSizeChosen
         if (previewWidth == 0 || previewHeight == 0) {
-            return;
+            return
         }
         if (rgbBytes == null) {
-            rgbBytes = new int[previewWidth * previewHeight];
+            rgbBytes = IntArray(previewWidth * previewHeight)
         }
         try {
-            final Image image = reader.acquireLatestImage();
-
-            if (image == null) {
-                return;
-            }
-
+            val image = reader.acquireLatestImage() ?: return
             if (isProcessingFrame) {
-                image.close();
-                return;
+                image.close()
+                return
             }
-            isProcessingFrame = true;
-            Trace.beginSection("imageAvailable");
-            final Plane[] planes = image.getPlanes();
-            fillBytes(planes, yuvBytes);
-            yRowStride = planes[0].getRowStride();
-            final int uvRowStride = planes[1].getRowStride();
-            final int uvPixelStride = planes[1].getPixelStride();
-
-            imageConverter =
-                    () -> ImageUtils.convertYUV420ToARGB8888(
-                            yuvBytes[0],
-                            yuvBytes[1],
-                            yuvBytes[2],
-                            previewWidth,
-                            previewHeight,
-                            yRowStride,
-                            uvRowStride,
-                            uvPixelStride,
-                            rgbBytes);
-
-            postInferenceCallback =
-                    () -> {
-                        image.close();
-                        isProcessingFrame = false;
-                    };
-
-            processImage();
-        } catch (final Exception e) {
-            e.printStackTrace();
-            Trace.endSection();
-            return;
+            isProcessingFrame = true
+            Trace.beginSection("imageAvailable")
+            val planes = image.planes
+            fillBytes(planes, yuvBytes)
+            yRowStride = planes[0].rowStride
+            val uvRowStride = planes[1].rowStride
+            val uvPixelStride = planes[1].pixelStride
+            imageConverter = Runnable {
+                ImageUtils.convertYUV420ToARGB8888(
+                    yuvBytes[0],
+                    yuvBytes[1],
+                    yuvBytes[2],
+                    previewWidth,
+                    previewHeight,
+                    yRowStride,
+                    uvRowStride,
+                    uvPixelStride,
+                    rgbBytes
+                )
+            }
+            postInferenceCallback = Runnable {
+                image.close()
+                isProcessingFrame = false
+            }
+            processImage()
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Trace.endSection()
+            return
         }
-        Trace.endSection();
+        Trace.endSection()
     }
 
-    @Override
-    public synchronized void onResume() {
-        super.onResume();
-
-        handlerThread = new HandlerThread("inference");
-        handlerThread.start();
-        handler = new Handler(handlerThread.getLooper());
+    @Synchronized
+    public override fun onResume() {
+        super.onResume()
+        handlerThread = HandlerThread("inference")
+        handlerThread!!.start()
+        handler = Handler(handlerThread!!.looper)
     }
 
-    @Override
-    public synchronized void onPause() {
-        handlerThread.quitSafely();
+    @Synchronized
+    public override fun onPause() {
+        handlerThread!!.quitSafely()
         try {
-            handlerThread.join();
-            handlerThread = null;
-            handler = null;
-        } catch (final InterruptedException e) {
-            e.printStackTrace();
+            handlerThread!!.join()
+            handlerThread = null
+            handler = null
+        } catch (e: InterruptedException) {
+            e.printStackTrace()
         }
-
-        super.onPause();
+        super.onPause()
     }
 
-    protected synchronized void runInBackground(final Runnable r) {
+    @Synchronized
+    private fun runInBackground(r: Runnable?) {
         if (handler != null) {
-            handler.post(r);
+            handler!!.post(r!!)
         }
     }
 
-    @Override
-    public void onRequestPermissionsResult(
-            final int requestCode, final String[] permissions, final int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    override fun onRequestPermissionsResult(
+        requestCode: Int, permissions: Array<String>, grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == PERMISSIONS_REQUEST) {
             if (allPermissionsGranted(grantResults)) {
-                setFragment();
+                setFragment()
             } else {
-                requestPermission();
+                requestPermission()
             }
         }
     }
 
-    private static boolean allPermissionsGranted(final int[] grantResults) {
-        for (int result : grantResults) {
-            if (result != PackageManager.PERMISSION_GRANTED) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    private boolean hasPermission() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            return checkSelfPermission(PERMISSION_CAMERA) == PackageManager.PERMISSION_GRANTED;
+    private fun hasPermission(): Boolean {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            checkSelfPermission(PERMISSION_CAMERA) == PackageManager.PERMISSION_GRANTED
         } else {
-            return true;
+            true
         }
     }
 
-    private void requestPermission() {
+    private fun requestPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (shouldShowRequestPermissionRationale(PERMISSION_CAMERA)) {
                 Toast.makeText(
-                                CameraActivity.this,
-                                "Camera permission is required for this demo",
-                                Toast.LENGTH_LONG)
-                        .show();
+                    this@CameraActivity,
+                    "Camera permission is required for this demo",
+                    Toast.LENGTH_LONG
+                )
+                    .show()
             }
-            requestPermissions(new String[]{PERMISSION_CAMERA}, PERMISSIONS_REQUEST);
+            requestPermissions(arrayOf(PERMISSION_CAMERA), PERMISSIONS_REQUEST)
         }
     }
 
     // Returns true if the device supports the required hardware level, or better.
-    private boolean isHardwareLevelSupported(
-            CameraCharacteristics characteristics, int requiredLevel) {
-        int deviceLevel = characteristics.get(CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL);
-        if (deviceLevel == CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL_LEGACY) {
-            return requiredLevel == deviceLevel;
-        }
+    private fun isHardwareLevelSupported(
+        characteristics: CameraCharacteristics, requiredLevel: Int
+    ): Boolean {
+        val deviceLevel = characteristics.get(CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL)!!
+        return if (deviceLevel == CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL_LEGACY) {
+            requiredLevel == deviceLevel
+        } else requiredLevel <= deviceLevel
         // deviceLevel is not LEGACY, can use numerical sort
-        return requiredLevel <= deviceLevel;
     }
 
-    private String chooseCamera() {
-        final CameraManager manager = (CameraManager) getSystemService(Context.CAMERA_SERVICE);
+    private fun chooseCamera(): String? {
+        val manager = getSystemService(CAMERA_SERVICE) as CameraManager
         try {
-            for (final String cameraId : manager.getCameraIdList()) {
-                final CameraCharacteristics characteristics = manager.getCameraCharacteristics(cameraId);
+            for (cameraId in manager.cameraIdList) {
+                val characteristics = manager.getCameraCharacteristics(cameraId)
 
                 // We don't use a front facing camera in this sample.
-                final Integer facing = characteristics.get(CameraCharacteristics.LENS_FACING);
+                val facing = characteristics.get(CameraCharacteristics.LENS_FACING)
                 if (facing != null && facing == CameraCharacteristics.LENS_FACING_FRONT) {
-                    continue;
+                    continue
                 }
-
-                final StreamConfigurationMap map =
-                        characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
-
-                if (map == null) {
-                    continue;
-                }
-
-                return cameraId;
+                val map = characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP)
+                    ?: continue
+                return cameraId
             }
-        } catch (CameraAccessException e) {
-            e.printStackTrace();
+        } catch (e: CameraAccessException) {
+            e.printStackTrace()
         }
-
-        return null;
+        return null
     }
 
-    protected void setFragment() {
-        String cameraId = chooseCamera();
-
-        Fragment fragment;
-        CameraConnectionFragment camera2Fragment =
-                CameraConnectionFragment.newInstance(
-                        (size, rotation) -> {
-                            previewHeight = size.getHeight();
-                            previewWidth = size.getWidth();
-                            CameraActivity.this.onPreviewSizeChosen(size, rotation);
-                        },
-                        this,
-                        getLayoutId(),
-                        getDesiredPreviewFrameSize());
-
-        camera2Fragment.setCamera(cameraId);
-        fragment = camera2Fragment;
-
-        getSupportFragmentManager().beginTransaction().replace(R.id.container, fragment).commit();
+    private fun setFragment() {
+        val cameraId = chooseCamera()
+        val fragment: Fragment
+        val camera2Fragment = newInstance(
+            { size: Size, rotation: Int ->
+                previewHeight = size.height
+                previewWidth = size.width
+                onPreviewSizeChosen(size, rotation)
+                null
+            },
+            this,
+            layoutId,
+            desiredPreviewFrameSize
+        )
+        camera2Fragment.setCamera(cameraId)
+        fragment = camera2Fragment
+        supportFragmentManager.beginTransaction().replace(R.id.container, fragment).commit()
     }
 
-    protected void fillBytes(final Plane[] planes, final byte[][] yuvBytes) {
+    private fun fillBytes(planes: Array<Plane>, yuvBytes: Array<ByteArray?>) {
         // Because of the variable row stride it's not possible to know in
         // advance the actual necessary dimensions of the yuv planes.
-        for (int i = 0; i < planes.length; ++i) {
-            final ByteBuffer buffer = planes[i].getBuffer();
+        for (i in planes.indices) {
+            val buffer = planes[i].buffer
             if (yuvBytes[i] == null) {
-                yuvBytes[i] = new byte[buffer.capacity()];
+                yuvBytes[i] = ByteArray(buffer.capacity())
             }
-            buffer.get(yuvBytes[i]);
+            buffer[yuvBytes[i]]
         }
     }
 
-    protected void readyForNextImage() {
+    private fun readyForNextImage() {
         if (postInferenceCallback != null) {
-            postInferenceCallback.run();
+            postInferenceCallback!!.run()
         }
     }
 
-    protected int getScreenOrientation() {
-        return switch (getWindowManager().getDefaultDisplay().getRotation()) {
-            case Surface.ROTATION_270 -> 270;
-            case Surface.ROTATION_180 -> 180;
-            case Surface.ROTATION_90 -> 90;
-            default -> 0;
-        };
-    }
+    private val screenOrientation: Int
+        private get() = when (windowManager.defaultDisplay.rotation) {
+            Surface.ROTATION_270 -> 270
+            Surface.ROTATION_180 -> 180
+            Surface.ROTATION_90 -> 90
+            else -> 0
+        }
 
-    private void onPreviewSizeChosen(final Size size, final int rotation) {
-
-        tracker = new MultiBoxTracker(this);
-        int cropSize = TF_OD_API_INPUT_SIZE;
+    private fun onPreviewSizeChosen(size: Size, rotation: Int) {
+        tracker = MultiBoxTracker(this)
+        val cropSize = TF_OD_API_INPUT_SIZE
 
         /*
         try {
@@ -375,93 +320,91 @@ public class CameraActivity extends AppCompatActivity
                             getApplicationContext(), "Classifier could not be initialized", Toast.LENGTH_SHORT);
             toast.show();
             finish();
-        } */
-
-        previewWidth = size.getWidth();
-        previewHeight = size.getHeight();
-
-        int sensorOrientation = rotation - getScreenOrientation();
-
-        rgbFrameBitmap = Bitmap.createBitmap(previewWidth, previewHeight, Bitmap.Config.ARGB_8888);
-        croppedBitmap = Bitmap.createBitmap(cropSize, cropSize, Bitmap.Config.ARGB_8888);
-
-        frameToCropTransform =
-                ImageUtils.getTransformationMatrix(
-                        previewWidth, previewHeight,
-                        cropSize, cropSize,
-                        sensorOrientation, MAINTAIN_ASPECT);
-
-        cropToFrameTransform = new Matrix();
-        frameToCropTransform.invert(cropToFrameTransform);
-
-        trackingOverlay = (OverlayView) findViewById(R.id.tracking_overlay);
-        trackingOverlay.addCallback(canvas -> tracker.draw(canvas));
-
-        tracker.setFrameConfiguration(previewWidth, previewHeight, sensorOrientation);
+        } */previewWidth = size.width
+        previewHeight = size.height
+        val sensorOrientation = rotation - screenOrientation
+        rgbFrameBitmap = Bitmap.createBitmap(previewWidth, previewHeight, Bitmap.Config.ARGB_8888)
+        croppedBitmap = Bitmap.createBitmap(cropSize, cropSize, Bitmap.Config.ARGB_8888)
+        frameToCropTransform = ImageUtils.getTransformationMatrix(
+            previewWidth, previewHeight,
+            cropSize, cropSize,
+            sensorOrientation, MAINTAIN_ASPECT
+        )
+        cropToFrameTransform = Matrix()
+        frameToCropTransform?.invert(cropToFrameTransform)
+        trackingOverlay = findViewById<View>(R.id.tracking_overlay) as OverlayView
+        trackingOverlay!!.addCallback { canvas: Canvas? -> tracker!!.draw(canvas) }
+        tracker!!.setFrameConfiguration(previewWidth, previewHeight, sensorOrientation)
     }
 
-    private void processImage() {
-        ++timestamp;
-        final long currTimestamp = timestamp;
-        trackingOverlay.postInvalidate();
+    private fun processImage() {
+        ++timestamp
+        val currTimestamp = timestamp
+        trackingOverlay!!.postInvalidate()
 
         // No mutex needed as this method is not reentrant.
         if (computingDetection) {
-            readyForNextImage();
-            return;
+            readyForNextImage()
+            return
         }
-        computingDetection = true;
-
-        rgbFrameBitmap.setPixels(getRgbBytes(), 0, previewWidth, 0, 0, previewWidth, previewHeight);
-
-        readyForNextImage();
-
-        final Canvas canvas = new Canvas(croppedBitmap);
-        canvas.drawBitmap(rgbFrameBitmap, frameToCropTransform, null);
+        computingDetection = true
+        rgbFrameBitmap!!.setPixels(
+            getRgbBytes()!!,
+            0,
+            previewWidth,
+            0,
+            0,
+            previewWidth,
+            previewHeight
+        )
+        readyForNextImage()
+        val canvas = Canvas(croppedBitmap!!)
+        canvas.drawBitmap(rgbFrameBitmap!!, frameToCropTransform!!, null)
         // For examining the actual TF input.
         if (SAVE_PREVIEW_BITMAP) {
-            ImageUtils.saveBitmap(croppedBitmap);
+            ImageUtils.saveBitmap(croppedBitmap)
         }
-
-        runInBackground(
-                () -> {
-                    final List<Classifier.Recognition> results = new ArrayList<>();// todo !!! //detector.recognizeImage(croppedBitmap);
-
-                    cropCopyBitmap = Bitmap.createBitmap(croppedBitmap);
-                    final Canvas canvas1 = new Canvas(cropCopyBitmap);
-                    final Paint paint = new Paint();
-                    paint.setColor(Color.RED);
-                    paint.setStyle(Paint.Style.STROKE);
-                    paint.setStrokeWidth(2.0f);
-
-                    final List<Classifier.Recognition> mappedRecognitions =
-                            new LinkedList<>();
-
-                    for (final Classifier.Recognition result : results) {
-                        final RectF location = result.getLocation();
-                        if (location != null && result.getConfidence() >= MINIMUM_CONFIDENCE_TF_OD_API) {
-                            canvas1.drawRect(location, paint);
-
-                            cropToFrameTransform.mapRect(location);
-
-                            result.setLocation(location);
-                            mappedRecognitions.add(result);
-                        }
-                    }
-
-                    tracker.trackResults(mappedRecognitions, currTimestamp);
-                    trackingOverlay.postInvalidate();
-
-                    computingDetection = false;
-
-                });
+        runInBackground {
+            val results: List<Recognition> =
+                ArrayList() // todo !!! //detector.recognizeImage(croppedBitmap);
+            cropCopyBitmap = Bitmap.createBitmap(croppedBitmap!!)
+            val canvas1 = Canvas(cropCopyBitmap!!)
+            val paint = Paint()
+            paint.color = Color.RED
+            paint.style = Paint.Style.STROKE
+            paint.strokeWidth = 2.0f
+            val mappedRecognitions: MutableList<Recognition> = LinkedList()
+            for (result in results) {
+                val location = result.location
+                if (location != null && result.confidence >= MINIMUM_CONFIDENCE_TF_OD_API) {
+                    canvas1.drawRect(location, paint)
+                    cropToFrameTransform!!.mapRect(location)
+                    result.location = location
+                    mappedRecognitions.add(result)
+                }
+            }
+            tracker!!.trackResults(mappedRecognitions, currTimestamp)
+            trackingOverlay!!.postInvalidate()
+            computingDetection = false
+        }
     }
 
-    private int getLayoutId() {
-        return R.layout.tfe_od_camera_connection_fragment_tracking;
+    private fun allPermissionsGranted(grantResults: IntArray): Boolean {
+        for (result in grantResults) {
+            if (result != PackageManager.PERMISSION_GRANTED) {
+                return false
+            }
+        }
+        return true
     }
-
-    private Size getDesiredPreviewFrameSize() {
-        return DESIRED_PREVIEW_SIZE;
+    
+    companion object {
+        private const val PERMISSIONS_REQUEST = 1
+        private const val PERMISSION_CAMERA = Manifest.permission.CAMERA
+        private const val TF_OD_API_INPUT_SIZE = 300
+        private const val MINIMUM_CONFIDENCE_TF_OD_API = 0.5f
+        private const val MAINTAIN_ASPECT = false
+        private val desiredPreviewFrameSize = Size(640, 480)
+        private const val SAVE_PREVIEW_BITMAP = false
     }
 }

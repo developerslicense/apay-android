@@ -29,14 +29,13 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import kz.airbapay.apay_android.R
-import kz.airbapay.apay_android.ui.pages.card_scanner.camera.ConnectionCallback
 import kz.airbapay.apay_android.ui.pages.card_scanner.view.AutoFitTextureView
 import java.util.Collections
 import java.util.concurrent.Semaphore
 import java.util.concurrent.TimeUnit
 
 open class CameraConnectionFragment private constructor(
-    private val cameraConnectionCallback: ConnectionCallback,
+    private val cameraConnectionCallback: (size: Size, rotation: Int) -> Unit,
     private val imageListener: ImageReader.OnImageAvailableListener,
     private val layout: Int,
     private val inputSize: Size
@@ -181,7 +180,7 @@ open class CameraConnectionFragment private constructor(
             e.printStackTrace()
             showToast()
         }
-        cameraConnectionCallback.onPreviewSizeChosen(previewSize!!, sensorOrientation!!)
+        cameraConnectionCallback.invoke(previewSize!!, sensorOrientation!!)
     }
 
     /**
@@ -422,7 +421,7 @@ open class CameraConnectionFragment private constructor(
 
         @JvmStatic
         fun newInstance(
-            callback: ConnectionCallback,
+            callback: (size: Size, rotation: Int) -> Unit,
             imageListener: ImageReader.OnImageAvailableListener,
             layout: Int,
             inputSize: Size
