@@ -1,71 +1,67 @@
-package kz.airbapay.apay_android.ui.pages.card_reader.bl.rectangle_detection;
+package kz.airbapay.apay_android.ui.pages.card_reader.bl.rectangle_detection
 
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.Rect;
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Paint
+import com.google.mlkit.vision.common.InputImage
+import com.google.mlkit.vision.objects.DetectedObject
+import com.google.mlkit.vision.objects.ObjectDetection
+import com.google.mlkit.vision.objects.ObjectDetector
+import com.google.mlkit.vision.objects.defaults.ObjectDetectorOptions
+import com.google.mlkit.vision.objects.defaults.PredefinedCategory
+import kz.airbapay.apay_android.ui.pages.card_reader.bl.camera.OnRectangleListener
 
-import com.google.mlkit.vision.common.InputImage;
-import com.google.mlkit.vision.objects.DetectedObject;
-import com.google.mlkit.vision.objects.ObjectDetection;
-import com.google.mlkit.vision.objects.ObjectDetector;
-import com.google.mlkit.vision.objects.defaults.ObjectDetectorOptions;
-import com.google.mlkit.vision.objects.defaults.PredefinedCategory;
+class RectangleDetector(listener: OnRectangleListener) {
+    var objectDetector: ObjectDetector
+    var listener: OnRectangleListener
 
-import kz.airbapay.apay_android.ui.pages.card_reader.bl.camera.OnRectangleListener;
-
-public class RectangleDetector {
-    ObjectDetector objectDetector;
-    OnRectangleListener listener;
-
-    public RectangleDetector(OnRectangleListener listener) {
-        ObjectDetectorOptions options =
-                new ObjectDetectorOptions.Builder()
-                        .setDetectorMode(ObjectDetectorOptions.SINGLE_IMAGE_MODE)
-                        .enableMultipleObjects()
-                        .enableClassification()  // ◄◄ OPTIONAL
-                        .build();
+    init {
+        val options = ObjectDetectorOptions.Builder()
+            .setDetectorMode(ObjectDetectorOptions.SINGLE_IMAGE_MODE)
+            .enableMultipleObjects()
+            .enableClassification() // ◄◄ OPTIONAL
+            .build()
 
 
         // (STEP 1-2 - "OBJECT DETECTION") "INSTANTIATION" OF "OBJECT DETECTOR":
-        objectDetector = ObjectDetection.getClient(options);
-        this.listener = listener;
+        objectDetector = ObjectDetection.getClient(options)
+        this.listener = listener
     }
 
-    public void doObjectDetection(Bitmap rotated) {
+    fun doObjectDetection(rotated: Bitmap) {
 //        Bitmap inputImage = uriToBitmap(image_uri);
 //        Bitmap rotated = rotateBitmap(inputImage);
 
 
         // (STEP 4-2.1 → "OBJEC T DETECTION") CREATING "MUTABLE COBY" OF "ROTATED" BITMAP:
-        Bitmap mutable = rotated.copy(Bitmap.Config.ARGB_8888, true);
+        val mutable = rotated.copy(Bitmap.Config.ARGB_8888, true)
 
         // (STEP 4-2.2 → "OBJECT DETECTION") CREATING "CANVAS" OBJECT:
-        Canvas canvas = new Canvas(mutable);
+        val canvas = Canvas(mutable)
 
         // (STEP 4-2.3 → "OBJECT DETECTION") CREATING A "PAINT" OBJECT:
-        Paint paint = new Paint();
+        val paint = Paint()
 
         // (STEP 4-2.4 → "OBJECT DETECTION") "SETTING" THE "RECTANGLE COLOR":
-        paint.setColor(Color.RED);
+        paint.color = Color.RED
 
         // (STEP 4-2.5 → "OBJECT DETECTION") "SETTING" THE "RECTANGLE STYLE":
-        paint.setStyle(Paint.Style.STROKE);
+        paint.style = Paint.Style.STROKE
 
         // (STEP 4-2.6 → "OBJECT DETECTION") "SETTING" THE "STROKE WIDTH":
-        paint.setStrokeWidth(3);
+        paint.strokeWidth = 3f
 
 
         // ▼ "DRAWING" THE "TEXT" ▼
         // (STEP 5-1.1 → "OBJECT DETECTION") CREATING A "PAINT" OBJECT FOR THE "TEXT":
-        Paint paint2 = new Paint();
+        val paint2 = Paint()
 
         // (STEP 5-1.2 → "OBJECT DETECTION") "SETTING" THE "TEXT COLOR":
-        paint2.setColor(Color.YELLOW);
+        paint2.color = Color.YELLOW
 
         // (STEP 5-1.3 → "OBJECT DETECTION") "SETTING" THE "TEXT SIZE":
-        paint2.setTextSize(18);
+        paint2.textSize = 18f
 
 
 //        innerImage.setImageBitmap(rotated);
@@ -73,68 +69,55 @@ public class RectangleDetector {
 
         // (STEP 2 - "OBJECT DETECTION") "PERFORMING" "INPUT IMAGE"
         //      → USING "BITMAP" AS "INPUT IMAGE":
-        InputImage image = InputImage.fromBitmap(rotated, 0);
+        val image = InputImage.fromBitmap(rotated, 0)
 
 
         // (STEP 3 - "OBJECT DETECTION") "PROCESS" THE "IMAGE":
         objectDetector.process(image)
-                .addOnSuccessListener(
-                        detectedObjects -> {
-                            System.out.println("rrrrrrrrrr");
-                            // (STEP 4-1 → "OBJECT DETECTION") "GETTING INFORMATION" ABOUT "DETECTED OBJECTS":
-                            //      → WHICH CONTAIN "ONE ITEM"
-                            //      → IF "MULTIPLE OBJECT DETECTION" WASN'T "ENABLED":
-                            // ▼ LOOPING FOR "RECTANGLE" ▼
-                            for (DetectedObject detectedObject : detectedObjects) {
-                                Rect boundingBox = detectedObject.getBoundingBox();
+            .addOnSuccessListener { detectedObjects: List<DetectedObject> ->
+                println("rrrrrrrrrr")
+                // (STEP 4-1 → "OBJECT DETECTION") "GETTING INFORMATION" ABOUT "DETECTED OBJECTS":
+                //      → WHICH CONTAIN "ONE ITEM"
+                //      → IF "MULTIPLE OBJECT DETECTION" WASN'T "ENABLED":
+                // ▼ LOOPING FOR "RECTANGLE" ▼
+                for (detectedObject in detectedObjects) {
+                    val boundingBox = detectedObject.boundingBox
 
 
-                                // (STEP 4-3 → "OBJECT DETECTION") "DRAWING" A "RECTANGLE" ON "CANVAS":
-                                canvas.drawRect(boundingBox, paint);
+                    // (STEP 4-3 → "OBJECT DETECTION") "DRAWING" A "RECTANGLE" ON "CANVAS":
+                    canvas.drawRect(boundingBox, paint)
 
 
-                                // ▼ LOOPING FOR "LABEL" ▼
-                                for (DetectedObject.Label label : detectedObject.getLabels()) {
-                                    String text = label.getText();
+                    // ▼ LOOPING FOR "LABEL" ▼
+                    for (label in detectedObject.labels) {
+                        val text = label.text
 
-                                    // (STEP 5-2 → "OBJECT DETECTION") "DRAWING" A "TEXT" ON "CANVAS":
-                                    canvas.drawText(
-                                            text,
-                                            boundingBox.left,
-                                            boundingBox.top,
-                                            paint2
-                                    );
-
-
-                                    if (PredefinedCategory.FOOD.equals(text)) {
-
-                                    }
-
-                                    int index = label.getIndex();
-
-                                    if (PredefinedCategory.FOOD_INDEX == index) {
-
-                                    }
-
-                                    float confidence = label.getConfidence();
-                                    break;
-                                }
-                            }
+                        // (STEP 5-2 → "OBJECT DETECTION") "DRAWING" A "TEXT" ON "CANVAS":
+                        canvas.drawText(
+                            text,
+                            boundingBox.left.toFloat(),
+                            boundingBox.top.toFloat(),
+                            paint2
+                        )
+                        if (PredefinedCategory.FOOD == text) {
+                        }
+                        val index = label.index
+                        if (PredefinedCategory.FOOD_INDEX == index) {
+// todo проблемы:
+//  1) вызывается один раз
+//  2) выделяется все, что не поподя.
+//  3) нужно как-то прямоугольник вписать в превьюшку, а не вырезанное изображение
+                        }
+                        val confidence = label.confidence
+                        break
+                    }
+                }
 
 
-                            // (STEP 4-4 → "OBJECT DETECTION") SHOWING "MUTABLE" IN THE "INNER IMAGE":
+                // (STEP 4-4 → "OBJECT DETECTION") SHOWING "MUTABLE" IN THE "INNER IMAGE":
 //                                innerImage.setImageBitmap(mutable);
-                            listener.onRectangleFound(mutable);
-
-                        })
-
-                .addOnFailureListener(
-                        e -> {
-                            System.out.println("eeeeeeeee");
-
-                            // Task failed with an exception
-                            // ...
-                        });
+                listener.onRectangleFound(mutable)
+            }
+            .addOnFailureListener { e: Exception? -> println("eeeeeeeee") }
     }
-
 }
