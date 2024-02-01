@@ -29,13 +29,16 @@ class RectangleDetector(listener: OnRectangleListener) {
         this.listener = listener
     }
 
-    fun doObjectDetection(rotated: Bitmap) {
+    fun doObjectDetection(
+        detectedImage: Bitmap,
+        mlAction: () -> Unit
+    ) {
 //        Bitmap inputImage = uriToBitmap(image_uri);
 //        Bitmap rotated = rotateBitmap(inputImage);
 
 
         // (STEP 4-2.1 → "OBJEC T DETECTION") CREATING "MUTABLE COBY" OF "ROTATED" BITMAP:
-        val mutable = rotated.copy(Bitmap.Config.ARGB_8888, true)
+        val mutable = detectedImage.copy(Bitmap.Config.ARGB_8888, true)
 
         // (STEP 4-2.2 → "OBJECT DETECTION") CREATING "CANVAS" OBJECT:
         val canvas = Canvas(mutable)
@@ -69,7 +72,7 @@ class RectangleDetector(listener: OnRectangleListener) {
 
         // (STEP 2 - "OBJECT DETECTION") "PERFORMING" "INPUT IMAGE"
         //      → USING "BITMAP" AS "INPUT IMAGE":
-        val image = InputImage.fromBitmap(rotated, 0)
+        val image = InputImage.fromBitmap(detectedImage, 0)
 
 
         // (STEP 3 - "OBJECT DETECTION") "PROCESS" THE "IMAGE":
@@ -117,6 +120,8 @@ class RectangleDetector(listener: OnRectangleListener) {
                 // (STEP 4-4 → "OBJECT DETECTION") SHOWING "MUTABLE" IN THE "INNER IMAGE":
 //                                innerImage.setImageBitmap(mutable);
                 listener.onRectangleFound(mutable)
+
+//                mlAction()  //todo !!!
             }
             .addOnFailureListener { e: Exception? -> println("eeeeeeeee") }
     }

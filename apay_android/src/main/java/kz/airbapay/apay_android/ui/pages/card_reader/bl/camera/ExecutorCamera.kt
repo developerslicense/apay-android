@@ -22,6 +22,7 @@ internal class ExecutorCamera(
 ) : Camera.PreviewCallback, OnCameraOpenListener {
 
     var mRoiCenterYRatio = 0f
+
     // set when this activity posts to the machineLearningThread
     private var mPredictionStartMs: Long = 0
     var mIsPermissionCheckDone = false
@@ -80,7 +81,8 @@ internal class ExecutorCamera(
 
     private fun setCameraDisplayOrientation(
         activity: Activity,
-        cameraId: Int, camera: Camera
+        cameraId: Int,
+        camera: Camera
     ) {
         val info = Camera.CameraInfo()
         Camera.getCameraInfo(cameraId, info)
@@ -108,32 +110,37 @@ internal class ExecutorCamera(
     }
 
     override fun onPreviewFrame(bytes: ByteArray, camera: Camera) {
-        if (tryAcquire()) {
-            val mlThread = ScanActivity.machineLearningThread
-            val parameters = camera.parameters
-            val width = parameters.previewSize.width
-            val height = parameters.previewSize.height
-            mPredictionStartMs = SystemClock.uptimeMillis()
+        val mlThread = ScanActivity.machineLearningThread
+        val parameters = camera.parameters
+        val width = parameters.previewSize.width
+        val height = parameters.previewSize.height
+        mPredictionStartMs = SystemClock.uptimeMillis()
 
-            // Use the application context here because the machine learning thread's lifecycle
-            // is connected to the application and not this activity
+        // Use the application context here because the machine learning thread's lifecycle
+        // is connected to the application and not this activity
 
-            System.out.println("aaaaaaaaaaaaaaaaaaaaaaaa onPreviewFrame")
-            val image = ImageConverterUtils.getBitmap(
-                bytes,
-                width,
-                height,
-                mRotation,
-                mRoiCenterYRatio,
-                activity.applicationContext
-            )
+        System.out.println("aaaaaaaaaaaaaaaaaaaaaaaa onPreviewFrame")
+        val image = ImageConverterUtils.getBitmap(
+            bytes,
+            width,
+            height,
+            mRotation,
+            mRoiCenterYRatio,
+            activity.applicationContext
+        )
 
-            activity.rectangleDetector?.doObjectDetection(image)
-           /* mlThread!!.post(
-                bytes, width, height, mRotation, activity.executorML,
-                activity.applicationContext, mRoiCenterYRatio
-            )*/
-        }
+        activity.rectangleDetector?.doObjectDetection(
+            detectedImage = image,
+            mlAction = {
+                if (tryAcquire()) {
+                    mlThread!!.post(
+                        bytes, width, height, mRotation, activity.executorML,
+                        activity.applicationContext, mRoiCenterYRatio
+                    )
+                }
+            }
+        )
+
     }
 
 
