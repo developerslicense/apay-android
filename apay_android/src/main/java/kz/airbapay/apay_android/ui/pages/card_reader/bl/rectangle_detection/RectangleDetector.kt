@@ -9,7 +9,6 @@ import com.google.mlkit.vision.objects.DetectedObject
 import com.google.mlkit.vision.objects.ObjectDetection
 import com.google.mlkit.vision.objects.ObjectDetector
 import com.google.mlkit.vision.objects.defaults.ObjectDetectorOptions
-import com.google.mlkit.vision.objects.defaults.PredefinedCategory
 import kz.airbapay.apay_android.ui.pages.card_reader.bl.camera.OnRectangleListener
 
 class RectangleDetector(listener: OnRectangleListener) {
@@ -90,9 +89,12 @@ class RectangleDetector(listener: OnRectangleListener) {
                     // (STEP 4-3 → "OBJECT DETECTION") "DRAWING" A "RECTANGLE" ON "CANVAS":
                     canvas.drawRect(boundingBox, paint)
 
+// todo проблемы:
+//  2) выделяется все, что не поподя.
+//  3) нужно как-то прямоугольник вписать в превьюшку, а не вырезанное изображение
 
                     // ▼ LOOPING FOR "LABEL" ▼
-                    for (label in detectedObject.labels) {
+                   /* for (label in detectedObject.labels) {
                         val text = label.text
 
                         // (STEP 5-2 → "OBJECT DETECTION") "DRAWING" A "TEXT" ON "CANVAS":
@@ -106,13 +108,10 @@ class RectangleDetector(listener: OnRectangleListener) {
                         }
                         val index = label.index
                         if (PredefinedCategory.FOOD_INDEX == index) {
-// todo проблемы:
-//  2) выделяется все, что не поподя.
-//  3) нужно как-то прямоугольник вписать в превьюшку, а не вырезанное изображение
                         }
                         val confidence = label.confidence
                         break
-                    }
+                    }*/
                 }
 
 
