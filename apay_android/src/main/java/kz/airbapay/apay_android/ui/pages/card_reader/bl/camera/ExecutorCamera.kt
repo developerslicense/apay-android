@@ -66,8 +66,7 @@ internal class ExecutorCamera(
         try {
             if (mIsPermissionCheckDone) {
                 if (mCameraThread == null) {
-                    mCameraThread =
-                        CameraThread()
+                    mCameraThread = CameraThread()
                     mCameraThread!!.start()
                 }
                 mCameraThread!!.startCamera(this)

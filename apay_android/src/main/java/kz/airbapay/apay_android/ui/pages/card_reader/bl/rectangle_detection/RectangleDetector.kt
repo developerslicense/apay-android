@@ -13,8 +13,8 @@ import com.google.mlkit.vision.objects.defaults.PredefinedCategory
 import kz.airbapay.apay_android.ui.pages.card_reader.bl.camera.OnRectangleListener
 
 class RectangleDetector(listener: OnRectangleListener) {
-    var objectDetector: ObjectDetector
-    var listener: OnRectangleListener
+    private var objectDetector: ObjectDetector
+    private var listener: OnRectangleListener
 
     init {
         val options = ObjectDetectorOptions.Builder()
@@ -37,7 +37,7 @@ class RectangleDetector(listener: OnRectangleListener) {
 //        Bitmap rotated = rotateBitmap(inputImage);
 
 
-        // (STEP 4-2.1 → "OBJEC T DETECTION") CREATING "MUTABLE COBY" OF "ROTATED" BITMAP:
+        // (STEP 4-2.1 → "OBJECT T DETECTION") CREATING "MUTABLE COBY" OF "ROTATED" BITMAP:
         val mutable = detectedImage.copy(Bitmap.Config.ARGB_8888, true)
 
         // (STEP 4-2.2 → "OBJECT DETECTION") CREATING "CANVAS" OBJECT:
@@ -107,7 +107,6 @@ class RectangleDetector(listener: OnRectangleListener) {
                         val index = label.index
                         if (PredefinedCategory.FOOD_INDEX == index) {
 // todo проблемы:
-//  1) вызывается один раз
 //  2) выделяется все, что не поподя.
 //  3) нужно как-то прямоугольник вписать в превьюшку, а не вырезанное изображение
                         }
@@ -123,6 +122,6 @@ class RectangleDetector(listener: OnRectangleListener) {
 
 //                mlAction()  //todo !!!
             }
-            .addOnFailureListener { e: Exception? -> println("eeeeeeeee") }
+            .addOnFailureListener { e: Exception -> e.printStackTrace() }
     }
 }
