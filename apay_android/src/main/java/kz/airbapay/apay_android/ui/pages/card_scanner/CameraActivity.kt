@@ -115,9 +115,9 @@ internal class CameraActivity : AppCompatActivity(),
             },
             imageListener = this,
             layout = layoutId,
-            inputSize = Size(640, 480)
+            inputSize = Size(640, 480),
+            cameraId = cameraId
         )
-        camera2Fragment.setCamera(cameraId)
         fragment = camera2Fragment
         supportFragmentManager.beginTransaction().replace(R.id.container, fragment).commit()
     }
