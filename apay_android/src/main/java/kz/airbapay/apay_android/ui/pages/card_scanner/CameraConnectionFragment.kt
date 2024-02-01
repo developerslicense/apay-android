@@ -34,7 +34,7 @@ import java.util.Collections
 import java.util.concurrent.Semaphore
 import java.util.concurrent.TimeUnit
 
-open class CameraConnectionFragment private constructor(
+internal class CameraConnectionFragment private constructor(
     private val cameraConnectionCallback: (size: Size, rotation: Int) -> Unit,
     private val imageListener: ImageReader.OnImageAvailableListener,
     private val layout: Int,
@@ -68,6 +68,7 @@ open class CameraConnectionFragment private constructor(
     private var previewReader: ImageReader? = null
     private var previewRequestBuilder: CaptureRequest.Builder? = null
     private var previewRequest: CaptureRequest? = null
+
     private val stateCallback: CameraDevice.StateCallback = object : CameraDevice.StateCallback() {
         override fun onOpened(cd: CameraDevice) {
             // This method is called when the camera is opened.  We start camera preview here.
@@ -91,25 +92,16 @@ open class CameraConnectionFragment private constructor(
         }
     }
 
-    /**
-     * [TextureView.SurfaceTextureListener] handles several lifecycle events on a [ ].
-     */
     private val surfaceTextureListener: SurfaceTextureListener = object : SurfaceTextureListener {
-        override fun onSurfaceTextureAvailable(
-            texture: SurfaceTexture, width: Int, height: Int
-        ) {
+        override fun onSurfaceTextureAvailable(texture: SurfaceTexture, width: Int, height: Int) {
             openCamera(width, height)
         }
 
-        override fun onSurfaceTextureSizeChanged(
-            texture: SurfaceTexture, width: Int, height: Int
-        ) {
+        override fun onSurfaceTextureSizeChanged(texture: SurfaceTexture, width: Int, height: Int) {
             configureTransform(width, height)
         }
 
-        override fun onSurfaceTextureDestroyed(texture: SurfaceTexture): Boolean {
-            return true
-        }
+        override fun onSurfaceTextureDestroyed(texture: SurfaceTexture) = true
 
         override fun onSurfaceTextureUpdated(texture: SurfaceTexture) {}
     }
@@ -264,9 +256,8 @@ open class CameraConnectionFragment private constructor(
             val surface = Surface(texture)
 
             // We set up a CaptureRequest.Builder with the output Surface.
-            previewRequestBuilder =
-                cameraDevice!!.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW)
-            previewRequestBuilder!!.addTarget(surface)
+            previewRequestBuilder = cameraDevice!!.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW)
+            previewRequestBuilder?.addTarget(surface)
 
             // Create the reader for the preview frames.
             previewReader = ImageReader.newInstance(
@@ -388,7 +379,7 @@ open class CameraConnectionFragment private constructor(
          * @param height  The minimum desired height
          * @return The optimal `Size`, or an arbitrary one if none were big enough
          */
-        protected fun chooseOptimalSize(choices: Array<Size?>, width: Int, height: Int): Size {
+        private fun chooseOptimalSize(choices: Array<Size?>, width: Int, height: Int): Size {
             val minSize = Math.max(Math.min(width, height), MINIMUM_PREVIEW_SIZE)
             val desiredSize = Size(width, height)
 
@@ -419,7 +410,6 @@ open class CameraConnectionFragment private constructor(
             }
         }
 
-        @JvmStatic
         fun newInstance(
             callback: (size: Size, rotation: Int) -> Unit,
             imageListener: ImageReader.OnImageAvailableListener,

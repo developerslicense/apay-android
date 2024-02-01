@@ -35,7 +35,7 @@ import kz.airbapay.apay_android.ui.pages.card_scanner.utils.ImageUtils
 import kz.airbapay.apay_android.ui.pages.card_scanner.view.OverlayView
 import java.util.LinkedList
 
-class CameraActivity : AppCompatActivity(), ImageReader.OnImageAvailableListener, PreviewCallback {
+internal class CameraActivity : AppCompatActivity(), ImageReader.OnImageAvailableListener, PreviewCallback {
     private var previewWidth = 0
     private var previewHeight = 0
     private var handler: Handler? = null
