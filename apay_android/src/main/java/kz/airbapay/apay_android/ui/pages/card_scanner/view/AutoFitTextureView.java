@@ -38,7 +38,7 @@ public class AutoFitTextureView extends TextureView {
     requestLayout();
   }
 
-  @Override
+/*  @Override //todo нужно ли?
   protected void onMeasure(final int widthMeasureSpec, final int heightMeasureSpec) {
     super.onMeasure(widthMeasureSpec, heightMeasureSpec);
     final int width = MeasureSpec.getSize(widthMeasureSpec);
@@ -52,5 +52,5 @@ public class AutoFitTextureView extends TextureView {
         setMeasuredDimension(height * ratioWidth / ratioHeight, height);
       }
     }
-  }
+  }*/
 }
