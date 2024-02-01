@@ -8,7 +8,7 @@ import com.google.gson.annotations.SerializedName
 import kz.airbapay.apay_android.data.utils.DataHolder
 import kz.airbapay.apay_android.data.utils.Money
 import kz.airbapay.apay_android.network.repository.Repository
-import kz.airbapay.apay_android.ui.pages.card_scanner.DetectorActivity
+import kz.airbapay.apay_android.ui.pages.card_scanner.CameraActivity
 import kz.airbapay.apay_android.ui.resources.ColorsSdk
 
 class AirbaPaySdk {
@@ -128,7 +128,7 @@ fun startAirbaPay(
 ) {
     if (DataHolder.baseUrl.isNotEmpty()) {
         DataHolder.redirectToCustomSuccessPage = redirectToCustomSuccessPage
-        activity.startActivity(Intent(activity, DetectorActivity::class.java))
+        activity.startActivity(Intent(activity, CameraActivity::class.java))
 //        activity.startActivity(Intent(activity, StartProcessingActivity::class.java))
     } else {
         println("Не выполнено initOnCreate")

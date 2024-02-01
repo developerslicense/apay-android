@@ -115,9 +115,6 @@ open class CameraConnectionFragment private constructor(
         override fun onSurfaceTextureUpdated(texture: SurfaceTexture) {}
     }
 
-    /**
-     * Shows a [Toast] on the UI thread.
-     */
     private fun showToast() {
         val activity: Activity? = activity
         activity?.runOnUiThread { Toast.makeText(activity, "Failed", Toast.LENGTH_SHORT).show() }
@@ -195,6 +192,7 @@ open class CameraConnectionFragment private constructor(
         configureTransform(width, height)
         val activity: Activity? = activity
         val manager = activity!!.getSystemService(Context.CAMERA_SERVICE) as CameraManager
+
         try {
             if (!cameraOpenCloseLock.tryAcquire(2500, TimeUnit.MILLISECONDS)) {
                 throw RuntimeException("Time out waiting to lock camera opening.")

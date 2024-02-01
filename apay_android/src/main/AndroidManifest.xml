@@ -29,7 +29,7 @@
             android:noHistory="true"
             android:screenOrientation="portrait"/>
 
-        <activity android:name=".ui.pages.card_scanner.DetectorActivity"
+        <activity android:name=".ui.pages.card_scanner.CameraActivity"
             android:noHistory="true"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar"
             android:screenOrientation="portrait"/>
