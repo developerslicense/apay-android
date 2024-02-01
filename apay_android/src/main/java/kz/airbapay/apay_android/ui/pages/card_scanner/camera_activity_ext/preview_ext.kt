@@ -3,6 +3,7 @@ package kz.airbapay.apay_android.ui.pages.card_scanner.camera_activity_ext
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Matrix
+import android.hardware.Camera
 import android.hardware.camera2.CameraAccessException
 import android.hardware.camera2.CameraCharacteristics
 import android.hardware.camera2.CameraManager
@@ -15,6 +16,38 @@ import kz.airbapay.apay_android.ui.pages.card_scanner.CameraActivity
 import kz.airbapay.apay_android.ui.pages.card_scanner.rectangle_detector.MultiBoxTracker
 import kz.airbapay.apay_android.ui.pages.card_scanner.utils.ImageUtils
 import kz.airbapay.apay_android.ui.pages.card_scanner.view.OverlayView
+
+internal fun CameraActivity.onPreviewFrameImpl(camera: Camera, bytes: ByteArray) {
+    try {
+        // Initialize the storage bitmaps once when the resolution is known.
+        if (rgbBytes == null) {
+            val previewSize = camera.parameters.previewSize
+            previewHeight = previewSize.height
+            previewWidth = previewSize.width
+            rgbBytes = IntArray(previewWidth * previewHeight)
+            onPreviewSizeChosen(Size(previewSize.width, previewSize.height), 90)
+        }
+    } catch (e: Exception) {
+        e.printStackTrace()
+        return
+    }
+    isProcessingFrame = true
+    yuvBytes[0] = bytes
+    yRowStride = previewWidth
+    imageConverter = Runnable {
+        ImageUtils.convertYUV420SPToARGB8888(
+            bytes,
+            previewWidth,
+            previewHeight,
+            rgbBytes
+        )
+    }
+    postInferenceCallback = Runnable {
+        camera.addCallbackBuffer(bytes)
+        isProcessingFrame = false
+    }
+    processImage()
+}
 
 internal fun CameraActivity.onPreviewSizeChosen(
     size: Size,
