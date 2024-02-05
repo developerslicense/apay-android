@@ -138,8 +138,8 @@ internal fun orPayWithCard() = getStrFromRes(
 )
 
 internal fun payAnotherCard() = getStrFromRes(
-    payAnotherCardRu,
-    payAnotherCardKz
+    "Другая карта",
+    "Басқа карта"
 )
 
 internal fun accessToCardRestricted() = getStrFromRes(

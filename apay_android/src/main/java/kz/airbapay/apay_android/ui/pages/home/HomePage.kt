@@ -43,6 +43,7 @@ import kz.airbapay.apay_android.data.utils.MaskUtils
 import kz.airbapay.apay_android.data.utils.backToStartPage
 import kz.airbapay.apay_android.data.utils.card_utils.getCardTypeFromNumber
 import kz.airbapay.apay_android.data.utils.openCardScanner
+import kz.airbapay.apay_android.data.utils.openGooglePay
 import kz.airbapay.apay_android.network.repository.Repository
 import kz.airbapay.apay_android.ui.pages.card_reader.ScanActivity
 import kz.airbapay.apay_android.ui.pages.dialogs.InitDialogExit
@@ -54,9 +55,10 @@ import kz.airbapay.apay_android.ui.pages.home.presentation.CvvBottomSheet
 import kz.airbapay.apay_android.ui.pages.home.presentation.CvvView
 import kz.airbapay.apay_android.ui.pages.home.presentation.DateExpiredView
 import kz.airbapay.apay_android.ui.pages.home.presentation.SwitchedView
-import kz.airbapay.apay_android.ui.pages.home.presentation.TopInfoView
 import kz.airbapay.apay_android.ui.resources.ColorsSdk
 import kz.airbapay.apay_android.ui.ui_components.BackHandler
+import kz.airbapay.apay_android.ui.ui_components.GPayView
+import kz.airbapay.apay_android.ui.ui_components.TopInfoView
 import kz.airbapay.apay_android.ui.ui_components.ViewButton
 import kz.airbapay.apay_android.ui.ui_components.ViewToolbar
 
@@ -172,6 +174,17 @@ internal fun HomePage(
 
 
                 TopInfoView(purchaseAmount.value)
+
+                if (DataHolder.featureGooglePay) {
+                    GPayView(
+                        openGooglePay = {
+                            openGooglePay(
+                                redirectUrl = DataHolder.googlePayButtonUrl,
+                                activity = activity
+                            )
+                        }
+                    )
+                }
 
                 Spacer(modifier = Modifier.height(16.dp))
                 CardNumberView(

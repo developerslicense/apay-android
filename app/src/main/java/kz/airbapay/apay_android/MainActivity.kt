@@ -25,21 +25,6 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        AirbaPaySdk.initOnCreate(
-            context = this.application,
-            isProd = false,
-            accountId = "77051111118",
-            phone = "77051111117",
-            shopId = "test-merchant",
-            lang = AirbaPaySdk.Lang.RU,
-            password = "123456",
-            terminalId = "64216e7ccc4a48db060dd689",
-            failureCallback = "https://site.kz/failure-clb",
-            successCallback = "https://site.kz/success-clb",
-            userEmail = "test@test.com",
-            colorBrandMain = Color(0xFFFC6B3F)
-        )
-
         setContent {
 
             Apay_androidTheme {
@@ -58,6 +43,20 @@ class MainActivity : ComponentActivity() {
                             .fillMaxWidth()
                             .padding(vertical = 50.dp, horizontal = 50.dp),
                         onClick = {
+                            AirbaPaySdk.initOnCreate(
+                                context = this@MainActivity.application,
+                                isProd = false,
+                                accountId = "77051111118", // "77061111113", //
+                                phone = "77051111117",
+                                shopId = "test-merchant",
+                                lang = AirbaPaySdk.Lang.RU,
+                                password = "123456",
+                                terminalId = "64216e7ccc4a48db060dd689",
+                                failureCallback = "https://site.kz/failure-clb",
+                                successCallback = "https://site.kz/success-clb",
+                                userEmail = "test@test.com",
+                                colorBrandMain = Color(0xFFFC6B3F)
+                            )
                             initProcessing()
                             startAirbaPay(
                                 activity = this@MainActivity,

@@ -37,7 +37,7 @@ internal class AuthRepository(
 
 internal fun startAuth(
     authRepository: AuthRepository,
-    onResult: () -> Unit,
+    onSuccess: () -> Unit,
     onError: () -> Unit,
     paymentId: String? = null
 ) {
@@ -51,7 +51,7 @@ internal fun startAuth(
     authRepository.auth(
         param = authRequest,
         result = {
-            onResult()
+            onSuccess()
         },
         error = {
             onError()

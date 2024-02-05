@@ -30,10 +30,19 @@ internal fun startPaymentProcessing(
             pan = getNumberCleared(cardNumber),
             cardSave = saveCard,
             error = {
-                openErrorPageWithCondition(
-                    errorCode = ErrorsCode.error_1.code,
-                    activity = activity
-                )
+
+                if (it.errorBody()?.string()?.contains("invalid pan") == true) {
+                    openErrorPageWithCondition(
+                        errorCode = ErrorsCode.error_5002.code,
+                        activity = activity
+                    )
+
+                } else {
+                    openErrorPageWithCondition(
+                        errorCode = ErrorsCode.error_1.code,
+                        activity = activity
+                    )
+                }
             },
             result = { entryResponse ->
                 if (entryResponse.errorCode != "0") {
