@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.ModalBottomSheetLayout
+import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -131,22 +132,15 @@ internal fun HomePage(
     val purchaseAmount = DataHolder.purchaseAmountFormatted.collectAsState()
 
     BackHandler {
-        coroutineScope.launch {
-            if (sheetState.isVisible) sheetState.hide()
-            else if (
-                dateExpiredText.value.text.isNotBlank()
-                || cardNumberText.value.text.isNotBlank()
-                || cvvText.value.text.isNotBlank()
-            ) {
-                showDialogExit.value = true
-
-            } else if(!DataHolder.featureSavedCards || !DataHolder.hasSavedCards) {
-                DataHolder.frontendCallback?.invoke(activity, false)
-
-            } else {
-                backToStartPage(activity)
-            }
-        }
+        onBackPressed(
+            sheetState = sheetState,
+            dateExpiredText = dateExpiredText,
+            cardNumberText = cardNumberText,
+            cvvText = cvvText,
+            showDialogExit = showDialogExit,
+            activity = activity,
+            coroutineScope = coroutineScope
+        )
     }
 
     ModalBottomSheetLayout(
@@ -170,12 +164,15 @@ internal fun HomePage(
                     title = paymentOfPurchase(),
                     backIcon = R.drawable.ic_arrow_back,
                     actionBack = {
-                        if (
-                            dateExpiredText.value.text.isNotBlank()
-                            || cardNumberText.value.text.isNotBlank()
-                            || cvvText.value.text.isNotBlank()
-                        ) showDialogExit.value = true
-                        else backToStartPage(activity)
+                        onBackPressed(
+                            sheetState = sheetState,
+                            dateExpiredText = dateExpiredText,
+                            cardNumberText = cardNumberText,
+                            cvvText = cvvText,
+                            showDialogExit = showDialogExit,
+                            activity = activity,
+                            coroutineScope = coroutineScope
+                        )
                     }
                 )
 
@@ -300,6 +297,33 @@ internal fun HomePage(
             )
         }
 
+    }
+}
+
+private fun onBackPressed(
+    sheetState: ModalBottomSheetState,
+    dateExpiredText: MutableState<TextFieldValue>,
+    cardNumberText: MutableState<TextFieldValue>,
+    cvvText: MutableState<TextFieldValue>,
+    showDialogExit: MutableState<Boolean>,
+    activity: Activity,
+    coroutineScope: CoroutineScope
+) {
+
+    if (sheetState.isVisible) coroutineScope.launch { sheetState.hide() }
+    else if (
+        dateExpiredText.value.text.isNotBlank()
+        || cardNumberText.value.text.isNotBlank()
+        || cvvText.value.text.isNotBlank()
+    ) {
+        showDialogExit.value = true
+
+    } else if (!DataHolder.featureSavedCards || !DataHolder.hasSavedCards) {
+        DataHolder.frontendCallback?.invoke(activity, false)
+        activity.finishAffinity()
+
+    } else {
+        backToStartPage(activity)
     }
 }
 
