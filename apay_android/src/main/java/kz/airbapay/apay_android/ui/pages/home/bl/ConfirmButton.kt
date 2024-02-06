@@ -6,6 +6,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kz.airbapay.apay_android.data.constant.ErrorsCode
 import kz.airbapay.apay_android.data.constant.initErrorsCodeByCode
+import kz.airbapay.apay_android.data.utils.DataHolder
 import kz.airbapay.apay_android.data.utils.getNumberCleared
 import kz.airbapay.apay_android.data.utils.openAcquiring
 import kz.airbapay.apay_android.data.utils.openErrorPageWithCondition
@@ -22,6 +23,7 @@ internal fun startPaymentProcessing(
     coroutineScope: CoroutineScope
 ) {
     isLoading.value = true
+    DataHolder.isGooglePayFlow = false
 
     coroutineScope.launch {
         Repository.paymentsRepository?.startPaymentDefault(

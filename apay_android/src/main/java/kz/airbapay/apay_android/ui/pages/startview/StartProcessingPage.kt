@@ -68,6 +68,11 @@ internal class StartProcessingActivity : ComponentActivity() {
             )
         }
     }
+
+    override fun onResume() {
+        super.onResume()
+        DataHolder.isGooglePayFlow = true
+    }
 }
 
 @Composable

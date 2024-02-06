@@ -35,7 +35,9 @@ internal class AcquiringClient(
     override fun onPageFinished(view: WebView?, url: String?) {
         super.onPageFinished(view, url)
         messageLog("onPageFinished, $url")
-        inProgress.value = false
+        if (url?.contains("https://forward.airbapay.kz") == false) {
+            inProgress.value = false
+        }
     }
 
     override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {

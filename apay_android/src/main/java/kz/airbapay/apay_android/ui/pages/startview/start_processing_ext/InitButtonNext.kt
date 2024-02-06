@@ -10,6 +10,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import kz.airbapay.apay_android.data.constant.payAmount
 import kz.airbapay.apay_android.data.model.BankCard
+import kz.airbapay.apay_android.data.utils.DataHolder
 import kz.airbapay.apay_android.data.utils.recomposeHighlighter
 import kz.airbapay.apay_android.ui.pages.startview.bl.checkNeedCvv
 import kz.airbapay.apay_android.ui.ui_components.ViewButton
@@ -39,6 +40,7 @@ internal fun InitViewStartProcessingButtonNext(
                 coroutineScope = coroutineScope,
                 onFailed = {},
                 onSuccess = {
+                    DataHolder.isGooglePayFlow = false
                     isLoading.value = true
                     checkNeedCvv(
                         activity = activity,

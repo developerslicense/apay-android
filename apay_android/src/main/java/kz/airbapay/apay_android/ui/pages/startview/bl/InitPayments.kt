@@ -20,22 +20,16 @@ internal fun initPayments(
             )
         },
         result = { response ->
-
-            if (DataHolder.featureGooglePay) {
-                authForGooglePay(
-                    paymentCreateResponse = response,
-                    activity = activity,
-                    onGooglePayResult = onGooglePayResult
-                )
-
-            } else {
-                onGooglePayResult(null)
-            }
+            authWithPaymentIdAndForGooglePay(
+                paymentCreateResponse = response,
+                activity = activity,
+                onGooglePayResult = onGooglePayResult
+            )
         }
     )
 }
 
-private fun authForGooglePay(
+private fun authWithPaymentIdAndForGooglePay(
     paymentCreateResponse: PaymentCreateResponse,
     activity: Activity,
     onGooglePayResult: (String?) -> Unit,
@@ -50,7 +44,12 @@ private fun authForGooglePay(
             )
         },
         onSuccess = {
-            loadGooglePayButton(onGooglePayResult)
+            if (DataHolder.featureGooglePay) {
+                loadGooglePayButton(onGooglePayResult)
+
+            } else {
+                onGooglePayResult(null)
+            }
         }
     )
 }

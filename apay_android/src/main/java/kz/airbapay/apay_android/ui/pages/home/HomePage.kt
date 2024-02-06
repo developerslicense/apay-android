@@ -137,8 +137,15 @@ internal fun HomePage(
                 dateExpiredText.value.text.isNotBlank()
                 || cardNumberText.value.text.isNotBlank()
                 || cvvText.value.text.isNotBlank()
-            ) showDialogExit.value = true
-            else backToStartPage(activity)
+            ) {
+                showDialogExit.value = true
+
+            } else if(!DataHolder.featureSavedCards || !DataHolder.hasSavedCards) {
+                DataHolder.frontendCallback?.invoke(activity, false)
+
+            } else {
+                backToStartPage(activity)
+            }
         }
     }
 

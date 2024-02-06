@@ -84,6 +84,7 @@ private fun fetchCards(
         },
         result = {
             savedCards.value = it
+            DataHolder.hasSavedCards = it.isNotEmpty()
 
             if (it.isEmpty()) {
                 openHome(activity)

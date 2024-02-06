@@ -42,4 +42,7 @@ internal object DataHolder {
   var featureSavedCards: Boolean = false
 
   var googlePayButtonUrl: String? = null
+  var isGooglePayFlow: Boolean = true
+
+  var hasSavedCards: Boolean = false
 }
