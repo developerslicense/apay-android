@@ -1,12 +1,10 @@
-package kz.airbapay.apay_android.ui.pages.home.presentation
+package kz.airbapay.apay_android.ui.ui_components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
@@ -45,40 +43,44 @@ internal fun TopInfoView(
             )
             .padding(16.dp)
     ) {
-        InitRow(
-            textStart = amountOfPurchase(),
-            textEnd = purchaseAmount.orEmpty(),
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-        InitRow(
-            textStart = numberOfPurchase(),
-            textEnd = DataHolder.orderNumber
-        )
+        Row(
+            horizontalArrangement = Arrangement.SpaceBetween,
+            modifier = Modifier
+                .recomposeHighlighter()
+                .fillMaxWidth()
+        ) {
+            Text(
+                text = amountOfPurchase(),
+                textAlign = TextAlign.Start,
+                style = LocalFonts.current.regular
+            )
+            Text(
+                text = purchaseAmount.orEmpty(),
+                textAlign = TextAlign.End,
+                style = LocalFonts.current.semiBold,
+                modifier = Modifier.recomposeHighlighter()
+            )
+        }
+
+        Row(
+            horizontalArrangement = Arrangement.SpaceBetween,
+            modifier = Modifier
+                .recomposeHighlighter()
+                .fillMaxWidth()
+                .padding(top = 8.dp)
+        ) {
+            Text(
+                text = numberOfPurchase(),
+                textAlign = TextAlign.Start,
+                style = LocalFonts.current.regular
+            )
+            Text(
+                text = DataHolder.orderNumber,
+                textAlign = TextAlign.End,
+                style = LocalFonts.current.semiBold,
+                modifier = Modifier.recomposeHighlighter()
+            )
+        }
     }
 }
 
-@Composable
-private fun InitRow(
-    textStart: String = "",
-    textEnd: String = "",
-) {
-    Row(
-        horizontalArrangement = Arrangement.SpaceBetween,
-        modifier = Modifier
-            .recomposeHighlighter()
-            .fillMaxWidth()
-    ) {
-        Text(
-            text = textStart,
-            textAlign = TextAlign.Start,
-            style = LocalFonts.current.regular,
-            modifier = Modifier.recomposeHighlighter()
-        )
-        Text(
-            text = textEnd,
-            textAlign = TextAlign.End,
-            style = LocalFonts.current.semiBold,
-            modifier = Modifier.recomposeHighlighter()
-        )
-    }
-}

@@ -61,7 +61,7 @@ internal class GooglePayClient(
                 }
             }
             timer?.start()
-        } else {
+        } else if (url?.contains("https://forward.airbapay.kz") == false) {
             inProgress.value = false
         }
 

@@ -17,7 +17,6 @@ import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -37,52 +36,53 @@ import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kz.airbapay.apay_android.R
+import kz.airbapay.apay_android.data.constant.ErrorsCode
 import kz.airbapay.apay_android.data.constant.cvvInfo
 import kz.airbapay.apay_android.data.constant.paymentByCard
 import kz.airbapay.apay_android.data.model.BankCard
-import kz.airbapay.apay_android.data.utils.AirbaPayBiometric
 import kz.airbapay.apay_android.data.utils.DataHolder
+import kz.airbapay.apay_android.data.utils.openErrorPageWithCondition
 import kz.airbapay.apay_android.data.utils.openGooglePay
 import kz.airbapay.apay_android.data.utils.recomposeHighlighter
 import kz.airbapay.apay_android.network.repository.Repository
 import kz.airbapay.apay_android.network.repository.startAuth
-import kz.airbapay.apay_android.ui.pages.startview.bl.initPayments
+import kz.airbapay.apay_android.ui.pages.startview.bl.fetchMerchantsWithNextStep
 import kz.airbapay.apay_android.ui.pages.startview.start_processing_ext.EnterCvvBottomSheet
-import kz.airbapay.apay_android.ui.pages.startview.start_processing_ext.InitErrorState
-import kz.airbapay.apay_android.ui.pages.startview.start_processing_ext.InitViewStartProcessingAmount
 import kz.airbapay.apay_android.ui.pages.startview.start_processing_ext.InitViewStartProcessingButtonNext
 import kz.airbapay.apay_android.ui.pages.startview.start_processing_ext.InitViewStartProcessingCards
-import kz.airbapay.apay_android.ui.pages.startview.start_processing_ext.InitViewStartProcessingGPay
 import kz.airbapay.apay_android.ui.resources.ColorsSdk
 import kz.airbapay.apay_android.ui.ui_components.BackHandler
+import kz.airbapay.apay_android.ui.ui_components.GPayView
 import kz.airbapay.apay_android.ui.ui_components.ProgressBarView
+import kz.airbapay.apay_android.ui.ui_components.TopInfoView
 import kz.airbapay.apay_android.ui.ui_components.ViewToolbar
 
 internal class StartProcessingActivity : ComponentActivity() {
-    private val isAuthenticated = mutableStateOf(DataHolder.isAuthenticated)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         setContent {
             StartProcessingPage(
-                isAuthenticated = isAuthenticated,
                 actionClose = { this@StartProcessingActivity.finish() }
             )
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        DataHolder.isGooglePayFlow = true
     }
 }
 
 @Composable
 internal fun StartProcessingPage(
     actionClose: () -> Unit,
-    backgroundColor: Color = ColorsSdk.bgBlock,
-    isAuthenticated: MutableState<Boolean>
+    backgroundColor: Color = ColorsSdk.bgBlock
 ) {
     val sheetState = rememberModalBottomSheetState(
         initialValue = ModalBottomSheetValue.Hidden,
         confirmValueChange = { false },
-//        confirmValueChange = { it != ModalBottomSheetValue.HalfExpanded },
         skipHalfExpanded = true
     )
 
@@ -99,7 +99,6 @@ internal fun StartProcessingPage(
 
     val purchaseAmount = DataHolder.purchaseAmountFormatted.collectAsState()
 
-    val isError = remember { mutableStateOf(false) }
     val size = remember { mutableStateOf(IntSize.Zero) }
     val isLoading = remember { mutableStateOf(true) }
     val selectedCard = rememberSaveable { mutableStateOf<BankCard?>(null) }
@@ -175,13 +174,10 @@ internal fun StartProcessingPage(
                             actionBack = actionClose
                         )
 
-                        if (isError.value) {
-                            InitErrorState()
+                        TopInfoView(purchaseAmount.value)
 
-                        } else {
-                            InitViewStartProcessingAmount(purchaseAmount.value)
-
-                            InitViewStartProcessingGPay(
+                        if (DataHolder.featureGooglePay) {
+                            GPayView(
                                 openGooglePay = {
                                     openGooglePay(
                                         redirectUrl = googlePayRedirectUrl.value,
@@ -189,37 +185,33 @@ internal fun StartProcessingPage(
                                     )
                                 }
                             )
+                        }
 
-                            if (savedCards.value.isNotEmpty()
-                                && isAuthenticated.value
-                            ) {
-                                InitViewStartProcessingCards(
-                                    savedCards = savedCards.value,
-                                    selectedCard = selectedCard,
-                                    selectedIndex = selectedIndex
-                                )
-                            }
-
-                            InitViewStartProcessingButtonNext(
-                                isLoading = isLoading,
+                        if (savedCards.value.isNotEmpty()) {
+                            InitViewStartProcessingCards(
                                 savedCards = savedCards.value,
-                                purchaseAmount = purchaseAmount.value,
-                                isAuthenticated = isAuthenticated.value,
                                 selectedCard = selectedCard,
-                                showCvv = {
-                                    coroutineScope.launch {
-                                        sheetState.show()
-                                        cvvFocusRequester.requestFocus()
-
-                                        val def = coroutineScope.async(IO) {
-                                            Thread.sleep(1000)
-                                            isLoading.value = false
-                                        }
-                                        def.start()
-                                    }
-                                }
+                                selectedIndex = selectedIndex
                             )
                         }
+
+                        InitViewStartProcessingButtonNext(
+                            isLoading = isLoading,
+                            purchaseAmount = purchaseAmount.value,
+                            selectedCard = selectedCard,
+                            showCvv = {
+                                coroutineScope.launch {
+                                    sheetState.show()
+                                    cvvFocusRequester.requestFocus()
+
+                                    val def = coroutineScope.async(IO) {
+                                        Thread.sleep(1000)
+                                        isLoading.value = false
+                                    }
+                                    def.start()
+                                }
+                            }
+                        )
                     }
                 }
 
@@ -233,52 +225,23 @@ internal fun StartProcessingPage(
 
             LaunchedEffect("CardRepository") {
 
-                if (!DataHolder.isAuthenticated) {
-                    val airbaPayBiometric = AirbaPayBiometric(activity)
-                    airbaPayBiometric.authenticate(
-                        onSuccess = {
-                            DataHolder.isAuthenticated = true
-                            isAuthenticated.value = true
-                        },
-                        onError = {
-                            DataHolder.isAuthenticated = false
-                            isAuthenticated.value = false
-                        }
-                    )
-                }
-
                 launch {
-                    isError.value = false
 
                     startAuth(
                         authRepository = Repository.authRepository!!,
                         onError = {
-                            isError.value = true
-                            isLoading.value = false
-                        },
-                        onResult = {
-
-                            Repository.cardRepository?.getCards(
-                                accountId = DataHolder.accountId,
-                                error = {
-                                    isLoading.value = false
-                                },
-                                result = {
-                                    isLoading.value = false
-                                    savedCards.value = it
-
-                                    if (it.isNotEmpty()) {
-                                        selectedCard.value = it[0]
-                                    }
-                                }
+                            openErrorPageWithCondition(
+                                errorCode = ErrorsCode.error_1.code,
+                                activity = activity
                             )
-
-                            initPayments(
+                        },
+                        onSuccess = {
+                            fetchMerchantsWithNextStep(
                                 activity = activity,
-                                isLoading = isLoading,
-                                onGooglePayLoadSuccess = { url ->
-                                    googlePayRedirectUrl.value = url
-                                }
+                                googlePayRedirectUrl = googlePayRedirectUrl,
+                                savedCards = savedCards,
+                                selectedCard = selectedCard,
+                                isLoading = isLoading
                             )
                         }
                     )
@@ -287,5 +250,3 @@ internal fun StartProcessingPage(
         }
     }
 }
-
-

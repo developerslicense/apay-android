@@ -93,7 +93,7 @@ internal fun AcquiringPage(
                     }
                 },
                 update = {
-                    it.loadPage(url)
+//                    it.loadPage(url)
                 }
             )
         }

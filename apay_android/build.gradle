@@ -28,7 +28,7 @@ android {
         mlModelBinding true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion '1.4.3'
+        kotlinCompilerExtensionVersion '1.5.6' // '1.4.3'
     }
 
     compileOptions {
@@ -172,7 +172,7 @@ dependencies {
 }
 
 group 'kz.airbapay' // this is your groupId
-version '1.0.20' // this is your version
+version '1.0.24' // this is your version
 
 ext { // this are variables
     pomGroupId = group

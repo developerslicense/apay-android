@@ -34,7 +34,7 @@ internal fun validateCardNumWithLuhnAlgorithm(
     val input = getNumberCleared(
         amount = number,
     )
-    if ((input.length) < 16) {
+    if ((input.length) < 15) {
         return false
     }
 

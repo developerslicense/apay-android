@@ -6,6 +6,7 @@ import kz.airbapay.apay_android.data.model.CardsGetResponse
 import kz.airbapay.apay_android.data.model.CardsPanResponse
 import kz.airbapay.apay_android.data.model.GetCvvResponse
 import kz.airbapay.apay_android.data.model.GooglePayButtonResponse
+import kz.airbapay.apay_android.data.model.MerchantsResponse
 import kz.airbapay.apay_android.data.model.PaymentCreateResponse
 import kz.airbapay.apay_android.data.model.PaymentEntryResponse
 import retrofit2.Response
@@ -59,4 +60,7 @@ internal interface Api {
     suspend fun getCvv(
         @Path("cardId") cardId: String
     ): Response<GetCvvResponse>
+
+    @GET("api/v1/merchants")
+    suspend fun getMerchantInfo(): Response<MerchantsResponse>
 }
