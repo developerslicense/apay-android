@@ -62,4 +62,24 @@ internal class CardRepository(
             next()
         }
     }
+
+    fun deleteCard(
+        cardId: String,
+        result: (Any) -> Unit,
+        error: (Response<*>) -> Unit
+    ) {
+        launch(
+            requestFlow = {
+                safeApiFlowCall {
+                    api.deleteCard(cardId)
+                }
+            },
+            result = { body ->
+                body.body()?.let {
+                    result(it)
+                } ?: error(Unit)
+            },
+            error = error
+        )
+    }
 }
