@@ -100,6 +100,23 @@ class TestActivity : ComponentActivity() {
                             .padding(horizontal = 50.dp),
                         onClick = {
                             isLoading.value = true
+
+                            AirbaPaySdk.initOnCreate(
+                                context = this@TestActivity.application,
+                                isProd = false,
+                                accountId = "77051111111",
+                                phone = "77051111117",
+                                shopId = "test-merchant",
+                                lang = AirbaPaySdk.Lang.RU,
+                                password = "123456",
+                                terminalId = "64216e7ccc4a48db060dd689",
+                                failureCallback = "https://site.kz/failure-clb",
+                                successCallback = "https://site.kz/success-clb",
+                                userEmail = "test@test.com",
+                                colorBrandMain = Color(0xFFFC6B3F),
+                                autoCharge = if (autoCharge.value) 1 else 0
+                            )
+
                             val authRequest = AuthRequest(
                                 paymentId = null,
                                 password = DataHolder.password,
