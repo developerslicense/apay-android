@@ -234,11 +234,13 @@ internal fun HomePage(
                 }
 
 
-                Spacer(modifier = Modifier.height(24.dp))
-                SwitchedView(
-                    text = saveCardData(),
-                    switchCheckedState = switchSaveCard,
-                )
+                if (DataHolder.featureSavedCards) {
+                    Spacer(modifier = Modifier.height(24.dp))
+                    SwitchedView(
+                        text = saveCardData(),
+                        switchCheckedState = switchSaveCard,
+                    )
+                }
 
                 BottomImages()
 

@@ -4,6 +4,7 @@ import android.app.Activity
 import androidx.compose.runtime.MutableState
 import kz.airbapay.apay_android.data.model.BankCard
 import kz.airbapay.apay_android.data.utils.DataHolder
+import kz.airbapay.apay_android.data.utils.TestAirbaPayStates
 import kz.airbapay.apay_android.data.utils.openHome
 import kz.airbapay.apay_android.network.repository.Repository
 
@@ -17,8 +18,17 @@ internal fun fetchMerchantsWithNextStep(
 ) {
     Repository.merchantRepository?.getMerchantInfo(
         result = { response ->
-            DataHolder.featureSavedCards = response.configuration?.renderSaveCards ?: false
-            DataHolder.featureGooglePay = response.configuration?.renderGooglePayButton ?: false
+            DataHolder.featureSavedCards = if (TestAirbaPayStates.shutDownTestFeatureSavedCards) {
+                false
+            } else {
+                response.configuration?.renderSaveCards ?: false
+            }
+
+            DataHolder.featureGooglePay = if (TestAirbaPayStates.shutDownTestFeatureGooglePay) {
+                false
+            } else {
+                response.configuration?.renderGooglePayButton ?: false
+            }
 
             initPaymentsWithNextStep(
                 activity = activity,

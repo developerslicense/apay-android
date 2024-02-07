@@ -11,6 +11,7 @@ import kz.airbapay.apay_android.data.model.PaymentCreateResponse
 import kz.airbapay.apay_android.data.model.PaymentEntryResponse
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.PUT
@@ -29,6 +30,9 @@ internal interface Api {
 
     @GET("api/v1/cards/info-by-pan/{pan}")
     suspend fun getCardsBank(@Path("pan") pan: String): Response<CardsPanResponse>
+
+    @DELETE("api/v1/cards/{id}")
+    suspend fun deleteCard(@Path("id") cardId: String): Response<Any>
 
     // google pay
 

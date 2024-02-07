@@ -28,6 +28,7 @@ internal object DataHolder {
   var failureCallback = ""
   var successBackUrl = ""
   var successCallback = ""
+  var autoCharge = 0
   var currentLang = AirbaPaySdk.Lang.RU.lang
 
   var goods: List<AirbaPaySdk.Goods>? = null
@@ -45,4 +46,9 @@ internal object DataHolder {
   var isGooglePayFlow: Boolean = true
 
   var hasSavedCards: Boolean = false
+}
+
+object TestAirbaPayStates {
+  var shutDownTestFeatureGooglePay: Boolean = false
+  var shutDownTestFeatureSavedCards: Boolean = false
 }

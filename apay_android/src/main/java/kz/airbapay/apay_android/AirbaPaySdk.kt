@@ -61,6 +61,7 @@ class AirbaPaySdk {
             userEmail: String? = null,
             colorBrandMain: Color? = null,
             colorBrandInversion: Color? = null,
+            autoCharge: Int = 0
         ) {
 
             if (colorBrandInversion != null) {
@@ -92,6 +93,7 @@ class AirbaPaySdk {
             DataHolder.shopId = shopId
             DataHolder.password = password
             DataHolder.terminalId = terminalId
+            DataHolder.autoCharge = autoCharge
 
             DataHolder.currentLang = lang.lang
 
