@@ -62,6 +62,7 @@ class TestActivity : ComponentActivity() {
                             .fillMaxWidth()
                             .padding(horizontal = 50.dp),
                         onClick = {
+                            DataHolder.hasSavedCards = featureSavedCards.value
                             TestAirbaPayStates.shutDownTestFeatureGooglePay = !featureGooglePay.value
                             TestAirbaPayStates.shutDownTestFeatureSavedCards = !featureSavedCards.value
 

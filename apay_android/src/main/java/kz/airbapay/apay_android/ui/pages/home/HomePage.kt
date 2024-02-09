@@ -179,7 +179,7 @@ internal fun HomePage(
 
                 TopInfoView(purchaseAmount.value)
 
-                if (DataHolder.featureGooglePay) {
+                if (DataHolder.featureGooglePay && !DataHolder.hasSavedCards) {
                     GPayView(
                         openGooglePay = {
                             openGooglePay(
