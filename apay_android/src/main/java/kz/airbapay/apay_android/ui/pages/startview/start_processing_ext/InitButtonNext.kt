@@ -8,10 +8,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import kz.airbapay.apay_android.data.constant.payAmount
 import kz.airbapay.apay_android.data.model.BankCard
-import kz.airbapay.apay_android.data.utils.DataHolder
 import kz.airbapay.apay_android.ui.pages.startview.bl.checkNeedCvv
 import kz.airbapay.apay_android.ui.ui_components.ViewButton
-import kz.airbapay.apay_android.ui.ui_components.initAuth
 
 @Composable
 internal fun InitViewStartProcessingButtonNext(
@@ -27,31 +25,12 @@ internal fun InitViewStartProcessingButtonNext(
     ViewButton(
         title = "${payAmount()} $purchaseAmount",
         actionClick = {
-            initAuth(
+            checkNeedCvv(
                 activity = activity,
-                coroutineScope = coroutineScope,
-                onFailed = {},
-                onSuccess = {
-                    DataHolder.isGooglePayFlow = false
-                    isLoading.value = true
-                    checkNeedCvv(
-                        activity = activity,
-                        cardId = selectedCard.value?.id ?: "",
-                        showCvv = showCvv,
-                        noAuth = false,
-                        isLoading = isLoading
-                    )
-                },
-                onNotSecurity = {
-                    DataHolder.isGooglePayFlow = false
-                    checkNeedCvv(
-                        activity = activity,
-                        cardId = selectedCard.value?.id ?: "",
-                        showCvv = showCvv,
-                        noAuth = true,
-                        isLoading = isLoading
-                    )
-                }
+                cardId = selectedCard.value?.id ?: "",
+                showCvv = showCvv,
+                isLoading = isLoading,
+                coroutineScope = coroutineScope
             )
         },
         modifierRoot = modifier

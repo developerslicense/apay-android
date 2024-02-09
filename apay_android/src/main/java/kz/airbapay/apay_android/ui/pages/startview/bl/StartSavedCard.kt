@@ -2,30 +2,48 @@ package kz.airbapay.apay_android.ui.pages.startview.bl
 
 import android.app.Activity
 import androidx.compose.runtime.MutableState
+import kotlinx.coroutines.CoroutineScope
 import kz.airbapay.apay_android.data.constant.ErrorsCode
+import kz.airbapay.apay_android.data.utils.DataHolder
 import kz.airbapay.apay_android.data.utils.openAcquiring
 import kz.airbapay.apay_android.data.utils.openErrorPageWithCondition
 import kz.airbapay.apay_android.data.utils.openSuccess
 import kz.airbapay.apay_android.network.repository.Repository
+import kz.airbapay.apay_android.ui.ui_components.initAuth
 
 internal fun checkNeedCvv(
     activity: Activity,
     cardId: String,
-    noAuth: Boolean,
     showCvv: () -> Unit,
-    isLoading: MutableState<Boolean>? = null
+    isLoading: MutableState<Boolean>? = null,
+    coroutineScope: CoroutineScope
 ) {
+
     Repository.paymentsRepository?.paymentGetCvv(
         cardId = cardId,
         result = {
-            if (it.requestCvv || noAuth) {
+            DataHolder.isGooglePayFlow = false
+
+            if (it.requestCvv) {
                 showCvv()
+
             } else {
-                startSavedCard(
-                    cardId = cardId,
-                    cvv = null,
-                    isLoading = isLoading,
-                    activity = activity
+                initAuth(
+                    activity = activity,
+                    coroutineScope = coroutineScope,
+                    onFailed = {},
+                    onSuccess = {
+                        isLoading?.value = true
+                        startSavedCard(
+                            cardId = cardId,
+                            cvv = null,
+                            isLoading = isLoading,
+                            activity = activity
+                        )
+                    },
+                    onNotSecurity = {
+                        showCvv()
+                    }
                 )
             }
         },
