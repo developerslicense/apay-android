@@ -51,7 +51,8 @@ internal fun GPayView(
                     onSuccess = {
                         openGooglePay()
                     },
-                    onFailed = {}
+                    onFailed = {},
+                    onNotSecurity = {}
                 )
 
             }

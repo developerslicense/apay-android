@@ -76,7 +76,7 @@ ext {
 
     retrofitVersion = '2.9.0'
 
-    tensorflow = '2.4.0'
+    tensorflow = '2.14.0'
 }
 
 dependencies {
@@ -172,7 +172,7 @@ dependencies {
 }
 
 group 'kz.airbapay' // this is your groupId
-version '1.0.25' // this is your version
+version '1.0.27' // this is your version
 
 ext { // this are variables
     pomGroupId = group

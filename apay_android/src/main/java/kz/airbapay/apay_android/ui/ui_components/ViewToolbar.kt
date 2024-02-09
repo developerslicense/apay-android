@@ -8,6 +8,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import kz.airbapay.apay_android.data.utils.recomposeHighlighter
@@ -49,10 +50,11 @@ internal fun ViewToolbar(
                 style = LocalFonts.current.h0,
                 overflow = TextOverflow.Ellipsis,
                 maxLines = 1,
+                textAlign = TextAlign.Center,
                 modifier = Modifier
                     .recomposeHighlighter()
                     .fillMaxWidth()
-                    .padding(start = 10.dp)
+//                    .padding(start = 10.dp)
             )
         }
     }

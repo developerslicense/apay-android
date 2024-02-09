@@ -1,15 +1,16 @@
 package kz.airbapay.apay_android.ui.pages.startview
 
 import android.app.Activity
+import android.app.KeyguardManager
+import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Card
 import androidx.compose.material.ModalBottomSheetLayout
 import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.Scaffold
@@ -32,6 +33,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
+import androidx.constraintlayout.compose.ConstraintLayout
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
@@ -89,6 +91,7 @@ internal fun StartProcessingPage(
     val coroutineScope = rememberCoroutineScope()
     val activity = LocalContext.current as Activity
     val googlePayRedirectUrl = remember { mutableStateOf<String?>(null) }
+    val keyguardManager = activity.getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager
 
     BackHandler {
         coroutineScope.launch {
@@ -146,25 +149,20 @@ internal fun StartProcessingPage(
             },
             modifier = Modifier.fillMaxSize()
         ) {
-            Card(
-                backgroundColor = backgroundColor,
-                shape = RoundedCornerShape(
-                    topStart = 0.dp,
-                    topEnd = 0.dp
-                ),
-                modifier = Modifier
-                    .recomposeHighlighter()
-                    .fillMaxSize()
-                    .padding(padding)
-                    .onSizeChanged {
-                        size.value = it
-                    },
-                elevation = 0.dp,
-            ) {
-                if (!isLoading.value) {
+            if (!isLoading.value) {
+                ConstraintLayout {
+                    val (buttonRef) = createRefs()
+
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
-                        modifier = Modifier.recomposeHighlighter()
+                        modifier = Modifier
+                            .recomposeHighlighter()
+                            .background(backgroundColor)
+                            .fillMaxSize()
+                            .padding(padding)
+                            .onSizeChanged {
+                                size.value = it
+                            }
 
                     ) {
 
@@ -176,7 +174,9 @@ internal fun StartProcessingPage(
 
                         TopInfoView(purchaseAmount.value)
 
-                        if (DataHolder.featureGooglePay) {
+                        if (DataHolder.featureGooglePay
+                            && keyguardManager.isKeyguardSecure
+                        ) {
                             GPayView(
                                 openGooglePay = {
                                     openGooglePay(
@@ -194,25 +194,33 @@ internal fun StartProcessingPage(
                                 selectedIndex = selectedIndex
                             )
                         }
-
-                        InitViewStartProcessingButtonNext(
-                            isLoading = isLoading,
-                            purchaseAmount = purchaseAmount.value,
-                            selectedCard = selectedCard,
-                            showCvv = {
-                                coroutineScope.launch {
-                                    sheetState.show()
-                                    cvvFocusRequester.requestFocus()
-
-                                    val def = coroutineScope.async(IO) {
-                                        Thread.sleep(1000)
-                                        isLoading.value = false
-                                    }
-                                    def.start()
-                                }
-                            }
-                        )
                     }
+
+                    InitViewStartProcessingButtonNext(
+                        isLoading = isLoading,
+                        purchaseAmount = purchaseAmount.value,
+                        selectedCard = selectedCard,
+                        showCvv = {
+                            coroutineScope.launch {
+                                sheetState.show()
+                                cvvFocusRequester.requestFocus()
+
+                                val def = coroutineScope.async(IO) {
+                                    Thread.sleep(1000)
+                                    isLoading.value = false
+                                }
+                                def.start()
+                            }
+                        },
+                        modifier = Modifier
+                            .recomposeHighlighter()
+                            .padding(horizontal = 16.dp)
+                            .padding(top = 16.dp)
+                            .padding(bottom = 32.dp)
+                            .constrainAs(buttonRef) {
+                                bottom.linkTo(parent.bottom)
+                            }
+                    )
                 }
 
                 if (isLoading.value) {
