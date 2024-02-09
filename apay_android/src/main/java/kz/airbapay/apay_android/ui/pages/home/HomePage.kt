@@ -1,6 +1,8 @@
 package kz.airbapay.apay_android.ui.pages.home
 
 import android.app.Activity
+import android.app.KeyguardManager
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -106,6 +108,7 @@ internal fun HomePage(
     coroutineScope: CoroutineScope = rememberCoroutineScope()
 ) {
     val activity = LocalContext.current as Activity
+    val keyguardManager = activity.getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager
 
     val isLoading = remember { mutableStateOf(true) }
     val showDialogExit = remember { mutableStateOf(false) }
@@ -179,7 +182,10 @@ internal fun HomePage(
 
                 TopInfoView(purchaseAmount.value)
 
-                if (DataHolder.featureGooglePay && !DataHolder.hasSavedCards) {
+                if (DataHolder.featureGooglePay
+                    && !DataHolder.hasSavedCards
+                    && keyguardManager.isKeyguardSecure
+                ) {
                     GPayView(
                         openGooglePay = {
                             openGooglePay(

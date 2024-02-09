@@ -38,6 +38,17 @@ internal fun InitViewStartProcessingButtonNext(
                         activity = activity,
                         cardId = selectedCard.value?.id ?: "",
                         showCvv = showCvv,
+                        noAuth = false,
+                        isLoading = isLoading
+                    )
+                },
+                onNotSecurity = {
+                    DataHolder.isGooglePayFlow = false
+                    checkNeedCvv(
+                        activity = activity,
+                        cardId = selectedCard.value?.id ?: "",
+                        showCvv = showCvv,
+                        noAuth = true,
                         isLoading = isLoading
                     )
                 }

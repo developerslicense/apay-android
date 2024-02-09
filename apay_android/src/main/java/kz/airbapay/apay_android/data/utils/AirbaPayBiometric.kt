@@ -21,6 +21,7 @@ internal class AirbaPayBiometric(
     fun authenticate(
         onSuccess: () -> Unit,
         onError: () -> Unit,
+        onNotSecurity: () -> Unit
     ) {
         val keyguardManager = context.getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager
 
@@ -67,7 +68,7 @@ internal class AirbaPayBiometric(
             }
         } else {
 //            notifyUser(accessToCardRestricted())
-            onError()
+            onNotSecurity()
         }
     }
 

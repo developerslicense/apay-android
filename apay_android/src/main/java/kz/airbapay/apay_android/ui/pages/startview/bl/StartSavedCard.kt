@@ -11,13 +11,14 @@ import kz.airbapay.apay_android.network.repository.Repository
 internal fun checkNeedCvv(
     activity: Activity,
     cardId: String,
+    noAuth: Boolean,
     showCvv: () -> Unit,
     isLoading: MutableState<Boolean>? = null
 ) {
     Repository.paymentsRepository?.paymentGetCvv(
         cardId = cardId,
         result = {
-            if (it.requestCvv) {
+            if (it.requestCvv || noAuth) {
                 showCvv()
             } else {
                 startSavedCard(

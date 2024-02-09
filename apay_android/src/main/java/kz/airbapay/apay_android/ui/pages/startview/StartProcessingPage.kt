@@ -1,6 +1,8 @@
 package kz.airbapay.apay_android.ui.pages.startview
 
 import android.app.Activity
+import android.app.KeyguardManager
+import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -89,6 +91,7 @@ internal fun StartProcessingPage(
     val coroutineScope = rememberCoroutineScope()
     val activity = LocalContext.current as Activity
     val googlePayRedirectUrl = remember { mutableStateOf<String?>(null) }
+    val keyguardManager = activity.getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager
 
     BackHandler {
         coroutineScope.launch {
@@ -171,7 +174,9 @@ internal fun StartProcessingPage(
 
                         TopInfoView(purchaseAmount.value)
 
-                        if (DataHolder.featureGooglePay) {
+                        if (DataHolder.featureGooglePay
+                            && keyguardManager.isKeyguardSecure
+                        ) {
                             GPayView(
                                 openGooglePay = {
                                     openGooglePay(
