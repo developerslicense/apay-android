@@ -60,6 +60,8 @@ ext {
 
     espressoCore = '3.5.0'
 
+    gmsWallet = "19.2.1"
+
     junit = '4.13.2'
     jetpackComposeAccompanist = '0.28.0'
     jetpackComposeFoundation = '1.4.3'
@@ -118,6 +120,9 @@ dependencies {
     implementation "io.coil-kt:coil-gif:$coilVersion"
     implementation "io.coil-kt:coil-svg:$coilVersion"
     implementation "com.github.skydoves:landscapist-coil:$coilComposeVersion"// обертка для coil для композа https://github.com/skydoves/landscapist#coil
+
+    // Gms
+    implementation "com.google.android.gms:play-services-wallet:$gmsWallet"
 
     // Jetpack compose
     def composeBom = platform("androidx.compose:compose-bom:$airbaPayJetpackCompose") // https://developer.android.com/jetpack/compose/setup#bom-version-mapping

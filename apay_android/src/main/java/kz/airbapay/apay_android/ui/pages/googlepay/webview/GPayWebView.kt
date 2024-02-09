@@ -1,33 +1,30 @@
-package kz.airbapay.apay_android.ui.ui_components
+package kz.airbapay.apay_android.ui.pages.googlepay.webview
 
 import android.app.Activity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.CoroutineScope
 import kz.airbapay.apay_android.R
 import kz.airbapay.apay_android.ui.resources.ColorsSdk
+import kz.airbapay.apay_android.ui.ui_components.LoadImageSrc
+import kz.airbapay.apay_android.ui.ui_components.initAuth
 
 @Composable
-internal fun GPayView(
-    openGooglePay: () -> Unit
+internal fun GPayWebView(
+    activity: Activity,
+    coroutineScope: CoroutineScope,
+    openGooglePayForWebFlow: () -> Unit
 ) {
-    val activity = LocalContext.current as Activity
-    val coroutineScope = rememberCoroutineScope()
-
-    Spacer(modifier = Modifier.height(16.dp))
-
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
@@ -49,7 +46,7 @@ internal fun GPayView(
                     activity = activity,
                     coroutineScope = coroutineScope,
                     onSuccess = {
-                        openGooglePay()
+                        openGooglePayForWebFlow()
                     },
                     onFailed = {},
                     onNotSecurity = {}

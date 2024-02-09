@@ -48,13 +48,13 @@ import kz.airbapay.apay_android.data.utils.openGooglePay
 import kz.airbapay.apay_android.data.utils.recomposeHighlighter
 import kz.airbapay.apay_android.network.repository.Repository
 import kz.airbapay.apay_android.network.repository.startAuth
+import kz.airbapay.apay_android.ui.pages.googlepay.GPayView
 import kz.airbapay.apay_android.ui.pages.startview.bl.fetchMerchantsWithNextStep
 import kz.airbapay.apay_android.ui.pages.startview.start_processing_ext.EnterCvvBottomSheet
 import kz.airbapay.apay_android.ui.pages.startview.start_processing_ext.InitViewStartProcessingButtonNext
 import kz.airbapay.apay_android.ui.pages.startview.start_processing_ext.InitViewStartProcessingCards
 import kz.airbapay.apay_android.ui.resources.ColorsSdk
 import kz.airbapay.apay_android.ui.ui_components.BackHandler
-import kz.airbapay.apay_android.ui.ui_components.GPayView
 import kz.airbapay.apay_android.ui.ui_components.ProgressBarView
 import kz.airbapay.apay_android.ui.ui_components.TopInfoView
 import kz.airbapay.apay_android.ui.ui_components.ViewToolbar
@@ -178,7 +178,7 @@ internal fun StartProcessingPage(
                             && keyguardManager.isKeyguardSecure
                         ) {
                             GPayView(
-                                openGooglePay = {
+                                openGooglePayForWebFlow = {
                                     openGooglePay(
                                         redirectUrl = googlePayRedirectUrl.value,
                                         activity = activity

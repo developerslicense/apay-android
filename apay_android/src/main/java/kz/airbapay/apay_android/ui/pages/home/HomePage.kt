@@ -60,7 +60,7 @@ import kz.airbapay.apay_android.ui.pages.home.presentation.DateExpiredView
 import kz.airbapay.apay_android.ui.pages.home.presentation.SwitchedView
 import kz.airbapay.apay_android.ui.resources.ColorsSdk
 import kz.airbapay.apay_android.ui.ui_components.BackHandler
-import kz.airbapay.apay_android.ui.ui_components.GPayView
+import kz.airbapay.apay_android.ui.pages.googlepay.GPayView
 import kz.airbapay.apay_android.ui.ui_components.TopInfoView
 import kz.airbapay.apay_android.ui.ui_components.ViewButton
 import kz.airbapay.apay_android.ui.ui_components.ViewToolbar
@@ -187,7 +187,7 @@ internal fun HomePage(
                     && keyguardManager.isKeyguardSecure
                 ) {
                     GPayView(
-                        openGooglePay = {
+                        openGooglePayForWebFlow = {
                             openGooglePay(
                                 redirectUrl = DataHolder.googlePayButtonUrl,
                                 activity = activity

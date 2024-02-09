@@ -36,7 +36,7 @@
             android:noHistory="true"
             android:screenOrientation="portrait"/>
 
-        <activity android:name=".ui.pages.googlepay.GooglePayActivity"
+        <activity android:name=".ui.pages.googlepay.webview.GooglePayActivity"
             android:noHistory="true"
             android:screenOrientation="portrait"/>
 

@@ -57,7 +57,7 @@ private fun authWithPaymentIdAndForGooglePay(
 private fun loadGooglePayButton(
     onGooglePayResult: (String?) -> Unit
 ) {
-    Repository.googlePayRepository?.getGooglePay(
+    Repository.googlePayRepository?.getGooglePayButton(
         result = { response ->
             onGooglePayResult(response.buttonUrl)
         },

@@ -8,7 +8,7 @@ import kz.airbapay.apay_android.ui.pages.acquiring.AcquiringActivity
 import kz.airbapay.apay_android.ui.pages.card_reader.ScanActivity
 import kz.airbapay.apay_android.ui.pages.error.ErrorActivity
 import kz.airbapay.apay_android.ui.pages.error.RepeatActivity
-import kz.airbapay.apay_android.ui.pages.googlepay.GooglePayActivity
+import kz.airbapay.apay_android.ui.pages.googlepay.webview.GooglePayActivity
 import kz.airbapay.apay_android.ui.pages.home.HomeActivity
 import kz.airbapay.apay_android.ui.pages.startview.StartProcessingActivity
 import kz.airbapay.apay_android.ui.pages.success.SuccessActivity
