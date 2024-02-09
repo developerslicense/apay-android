@@ -11,6 +11,7 @@ data class Fonts(
     val regular: TextStyle = regular(),
     val bodyRegular: TextStyle = bodyRegular(),
     val caption400: TextStyle = caption400(),
+    val caption600: TextStyle = caption600(),
     val subtitleBold: TextStyle = subtitleBold(),
     val semiBold: TextStyle = semiBold(),
     val h0: TextStyle = h0(),
@@ -43,6 +44,14 @@ internal fun caption400() = TextStyle(
     color = ColorsSdk.textMain,
     fontFamily = regular,
     fontWeight = FontWeight.W400,
+    fontSize = 12.sp,
+    lineHeight = 18.sp
+)
+
+internal fun caption600() = TextStyle(
+    color = ColorsSdk.textMain,
+    fontFamily = semibold,
+    fontWeight = FontWeight.W600,
     fontSize = 12.sp,
     lineHeight = 18.sp
 )

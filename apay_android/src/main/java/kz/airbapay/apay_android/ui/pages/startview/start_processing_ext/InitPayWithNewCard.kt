@@ -32,7 +32,7 @@ internal fun InitViewStartProcessingPayWithNewCard(
         shape = RoundedCornerShape(8.dp),
         elevation = 0.dp,
         border = BorderStroke(
-            width = 0.1.dp,
+            width = 1.0.dp,
             color = ColorsSdk.gray10
         ),
         modifier = Modifier
@@ -67,7 +67,7 @@ internal fun InitViewStartProcessingPayWithNewCard(
             Text(
                 text = payAnotherCard(),
                 color = ColorsSdk.colorBrand,
-                style = LocalFonts.current.semiBold,
+                style = LocalFonts.current.caption600,
                 modifier = Modifier
                     .constrainAs(titleRef) {
                         top.linkTo(parent.top)

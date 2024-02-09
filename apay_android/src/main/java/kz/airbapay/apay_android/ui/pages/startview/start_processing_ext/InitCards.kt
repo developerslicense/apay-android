@@ -23,9 +23,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import kz.airbapay.apay_android.data.constant.orPayWithCard
 import kz.airbapay.apay_android.data.model.BankCard
-import kz.airbapay.apay_android.data.utils.DataHolder
 import kz.airbapay.apay_android.data.utils.openHome
 import kz.airbapay.apay_android.data.utils.recomposeHighlighter
 import kz.airbapay.apay_android.ui.resources.ColorsSdk
@@ -40,15 +38,6 @@ internal fun InitViewStartProcessingCards(
     selectedIndex: MutableIntState,
 ) {
     val activity = LocalContext.current as Activity
-
-    if (DataHolder.featureGooglePay) {
-        Spacer(modifier = Modifier.height(32.dp))
-        Text(
-            style = LocalFonts.current.regular,
-            text = orPayWithCard(),
-            color = ColorsSdk.textLight
-        )
-    }
 
     Spacer(modifier = Modifier.height(16.dp))
 
