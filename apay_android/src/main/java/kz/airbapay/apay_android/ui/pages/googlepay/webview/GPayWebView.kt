@@ -15,7 +15,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import kotlinx.coroutines.CoroutineScope
 import kz.airbapay.apay_android.R
 import kz.airbapay.apay_android.data.utils.checkIsDeviceSecure
 import kz.airbapay.apay_android.ui.resources.ColorsSdk
@@ -24,8 +23,6 @@ import kz.airbapay.apay_android.ui.ui_components.initAuth
 
 @Composable
 internal fun GPayWebView(
-    activity: Activity,
-    coroutineScope: CoroutineScope,
     openGooglePayForWebFlow: () -> Unit
 ) {
     val activity = LocalContext.current as Activity

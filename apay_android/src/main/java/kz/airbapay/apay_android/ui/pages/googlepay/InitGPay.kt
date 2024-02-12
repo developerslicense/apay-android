@@ -44,6 +44,6 @@ internal fun GPayView(
         )
 
     } else {
-        GPayWebView(activity, coroutineScope, openGooglePayForWebFlow)
+        GPayWebView(openGooglePayForWebFlow)
     }
 }
