@@ -17,10 +17,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.ModalBottomSheetLayout
 import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.ModalBottomSheetValue
+import androidx.compose.material.Scaffold
 import androidx.compose.material.rememberModalBottomSheetState
+import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
@@ -38,6 +39,7 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kz.airbapay.apay_android.R
+import kz.airbapay.apay_android.data.constant.cvvInfo
 import kz.airbapay.apay_android.data.constant.payAmount
 import kz.airbapay.apay_android.data.constant.paymentOfPurchase
 import kz.airbapay.apay_android.data.constant.saveCardData
@@ -54,7 +56,6 @@ import kz.airbapay.apay_android.ui.pages.home.bl.checkValid
 import kz.airbapay.apay_android.ui.pages.home.bl.startPaymentProcessing
 import kz.airbapay.apay_android.ui.pages.home.presentation.BottomImages
 import kz.airbapay.apay_android.ui.pages.home.presentation.CardNumberView
-import kz.airbapay.apay_android.ui.pages.home.presentation.CvvBottomSheet
 import kz.airbapay.apay_android.ui.pages.home.presentation.CvvView
 import kz.airbapay.apay_android.ui.pages.home.presentation.DateExpiredView
 import kz.airbapay.apay_android.ui.pages.home.presentation.SwitchedView
@@ -126,6 +127,7 @@ internal fun HomePage(
     val cvvError = remember { mutableStateOf<String?>(null) }
 
     val focusManager = LocalFocusManager.current
+    val scaffoldState = rememberScaffoldState()
 
     val sheetState = rememberModalBottomSheetState(
         initialValue = ModalBottomSheetValue.Hidden,
@@ -146,16 +148,11 @@ internal fun HomePage(
         )
     }
 
-    ModalBottomSheetLayout(
-        sheetState = sheetState,
-        sheetBackgroundColor = ColorsSdk.transparent,
-        sheetContent = {
-            CvvBottomSheet {
-                coroutineScope.launch { sheetState.hide() }
-            }
-        },
+    Scaffold(
+        scaffoldState = scaffoldState,
         modifier = Modifier.fillMaxSize()
-    ) {
+    ) { padding ->
+
         ConstraintLayout {
             val buttonRef = createRef()
             Column(
@@ -230,7 +227,9 @@ internal fun HomePage(
                         cvvText = cvvText,
                         actionClickInfo = {
                             coroutineScope.launch {
-                                sheetState.show()
+                                scaffoldState.snackbarHostState.showSnackbar(
+                                    message = cvvInfo()
+                                )
                             }
                         },
                         modifier = Modifier
