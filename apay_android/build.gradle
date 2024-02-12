@@ -4,6 +4,7 @@ plugins {
 
     id 'maven-publish'
     id 'signing'
+    id "kotlin-parcelize"
 }
 
 android {
@@ -177,7 +178,7 @@ dependencies {
 }
 
 group 'kz.airbapay' // this is your groupId
-version '1.0.28' // this is your version
+version '1.0.29' // this is your version
 
 ext { // this are variables
     pomGroupId = group

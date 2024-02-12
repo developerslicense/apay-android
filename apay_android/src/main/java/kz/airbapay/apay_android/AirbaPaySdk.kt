@@ -61,7 +61,8 @@ class AirbaPaySdk {
             userEmail: String? = null,
             colorBrandMain: Color? = null,
             colorBrandInversion: Color? = null,
-            autoCharge: Int = 0
+            autoCharge: Int = 0,
+            enabledLogsForProd: Boolean = false
         ) {
 
             if (colorBrandInversion != null) {
@@ -74,6 +75,7 @@ class AirbaPaySdk {
 
             DataHolder.bankCode = null
             DataHolder.isProd = isProd
+            DataHolder.enabledLogsForProd = enabledLogsForProd
 
             DataHolder.baseUrl = if (DataHolder.isProd) "https://ps.airbapay.kz/acquiring-api/sdk/"
             else "https://sps.airbapay.kz/acquiring-api/sdk/"

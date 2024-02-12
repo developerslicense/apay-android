@@ -12,6 +12,7 @@ internal object DataHolder {
   var sendTimeout = 60
 
   var isProd = true
+  var enabledLogsForProd = false
 
   var bankCode: String? = null
   var accessToken: String? = null

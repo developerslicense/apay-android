@@ -19,7 +19,6 @@ import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -90,7 +89,6 @@ internal fun StartProcessingPage(
 
     val coroutineScope = rememberCoroutineScope()
     val activity = LocalContext.current as Activity
-    val googlePayRedirectUrl = remember { mutableStateOf<String?>(null) }
     val keyguardManager = activity.getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager
 
     BackHandler {
@@ -103,7 +101,8 @@ internal fun StartProcessingPage(
     val purchaseAmount = DataHolder.purchaseAmountFormatted.collectAsState()
 
     val size = remember { mutableStateOf(IntSize.Zero) }
-    val isLoading = remember { mutableStateOf(true) }
+    val googlePayRedirectUrl = rememberSaveable { mutableStateOf<String?>(null) }
+    val isLoading = rememberSaveable { mutableStateOf(true) }
     val selectedCard = rememberSaveable { mutableStateOf<BankCard?>(null) }
 
     val savedCards = rememberSaveable {
@@ -111,7 +110,7 @@ internal fun StartProcessingPage(
     }
 
     val selectedIndex = rememberSaveable {
-        mutableIntStateOf(0)
+        mutableStateOf(0)
     }
 
     val cvvFocusRequester = FocusRequester()
