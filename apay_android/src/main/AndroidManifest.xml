@@ -19,6 +19,11 @@
         а это усложняет работу с навигацией и, на случай повторных переделок, решил облегчить задачу
         -->
 
+
+    <!--todo временно-->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
     <application>
         <activity
             android:name="kz.airbapay.apay_android.ui.pages.startview.StartProcessingActivity"
@@ -52,6 +57,29 @@
         <activity android:name=".ui.pages.error.ErrorActivity"
             android:noHistory="true"
             android:screenOrientation="portrait"/>
+
+<!--todo временно-->
+        <activity
+            android:name=".ui.pages.card_reader2.ScannerActivity"
+            android:configChanges="orientation|screenSize"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.FullScreen" />
+
+        <activity
+            android:name=".ui.pages.card_reader2.DocumentScannerActivity"
+            android:configChanges="orientation|screenSize"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.FullScreen" />
+
+        <provider
+            android:name=".ui.pages.card_reader2.DocumentScannerFileProvider"
+            android:authorities="kz.airbapay.apay_android.DocumentScannerFileProvider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
     </application>
 
 </manifest>

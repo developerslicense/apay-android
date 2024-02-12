@@ -72,6 +72,7 @@ ext {
 
     navigationComponent = '2.7.6'//'2.7.2'
 
+    openCv = '4.1.0'
     okhttp = '4.2.2'
     okhttpInterceptor = '4.9.2'
 
@@ -152,6 +153,9 @@ dependencies {
     // Navigation
     implementation "androidx.navigation:navigation-compose:$navigationComponent"
     implementation "androidx.compose.foundation:foundation:$jetpackComposeFoundation"
+
+    // OpenCv
+    implementation "com.websitebeaver:opencv:$openCv"
 
     // Retrofit
     implementation "com.squareup.retrofit2:retrofit:$retrofitVersion"
