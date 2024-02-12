@@ -9,6 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import kz.airbapay.apay_android.data.utils.DataHolder
+import kz.airbapay.apay_android.network.repository.Repository
 import kz.airbapay.apay_android.ui.pages.googlepay.nativegp.GPayNative
 import kz.airbapay.apay_android.ui.pages.googlepay.webview.GPayWebView
 
@@ -30,6 +31,15 @@ internal fun GPayView(
         GPayNative(
             onClick = {
 
+                Repository.paymentsRepository?.startPaymentWallet(
+                    token = "", // todo
+                    result = {
+
+                    },
+                    error = {
+
+                    }
+                )
                 println("click native aaaaaaaaaaaaaaa 1")/*clickOnNativeFlow()*/
                 /*initAuth(
                     activity = activity,

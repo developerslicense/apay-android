@@ -20,6 +20,10 @@
         -->
 
     <application>
+       <!-- <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="API_KEY" />-->
+
         <activity
             android:name="kz.airbapay.apay_android.ui.pages.startview.StartProcessingActivity"
             android:exported="true"

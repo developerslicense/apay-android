@@ -7,6 +7,7 @@ import kz.airbapay.apay_android.data.model.CardsPanResponse
 import kz.airbapay.apay_android.data.model.GetCvvResponse
 import kz.airbapay.apay_android.data.model.GooglePayButtonResponse
 import kz.airbapay.apay_android.data.model.GooglePayMerchantResponse
+import kz.airbapay.apay_android.data.model.GooglePaymentWalletRequest
 import kz.airbapay.apay_android.data.model.MerchantsResponse
 import kz.airbapay.apay_android.data.model.PaymentCreateResponse
 import kz.airbapay.apay_android.data.model.PaymentEntryResponse
@@ -53,6 +54,11 @@ internal interface Api {
     @PUT("api/v1/payments")
     suspend fun putPayment(
         @Body param: HashMap<String, Any?>
+    ): Response<PaymentEntryResponse>
+
+    @PUT("api/v1/payments")
+    suspend fun putPaymentWallet(
+        @Body param: GooglePaymentWalletRequest
     ): Response<PaymentEntryResponse>
 
     @PUT("api/v1/payments/{cardId}")
