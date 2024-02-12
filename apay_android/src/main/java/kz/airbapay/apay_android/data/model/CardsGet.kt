@@ -1,9 +1,12 @@
 package kz.airbapay.apay_android.data.model
 
+import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
+import kotlinx.parcelize.Parcelize
 
 internal class CardsGetResponse : ArrayList<BankCard>()
 
+@Parcelize
 internal data class BankCard(
     @SerializedName("pan")
     val pan: String? = null,
@@ -37,7 +40,7 @@ internal data class BankCard(
 
     val typeIcon: Int? = null
 
-) {
+) : Parcelable {
     fun getMaskedPanCleared() = maskedPan?.takeLast(6).orEmpty()
     fun getMaskedPanClearedWithPoint() = maskedPan?.takeLast(6)?.replace("*", "•").orEmpty()
  }

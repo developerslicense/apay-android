@@ -56,7 +56,7 @@ internal class PaymentsRepository(
             put("language", DataHolder.currentLang)
             put("order_number", DataHolder.orderNumber)
             put("phone", DataHolder.userPhone)
-            put("auto_charge", 0)
+            put("auto_charge", DataHolder.autoCharge)
             put("failure_back_url", DataHolder.failureBackUrl)
             put("failure_callback", DataHolder.failureCallback)
             put("success_back_url", DataHolder.successBackUrl)

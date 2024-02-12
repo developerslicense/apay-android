@@ -6,10 +6,12 @@ import kz.airbapay.apay_android.data.model.CardsGetResponse
 import kz.airbapay.apay_android.data.model.CardsPanResponse
 import kz.airbapay.apay_android.data.model.GetCvvResponse
 import kz.airbapay.apay_android.data.model.GooglePayButtonResponse
+import kz.airbapay.apay_android.data.model.MerchantsResponse
 import kz.airbapay.apay_android.data.model.PaymentCreateResponse
 import kz.airbapay.apay_android.data.model.PaymentEntryResponse
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.PUT
@@ -28,6 +30,9 @@ internal interface Api {
 
     @GET("api/v1/cards/info-by-pan/{pan}")
     suspend fun getCardsBank(@Path("pan") pan: String): Response<CardsPanResponse>
+
+    @DELETE("api/v1/cards/{id}")
+    suspend fun deleteCard(@Path("id") cardId: String): Response<Any>
 
     // google pay
 
@@ -59,4 +64,7 @@ internal interface Api {
     suspend fun getCvv(
         @Path("cardId") cardId: String
     ): Response<GetCvvResponse>
+
+    @GET("api/v1/merchants")
+    suspend fun getMerchantInfo(): Response<MerchantsResponse>
 }

@@ -38,7 +38,8 @@ internal fun InitDialogExit(
         onDismissRequest = onDismissRequest,
         properties = DialogProperties(
             dismissOnBackPress = true,
-            dismissOnClickOutside = true
+            dismissOnClickOutside = true,
+            usePlatformDefaultWidth = false
         )
     ) {
 //        val dialogWindowProvider = LocalView.current.parent as DialogWindowProvider
@@ -47,6 +48,7 @@ internal fun InitDialogExit(
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
+                .padding(horizontal = 16.dp)
                 .background(
                     color = ColorsSdk.bgBlock,
                     shape = RoundedCornerShape(

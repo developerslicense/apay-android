@@ -12,6 +12,7 @@ internal object DataHolder {
   var sendTimeout = 60
 
   var isProd = true
+  var enabledLogsForProd = false
 
   var bankCode: String? = null
   var accessToken: String? = null
@@ -28,6 +29,7 @@ internal object DataHolder {
   var failureCallback = ""
   var successBackUrl = ""
   var successCallback = ""
+  var autoCharge = 0
   var currentLang = AirbaPaySdk.Lang.RU.lang
 
   var goods: List<AirbaPaySdk.Goods>? = null
@@ -38,5 +40,16 @@ internal object DataHolder {
   var frontendCallback: ((activity: Activity, paymentSubmittingResult: Boolean) -> Unit)? = null
 
   var redirectToCustomSuccessPage: (() -> Unit)? = null
-  var isAuthenticated: Boolean = false
+  var featureGooglePay: Boolean = false
+  var featureSavedCards: Boolean = false
+
+  var googlePayButtonUrl: String? = null
+  var isGooglePayFlow: Boolean = true
+
+  var hasSavedCards: Boolean = false
+}
+
+object TestAirbaPayStates {
+  var shutDownTestFeatureGooglePay: Boolean = false
+  var shutDownTestFeatureSavedCards: Boolean = false
 }

@@ -1,6 +1,8 @@
 package kz.airbapay.apay_android.ui.pages.home
 
 import android.app.Activity
+import android.app.KeyguardManager
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -15,9 +17,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.ModalBottomSheetLayout
+import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.ModalBottomSheetValue
+import androidx.compose.material.Scaffold
 import androidx.compose.material.rememberModalBottomSheetState
+import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
@@ -35,6 +39,7 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kz.airbapay.apay_android.R
+import kz.airbapay.apay_android.data.constant.cvvInfo
 import kz.airbapay.apay_android.data.constant.payAmount
 import kz.airbapay.apay_android.data.constant.paymentOfPurchase
 import kz.airbapay.apay_android.data.constant.saveCardData
@@ -43,6 +48,7 @@ import kz.airbapay.apay_android.data.utils.MaskUtils
 import kz.airbapay.apay_android.data.utils.backToStartPage
 import kz.airbapay.apay_android.data.utils.card_utils.getCardTypeFromNumber
 import kz.airbapay.apay_android.data.utils.openCardScanner
+import kz.airbapay.apay_android.data.utils.openGooglePay
 import kz.airbapay.apay_android.network.repository.Repository
 import kz.airbapay.apay_android.ui.pages.card_reader.ScanActivity
 import kz.airbapay.apay_android.ui.pages.dialogs.InitDialogExit
@@ -50,13 +56,13 @@ import kz.airbapay.apay_android.ui.pages.home.bl.checkValid
 import kz.airbapay.apay_android.ui.pages.home.bl.startPaymentProcessing
 import kz.airbapay.apay_android.ui.pages.home.presentation.BottomImages
 import kz.airbapay.apay_android.ui.pages.home.presentation.CardNumberView
-import kz.airbapay.apay_android.ui.pages.home.presentation.CvvBottomSheet
 import kz.airbapay.apay_android.ui.pages.home.presentation.CvvView
 import kz.airbapay.apay_android.ui.pages.home.presentation.DateExpiredView
 import kz.airbapay.apay_android.ui.pages.home.presentation.SwitchedView
-import kz.airbapay.apay_android.ui.pages.home.presentation.TopInfoView
 import kz.airbapay.apay_android.ui.resources.ColorsSdk
 import kz.airbapay.apay_android.ui.ui_components.BackHandler
+import kz.airbapay.apay_android.ui.ui_components.GPayView
+import kz.airbapay.apay_android.ui.ui_components.TopInfoView
 import kz.airbapay.apay_android.ui.ui_components.ViewButton
 import kz.airbapay.apay_android.ui.ui_components.ViewToolbar
 
@@ -103,6 +109,7 @@ internal fun HomePage(
     coroutineScope: CoroutineScope = rememberCoroutineScope()
 ) {
     val activity = LocalContext.current as Activity
+    val keyguardManager = activity.getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager
 
     val isLoading = remember { mutableStateOf(true) }
     val showDialogExit = remember { mutableStateOf(false) }
@@ -120,6 +127,7 @@ internal fun HomePage(
     val cvvError = remember { mutableStateOf<String?>(null) }
 
     val focusManager = LocalFocusManager.current
+    val scaffoldState = rememberScaffoldState()
 
     val sheetState = rememberModalBottomSheetState(
         initialValue = ModalBottomSheetValue.Hidden,
@@ -129,27 +137,22 @@ internal fun HomePage(
     val purchaseAmount = DataHolder.purchaseAmountFormatted.collectAsState()
 
     BackHandler {
-        coroutineScope.launch {
-            if (sheetState.isVisible) sheetState.hide()
-            else if (
-                dateExpiredText.value.text.isNotBlank()
-                || cardNumberText.value.text.isNotBlank()
-                || cvvText.value.text.isNotBlank()
-            ) showDialogExit.value = true
-            else backToStartPage(activity)
-        }
+        onBackPressed(
+            sheetState = sheetState,
+            dateExpiredText = dateExpiredText,
+            cardNumberText = cardNumberText,
+            cvvText = cvvText,
+            showDialogExit = showDialogExit,
+            activity = activity,
+            coroutineScope = coroutineScope
+        )
     }
 
-    ModalBottomSheetLayout(
-        sheetState = sheetState,
-        sheetBackgroundColor = ColorsSdk.transparent,
-        sheetContent = {
-            CvvBottomSheet {
-                coroutineScope.launch { sheetState.hide() }
-            }
-        },
+    Scaffold(
+        scaffoldState = scaffoldState,
         modifier = Modifier.fillMaxSize()
-    ) {
+    ) { padding ->
+
         ConstraintLayout {
             val buttonRef = createRef()
             Column(
@@ -161,17 +164,34 @@ internal fun HomePage(
                     title = paymentOfPurchase(),
                     backIcon = R.drawable.ic_arrow_back,
                     actionBack = {
-                        if (
-                            dateExpiredText.value.text.isNotBlank()
-                            || cardNumberText.value.text.isNotBlank()
-                            || cvvText.value.text.isNotBlank()
-                        ) showDialogExit.value = true
-                        else backToStartPage(activity)
+                        onBackPressed(
+                            sheetState = sheetState,
+                            dateExpiredText = dateExpiredText,
+                            cardNumberText = cardNumberText,
+                            cvvText = cvvText,
+                            showDialogExit = showDialogExit,
+                            activity = activity,
+                            coroutineScope = coroutineScope
+                        )
                     }
                 )
 
 
                 TopInfoView(purchaseAmount.value)
+
+                if (DataHolder.featureGooglePay
+                    && !DataHolder.hasSavedCards
+                    && keyguardManager.isKeyguardSecure
+                ) {
+                    GPayView(
+                        openGooglePay = {
+                            openGooglePay(
+                                redirectUrl = DataHolder.googlePayButtonUrl,
+                                activity = activity
+                            )
+                        }
+                    )
+                }
 
                 Spacer(modifier = Modifier.height(16.dp))
                 CardNumberView(
@@ -207,7 +227,9 @@ internal fun HomePage(
                         cvvText = cvvText,
                         actionClickInfo = {
                             coroutineScope.launch {
-                                sheetState.show()
+                                scaffoldState.snackbarHostState.showSnackbar(
+                                    message = cvvInfo()
+                                )
                             }
                         },
                         modifier = Modifier
@@ -217,11 +239,13 @@ internal fun HomePage(
                 }
 
 
-                Spacer(modifier = Modifier.height(24.dp))
-                SwitchedView(
-                    text = saveCardData(),
-                    switchCheckedState = switchSaveCard,
-                )
+                if (DataHolder.featureSavedCards) {
+                    Spacer(modifier = Modifier.height(24.dp))
+                    SwitchedView(
+                        text = saveCardData(),
+                        switchCheckedState = switchSaveCard,
+                    )
+                }
 
                 BottomImages()
 
@@ -280,6 +304,33 @@ internal fun HomePage(
             )
         }
 
+    }
+}
+
+private fun onBackPressed(
+    sheetState: ModalBottomSheetState,
+    dateExpiredText: MutableState<TextFieldValue>,
+    cardNumberText: MutableState<TextFieldValue>,
+    cvvText: MutableState<TextFieldValue>,
+    showDialogExit: MutableState<Boolean>,
+    activity: Activity,
+    coroutineScope: CoroutineScope
+) {
+
+    if (sheetState.isVisible) coroutineScope.launch { sheetState.hide() }
+    else if (
+        dateExpiredText.value.text.isNotBlank()
+        || cardNumberText.value.text.isNotBlank()
+        || cvvText.value.text.isNotBlank()
+    ) {
+        showDialogExit.value = true
+
+    } else if (!DataHolder.featureSavedCards || !DataHolder.hasSavedCards) {
+        DataHolder.frontendCallback?.invoke(activity, false)
+        activity.finishAffinity()
+
+    } else {
+        backToStartPage(activity)
     }
 }
 

@@ -19,7 +19,7 @@ internal fun backToStartPage(activity: Activity) {
     activity.finish()
 }
 
-internal fun openHome( //todo ??? finish
+internal fun openHome(
     activity: Activity
 ) {
     val intent = Intent(activity, HomeActivity::class.java)

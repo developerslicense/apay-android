@@ -8,7 +8,6 @@ import android.view.ViewGroup
 import android.webkit.WebChromeClient
 import android.webkit.WebSettings
 import android.webkit.WebView
-import android.webkit.WebView.WebViewTransport
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Column
@@ -47,7 +46,7 @@ internal fun GooglePayPage(
     url: String?
 ) {
     val activity = LocalContext.current as Activity
-    val inProgress = remember { mutableStateOf(true) }
+    val inProgress = remember { mutableStateOf(false) }
 
     val showDialogExit = remember {
         mutableStateOf(false)
@@ -94,6 +93,7 @@ internal fun GooglePayPage(
                             inProgress = inProgress,
                             redirectUrl = url
                         )
+
                         webChromeClient = object : WebChromeClient() {
                             var newWebView: WebView? = null
 
@@ -110,7 +110,7 @@ internal fun GooglePayPage(
                                 newWebView!!.settings.setSupportMultipleWindows(true)
 
                                 mWebviewPop?.addView(newWebView)
-                                val transport = resultMsg.obj as WebViewTransport
+                                val transport = resultMsg.obj as WebView.WebViewTransport
                                 transport.webView = newWebView
                                 resultMsg.sendToTarget()
 
@@ -129,7 +129,7 @@ internal fun GooglePayPage(
                     }
                 },
                 update = {
-                    it.loadPage(url)
+//                    it.loadPage(url)
                 }
             )
         }

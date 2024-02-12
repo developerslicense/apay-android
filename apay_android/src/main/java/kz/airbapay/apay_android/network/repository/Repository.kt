@@ -7,6 +7,7 @@ import kz.airbapay.apay_android.network.base.provideRetrofit
 internal object Repository {
     var authRepository: AuthRepository? = null
     var cardRepository: CardRepository? = null
+    var merchantRepository: MerchantsRepository? = null
     var googlePayRepository: GooglePayRepository? = null
     var paymentsRepository: PaymentsRepository? = null
 
@@ -20,5 +21,6 @@ internal object Repository {
         cardRepository = CardRepository(api)
         googlePayRepository = GooglePayRepository(api)
         paymentsRepository = PaymentsRepository(api)
+        merchantRepository = MerchantsRepository(api)
     }
 }

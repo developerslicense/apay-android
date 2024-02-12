@@ -51,8 +51,9 @@ internal fun ErrorWithInstructionPage(
                 "https://static-data.object.pscloud.io/pay-manuals/Kaspi_kaz.mp4"
             else "https://static-data.object.pscloud.io/pay-manuals/Kaspi_rus.mp4"
         }
+
         else -> {
-            if(DataHolder.currentLang == AirbaPaySdk.Lang.KZ.lang)
+            if (DataHolder.currentLang == AirbaPaySdk.Lang.KZ.lang)
                 "https://static-data.object.pscloud.io/pay-manuals/Halyk_kaz.mp4"
             else "https://static-data.object.pscloud.io/pay-manuals/Halyk_rus.mp4"
         }
@@ -136,7 +137,7 @@ internal fun ErrorWithInstructionPage(
                     start.linkTo(parent.start, margin = 16.dp)
                     end.linkTo(parent.end, margin = 16.dp)
                 }
-        ){
+        ) {
             VideoPlayerPage(faqUrl)
         }
 
@@ -151,17 +152,19 @@ internal fun ErrorWithInstructionPage(
                 }
         ) {
 
-            ViewButton(
-                title = errorCode.buttonTop(),
-                actionClick = {
-                    errorCode.clickOnTop(
-                        activity = activity,
-                        finish = { activity.finish() }
-                    )
-                }
-            )
+            if (!DataHolder.isGooglePayFlow) {
+                ViewButton(
+                    title = errorCode.buttonTop(),
+                    actionClick = {
+                        errorCode.clickOnTop(
+                            activity = activity,
+                            finish = { activity.finish() }
+                        )
+                    }
+                )
 
-            Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(16.dp))
+            }
 
             ViewButton(
                 title = errorCode.buttonBottom(),

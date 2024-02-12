@@ -6,13 +6,13 @@ import retrofit2.Response
 private const val TAG = "TagAirbaPay"
 
 fun messageLog(message: String) {
-    if (!DataHolder.isProd) {
+    if (!DataHolder.isProd || DataHolder.enabledLogsForProd) {
         Log.i(TAG, message)
     }
 }
 
 fun <T> errorLog(e: Response<T>?) {
-    if (!DataHolder.isProd) {
+    if (!DataHolder.isProd || DataHolder.enabledLogsForProd) {
         if (e != null) {
             Log.i(TAG, "response error:")
             Log.i(TAG, "STATUS: ${e.code()}")
@@ -27,7 +27,7 @@ fun <T> errorLog(e: Response<T>?) {
 }
 
 fun errorLog(e: Exception) {
-    if (!DataHolder.isProd) {
+    if (!DataHolder.isProd || DataHolder.enabledLogsForProd) {
         Log.i(TAG, "Error sending request!")
         Log.i(TAG, e.printStackTrace().toString())
     }

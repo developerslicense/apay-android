@@ -17,13 +17,11 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableIntState
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import kz.airbapay.apay_android.data.constant.orPayWithCard
 import kz.airbapay.apay_android.data.model.BankCard
 import kz.airbapay.apay_android.data.utils.openHome
 import kz.airbapay.apay_android.data.utils.recomposeHighlighter
@@ -36,16 +34,10 @@ import kz.airbapay.apay_android.ui.ui_components.LoadImageSrc
 internal fun InitViewStartProcessingCards(
     savedCards: List<BankCard>,
     selectedCard: MutableState<BankCard?>,
-    selectedIndex: MutableIntState,
+    selectedIndex: MutableState<Int>,
 ) {
     val activity = LocalContext.current as Activity
 
-    Spacer(modifier = Modifier.height(32.dp))
-    Text(
-        style = LocalFonts.current.regular,
-        text = orPayWithCard(),
-        color = ColorsSdk.textLight
-    )
     Spacer(modifier = Modifier.height(16.dp))
 
     LazyColumn(
@@ -60,10 +52,10 @@ internal fun InitViewStartProcessingCards(
                 val card = savedCards[index]
                 InitCard(
                     card = card,
-                    isSelected = index == selectedIndex.intValue,
+                    isSelected = index == selectedIndex.value,
                     isFirst = index == 0,
                     clickOnCard = {
-                        selectedIndex.intValue = index
+                        selectedIndex.value = index
                         selectedCard.value = card
                     }
                 )

@@ -113,17 +113,19 @@ internal fun ErrorPage(
                 }
         ) {
 
-            ViewButton(
-                title = errorCode.buttonTop(),
-                actionClick = {
-                    errorCode.clickOnTop(
-                        activity = activity,
-                        finish = { activity.finish() }
-                    )
-                }
-            )
+            if (!DataHolder.isGooglePayFlow) {
+                ViewButton(
+                    title = errorCode.buttonTop(),
+                    actionClick = {
+                        errorCode.clickOnTop(
+                            activity = activity,
+                            finish = { activity.finish() }
+                        )
+                    }
+                )
 
-            Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(16.dp))
+            }
 
             ViewButton(
                 title = errorCode.buttonBottom(),

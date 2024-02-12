@@ -24,6 +24,8 @@
             </intent-filter>
 
         </activity>
+
+        <activity android:name=".ui.pages.test_page.TestActivity"/>
     </application>
 
 </manifest>

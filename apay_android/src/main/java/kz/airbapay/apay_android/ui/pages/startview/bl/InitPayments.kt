@@ -1,73 +1,68 @@
 package kz.airbapay.apay_android.ui.pages.startview.bl
 
 import android.app.Activity
-import androidx.compose.runtime.MutableState
 import kz.airbapay.apay_android.data.constant.ErrorsCode
 import kz.airbapay.apay_android.data.model.PaymentCreateResponse
+import kz.airbapay.apay_android.data.utils.DataHolder
 import kz.airbapay.apay_android.data.utils.openErrorPageWithCondition
 import kz.airbapay.apay_android.network.repository.Repository
 import kz.airbapay.apay_android.network.repository.startAuth
 
 internal fun initPayments(
     activity: Activity,
-    isLoading : MutableState<Boolean>,
-    onGooglePayLoadSuccess: (String?) -> Unit
+    onGooglePayResult: (String?) -> Unit
 ) {
     Repository.paymentsRepository?.createPayment(
         error = {
-            isLoading.value = false
             openErrorPageWithCondition(
                 errorCode = ErrorsCode.error_1.code,
                 activity = activity
             )
         },
         result = { response ->
-            authForGooglePay(
+            authWithPaymentIdAndForGooglePay(
                 paymentCreateResponse = response,
-                isLoading = isLoading,
                 activity = activity,
-                onGooglePayLoadSuccess = onGooglePayLoadSuccess
+                onGooglePayResult = onGooglePayResult
             )
         }
     )
 }
 
-private fun authForGooglePay(
+private fun authWithPaymentIdAndForGooglePay(
     paymentCreateResponse: PaymentCreateResponse,
-    isLoading: MutableState<Boolean>,
     activity: Activity,
-    onGooglePayLoadSuccess: (String?) -> Unit
+    onGooglePayResult: (String?) -> Unit,
 ) {
     startAuth(
         authRepository = Repository.authRepository!!,
         paymentId = paymentCreateResponse.id,
         onError = {
-            isLoading.value = false
             openErrorPageWithCondition(
                 errorCode = ErrorsCode.error_1.code,
                 activity = activity
             )
         },
-        onResult = {
-            loadGooglePayButton(
-                onGooglePayLoadSuccess = onGooglePayLoadSuccess,
-                isLoading = isLoading
-            )
+        onSuccess = {
+            if (DataHolder.featureGooglePay) {
+                loadGooglePayButton(onGooglePayResult)
+
+            } else {
+                onGooglePayResult(null)
+            }
         }
     )
 }
 
 private fun loadGooglePayButton(
-    onGooglePayLoadSuccess: (String?) -> Unit,
-    isLoading: MutableState<Boolean>
+    onGooglePayResult: (String?) -> Unit
 ) {
     Repository.googlePayRepository?.getGooglePay(
         result = { response ->
-            onGooglePayLoadSuccess(response.buttonUrl)
-            isLoading.value = false
+            onGooglePayResult(response.buttonUrl)
         },
         error = {
-            isLoading.value = false
+            onGooglePayResult(null)
         }
     )
 }

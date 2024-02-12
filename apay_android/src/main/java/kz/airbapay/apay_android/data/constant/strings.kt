@@ -132,14 +132,9 @@ internal fun somethingWentWrongDescription() = getStrFromRes(
     "Дүкен қолдау қызметіне хабарласыңыз"
 )
 
-internal fun orPayWithCard() = getStrFromRes(
-    "или оплатите картой",
-    "немесе картамен төлеңіз"
-)
-
 internal fun payAnotherCard() = getStrFromRes(
-    payAnotherCardRu,
-    payAnotherCardKz
+    "Другая карта",
+    "Басқа карта"
 )
 
 internal fun accessToCardRestricted() = getStrFromRes(
