@@ -128,10 +128,12 @@ class AirbaPaySdk {
 
 fun startAirbaPay(
     activity: Activity,
-    redirectToCustomSuccessPage: (() -> Unit)? = null
+    redirectToCustomSuccessPage: (() -> Unit)? = null,
+    redirectToCustomFinalErrorPage: (() -> Unit)? = null
 ) {
     if (DataHolder.baseUrl.isNotEmpty()) {
         DataHolder.redirectToCustomSuccessPage = redirectToCustomSuccessPage
+        DataHolder.redirectToCustomFinalErrorPage = redirectToCustomFinalErrorPage
         activity.startActivity(Intent(activity, StartProcessingActivity::class.java))
     } else {
         println("Не выполнено initOnCreate")

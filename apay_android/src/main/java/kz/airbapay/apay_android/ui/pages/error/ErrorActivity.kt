@@ -21,7 +21,11 @@ internal class ErrorActivity: ComponentActivity() {
                 ErrorSomethingWrongPage()
 
             } else if (error.code == ErrorsCode.error_5020.code) {
-                ErrorFinalPage()
+                if (DataHolder.redirectToCustomFinalErrorPage != null) {
+                    DataHolder.redirectToCustomFinalErrorPage?.invoke()
+                } else {
+                    ErrorFinalPage()
+                }
 
             } else if (error.code == ErrorsCode.error_5999.code && DataHolder.bankCode?.isNotBlank() == true) {
                 ErrorWithInstructionPage(errorCode = error)
