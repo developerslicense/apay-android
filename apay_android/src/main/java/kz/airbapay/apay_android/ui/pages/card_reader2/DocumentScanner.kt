@@ -42,9 +42,19 @@ class DocumentScanner(
     }
 
     /**
+     * add document scanner result handler and launch the document scanner
+     */
+    fun startScan() {
+        activity.registerForActivityResult(
+            ActivityResultContracts.StartActivityForResult()
+        ) { result: ActivityResult -> handleDocumentScanIntentResult(result) }
+            .launch(createDocumentScanIntent())
+    }
+
+    /**
      * create intent to launch document scanner and set custom options
      */
-    fun createDocumentScanIntent(): Intent {
+    private fun createDocumentScanIntent(): Intent {
         val documentScanIntent = Intent(activity, DocumentScannerActivity::class.java)
         documentScanIntent.putExtra(
             DocumentScannerExtra.EXTRA_CROPPED_IMAGE_QUALITY,
@@ -67,7 +77,7 @@ class DocumentScanner(
      *
      * @param result the document scanner activity result
      */
-     fun handleDocumentScanIntentResult(result: ActivityResult) {
+    private fun handleDocumentScanIntentResult(result: ActivityResult) {
         try {
             // make sure responseType is valid
             if (!arrayOf(
@@ -127,15 +137,5 @@ class DocumentScanner(
             // trigger the error event handler
             errorHandler?.let { it(exception.localizedMessage ?: "An error happened") }
         }
-    }
-
-    /**
-     * add document scanner result handler and launch the document scanner
-     */
-    fun startScan() {
-        activity.registerForActivityResult(
-            ActivityResultContracts.StartActivityForResult()
-        ) { result: ActivityResult -> handleDocumentScanIntentResult(result) }
-            .launch(createDocumentScanIntent())
     }
 }

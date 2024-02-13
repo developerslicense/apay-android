@@ -15,5 +15,4 @@ class Document(
     private val originalPhotoWidth: Int,
     val originalPhotoHeight: Int,
     var corners: Quad
-) {
-}
+)
