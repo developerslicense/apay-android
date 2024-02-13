@@ -7,11 +7,13 @@ import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.os.Build
 import android.os.Bundle
+import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatActivity
 import kz.airbapay.apay_android.R
 import kz.airbapay.apay_android.ui.pages.card_reader2.camera.ExecutorCamera2
 import kz.airbapay.apay_android.ui.pages.card_reader2.extensions.move
 import kz.airbapay.apay_android.ui.pages.card_reader2.models.Quad
+import kz.airbapay.apay_android.ui.pages.card_reader2.ui.Rectangle
 import org.opencv.core.Point
 
 /**
@@ -25,10 +27,12 @@ import org.opencv.core.Point
 class DocumentScannerActivity : AppCompatActivity() {
 
     private val cropperOffsetWhenCornersNotFound = 100.0
+    private var rectangle: FrameLayout? = null
 
     private val camera = ExecutorCamera2(
         activity = this,
         onGetPhoto = { bitmap ->
+
             val corners = try {
                 val (topLeft, topRight, bottomLeft, bottomRight) = getDocumentCorners(bitmap)
                 Quad(topLeft, topRight, bottomRight, bottomLeft)
@@ -38,12 +42,13 @@ class DocumentScannerActivity : AppCompatActivity() {
                 )
                 return@ExecutorCamera2
             }
-
             println("aaaaaaaaaaaaaaa")
             println(corners.bottomLeftCorner)
             println(corners.bottomRightCorner)
             println(corners.corners)
             println(corners.edges)
+            rectangle?.removeAllViews()
+            rectangle?.addView(Rectangle(this, corners))
             /*document = Document(originalPhotoPath, photo.width, photo.height, corners)
             document?.let { document ->
                 documents.add(document)
@@ -69,6 +74,7 @@ class DocumentScannerActivity : AppCompatActivity() {
         }
 
         setContentView(R.layout.irdcs_activity_scan_card)
+        rectangle = findViewById(R.id.textureRectangle)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
@@ -190,5 +196,5 @@ class DocumentScannerActivity : AppCompatActivity() {
             Intent().putExtra("error", errorMessage)
         )
         finish()
-    }
+    } //todo
 }
