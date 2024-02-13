@@ -5,8 +5,8 @@ import androidx.activity.ComponentActivity
 import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
-import java.util.Locale
 import java.util.Date
+import java.util.Locale
 
 /**
  * This class contains a helper function creating temporary files

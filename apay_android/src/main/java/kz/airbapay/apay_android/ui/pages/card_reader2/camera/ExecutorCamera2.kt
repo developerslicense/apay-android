@@ -1,9 +1,10 @@
-package kz.airbapay.apay_android.ui.pages.card_reader.bl
+package kz.airbapay.apay_android.ui.pages.card_reader2.camera
 
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
 import android.hardware.Camera
 import android.os.SystemClock
 import android.util.Log
@@ -13,20 +14,26 @@ import android.view.SurfaceView
 import android.widget.FrameLayout
 import kz.airbapay.apay_android.R
 import kz.airbapay.apay_android.ui.pages.card_reader.ScanActivity
+import kz.airbapay.apay_android.ui.pages.card_reader.bl.CameraThread
+import kz.airbapay.apay_android.ui.pages.card_reader.bl.DetectedBox
+import kz.airbapay.apay_android.ui.pages.card_reader.bl.OnCameraOpenListener
+import kz.airbapay.apay_android.ui.pages.card_reader.bl.OnScanListener
+import kz.airbapay.apay_android.ui.pages.card_reader2.ml.MLThread
 import java.io.IOException
 
-internal class ExecutorCamera(
-    private val activity: ScanActivity,
-    private val tryAcquire: () -> Boolean
-) : Camera.PreviewCallback, OnCameraOpenListener {
+internal class ExecutorCamera2(
+    private val activity: Activity,
+    private val onGetPhoto: (Bitmap) -> Unit
+) : Camera.PreviewCallback, OnCameraOpenListener, OnScanListener {
 
     var mRoiCenterYRatio = 0f
-    // set when this activity posts to the machineLearningThread
+
     private var mPredictionStartMs: Long = 0
     var mIsPermissionCheckDone = false
     private var mCamera: Camera? = null
     private var mRotation = 0
     private var mCameraThread: CameraThread? = null
+    private val mlThread = MLThread()
 
     fun onPause() {
         if (mCamera != null) {
@@ -43,9 +50,9 @@ internal class ExecutorCamera(
             intent.putExtra(ScanActivity.RESULT_CAMERA_OPEN_ERROR, true)
             activity.setResult(Activity.RESULT_CANCELED, intent)
             activity.finish()
-        } else if (!activity.executorML!!.mIsActivityActive) {
-            camera.release()
+
         } else {
+            Thread(mlThread).start()
             mCamera = camera
             setCameraDisplayOrientation(
                 activity,
@@ -78,7 +85,8 @@ internal class ExecutorCamera(
 
     private fun setCameraDisplayOrientation(
         activity: Activity,
-        cameraId: Int, camera: Camera
+        cameraId: Int,
+        camera: Camera
     ) {
         val info = Camera.CameraInfo()
         Camera.getCameraInfo(cameraId, info)
@@ -106,20 +114,15 @@ internal class ExecutorCamera(
     }
 
     override fun onPreviewFrame(bytes: ByteArray?, camera: Camera) {
-        if (tryAcquire()) {
-            val mlThread = ScanActivity.machineLearningThread
-            val parameters = camera.parameters
-            val width = parameters.previewSize.width
-            val height = parameters.previewSize.height
-            mPredictionStartMs = SystemClock.uptimeMillis()
+        val parameters = camera.parameters
+        val width = parameters.previewSize.width
+        val height = parameters.previewSize.height
+        mPredictionStartMs = SystemClock.uptimeMillis()
 
-            // Use the application context here because the machine learning thread's lifecycle
-            // is connected to the application and not this activity
-            mlThread!!.post(
-                bytes, width, height, mRotation, activity.executorML,
+        mlThread.post(
+            bytes, width, height, mRotation, this,
                 activity.applicationContext, mRoiCenterYRatio
-            )
-        }
+        )
     }
 
     /**
@@ -198,4 +201,14 @@ internal class ExecutorCamera(
             }
         }
     }
+
+    override fun onPrediction(number: String?, bitmap: Bitmap?, digitBoxes: List<DetectedBox?>?) {
+        bitmap?.let { onGetPhoto(it) }
+    }
+
+    override fun onFatalError() {
+        // todo
+        println("aaaaaaaaaaaaaaaa fatal error")
+    }
+
 }

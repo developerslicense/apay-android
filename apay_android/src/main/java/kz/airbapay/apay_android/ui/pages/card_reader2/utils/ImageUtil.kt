@@ -1,16 +1,12 @@
 package kz.airbapay.apay_android.ui.pages.card_reader2.utils
 
-import android.content.ContentResolver
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Matrix
 import android.media.ExifInterface
-import android.net.Uri
 import kz.airbapay.apay_android.ui.pages.card_reader2.extensions.distance
 import kz.airbapay.apay_android.ui.pages.card_reader2.extensions.toOpenCVPoint
 import kz.airbapay.apay_android.ui.pages.card_reader2.models.Quad
-import java.io.File
-import kotlin.math.min
 import org.opencv.android.Utils
 import org.opencv.core.Mat
 import org.opencv.core.MatOfPoint2f
@@ -18,6 +14,9 @@ import org.opencv.core.Point
 import org.opencv.core.Size
 import org.opencv.imgcodecs.Imgcodecs
 import org.opencv.imgproc.Imgproc
+import java.io.File
+import kotlin.math.min
+
 
 /**
  * This class contains helper functions for processing images
@@ -25,6 +24,8 @@ import org.opencv.imgproc.Imgproc
  * @constructor creates image util
  */
 class ImageUtil {
+
+
     /**
      * get image matrix from file path
      *
@@ -151,18 +152,4 @@ class ImageUtil {
         return croppedBitmap
     }
 
-    /**
-     * get bitmap image from file uri
-     *
-     * @param fileUriString image is saved here and starts with file:///
-     * @return bitmap image
-     */
-    fun readBitmapFromFileUriString(
-        fileUriString: String,
-        contentResolver: ContentResolver
-    ): Bitmap {
-        return BitmapFactory.decodeStream(
-            contentResolver.openInputStream(Uri.parse(fileUriString))
-        )
-    }
 }
