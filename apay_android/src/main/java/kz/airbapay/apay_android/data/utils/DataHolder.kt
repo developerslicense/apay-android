@@ -39,8 +39,8 @@ internal object DataHolder {
 
   var frontendCallback: ((activity: Activity, paymentSubmittingResult: Boolean) -> Unit)? = null
 
-  var redirectToCustomSuccessPage: (() -> Unit)? = null
-  var redirectToCustomFinalErrorPage: (() -> Unit)? = null
+  var redirectToCustomSuccessPage: ((Activity) -> Unit)? = null
+  var redirectToCustomFinalErrorPage: ((Activity) -> Unit)? = null
   var featureGooglePay: Boolean = false
   var featureSavedCards: Boolean = false
 
