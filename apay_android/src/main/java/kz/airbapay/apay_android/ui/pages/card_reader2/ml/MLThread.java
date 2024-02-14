@@ -1,5 +1,7 @@
 package kz.airbapay.apay_android.ui.pages.card_reader2.ml;
 
+import static kz.airbapay.apay_android.ui.pages.card_reader2.utils.ImageDecoderKt.getBitmap;
+
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
@@ -54,8 +56,8 @@ public class MLThread implements Runnable {
                     args.getMFrameBytes(),
                     args.getMWidth(),
                     args.getMHeight(),
-                    args.getMSensorOrientation(),
-                    args.getMRoiCenterYRatio(),
+//                    args.getMSensorOrientation(),
+//                    args.getMRoiCenterYRatio(),
                     args.getMContext()
             );
 
@@ -77,6 +79,8 @@ public class MLThread implements Runnable {
         return queue.pop();
     }
 
+
+/*
     private Bitmap getBitmap(byte[] bytes, int width, int height, int sensorOrientation,
                              float roiCenterYRatio, Context ctx) {
         final Bitmap bitmap = YUV_toRGB(bytes, width, height, ctx);
@@ -162,7 +166,7 @@ public class MLThread implements Runnable {
         in.destroy();
         out.destroy();
         return bmp;
-    }
+    }*/
 
     private void runOcrModel(final Bitmap bitmap, final RunArguments args) {
         Handler handler = new Handler(Looper.getMainLooper());

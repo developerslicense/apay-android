@@ -23,6 +23,7 @@ import kotlin.math.min
  *
  * @constructor creates image util
  */
+// todo del
 class ImageUtil {
 
 
