@@ -65,7 +65,7 @@ internal fun openGooglePay(
 
 internal fun openSuccess(activity: Activity) {
     if (DataHolder.redirectToCustomSuccessPage != null) {
-        DataHolder.redirectToCustomSuccessPage?.invoke()
+        DataHolder.redirectToCustomSuccessPage?.invoke(activity)
 
     } else {
         val intent = Intent(activity, SuccessActivity::class.java)
