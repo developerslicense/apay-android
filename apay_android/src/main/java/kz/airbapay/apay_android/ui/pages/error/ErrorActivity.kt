@@ -22,7 +22,7 @@ internal class ErrorActivity: ComponentActivity() {
 
             } else if (error.code == ErrorsCode.error_5020.code) {
                 if (DataHolder.redirectToCustomFinalErrorPage != null) {
-                    DataHolder.redirectToCustomFinalErrorPage?.invoke()
+                    DataHolder.redirectToCustomFinalErrorPage?.invoke(this)
                 } else {
                     ErrorFinalPage()
                 }

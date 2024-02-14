@@ -128,8 +128,8 @@ class AirbaPaySdk {
 
 fun startAirbaPay(
     activity: Activity,
-    redirectToCustomSuccessPage: (() -> Unit)? = null,
-    redirectToCustomFinalErrorPage: (() -> Unit)? = null
+    redirectToCustomSuccessPage: ((Activity) -> Unit)? = null,
+    redirectToCustomFinalErrorPage: ((Activity) -> Unit)? = null
 ) {
     if (DataHolder.baseUrl.isNotEmpty()) {
         DataHolder.redirectToCustomSuccessPage = redirectToCustomSuccessPage
