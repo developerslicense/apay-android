@@ -116,7 +116,7 @@ class CardScanner implements Camera.PreviewCallback, Camera.AutoFocusCallback,
     // ------------------------------------------------------------------------
     // STATIC INITIALIZATION
     // ------------------------------------------------------------------------
-/*
+
     static {
 
         try {
@@ -151,7 +151,7 @@ class CardScanner implements Camera.PreviewCallback, Camera.AutoFocusCallback,
             Log.e(Util.PUBLIC_LOG_TAG, error);
             manualFallbackForError = true;
         }
-    }*/
+    }
 
     /**
      * Custom loadLibrary method that first tries to load the libraries from the built-in libs

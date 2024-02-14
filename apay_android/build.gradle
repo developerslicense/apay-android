@@ -14,8 +14,20 @@ android {
     defaultConfig {
         minSdk 21
 
+        ndk {
+            moduleName "cardioRecognizer"
+        }
+
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
+    }
+
+    resourcePrefix 'cio_'
+
+    externalNativeBuild {
+        ndkBuild {
+            path 'src/main/jni/Android.mk'
+        }
     }
 
     buildTypes {

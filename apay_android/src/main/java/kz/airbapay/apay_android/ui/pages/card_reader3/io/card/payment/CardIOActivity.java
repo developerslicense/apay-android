@@ -325,12 +325,12 @@ public final class CardIOActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         System.out.println("AAAAAAAAAAAAA");
-        try {
-            // load OpenCV
-            System.loadLibrary("opencv_java4");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+//        try {
+//            // load OpenCV
+//            System.loadLibrary("opencv_java4");
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
 
         final Intent clientData = this.getIntent();
 
