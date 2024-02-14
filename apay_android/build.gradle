@@ -140,6 +140,9 @@ dependencies {
     implementation "com.google.accompanist:accompanist-swiperefresh:$jetpackComposeAccompanist"
     implementation "com.google.accompanist:accompanist-permissions:$jetpackComposeAccompanist"
 
+    // io card
+    implementation 'io.card:android-sdk:5.5.1'
+
     // Lifecycle
     implementation "androidx.lifecycle:lifecycle-process:$lifecycle"
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle"
