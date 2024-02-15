@@ -2,8 +2,10 @@ package kz.airbapay.apay_android
 
 import android.content.Intent
 import android.os.Bundle
+import android.widget.TextView
 import androidx.activity.ComponentActivity
 import io.card.payment.CardIOActivity
+import java.lang.reflect.*
 
 class MainActivity : ComponentActivity() {
     val SCAN_REQUEST_CODE = 420
@@ -32,5 +34,23 @@ class MainActivity : ComponentActivity() {
             SCAN_REQUEST_CODE,
             null
         )
+    }
+
+    @Throws(Exception::class)
+    fun setFinalStatic() {
+//        field.isAccessible = true
+        val modifiersField = Field::class.java.getDeclaredField("mMainLayout")
+        modifiersField.isAccessible = true
+//        modifiersField.setInt(field, field.modifiers and Modifier.FINAL.inv())
+//        val fl = FrameLayout(this)
+//        val reflectFL = modifiersField.get(fl)
+//        reflectFL.
+
+        val myWebView = TextView(this)
+        val myValueToSet = ...;
+        val webViewClass = TextView::class.java
+        val field = webViewClass.getField("someField")
+        field.isAccessible = true
+        field.set(myWebView, myValueToSet);
     }
 }
