@@ -18,6 +18,8 @@ import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.WindowManager;
 
+import org.opencv.android.OpenCVLoader;
+
 import java.io.File;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
@@ -126,6 +128,7 @@ class CardScanner implements Camera.PreviewCallback, Camera.AutoFocusCallback,
 
     static {
 //        Log.i(Util.PUBLIC_LOG_TAG, "card.io " + BuildConfig.VERSION_NAME);
+        OpenCVLoader.initDebug();
 
         try {
             loadLibrary("cardioDecider");
@@ -189,7 +192,7 @@ class CardScanner implements Camera.PreviewCallback, Camera.AutoFocusCallback,
     }
 
     private static boolean usesSupportedProcessorArch() {
-        return nUseNeon() || nUseTegra() || nUseX86();
+        return true; // nUseNeon() || nUseTegra() || nUseX86();
     }
 
     static boolean processorSupported() {
@@ -206,7 +209,7 @@ class CardScanner implements Camera.PreviewCallback, Camera.AutoFocusCallback,
         }
         mScanActivityRef = new WeakReference<>(scanActivity);
         mFrameOrientation = currentFrameOrientation;
-        nSetup(mSuppressScan, MIN_FOCUS_SCORE, mUnblurDigits);
+//        nSetup(mSuppressScan, MIN_FOCUS_SCORE, mUnblurDigits);
     }
 
     /**

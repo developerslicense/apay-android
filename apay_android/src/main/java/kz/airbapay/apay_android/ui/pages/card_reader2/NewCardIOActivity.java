@@ -354,9 +354,9 @@ public final class NewCardIOActivity extends Activity {
 
         if (clientData.getBooleanExtra(EXTRA_NO_CAMERA, false)) {
             manualEntryFallbackOrForced = true;
-        } else if (!CardScanner.processorSupported()){
+        } /*else if (!CardScanner.processorSupported()){
             manualEntryFallbackOrForced = true;
-        } else {
+        } */else {
             try {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     if (!waitingForPermission) {
