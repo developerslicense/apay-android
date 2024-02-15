@@ -45,12 +45,11 @@ import java.lang.reflect.Constructor;
 import java.util.Date;
 
 import io.card.payment.CameraUnavailableException;
+import io.card.payment.DataEntryActivity;
 import io.card.payment.i18n.LocalizedStrings;
 import io.card.payment.i18n.StringKey;
 import io.card.payment.ui.ActivityHelper;
 import io.card.payment.ui.ViewUtil;
-import io.card.payment.CreditCard;
-import io.card.payment.CardScanner;
 
 /**
  * This is the entry point {@link android.app.Activity} for a card.io client to use <a
@@ -306,7 +305,7 @@ public final class NewCardIOActivity extends Activity {
 
     static private int numActivityAllocations;
 
-    private CardScanner mCardScanner;
+    private CardScannerImpl mCardScanner;
 
     private boolean manualEntryFallbackOrForced = false;
 
@@ -374,7 +373,7 @@ public final class NewCardIOActivity extends Activity {
         if (clientData.getBooleanExtra(EXTRA_NO_CAMERA, false)) {
             Log.i("PUBLIC_LOG_TAG", "EXTRA_NO_CAMERA set to true. Skipping camera.");
             manualEntryFallbackOrForced = true;
-        } else if (!CardScanner.processorSupported()){
+        } else if (!CardScannerImpl.processorSupported()){
             Log.i("PUBLIC_LOG_TAG", "Processor not Supported. Skipping camera.");
             manualEntryFallbackOrForced = true;
         } else {
@@ -472,7 +471,7 @@ public final class NewCardIOActivity extends Activity {
 
             mFrameOrientation = ORIENTATION_PORTRAIT;
 
-            mCardScanner = new CardScanner(this, mFrameOrientation);
+            mCardScanner = new CardScannerImpl(this, mFrameOrientation);
             mCardScanner.prepareScanner();
 
             setPreviewLayout();
@@ -742,15 +741,7 @@ public final class NewCardIOActivity extends Activity {
     }
 
     void onCardDetected(Bitmap detectedBitmap, DetectionInfo dInfo) {
-        try {
-            Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-            vibrator.vibrate(VIBRATE_PATTERN, -1);
-        } catch (SecurityException e) {
-            Log.e("PUBLIC_LOG_TAG",
-                    "Could not activate vibration feedback. Please add <uses-permission android:name=\"android.permission.VIBRATE\" /> to your application's manifest.");
-        } catch (Exception e) {
-            Log.w("PUBLIC_LOG_TAG", "Exception while attempting to vibrate: ", e);
-        }
+
 
         mCardScanner.pauseScanning();
         mUIBar.setVisibility(View.INVISIBLE);
@@ -763,9 +754,9 @@ public final class NewCardIOActivity extends Activity {
         float sf;
         if (mFrameOrientation == ORIENTATION_PORTRAIT
                 || mFrameOrientation == ORIENTATION_PORTRAIT_UPSIDE_DOWN) {
-            sf = mGuideFrame.right / (float)CardScanner.CREDIT_CARD_TARGET_WIDTH * .95f;
+            sf = mGuideFrame.right / (float)CardScannerImpl.CREDIT_CARD_TARGET_WIDTH * .95f;
         } else {
-            sf = mGuideFrame.right / (float)CardScanner.CREDIT_CARD_TARGET_WIDTH * 1.15f;
+            sf = mGuideFrame.right / (float)CardScannerImpl.CREDIT_CARD_TARGET_WIDTH * 1.15f;
         }
 
         Matrix m = new Matrix();

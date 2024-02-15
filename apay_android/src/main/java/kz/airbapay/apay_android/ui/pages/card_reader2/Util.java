@@ -25,7 +25,6 @@ import java.util.List;
 
 import io.card.payment.CameraUnavailableException;
 import io.card.payment.CardIOActivity;
-import io.card.payment.CardScanner;
 
 /**
  * This class has various static utility methods.
@@ -76,7 +75,7 @@ class Util {
     }
 
     private static boolean hardwareSupportCheck() {
-        if (!CardScanner.processorSupported()) {
+        if (!CardScannerImpl.processorSupported()) {
             Log.w(PUBLIC_LOG_TAG, "- Processor type is not supported");
             return false;
         }

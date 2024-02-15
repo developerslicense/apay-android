@@ -24,10 +24,8 @@ import android.view.View;
 
 import java.lang.ref.WeakReference;
 
-import io.card.payment.CardIOActivity;
 import io.card.payment.i18n.LocalizedStrings;
 import io.card.payment.i18n.StringKey;
-import io.card.payment.CardScanner;
 
 /**
  * This class implements a transparent overlay that is drawn over the raw camera capture frames.
@@ -463,7 +461,7 @@ class OverlayView extends View {
         paint.setTextSize(CARD_NUMBER_MARKUP_FONT_SIZE * mScale);
 
         int len = mDetectedCard.cardNumber.length();
-        float sf = mBitmap.getWidth() / (float) CardScanner.CREDIT_CARD_TARGET_WIDTH;
+        float sf = mBitmap.getWidth() / (float) CardScannerImpl.CREDIT_CARD_TARGET_WIDTH;
         int yOffset = (int) ((mDetectedCard.yoff * sf - 6));
         for (int i = 0; i < len; i++) {
             int xOffset = (int) (mDetectedCard.xoff[i] * sf);
