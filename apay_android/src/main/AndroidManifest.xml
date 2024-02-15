@@ -52,6 +52,11 @@
         <activity android:name=".ui.pages.error.ErrorActivity"
             android:noHistory="true"
             android:screenOrientation="portrait"/>
+
+        <activity android:name="kz.airbapay.apay_android.ui.pages.card_reader2.NewCardIOActivity"
+            android:configChanges="keyboardHidden|orientation"/>
+
+        <activity android:name="kz.airbapay.apay_android.ui.pages.card_reader2.DataEntryActivity"/>
     </application>
 
 </manifest>
