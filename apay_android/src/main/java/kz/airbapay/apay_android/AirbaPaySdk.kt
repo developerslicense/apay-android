@@ -123,19 +123,19 @@ class AirbaPaySdk {
                 DataHolder.frontendCallback = it
             }
         }
-    }
-}
 
-fun startAirbaPay(
-    activity: Activity,
-    redirectToCustomSuccessPage: ((Activity) -> Unit)? = null,
-    redirectToCustomFinalErrorPage: ((Activity) -> Unit)? = null
-) {
-    if (DataHolder.baseUrl.isNotEmpty()) {
-        DataHolder.redirectToCustomSuccessPage = redirectToCustomSuccessPage
-        DataHolder.redirectToCustomFinalErrorPage = redirectToCustomFinalErrorPage
-        activity.startActivity(Intent(activity, StartProcessingActivity::class.java))
-    } else {
-        println("Не выполнено initOnCreate")
+        fun startAirbaPay(
+            activity: Activity,
+            redirectToCustomSuccessPage: ((Activity) -> Unit)? = null,
+            redirectToCustomFinalErrorPage: ((Activity) -> Unit)? = null
+        ) {
+            if (DataHolder.baseUrl.isNotEmpty()) {
+                DataHolder.redirectToCustomSuccessPage = redirectToCustomSuccessPage
+                DataHolder.redirectToCustomFinalErrorPage = redirectToCustomFinalErrorPage
+                activity.startActivity(Intent(activity, StartProcessingActivity::class.java))
+            } else {
+                println("Не выполнено initOnCreate")
+            }
+        }
     }
 }
