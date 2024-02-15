@@ -9,6 +9,7 @@ import android.os.Parcelable;
 
 import java.util.UUID;
 
+import io.card.payment.CardType;
 
 /**
  * Describes a credit card.
@@ -153,20 +154,6 @@ public class CreditCard implements Parcelable {
      */
     public CardType getCardType() {
         return CardType.fromCardNumber(cardNumber);
-    }
-
-    /**
-     * @return A string suitable for display, with spaces inserted for readability.
-     */
-    public String getFormattedCardNumber() {
-        return CreditCardNumber.formatString(cardNumber);
-    }
-
-    /**
-     * @return <code>true</code> indicates a current, valid date.
-     */
-    public boolean isExpiryValid() {
-        return CreditCardNumber.isDateValid(expiryMonth, expiryYear);
     }
 
     /**

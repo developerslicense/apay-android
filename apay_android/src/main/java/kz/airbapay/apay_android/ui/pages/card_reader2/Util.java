@@ -23,6 +23,10 @@ import android.util.Log;
 import java.io.ByteArrayOutputStream;
 import java.util.List;
 
+import io.card.payment.CameraUnavailableException;
+import io.card.payment.CardIOActivity;
+import io.card.payment.CardScanner;
+
 /**
  * This class has various static utility methods.
  */
@@ -137,8 +141,8 @@ class Util {
     }
 
     /**
-     * Writes {@link NewCardIOActivity#EXTRA_CAPTURED_CARD_IMAGE} to dataIntent if
-     * origIntent has {@link NewCardIOActivity#EXTRA_RETURN_CARD_IMAGE}.
+     * Writes {@link CardIOActivity#EXTRA_CAPTURED_CARD_IMAGE} to dataIntent if
+     * origIntent has {@link CardIOActivity#EXTRA_RETURN_CARD_IMAGE}.
      *
      * @param origIntent
      * @param dataIntent
@@ -146,11 +150,11 @@ class Util {
      */
     static void writeCapturedCardImageIfNecessary(
             Intent origIntent, Intent dataIntent, OverlayView mOverlay){
-        if (origIntent.getBooleanExtra(NewCardIOActivity.EXTRA_RETURN_CARD_IMAGE, false)
+        if (origIntent.getBooleanExtra(CardIOActivity.EXTRA_RETURN_CARD_IMAGE, false)
             && mOverlay != null && mOverlay.getBitmap() != null) {
             ByteArrayOutputStream scaledCardBytes = new ByteArrayOutputStream();
             mOverlay.getBitmap().compress(Bitmap.CompressFormat.JPEG, 80, scaledCardBytes);
-            dataIntent.putExtra(NewCardIOActivity.EXTRA_CAPTURED_CARD_IMAGE, scaledCardBytes.toByteArray());
+            dataIntent.putExtra(CardIOActivity.EXTRA_CAPTURED_CARD_IMAGE, scaledCardBytes.toByteArray());
         }
 
     }

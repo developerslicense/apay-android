@@ -11,6 +11,8 @@ import java.text.StringCharacterIterator;
 import java.util.Calendar;
 import java.util.Date;
 
+import io.card.payment.CardType;
+import io.card.payment.CreditCard;
 
 class CreditCardNumber {
 

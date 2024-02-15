@@ -24,9 +24,10 @@ import android.view.View;
 
 import java.lang.ref.WeakReference;
 
-import kz.airbapay.apay_android.ui.pages.card_reader2.i18n.LocalizedStrings;
-import kz.airbapay.apay_android.ui.pages.card_reader2.i18n.StringKey;
-
+import io.card.payment.CardIOActivity;
+import io.card.payment.i18n.LocalizedStrings;
+import io.card.payment.i18n.StringKey;
+import io.card.payment.CardScanner;
 
 /**
  * This class implements a transparent overlay that is drawn over the raw camera capture frames.
@@ -108,7 +109,7 @@ class OverlayView extends View {
     private Path mLockedBackgroundPath;
     private Rect mCameraPreviewRect;
     private final Torch mTorch;
-    private final Logo mLogo;
+//    private final Logo mLogo;
     private Rect mTorchRect, mLogoRect;
     private final boolean mShowTorch;
     private int mRotationFlip;
@@ -126,7 +127,7 @@ class OverlayView extends View {
         mScale = getResources().getDisplayMetrics().density / 1.5f;
 
         mTorch = new Torch(TORCH_WIDTH * mScale, TORCH_HEIGHT * mScale);
-        mLogo = new Logo(captureActivity);
+//        mLogo = new Logo(captureActivity);
 
         mGuidePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
 
@@ -365,13 +366,13 @@ class OverlayView extends View {
         canvas.restore();
 
         // draw logo
-        if (!hideCardIOLogo) {
+        /*if (!hideCardIOLogo) {
             canvas.save();
             canvas.translate(mLogoRect.exactCenterX(), mLogoRect.exactCenterY());
             canvas.rotate(mRotationFlip * mRotation);
             mLogo.draw(canvas, LOGO_MAX_WIDTH * mScale, LOGO_MAX_HEIGHT * mScale);
             canvas.restore();
-        }
+        }*/
 
         if (mShowTorch) {
             // draw torch
@@ -483,9 +484,9 @@ class OverlayView extends View {
         invalidate();
     }
 
-    public void setUseCardIOLogo(boolean useCardIOLogo) {
-        mLogo.loadLogo(useCardIOLogo);
-    }
+//    public void setUseCardIOLogo(boolean useCardIOLogo) {
+//        mLogo.loadLogo(useCardIOLogo);
+//    }
 
     // for test
     public Rect getTorchRect() {

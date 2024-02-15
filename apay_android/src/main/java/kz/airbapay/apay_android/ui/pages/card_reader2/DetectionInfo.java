@@ -4,6 +4,7 @@ package kz.airbapay.apay_android.ui.pages.card_reader2;
  * See the file "LICENSE.md" for the full license governing this code.
  */
 
+import io.card.payment.CreditCard;
 
 /**
  * This class implements a data structure used to pass card detection details back and forth between
