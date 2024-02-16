@@ -64,26 +64,7 @@ class CardScannerImpl implements Camera.PreviewCallback, Camera.AutoFocusCallbac
     static final int CREDIT_CARD_TARGET_WIDTH = 428; // kCreditCardTargetWidth
     static final int CREDIT_CARD_TARGET_HEIGHT = 270; // kCreditCardTargetHeight
 
-/*   
-    private Object cardScanner;
-
-    // ------------------------------------------------------------------------
-    // STATIC INITIALIZATION
-    // ------------------------------------------------------------------------
-
-    static {
-        try {
-            Class privateClassCardScanner = Class.forName("io.card.payment.CardScanner");
-                    
-//                    = Student.class.getDeclaredField("name");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-
-//        CardScannerImpl
-    }*/
-private Bitmap detectedBitmap;
+    private Bitmap detectedBitmap;
 
     private static boolean manualFallbackForError;
 
@@ -117,11 +98,33 @@ private Bitmap detectedBitmap;
     private int numManualTorchChange;
     private int numFramesSkipped;
 
+
+    private Object cardScanner;
+
     // ------------------------------------------------------------------------
     // STATIC INITIALIZATION
     // ------------------------------------------------------------------------
 
     static {
+        /*try {
+            Class privateClassCardScanner = Class.forName("io.card.payment.CardScanner");
+            Class[] classes = privateClassCardScanner.getClass().ac;
+            for(int i = 0; i < classes.length; i++) {
+                classes[i].
+            }
+//                    = Student.class.getDeclaredField("name");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }*/
+
+
+//        CardScannerImpl
+    }
+    // ------------------------------------------------------------------------
+    // STATIC INITIALIZATION
+    // ------------------------------------------------------------------------
+
+    /*static {
 //        Log.i(Util.PUBLIC_LOG_TAG, "card.io " + BuildConfig.VERSION_NAME);
 
         try {
@@ -156,7 +159,7 @@ private Bitmap detectedBitmap;
             Log.e("PUBLIC_LOG_TAG", error);
             manualFallbackForError = true;
         }
-    }
+    }*/
 
     /**
      * Custom loadLibrary method that first tries to load the libraries from the built-in libs
@@ -165,7 +168,7 @@ private Bitmap detectedBitmap;
      * No checks are performed to ensure that the native libraries match the cardIO library version.
      * This needs to be handled by the consuming application.
      */
-    private static void loadLibrary(String libraryName) throws UnsatisfiedLinkError {
+  /*  private static void loadLibrary(String libraryName) throws UnsatisfiedLinkError {
         try {
             System.loadLibrary(libraryName);
         } catch (UnsatisfiedLinkError e) {
@@ -183,7 +186,7 @@ private Bitmap detectedBitmap;
             // search path, try loading from there.
             System.load(fullPath);
         }
-    }
+    }*/
 
     private static boolean usesSupportedProcessorArch() {
         return nUseNeon() || nUseTegra() || nUseX86();
@@ -194,6 +197,13 @@ private Bitmap detectedBitmap;
     }
 
     CardScannerImpl(NewCardIOActivity scanActivity, int currentFrameOrientation) {
+        try {
+            cardScanner = Class.forName("io.card.payment.CardScanner");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        System.out.println("aaaaaaaaaaa" + cardScanner == null);
+
         Intent scanIntent = scanActivity.getIntent();
         if (scanIntent != null) {
             mSuppressScan = scanIntent.getBooleanExtra(NewCardIOActivity.EXTRA_SUPPRESS_SCAN, false);
@@ -203,6 +213,8 @@ private Bitmap detectedBitmap;
         }
         mScanActivityRef = new WeakReference<>(scanActivity);
         mFrameOrientation = currentFrameOrientation;
+
+        // todo рефлексию здесь вызвать
         nSetup(mSuppressScan, MIN_FOCUS_SCORE, mUnblurDigits);
     }
 
