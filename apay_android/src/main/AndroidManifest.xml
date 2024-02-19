@@ -21,8 +21,8 @@
 
     <application>
         <meta-data
-            android:name="com.google.android.gms.signin"
-            android:value="API_KEY" />
+            android:name="com.google.android.gms.wallet.api.enabled"
+            android:value="true" />
 
         <activity
             android:name="kz.airbapay.apay_android.ui.pages.startview.StartProcessingActivity"

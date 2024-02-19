@@ -5,7 +5,6 @@ import android.app.KeyguardManager
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -52,6 +51,8 @@ import kz.airbapay.apay_android.data.utils.openGooglePay
 import kz.airbapay.apay_android.network.repository.Repository
 import kz.airbapay.apay_android.ui.pages.card_reader.ScanActivity
 import kz.airbapay.apay_android.ui.pages.dialogs.InitDialogExit
+import kz.airbapay.apay_android.ui.pages.googlepay.GPayView
+import kz.airbapay.apay_android.ui.pages.googlepay.nativegp.BaseGooglePayActivity
 import kz.airbapay.apay_android.ui.pages.home.bl.checkValid
 import kz.airbapay.apay_android.ui.pages.home.bl.startPaymentProcessing
 import kz.airbapay.apay_android.ui.pages.home.presentation.BottomImages
@@ -61,12 +62,11 @@ import kz.airbapay.apay_android.ui.pages.home.presentation.DateExpiredView
 import kz.airbapay.apay_android.ui.pages.home.presentation.SwitchedView
 import kz.airbapay.apay_android.ui.resources.ColorsSdk
 import kz.airbapay.apay_android.ui.ui_components.BackHandler
-import kz.airbapay.apay_android.ui.pages.googlepay.GPayView
 import kz.airbapay.apay_android.ui.ui_components.TopInfoView
 import kz.airbapay.apay_android.ui.ui_components.ViewButton
 import kz.airbapay.apay_android.ui.ui_components.ViewToolbar
 
-internal class HomeActivity : ComponentActivity() {
+internal class HomeActivity : BaseGooglePayActivity() {
 
     private val cardNumberText = mutableStateOf(TextFieldValue())
     private val paySystemIcon = mutableStateOf<Int?>(null)

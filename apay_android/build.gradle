@@ -56,12 +56,14 @@ ext {
     desugarJdkLibs = '1.1.1'
     coroutines = '1.5.2'
     coroutinesCore = '1.6.1'
+    coroutinesPlayServices = "1.7.1"
     coilVersion = "2.2.2"
     coilComposeVersion = "1.4.5"
 
     espressoCore = '3.5.0'
 
     gmsWallet = "19.2.1"
+    gmsPayButton = "0.1.3"
 
     junit = '4.13.2'
     jetpackComposeAccompanist = '0.28.0'
@@ -81,7 +83,6 @@ ext {
 
     tensorflow = '2.14.0'
 }
-
 dependencies {
 
     testImplementation 'junit:junit:4.13.2'
@@ -115,6 +116,7 @@ dependencies {
     // Coroutines
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesCore"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutinesCore"
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:$coroutinesPlayServices")
 
     // Coil
     implementation "io.coil-kt:coil:$coilVersion"
@@ -123,7 +125,9 @@ dependencies {
     implementation "com.github.skydoves:landscapist-coil:$coilComposeVersion"// обертка для coil для композа https://github.com/skydoves/landscapist#coil
 
     // Gms
-    implementation "com.google.android.gms:play-services-wallet:$gmsWallet"
+//    implementation "com.google.android.gms:play-services-wallet:$gmsWallet"
+    implementation("com.google.android.gms:play-services-wallet:19.3.0-beta01")
+//    implementation("com.google.pay.button:compose-pay-button:$gmsPayButton")
 
     // Jetpack compose
     def composeBom = platform("androidx.compose:compose-bom:$airbaPayJetpackCompose") // https://developer.android.com/jetpack/compose/setup#bom-version-mapping
@@ -176,6 +180,7 @@ dependencies {
     implementation "org.tensorflow:tensorflow-lite:$tensorflow"
 
 }
+
 
 group 'kz.airbapay' // this is your groupId
 version '1.0.29' // this is your version
