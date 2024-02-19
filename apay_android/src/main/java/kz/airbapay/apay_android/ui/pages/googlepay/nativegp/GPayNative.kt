@@ -56,6 +56,8 @@ internal fun GPayNative(
         },
         update = { button ->
             println("click native aaaaaaaaaaaaaaa")
+            println(DataHolder.gateway)
+            println(DataHolder.gatewayMerchantId)
 
             button.apply {
                 setOnClickListener { onClick() }
