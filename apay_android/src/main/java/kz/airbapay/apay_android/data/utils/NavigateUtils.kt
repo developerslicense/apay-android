@@ -2,10 +2,11 @@ package kz.airbapay.apay_android.data.utils
 
 import android.app.Activity
 import android.content.Intent
+import io.card.payment.CardIOActivity
 import kz.airbapay.apay_android.data.constant.ARG_ACTION
 import kz.airbapay.apay_android.data.constant.ARG_ERROR_CODE
+import kz.airbapay.apay_android.data.constant.SCAN_REQUEST_CODE
 import kz.airbapay.apay_android.ui.pages.acquiring.AcquiringActivity
-import kz.airbapay.apay_android.ui.pages.card_reader.ScanActivity
 import kz.airbapay.apay_android.ui.pages.error.ErrorActivity
 import kz.airbapay.apay_android.ui.pages.error.RepeatActivity
 import kz.airbapay.apay_android.ui.pages.googlepay.GooglePayActivity
@@ -76,5 +77,22 @@ internal fun openSuccess(activity: Activity) {
 
 internal fun openCardScanner(activity: HomeActivity) {
     // todo если возникнут проблемы с камерой, то используй https://github.com/android/camera-samples
-    activity.scanResultLauncher?.launch(Intent(activity, ScanActivity::class.java))
+
+    // todo оставил на всякий сдучай
+//    activity.scanResultLauncher?.launch(Intent(activity, ScanActivity::class.java))
+
+    val scanIntent = Intent(activity, CardIOActivity::class.java)
+
+    scanIntent.putExtra(CardIOActivity.EXTRA_REQUIRE_EXPIRY, true)
+    scanIntent.putExtra(CardIOActivity.EXTRA_REQUIRE_POSTAL_CODE, false)
+    scanIntent.putExtra(CardIOActivity.EXTRA_USE_PAYPAL_ACTIONBAR_ICON, false)
+    scanIntent.putExtra(CardIOActivity.EXTRA_SUPPRESS_MANUAL_ENTRY, true)
+    scanIntent.putExtra(CardIOActivity.EXTRA_SUPPRESS_CONFIRMATION, true)
+    scanIntent.putExtra(CardIOActivity.EXTRA_HIDE_CARDIO_LOGO, true)
+    scanIntent.putExtra(CardIOActivity.EXTRA_KEEP_APPLICATION_THEME, true)
+    activity.startActivityForResult(
+        scanIntent,
+        SCAN_REQUEST_CODE,
+        null
+    )
 }
