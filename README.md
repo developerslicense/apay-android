@@ -145,14 +145,14 @@ AirbaPaySdk.initOnCreate(
 Пример без кастомной страницы:
 
 
-
+ ```
 startAirbaPay(activity = this@MainActivity)
-
+ ```
 
 
 # Пример с кастомной станицей:
 
-  ```
+```
 startAirbaPay(
     activity = this@MainActivity,
     redirectToCustomSuccessPage = { 
