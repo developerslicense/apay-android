@@ -16,6 +16,7 @@ android {
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
+
     }
 
     buildTypes {
@@ -29,7 +30,7 @@ android {
         mlModelBinding true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion '1.5.6' // '1.4.3'
+        kotlinCompilerExtensionVersion '1.5.9' // '1.4.3'
     }
 
     compileOptions {
@@ -68,6 +69,9 @@ ext {
     junit = '4.13.2'
     jetpackComposeAccompanist = '0.28.0'
     jetpackComposeFoundation = '1.4.3'
+    joorReflectionForIoCard = '0.9.15'
+
+    ioCard = '5.5.1'
 
     lifecycle = '2.7.0' //'2.5.2'
     lifecycleTesting = '2.2.0'
@@ -76,6 +80,7 @@ ext {
 
     navigationComponent = '2.7.6'//'2.7.2'
 
+    openCv = '4.1.0'
     okhttp = '4.2.2'
     okhttpInterceptor = '4.9.2'
 
@@ -109,10 +114,7 @@ dependencies {
     // Constraint
     implementation "androidx.constraintlayout:constraintlayout:$constraint"
     implementation "androidx.constraintlayout:constraintlayout-compose:$constraintCompose"
-
-    // CoreLibraryDesugaring
-//    coreLibraryDesugaring "com.android.tools:desugar_jdk_libs:$desugarJdkLibs"//добавляет поддержку в старые версии андроида новые апи java
-
+    
     // Coroutines
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesCore"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutinesCore"
@@ -149,6 +151,10 @@ dependencies {
     implementation "com.google.accompanist:accompanist-swiperefresh:$jetpackComposeAccompanist"
     implementation "com.google.accompanist:accompanist-permissions:$jetpackComposeAccompanist"
 
+    // io card
+//    implementation "org.jooq:joor:$joorReflectionForIoCard"
+    implementation "io.card:android-sdk:$ioCard"
+
     // Lifecycle
     implementation "androidx.lifecycle:lifecycle-process:$lifecycle"
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle"
@@ -161,6 +167,9 @@ dependencies {
     // Navigation
     implementation "androidx.navigation:navigation-compose:$navigationComponent"
     implementation "androidx.compose.foundation:foundation:$jetpackComposeFoundation"
+
+    // OpenCv
+//    implementation "com.websitebeaver:opencv:$openCv"
 
     // Retrofit
     implementation "com.squareup.retrofit2:retrofit:$retrofitVersion"
@@ -183,7 +192,7 @@ dependencies {
 
 
 group 'kz.airbapay' // this is your groupId
-version '1.0.29' // this is your version
+version '1.0.32' // this is your version
 
 ext { // this are variables
     pomGroupId = group

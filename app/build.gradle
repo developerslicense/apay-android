@@ -39,7 +39,7 @@ android {
         compose true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion '1.5.6'
+        kotlinCompilerExtensionVersion '1.5.9' //'1.4.3'
     }
     packaging {
         resources {
@@ -88,5 +88,7 @@ dependencies {
     androidTestImplementation 'androidx.compose.ui:ui-test-junit4'
     debugImplementation 'androidx.compose.ui:ui-tooling'
     debugImplementation 'androidx.compose.ui:ui-test-manifest'
+
+    implementation 'io.card:android-sdk:5.5.1'
 
 }

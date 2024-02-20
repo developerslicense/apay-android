@@ -35,9 +35,12 @@ import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
+import io.card.payment.CardIOActivity
+import io.card.payment.CreditCard
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kz.airbapay.apay_android.R
+import kz.airbapay.apay_android.data.constant.SCAN_REQUEST_CODE
 import kz.airbapay.apay_android.data.constant.cvvInfo
 import kz.airbapay.apay_android.data.constant.payAmount
 import kz.airbapay.apay_android.data.constant.paymentOfPurchase
@@ -76,21 +79,13 @@ internal class HomeActivity : BaseGooglePayActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        // старый вариант ScanActivity. новый использует card io. старый оставил на всякий случай
         scanResultLauncher = registerForActivityResult(
             ActivityResultContracts.StartActivityForResult()
         ) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
-                val data = result.data
-                val cardNumber = data?.extras?.getString(ScanActivity.RESULT_CARD_NUMBER)
-                val maskUtils = MaskUtils("AAAA AAAA AAAA AAAA")
-                val pan = maskUtils.format(cardNumber ?: "")
-
-                cardNumberText.value = TextFieldValue(
-                    text = pan,
-                    selection = TextRange(cardNumber?.length ?: 0)
-                )
-
-                paySystemIcon.value = getCardTypeFromNumber(pan).icon
+                val cardNumber = intent?.extras?.getString(ScanActivity.RESULT_CARD_NUMBER)
+                onResult(cardNumber)
             }
         }
 
@@ -100,6 +95,28 @@ internal class HomeActivity : BaseGooglePayActivity() {
                 paySystemIcon = paySystemIcon
             )
         }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == SCAN_REQUEST_CODE
+            && data?.hasExtra(CardIOActivity.EXTRA_SCAN_RESULT) == true
+        ) {
+            val result = data!!.getParcelableExtra<CreditCard>(CardIOActivity.EXTRA_SCAN_RESULT)
+            onResult(result?.cardNumber)
+        }
+    }
+
+    private fun onResult(cardNumber: String?) {
+        val maskUtils = MaskUtils("AAAA AAAA AAAA AAAA")
+        val pan = maskUtils.format(cardNumber ?: "")
+
+        cardNumberText.value = TextFieldValue(
+            text = pan,
+            selection = TextRange(cardNumber?.length ?: 0)
+        )
+
+        paySystemIcon.value = getCardTypeFromNumber(pan).icon
     }
 }
 

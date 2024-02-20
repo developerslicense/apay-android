@@ -25,7 +25,6 @@ import kz.airbapay.apay_android.data.model.AuthRequest
 import kz.airbapay.apay_android.data.utils.DataHolder
 import kz.airbapay.apay_android.data.utils.TestAirbaPayStates
 import kz.airbapay.apay_android.network.repository.Repository
-import kz.airbapay.apay_android.startAirbaPay
 import kz.airbapay.apay_android.ui.pages.home.presentation.SwitchedView
 import kz.airbapay.apay_android.ui.ui_components.ProgressBarView
 import java.util.Date
@@ -84,7 +83,7 @@ class TestActivity : ComponentActivity() {
                                 isGooglePayNative = featureGooglePayNative.value
                             )
                             initProcessing()
-                            startAirbaPay(
+                            AirbaPaySdk.startAirbaPay(
                                 activity = this@TestActivity,
                                 redirectToCustomSuccessPage = null//{
 //                                    activity.startActivity(Intent(activity, CustomSuccessActivity::java.class))
