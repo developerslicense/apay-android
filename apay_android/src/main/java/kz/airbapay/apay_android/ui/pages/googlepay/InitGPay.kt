@@ -13,6 +13,7 @@ import kz.airbapay.apay_android.ui.pages.googlepay.nativegp.BaseGooglePayActivit
 import kz.airbapay.apay_android.ui.pages.googlepay.nativegp.GPayNative
 import kz.airbapay.apay_android.ui.pages.googlepay.nativegp.PaymentUiState
 import kz.airbapay.apay_android.ui.pages.googlepay.webview.GPayWebView
+import kz.airbapay.apay_android.ui.ui_components.initAuth
 
 @Composable
 internal fun GPayView(
@@ -32,31 +33,23 @@ internal fun GPayView(
         GPayNative(
             isEnabled = hasGooglePay?.value == PaymentUiState.Available,
             onClick = {
-                val task = activity.paymentModel?.getLoadPaymentDataTask(priceCents = 1000L)
-                task?.addOnCompleteListener(activity.paymentDataLauncher::launch)
 
-                /*Repository.paymentsRepository?.startPaymentWallet(
-                result = {
-
-                },
-                error = {
-
-                }
-            )*/
-                println("click native aaaaaaaaaaaaaaa 1")/*clickOnNativeFlow()*/
-                /*initAuth(
-                activity = activity,
-                coroutineScope = coroutineScope,
-                onSuccess = {
-                    println("click native aaaaaaaaaaaaaaa_1")
-                },
-                onFailed = {},
-                onNotSecurity = {}
-            )*/
+                initAuth(
+                    activity = activity,
+                    coroutineScope = coroutineScope,
+                    onSuccess = { onResult(activity) },
+                    onFailed = {},
+                    onNotSecurity = { onResult(activity) }
+                )
             }
         )
 
     } else {
         GPayWebView(openGooglePayForWebFlow)
     }
+}
+
+private fun onResult(activity: BaseGooglePayActivity) {
+    val task = activity.paymentModel?.getLoadPaymentDataTask(priceCents = 1000L)
+    task?.addOnCompleteListener(activity.paymentDataLauncher::launch)
 }
