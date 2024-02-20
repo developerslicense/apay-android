@@ -11,7 +11,6 @@ internal abstract class BaseGooglePayActivity : ComponentActivity() {
     var paymentModel: CheckoutViewModel? = null
 
     val paymentDataLauncher = registerForActivityResult(GetPaymentDataResult()) { taskResult ->
-        println("click native aaaaaaaaaaaaaaa 2---")
         when (taskResult.status.statusCode) {
             CommonStatusCodes.SUCCESS -> {
                 taskResult.result!!.let {
@@ -27,7 +26,6 @@ internal abstract class BaseGooglePayActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        println("aaaaaaaaaaaaaaaa aaaaa__")
         paymentModel = CheckoutViewModel(this.application)
     }
 }

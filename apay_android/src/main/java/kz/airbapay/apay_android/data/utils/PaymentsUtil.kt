@@ -60,14 +60,14 @@ object PaymentsUtil {
      * @throws JSONException
      * See [PaymentMethodTokenizationSpecification](https://developers.google.com/pay/api/android/reference/object.PaymentMethodTokenizationSpecification)
      */
-    private val gatewayTokenizationSpecification: JSONObject =
+    private fun gatewayTokenizationSpecification(): JSONObject =
         JSONObject()
             .put("type", "PAYMENT_GATEWAY")
             .put(
                 "parameters",
                 JSONObject(mapOf(
-                    "gateway" to "example", //todo
-                    "gatewayMerchantId" to "exampleGatewayMerchantId"
+                    "gateway" to DataHolder.gateway,
+                    "gatewayMerchantId" to DataHolder.gatewayMerchantId
                 )
             ))
 
@@ -82,8 +82,8 @@ object PaymentsUtil {
      */
     private val allowedCardNetworks = JSONArray(listOf(
         "AMEX",
-        "DISCOVER",
-        "JCB",
+//        "DISCOVER",
+//        "JCB",
         "MASTERCARD",
         "VISA")
     )
@@ -138,10 +138,10 @@ object PaymentsUtil {
      * @throws JSONException
      * See [PaymentMethod](https://developers.google.com/pay/api/android/reference/object.PaymentMethod)
      */
-    private val cardPaymentMethod: JSONObject = baseCardPaymentMethod()
-        .put("tokenizationSpecification", gatewayTokenizationSpecification)
+    private fun cardPaymentMethod(): JSONObject = baseCardPaymentMethod()
+        .put("tokenizationSpecification", gatewayTokenizationSpecification())
 
-    val allowedPaymentMethods: JSONArray = JSONArray().put(cardPaymentMethod)
+    fun allowedPaymentMethods(): JSONArray = JSONArray().put(cardPaymentMethod())
 
     /**
      * An object describing accepted forms of payment by your app, used to determine a viewer's
@@ -166,7 +166,7 @@ object PaymentsUtil {
      * See [MerchantInfo](https://developers.google.com/pay/api/android/reference/object.MerchantInfo)
      */
     private val merchantInfo: JSONObject =
-        JSONObject().put("merchantName", "Example Merchant")
+        JSONObject().put("merchantName", "AirbaPay")
 
     /**
      * Creates an instance of [PaymentsClient] for use in an [Context] using the
@@ -204,9 +204,9 @@ object PaymentsUtil {
      */
     fun getPaymentDataRequest(priceCents: Long): JSONObject =
         baseRequest
-            .put("allowedPaymentMethods", allowedPaymentMethods)
+            .put("allowedPaymentMethods", allowedPaymentMethods())
             .put("transactionInfo", getTransactionInfo(priceCents.centsToString()))
-            .put("merchantInfo", merchantInfo)
+            .put("merchantInfo", merchantInfo)// todo
             .put("shippingAddressRequired", true)
             .put(
                 "shippingAddressParameters", JSONObject()
