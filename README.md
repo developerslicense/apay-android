@@ -17,7 +17,7 @@
 
 
 
-# 1.1  Подключение sdk
+## 1.1  Подключение sdk
 
 Последняя версия 1.0.33 (для jetpackCompose 2024.01.00) и 1.0.33_23_08_00 (для jetpackCompose 23.08.00)
 
@@ -129,7 +129,7 @@ AirbaPaySdk.initOnCreate(
 
 
 
-# 1.2 Вызов стартовой формы
+## 1.2 Вызов стартовой формы
 
 
 Открытие формы AirbaPay выполняется через AirbaPaySdk.startAirbaPay().
@@ -150,7 +150,7 @@ startAirbaPay(activity = this@MainActivity)
  ```
 
 
-# Пример с кастомной станицей:
+## Пример с кастомной станицей:
 
 ```
 startAirbaPay(
@@ -200,7 +200,7 @@ dependencies {
 
 
 
-# 1.3 Пример использования
+## 1.3 Пример использования
 
 
 В clickListener для XML или в onClick для Button в композе вставить
@@ -213,7 +213,7 @@ dependencies {
   ```
  
 
-# 1.4 Подключение нативного GooglePay
+## 1.4 Подключение нативного GooglePay
 
 
 * Изменить параметр isGooglePayNative в initOnCreate на true
