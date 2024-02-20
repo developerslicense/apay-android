@@ -39,6 +39,7 @@ class TestActivity : ComponentActivity() {
             val scrollState = rememberScrollState()
             val autoCharge = remember { mutableStateOf(false) }
             val featureGooglePay = remember { mutableStateOf(true) }
+            val featureGooglePayNative = remember { mutableStateOf(true) }
             val featureSavedCards = remember { mutableStateOf(true) }
             val isLoading = remember { mutableStateOf(false) }
 
@@ -80,7 +81,7 @@ class TestActivity : ComponentActivity() {
                                 userEmail = "test@test.com",
                                 colorBrandMain = Color(0xFFFC6B3F),
                                 autoCharge = if (autoCharge.value) 1 else 0,
-                                isGooglePayNative = true
+                                isGooglePayNative = featureGooglePayNative.value
                             )
                             initProcessing()
                             startAirbaPay(
@@ -117,7 +118,7 @@ class TestActivity : ComponentActivity() {
                                 userEmail = "test@test.com",
                                 colorBrandMain = Color(0xFFFC6B3F),
                                 autoCharge = if (autoCharge.value) 1 else 0,
-                                isGooglePayNative = true
+                                isGooglePayNative = featureGooglePayNative.value
                             )
 
                             val authRequest = AuthRequest(
@@ -157,7 +158,8 @@ class TestActivity : ComponentActivity() {
                     }
 
                     SwitchedView("AutoCharge 0 (off) / 1 (on)", autoCharge)
-                    SwitchedView("Feature GooglePay", featureGooglePay)
+                    SwitchedView("Включить GooglePay", featureGooglePay)
+                    SwitchedView("Нативный GooglePay", featureGooglePayNative)
                     SwitchedView("Feature Saved cards", featureSavedCards)
                 }
 

@@ -69,8 +69,18 @@ internal abstract class BaseGooglePayActivity : ComponentActivity() {
                 }
             }
             //CommonStatusCodes.CANCELED -> The user canceled
-            //AutoResolveHelper.RESULT_ERROR -> The API returned an error (it.status: Status)
-            //CommonStatusCodes.INTERNAL_ERROR -> Handle other unexpected errors
+            AutoResolveHelper.RESULT_ERROR -> {
+                openErrorPageWithCondition(
+                    errorCode = ErrorsCode.error_1.code,
+                    activity = this
+                )
+            }
+            CommonStatusCodes.INTERNAL_ERROR -> {
+                openErrorPageWithCondition(
+                    errorCode = ErrorsCode.error_1.code,
+                    activity = this
+                )
+            }
         }
     }
 
