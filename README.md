@@ -13,6 +13,9 @@
 ## 1.4 Подключение нативного GooglePay
 
 
+## 1.5 Рекомендация в случае интеграции в flutter
+
+
 # Описание изменений Android
 
 
@@ -230,3 +233,29 @@ dependencies {
 
 * В случае отказа по каким-либо причинам (к примеру, дизайн кнопки не соответствует их требованиям), нужно будет ответить на письмо гугла, что вы используете стороннее решение компании Airba Pay
 
+
+## 1.5 Рекомендация в случае интеграции в flutter
+
+Нужно создать дополнительный промежуточный активити FlutterAirbaPayActivity,
+в котором будет производиться инициализация и переход на страницу сдк. 
+Это нужно, чтоб при нажатии назад из сдк, не закрывалось приложение. 
+
+Добавить в манифест описание этого активити
+
+ ```
+<activity android:name=".pay.airba.AirbaPayActivity"
+    android:taskAffinity="kz.airbapay.apay_android"
+    android:theme="@style/AppTheme.TranslucentBG"
+    android:exported="false" />
+ ```
+
+Вызвать
+
+ ```
+
+intent.flags = Intent.FLAG_ACTIVITY_MULTIPLE_TASK
+
+context.startActivityForResult(intent, ActivityRequestCode.AIRBA)
+ ```
+
+Параметры  ```taskAffinity ``` в манифесте и  ```FLAG_ACTIVITY_MULTIPLE_TASK ``` для создания отдельного стэка.
