@@ -1,6 +1,5 @@
 package kz.airbapay.apay_android.ui.pages.startview
 
-import android.app.Activity
 import android.app.KeyguardManager
 import android.content.Context
 import android.os.Bundle
@@ -88,7 +87,7 @@ internal fun StartProcessingPage(
     )
 
     val coroutineScope = rememberCoroutineScope()
-    val activity = LocalContext.current as Activity
+    val activity = LocalContext.current as BaseGooglePayActivity
     val keyguardManager = activity.getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager
 
     BackHandler {
@@ -103,6 +102,8 @@ internal fun StartProcessingPage(
     val size = remember { mutableStateOf(IntSize.Zero) }
     val googlePayRedirectUrl = rememberSaveable { mutableStateOf<String?>(null) }
     val isLoading = rememberSaveable { mutableStateOf(true) }
+    val isLoadingGooglePay = activity.paymentModel?.isLoading?.collectAsState()
+
     val selectedCard = rememberSaveable { mutableStateOf<BankCard?>(null) }
 
     val savedCards = rememberSaveable {
@@ -222,7 +223,7 @@ internal fun StartProcessingPage(
                     )
                 }
 
-                if (isLoading.value) {
+                if (isLoading.value || isLoadingGooglePay?.value == true) {
                     ProgressBarView(
                         size = size,
                         modifier = Modifier.wrapContentHeight()

@@ -16,15 +16,13 @@ internal fun fetchMerchantsWithNextStep(
     isLoading: MutableState<Boolean>
 
 ) {
-    if (true) { // на случай отключения
-        Repository.googlePayRepository?.getGooglePayMerchant(
-            result = {
-                DataHolder.gatewayMerchantId = it.gatewayMerchantId
-                DataHolder.gateway = it.gateway
-            },
-            error = {}
-        )
-    }
+    Repository.googlePayRepository?.getGooglePayMerchant(
+        result = {
+            DataHolder.gatewayMerchantId = it.gatewayMerchantId
+            DataHolder.gateway = it.gateway
+        },
+        error = {}
+    )
 
     Repository.merchantRepository?.getMerchantInfo(
         result = { response ->

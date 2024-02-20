@@ -43,6 +43,9 @@ internal class CheckoutViewModel(application: Application) : AndroidViewModel(ap
         MutableStateFlow(PaymentUiState.NotStarted)
     val paymentUiState: StateFlow<PaymentUiState> = _paymentUiState.asStateFlow()
 
+    private val _isLoading: MutableStateFlow<Boolean> = MutableStateFlow(false)
+    val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
+
     // A client for interacting with the Google Pay API.
     private val paymentsClient: PaymentsClient = PaymentsUtil.createPaymentsClient(application)
 
@@ -52,6 +55,9 @@ internal class CheckoutViewModel(application: Application) : AndroidViewModel(ap
         }
     }
 
+    fun setLoadingState(isLoading: Boolean) {
+        _isLoading.update { isLoading }
+    }
     /**
      * Determine the user's ability to pay with a payment method supported by your app and display
      * a Google Pay payment button.

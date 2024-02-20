@@ -56,7 +56,7 @@ internal interface Api {
         @Body param: HashMap<String, Any?>
     ): Response<PaymentEntryResponse>
 
-    @PUT("api/v1/payments")
+    @PUT("api/v1/payments/wallet")
     suspend fun putPaymentWallet(
         @Body param: GooglePaymentWalletRequest
     ): Response<PaymentEntryResponse>

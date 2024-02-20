@@ -62,6 +62,7 @@ import kz.airbapay.apay_android.ui.pages.home.presentation.DateExpiredView
 import kz.airbapay.apay_android.ui.pages.home.presentation.SwitchedView
 import kz.airbapay.apay_android.ui.resources.ColorsSdk
 import kz.airbapay.apay_android.ui.ui_components.BackHandler
+import kz.airbapay.apay_android.ui.ui_components.ProgressBarView
 import kz.airbapay.apay_android.ui.ui_components.TopInfoView
 import kz.airbapay.apay_android.ui.ui_components.ViewButton
 import kz.airbapay.apay_android.ui.ui_components.ViewToolbar
@@ -108,10 +109,11 @@ internal fun HomePage(
     paySystemIcon: MutableState<Int?>,
     coroutineScope: CoroutineScope = rememberCoroutineScope()
 ) {
-    val activity = LocalContext.current as Activity
+    val activity = LocalContext.current as BaseGooglePayActivity
     val keyguardManager = activity.getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager
 
-    val isLoading = remember { mutableStateOf(true) }
+    val isLoadingGooglePay = activity.paymentModel?.isLoading?.collectAsState()
+    val isLoading = remember { mutableStateOf(false) }
     val showDialogExit = remember { mutableStateOf(false) }
     val switchSaveCard = remember { mutableStateOf(false) }
 
@@ -294,6 +296,10 @@ internal fun HomePage(
                         end.linkTo(parent.end)
                     }
             )
+
+            if (isLoading.value || isLoadingGooglePay?.value == true) {
+                ProgressBarView()
+            }
         }
 
         if (showDialogExit.value) {

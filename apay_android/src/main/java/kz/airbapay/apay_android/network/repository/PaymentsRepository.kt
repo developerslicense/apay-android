@@ -141,11 +141,12 @@ internal class PaymentsRepository(
     }
 
     fun startPaymentWallet(
+        googlePayToken: String,
         result: (PaymentEntryResponse) -> Unit,
         error: (Response<*>) -> Unit
     ) {
 
-        val wallet = GooglePaymentWallet(token = DataHolder.accessToken)
+        val wallet = GooglePaymentWallet(token = googlePayToken)
         val param = GooglePaymentWalletRequest(wallet = wallet)
 
         launch(
