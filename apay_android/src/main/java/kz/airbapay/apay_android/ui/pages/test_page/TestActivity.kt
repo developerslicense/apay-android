@@ -79,7 +79,8 @@ class TestActivity : ComponentActivity() {
                                 successCallback = "https://site.kz/success-clb",
                                 userEmail = "test@test.com",
                                 colorBrandMain = Color(0xFFFC6B3F),
-                                autoCharge = if (autoCharge.value) 1 else 0
+                                autoCharge = if (autoCharge.value) 1 else 0,
+                                isGooglePayNative = true
                             )
                             initProcessing()
                             startAirbaPay(
@@ -115,7 +116,8 @@ class TestActivity : ComponentActivity() {
                                 successCallback = "https://site.kz/success-clb",
                                 userEmail = "test@test.com",
                                 colorBrandMain = Color(0xFFFC6B3F),
-                                autoCharge = if (autoCharge.value) 1 else 0
+                                autoCharge = if (autoCharge.value) 1 else 0,
+                                isGooglePayNative = true
                             )
 
                             val authRequest = AuthRequest(

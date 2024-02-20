@@ -52,10 +52,6 @@ object PaymentsUtil {
      *
      * The Google Pay API response will return an encrypted payment method capable of being charged
      * by a supported gateway after payer authorization.
-     *
-     *
-     * TODO: Check with your gateway on the parameters to pass and modify them in Constants.java.
-     *
      * @return Payment data tokenization for the CARD payment method.
      * @throws JSONException
      * See [PaymentMethodTokenizationSpecification](https://developers.google.com/pay/api/android/reference/object.PaymentMethodTokenizationSpecification)
@@ -73,10 +69,6 @@ object PaymentsUtil {
 
     /**
      * Card networks supported by your app and your gateway.
-     *
-     *
-     * TODO: Confirm card networks supported by your app and gateway & update in Constants.java.
-     *
      * @return Allowed card networks
      * See [CardParameters](https://developers.google.com/pay/api/android/reference/object.CardParameters)
      */
@@ -91,9 +83,6 @@ object PaymentsUtil {
     /**
      * Card authentication methods supported by your app and your gateway.
      *
-     *
-     * TODO: Confirm your processor supports Android device tokens on your supported card networks
-     * and make updates in Constants.java.
      *
      * @return Allowed card authentication methods.
      * See [CardParameters](https://developers.google.com/pay/api/android/reference/object.CardParameters)
@@ -169,9 +158,7 @@ object PaymentsUtil {
         JSONObject().put("merchantName", "AirbaPay")
 
     /**
-     * Creates an instance of [PaymentsClient] for use in an [Context] using the
-     * environment and theme set in [Constants].
-     *
+     * Creates an instance of [PaymentsClient]
      * @param context from the caller activity.
      */
     fun createPaymentsClient(context: Context): PaymentsClient {
@@ -206,7 +193,7 @@ object PaymentsUtil {
         baseRequest
             .put("allowedPaymentMethods", allowedPaymentMethods())
             .put("transactionInfo", getTransactionInfo(priceCents.centsToString()))
-            .put("merchantInfo", merchantInfo)// todo
+            .put("merchantInfo", merchantInfo)
             .put("shippingAddressRequired", true)
             .put(
                 "shippingAddressParameters", JSONObject()

@@ -13,6 +13,7 @@ import kz.airbapay.apay_android.data.utils.PaymentsUtil
 
 @Composable
 internal fun GPayNative(
+    isEnabled: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
         .fillMaxWidth()
@@ -36,7 +37,7 @@ internal fun GPayNative(
         },
         update = { button ->
             button.apply {
-                isEnabled = true
+                this.isEnabled = isEnabled
 
                 setOnClickListener { onClick() }
             }

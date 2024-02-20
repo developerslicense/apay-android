@@ -47,6 +47,7 @@ internal object DataHolder {
   var isGooglePayFlow: Boolean = true
 
   var hasSavedCards: Boolean = false
+  var isGooglePayNative: Boolean = false
 
   var gateway: String? = null
   var gatewayMerchantId: String? = null
