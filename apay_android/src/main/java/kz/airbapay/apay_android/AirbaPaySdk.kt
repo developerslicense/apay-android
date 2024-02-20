@@ -62,7 +62,8 @@ class AirbaPaySdk {
             colorBrandMain: Color? = null,
             colorBrandInversion: Color? = null,
             autoCharge: Int = 0,
-            enabledLogsForProd: Boolean = false
+            enabledLogsForProd: Boolean = false,
+            isGooglePayNative: Boolean = false
         ) {
 
             if (colorBrandInversion != null) {
@@ -98,6 +99,7 @@ class AirbaPaySdk {
             DataHolder.autoCharge = autoCharge
 
             DataHolder.currentLang = lang.lang
+            DataHolder.isGooglePayNative = isGooglePayNative
 
             // не переносить
             Repository.initRepositories(context.applicationContext)

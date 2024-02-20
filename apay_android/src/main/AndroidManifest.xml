@@ -20,6 +20,10 @@
         -->
 
     <application>
+        <meta-data
+            android:name="com.google.android.gms.wallet.api.enabled"
+            android:value="true" />
+
         <activity
             android:name="kz.airbapay.apay_android.ui.pages.startview.StartProcessingActivity"
             android:exported="true"
@@ -37,7 +41,7 @@
             android:noHistory="true"
             android:screenOrientation="portrait"/>
 
-        <activity android:name=".ui.pages.googlepay.GooglePayActivity"
+        <activity android:name=".ui.pages.googlepay.webview.GooglePayActivity"
             android:noHistory="true"
             android:screenOrientation="portrait"/>
 
@@ -52,6 +56,7 @@
         <activity android:name=".ui.pages.error.ErrorActivity"
             android:noHistory="true"
             android:screenOrientation="portrait"/>
+
     </application>
 
 </manifest>

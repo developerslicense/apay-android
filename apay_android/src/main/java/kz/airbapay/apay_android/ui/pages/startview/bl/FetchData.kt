@@ -16,6 +16,14 @@ internal fun fetchMerchantsWithNextStep(
     isLoading: MutableState<Boolean>
 
 ) {
+    Repository.googlePayRepository?.getGooglePayMerchant(
+        result = {
+            DataHolder.gatewayMerchantId = it.gatewayMerchantId
+            DataHolder.gateway = it.gateway
+        },
+        error = {}
+    )
+
     Repository.merchantRepository?.getMerchantInfo(
         result = { response ->
             DataHolder.featureSavedCards = if (TestAirbaPayStates.shutDownTestFeatureSavedCards) {

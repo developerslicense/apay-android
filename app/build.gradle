@@ -8,12 +8,13 @@ android {
     compileSdk airbaPayCompileSdk
 
     defaultConfig {
-        applicationId "kz.airbapay.apay_android"
+        applicationId "kz.technodom.mobile"
+//        applicationId "kz.airbapay.apay_android"
 //         applicationId "kz.airbapayandroid.composesdkstand" // для заливки тестовой сборки в firebase
         minSdk 21
         targetSdk airbaPayCompileSdk
-        versionCode 10
-        versionName "1.9"
+        versionCode 745//11
+        versionName "1.10"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -87,5 +88,7 @@ dependencies {
     androidTestImplementation 'androidx.compose.ui:ui-test-junit4'
     debugImplementation 'androidx.compose.ui:ui-tooling'
     debugImplementation 'androidx.compose.ui:ui-test-manifest'
+
+    implementation 'io.card:android-sdk:5.5.1'
 
 }

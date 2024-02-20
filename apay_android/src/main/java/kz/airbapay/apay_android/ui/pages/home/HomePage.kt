@@ -5,7 +5,6 @@ import android.app.KeyguardManager
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -36,9 +35,12 @@ import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
+import io.card.payment.CardIOActivity
+import io.card.payment.CreditCard
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kz.airbapay.apay_android.R
+import kz.airbapay.apay_android.data.constant.SCAN_REQUEST_CODE
 import kz.airbapay.apay_android.data.constant.cvvInfo
 import kz.airbapay.apay_android.data.constant.payAmount
 import kz.airbapay.apay_android.data.constant.paymentOfPurchase
@@ -52,6 +54,8 @@ import kz.airbapay.apay_android.data.utils.openGooglePay
 import kz.airbapay.apay_android.network.repository.Repository
 import kz.airbapay.apay_android.ui.pages.card_reader.ScanActivity
 import kz.airbapay.apay_android.ui.pages.dialogs.InitDialogExit
+import kz.airbapay.apay_android.ui.pages.googlepay.GPayView
+import kz.airbapay.apay_android.ui.pages.googlepay.nativegp.BaseGooglePayActivity
 import kz.airbapay.apay_android.ui.pages.home.bl.checkValid
 import kz.airbapay.apay_android.ui.pages.home.bl.startPaymentProcessing
 import kz.airbapay.apay_android.ui.pages.home.presentation.BottomImages
@@ -61,12 +65,12 @@ import kz.airbapay.apay_android.ui.pages.home.presentation.DateExpiredView
 import kz.airbapay.apay_android.ui.pages.home.presentation.SwitchedView
 import kz.airbapay.apay_android.ui.resources.ColorsSdk
 import kz.airbapay.apay_android.ui.ui_components.BackHandler
-import kz.airbapay.apay_android.ui.ui_components.GPayView
+import kz.airbapay.apay_android.ui.ui_components.ProgressBarView
 import kz.airbapay.apay_android.ui.ui_components.TopInfoView
 import kz.airbapay.apay_android.ui.ui_components.ViewButton
 import kz.airbapay.apay_android.ui.ui_components.ViewToolbar
 
-internal class HomeActivity : ComponentActivity() {
+internal class HomeActivity : BaseGooglePayActivity() {
 
     private val cardNumberText = mutableStateOf(TextFieldValue())
     private val paySystemIcon = mutableStateOf<Int?>(null)
@@ -75,21 +79,13 @@ internal class HomeActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        // старый вариант ScanActivity. новый использует card io. старый оставил на всякий случай
         scanResultLauncher = registerForActivityResult(
             ActivityResultContracts.StartActivityForResult()
         ) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
-                val data = result.data
-                val cardNumber = data?.extras?.getString(ScanActivity.RESULT_CARD_NUMBER)
-                val maskUtils = MaskUtils("AAAA AAAA AAAA AAAA")
-                val pan = maskUtils.format(cardNumber ?: "")
-
-                cardNumberText.value = TextFieldValue(
-                    text = pan,
-                    selection = TextRange(cardNumber?.length ?: 0)
-                )
-
-                paySystemIcon.value = getCardTypeFromNumber(pan).icon
+                val cardNumber = intent?.extras?.getString(ScanActivity.RESULT_CARD_NUMBER)
+                onResult(cardNumber)
             }
         }
 
@@ -100,6 +96,28 @@ internal class HomeActivity : ComponentActivity() {
             )
         }
     }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == SCAN_REQUEST_CODE
+            && data?.hasExtra(CardIOActivity.EXTRA_SCAN_RESULT) == true
+        ) {
+            val result = data!!.getParcelableExtra<CreditCard>(CardIOActivity.EXTRA_SCAN_RESULT)
+            onResult(result?.cardNumber)
+        }
+    }
+
+    private fun onResult(cardNumber: String?) {
+        val maskUtils = MaskUtils("AAAA AAAA AAAA AAAA")
+        val pan = maskUtils.format(cardNumber ?: "")
+
+        cardNumberText.value = TextFieldValue(
+            text = pan,
+            selection = TextRange(cardNumber?.length ?: 0)
+        )
+
+        paySystemIcon.value = getCardTypeFromNumber(pan).icon
+    }
 }
 
 @Composable
@@ -108,10 +126,11 @@ internal fun HomePage(
     paySystemIcon: MutableState<Int?>,
     coroutineScope: CoroutineScope = rememberCoroutineScope()
 ) {
-    val activity = LocalContext.current as Activity
+    val activity = LocalContext.current as BaseGooglePayActivity
     val keyguardManager = activity.getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager
 
-    val isLoading = remember { mutableStateOf(true) }
+    val isLoadingGooglePay = activity.paymentModel?.isLoading?.collectAsState()
+    val isLoading = remember { mutableStateOf(false) }
     val showDialogExit = remember { mutableStateOf(false) }
     val switchSaveCard = remember { mutableStateOf(false) }
 
@@ -184,7 +203,7 @@ internal fun HomePage(
                     && keyguardManager.isKeyguardSecure
                 ) {
                     GPayView(
-                        openGooglePay = {
+                        openGooglePayForWebFlow = {
                             openGooglePay(
                                 redirectUrl = DataHolder.googlePayButtonUrl,
                                 activity = activity
@@ -294,6 +313,10 @@ internal fun HomePage(
                         end.linkTo(parent.end)
                     }
             )
+
+            if (isLoading.value || isLoadingGooglePay?.value == true) {
+                ProgressBarView()
+            }
         }
 
         if (showDialogExit.value) {

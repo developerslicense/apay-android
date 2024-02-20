@@ -1,6 +1,8 @@
 package kz.airbapay.apay_android.network.repository
 
 import kz.airbapay.apay_android.data.model.GetCvvResponse
+import kz.airbapay.apay_android.data.model.GooglePaymentWallet
+import kz.airbapay.apay_android.data.model.GooglePaymentWalletRequest
 import kz.airbapay.apay_android.data.model.PaymentCreateResponse
 import kz.airbapay.apay_android.data.model.PaymentEntryResponse
 import kz.airbapay.apay_android.data.utils.DataHolder
@@ -127,6 +129,30 @@ internal class PaymentsRepository(
                         cardId = cardId,
                         param = param
                     )
+                }
+            },
+            result = { body ->
+                body.body()?.let {
+                    result(it)
+                } ?: error(Unit)
+            },
+            error = error
+        )
+    }
+
+    fun startPaymentWallet(
+        googlePayToken: String,
+        result: (PaymentEntryResponse) -> Unit,
+        error: (Response<*>) -> Unit
+    ) {
+
+        val wallet = GooglePaymentWallet(token = googlePayToken)
+        val param = GooglePaymentWalletRequest(wallet = wallet)
+
+        launch(
+            requestFlow = {
+                safeApiFlowCall {
+                    api.putPaymentWallet(param)
                 }
             },
             result = { body ->

@@ -1,4 +1,4 @@
-package kz.airbapay.apay_android.ui.pages.googlepay
+package kz.airbapay.apay_android.ui.pages.googlepay.webview
 
 import android.annotation.SuppressLint
 import android.app.Activity

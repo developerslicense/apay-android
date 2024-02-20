@@ -1,11 +1,10 @@
-package kz.airbapay.apay_android.ui.ui_components
+package kz.airbapay.apay_android.ui.pages.googlepay.webview
 
 import android.app.Activity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -19,10 +18,12 @@ import androidx.compose.ui.unit.dp
 import kz.airbapay.apay_android.R
 import kz.airbapay.apay_android.data.utils.checkIsDeviceSecure
 import kz.airbapay.apay_android.ui.resources.ColorsSdk
+import kz.airbapay.apay_android.ui.ui_components.LoadImageSrc
+import kz.airbapay.apay_android.ui.ui_components.initAuth
 
 @Composable
-internal fun GPayView(
-    openGooglePay: () -> Unit
+internal fun GPayWebView(
+    openGooglePayForWebFlow: () -> Unit
 ) {
     val activity = LocalContext.current as Activity
     val coroutineScope = rememberCoroutineScope()
@@ -30,8 +31,6 @@ internal fun GPayView(
     val isDeviceSecure = checkIsDeviceSecure(activity)
 
     if (isDeviceSecure) {
-        Spacer(modifier = Modifier.height(16.dp))
-
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
@@ -53,7 +52,7 @@ internal fun GPayView(
                         activity = activity,
                         coroutineScope = coroutineScope,
                         onSuccess = {
-                            openGooglePay()
+                            openGooglePayForWebFlow()
                         },
                         onFailed = {},
                         onNotSecurity = {}
