@@ -63,7 +63,8 @@ class AirbaPaySdk {
             colorBrandInversion: Color? = null,
             autoCharge: Int = 0,
             enabledLogsForProd: Boolean = false,
-            isGooglePayNative: Boolean = false
+            isGooglePayNative: Boolean = false,
+            hideInternalGooglePayButton: Boolean = false
         ) {
 
             if (colorBrandInversion != null) {
@@ -100,6 +101,7 @@ class AirbaPaySdk {
 
             DataHolder.currentLang = lang.lang
             DataHolder.isGooglePayNative = isGooglePayNative
+            DataHolder.hideInternalGooglePayButton = hideInternalGooglePayButton
 
             // не переносить
             Repository.initRepositories(context.applicationContext)

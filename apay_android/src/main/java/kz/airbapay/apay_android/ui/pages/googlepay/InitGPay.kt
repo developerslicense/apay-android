@@ -19,33 +19,35 @@ import kz.airbapay.apay_android.ui.ui_components.initAuth
 internal fun GPayView(
     openGooglePayForWebFlow: () -> Unit,
 ) {
-    val activity = LocalContext.current as BaseGooglePayActivity
-    val coroutineScope = rememberCoroutineScope()
+    if (!DataHolder.hideInternalGooglePayButton) {
+        val activity = LocalContext.current as BaseGooglePayActivity
+        val coroutineScope = rememberCoroutineScope()
 
-    Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
-    if (DataHolder.isGooglePayNative
-        && !DataHolder.gatewayMerchantId.isNullOrBlank()
-        && !DataHolder.gateway.isNullOrBlank()
-    ) {
-        val hasGooglePay = activity.paymentModel?.paymentUiState?.collectAsState()
+        if (DataHolder.isGooglePayNative
+            && !DataHolder.gatewayMerchantId.isNullOrBlank()
+            && !DataHolder.gateway.isNullOrBlank()
+        ) {
+            val hasGooglePay = activity.paymentModel?.paymentUiState?.collectAsState()
 
-        GPayNative(
-            isEnabled = hasGooglePay?.value == PaymentUiState.Available,
-            onClick = {
+            GPayNative(
+                isEnabled = hasGooglePay?.value == PaymentUiState.Available,
+                onClick = {
 
-                initAuth(
-                    activity = activity,
-                    coroutineScope = coroutineScope,
-                    onSuccess = { onResult(activity) },
-                    onFailed = {},
-                    onNotSecurity = { onResult(activity) }
-                )
-            }
-        )
+                    initAuth(
+                        activity = activity,
+                        coroutineScope = coroutineScope,
+                        onSuccess = { onResult(activity) },
+                        onFailed = {},
+                        onNotSecurity = { onResult(activity) }
+                    )
+                }
+            )
 
-    } else {
-        GPayWebView(openGooglePayForWebFlow)
+        } else {
+            GPayWebView(openGooglePayForWebFlow)
+        }
     }
 }
 

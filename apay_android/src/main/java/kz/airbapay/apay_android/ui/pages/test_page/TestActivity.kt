@@ -80,7 +80,8 @@ class TestActivity : ComponentActivity() {
                                 userEmail = "test@test.com",
                                 colorBrandMain = Color(0xFFFC6B3F),
                                 autoCharge = if (autoCharge.value) 1 else 0,
-                                isGooglePayNative = featureGooglePayNative.value
+                                isGooglePayNative = featureGooglePayNative.value,
+//                                hideInternalGooglePayButton = true
                             )
                             initProcessing()
                             AirbaPaySdk.startAirbaPay(
@@ -154,6 +155,26 @@ class TestActivity : ComponentActivity() {
                     )
                     {
                         Text("Удалить привязанные карты")
+                    }
+
+                    Button(
+                        modifier = Modifier
+                            .padding(top = 20.dp, bottom = 20.dp)
+                            .fillMaxWidth()
+                            .padding(horizontal = 50.dp),
+                        onClick = {
+                            initProcessing()
+
+                            startActivity(
+                                Intent(
+                                    this@TestActivity,
+                                    TestGooglePayExternalActivity::class.java
+                                )
+                            )
+                        }
+                    )
+                    {
+                        Text("Открыть внешний тестовый GooglePay")
                     }
 
                     SwitchedView("AutoCharge 0 (off) / 1 (on)", autoCharge)
