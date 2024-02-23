@@ -7,6 +7,7 @@ import kz.airbapay.apay_android.data.constant.ErrorsCode
 import kz.airbapay.apay_android.data.constant.initErrorsCodeByCode
 import kz.airbapay.apay_android.data.model.AuthRequest
 import kz.airbapay.apay_android.data.utils.DataHolder
+import kz.airbapay.apay_android.data.utils.encode
 import kz.airbapay.apay_android.data.utils.openAcquiring
 import kz.airbapay.apay_android.data.utils.openErrorPageWithCondition
 import kz.airbapay.apay_android.data.utils.openSuccess
@@ -71,7 +72,7 @@ class AirbaPayGooglePayViewModel: ViewModel() {
     ) {
 
         Repository.paymentsRepository?.startPaymentWallet(
-            googlePayToken = googlePayToken,
+            googlePayToken = googlePayToken.encode(),
             result = { entryResponse ->
 
                 if (entryResponse.errorCode != "0") {
