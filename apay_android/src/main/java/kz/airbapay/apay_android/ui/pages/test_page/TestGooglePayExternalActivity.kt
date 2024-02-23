@@ -96,8 +96,13 @@ internal class TestGooglePayExternalActivity: ComponentActivity() {
                             this.isEnabled = true
 
                             setOnClickListener {
-                                val task = paymentModel?.getLoadPaymentDataTask("1500")
-                                task?.addOnCompleteListener(paymentDataLauncher::launch)
+                                googlePayViewModel.authBiometry(
+                                    activity = this@TestGooglePayExternalActivity,
+                                    onSuccess = {
+                                        val task = paymentModel?.getLoadPaymentDataTask("1500")
+                                        task?.addOnCompleteListener(paymentDataLauncher::launch)
+                                    }
+                                )
                             }
                         }
                     }
