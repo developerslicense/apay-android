@@ -91,8 +91,8 @@ internal class CheckoutViewModel(application: Application) : AndroidViewModel(ap
      * @return a [Task] with the payment information.
      * @see [PaymentDataRequest](https://developers.google.com/android/reference/com/google/android/gms/wallet/PaymentsClient#loadPaymentData(com.google.android.gms.wallet.PaymentDataRequest)
     ) */
-    fun getLoadPaymentDataTask(priceCents: Long): Task<PaymentData> {
-        val paymentDataRequestJson = PaymentsUtil.getPaymentDataRequest(priceCents)
+    fun getLoadPaymentDataTask(price: String): Task<PaymentData> {
+        val paymentDataRequestJson = PaymentsUtil.getPaymentDataRequest(price)
         val request = PaymentDataRequest.fromJson(paymentDataRequestJson.toString())
         return paymentsClient.loadPaymentData(request)
     }

@@ -10,19 +10,20 @@ import kz.airbapay.apay_android.network.repository.startAuth
 
 internal fun initPayments(
     activity: Activity,
-    onGooglePayResult: (String?) -> Unit
+    onGooglePayResult: (String?) -> Unit,
+    onError: () -> Unit = {
+        openErrorPageWithCondition(
+            errorCode = ErrorsCode.error_1.code,
+            activity = activity
+        )
+    }
 ) {
     Repository.paymentsRepository?.createPayment(
-        error = {
-            openErrorPageWithCondition(
-                errorCode = ErrorsCode.error_1.code,
-                activity = activity
-            )
-        },
+        error = { onError() },
         result = { response ->
             authWithPaymentIdAndForGooglePay(
                 paymentCreateResponse = response,
-                activity = activity,
+                onError = onError,
                 onGooglePayResult = onGooglePayResult
             )
         }
@@ -31,18 +32,13 @@ internal fun initPayments(
 
 private fun authWithPaymentIdAndForGooglePay(
     paymentCreateResponse: PaymentCreateResponse,
-    activity: Activity,
     onGooglePayResult: (String?) -> Unit,
+    onError: () -> Unit
 ) {
     startAuth(
         authRepository = Repository.authRepository!!,
         paymentId = paymentCreateResponse.id,
-        onError = {
-            openErrorPageWithCondition(
-                errorCode = ErrorsCode.error_1.code,
-                activity = activity
-            )
-        },
+        onError = onError,
         onSuccess = {
             if (DataHolder.featureGooglePay) {
                 loadGooglePayButton(onGooglePayResult)

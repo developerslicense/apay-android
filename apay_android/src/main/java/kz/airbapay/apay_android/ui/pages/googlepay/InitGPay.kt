@@ -52,6 +52,6 @@ internal fun GPayView(
 }
 
 private fun onResult(activity: BaseGooglePayActivity) {
-    val task = activity.paymentModel?.getLoadPaymentDataTask(priceCents = 1000L)
+    val task = activity.paymentModel?.getLoadPaymentDataTask(DataHolder.purchaseAmount)
     task?.addOnCompleteListener(activity.paymentDataLauncher::launch)
 }

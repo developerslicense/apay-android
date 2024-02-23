@@ -8,63 +8,28 @@ import com.google.android.gms.wallet.AutoResolveHelper
 import com.google.android.gms.wallet.contract.TaskResultContracts.GetPaymentDataResult
 import com.google.gson.Gson
 import kz.airbapay.apay_android.data.constant.ErrorsCode
-import kz.airbapay.apay_android.data.constant.initErrorsCodeByCode
 import kz.airbapay.apay_android.data.model.GooglePayTokenResponse
-import kz.airbapay.apay_android.data.utils.openAcquiring
 import kz.airbapay.apay_android.data.utils.openErrorPageWithCondition
-import kz.airbapay.apay_android.data.utils.openSuccess
-import kz.airbapay.apay_android.network.repository.Repository
+import kz.airbapay.apay_android.ui.pages.googlepay.AirbaPayGooglePayViewModel
 
 internal abstract class BaseGooglePayActivity : ComponentActivity() {
 
     var paymentModel: CheckoutViewModel? = null
+    private val googlePayViewModel = AirbaPayGooglePayViewModel()
 
     val paymentDataLauncher = registerForActivityResult(GetPaymentDataResult()) { taskResult ->
         when (taskResult.status.statusCode) {
             CommonStatusCodes.SUCCESS -> {
-
                 taskResult.result!!.let {
                     Log.i("Google Pay result:", it.toJson())
                     paymentModel?.setLoadingState(true)
                     paymentModel?.setPaymentData(it)
                     val response = Gson().fromJson(it.toJson(), GooglePayTokenResponse::class.java)
+                    val token = response.paymentMethodData?.tokenizationData?.token ?: ""
 
-                    Repository.paymentsRepository?.startPaymentWallet(
-                        googlePayToken = response.paymentMethodData?.tokenizationData?.token ?: "",
-                        result = {entryResponse ->
-
-                            if (entryResponse.errorCode != "0") {
-                                val error = initErrorsCodeByCode(entryResponse.errorCode?.toInt() ?: 1)
-                                openErrorPageWithCondition(
-                                    errorCode = error.code,
-                                    activity = this
-                                )
-
-                            } else if (entryResponse.isSecure3D == true) {
-                                openAcquiring(
-                                    redirectUrl = entryResponse.secure3D?.action,
-                                    activity = this
-                                )
-
-                            } else {
-                                openSuccess(this)
-                            }
-                        },
-                        error = {
-
-                            if (it.errorBody()?.string()?.contains("invalid pan") == true) {
-                                openErrorPageWithCondition(
-                                    errorCode = ErrorsCode.error_5002.code,
-                                    activity = this
-                                )
-
-                            } else {
-                                openErrorPageWithCondition(
-                                    errorCode = ErrorsCode.error_1.code,
-                                    activity = this
-                                )
-                            }
-                        }
+                    googlePayViewModel.processingWallet(
+                        activity = this,
+                        googlePayToken = token
                     )
                 }
             }
@@ -89,5 +54,3 @@ internal abstract class BaseGooglePayActivity : ComponentActivity() {
         paymentModel = CheckoutViewModel(this.application)
     }
 }
-
-
