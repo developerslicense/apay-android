@@ -7,5 +7,5 @@ fun String.decode(): String {
 }
 
 fun String.encode(): String {
-    return Base64.encodeToString(this.toByteArray(charset("UTF-8")), Base64.DEFAULT)
+    return Base64.encodeToString(this.toByteArray(charset("UTF-8")), Base64.NO_WRAP)
 }
