@@ -47,7 +47,7 @@ class AirbaPaySdk {
         /**
          * @settlementPayments - не обязательный параметр, нужно присылать, если есть необходимость в разделении счетов по компаниям
          * */
-        fun initOnCreate(
+        fun initSdk(
             context: Context,
             isProd: Boolean,
             lang: Lang,
@@ -64,7 +64,13 @@ class AirbaPaySdk {
             autoCharge: Int = 0,
             enabledLogsForProd: Boolean = false,
             isGooglePayNative: Boolean = false,
-            hideInternalGooglePayButton: Boolean = false
+            hideInternalGooglePayButton: Boolean = false,
+            purchaseAmount: Long,
+            invoiceId: String,
+            orderNumber: String,
+            goods: List<Goods>,
+            settlementPayments: List<SettlementPayment>? = null, // параметр, нужный, если несколько айдишников компаний
+            onProcessingResult: ((Activity, Boolean) -> Unit)?
         ) {
 
             if (colorBrandInversion != null) {
@@ -103,18 +109,6 @@ class AirbaPaySdk {
             DataHolder.isGooglePayNative = isGooglePayNative
             DataHolder.hideInternalGooglePayButton = hideInternalGooglePayButton
 
-            // не переносить
-            Repository.initRepositories(context.applicationContext)
-        }
-
-        fun initProcessing(
-            purchaseAmount: Long,
-            invoiceId: String,
-            orderNumber: String,
-            goods: List<Goods>,
-            settlementPayments: List<SettlementPayment>? = null, // параметр, нужный, если несколько айдишников компаний
-            onProcessingResult: ((Activity, Boolean) -> Unit)?
-        ) {
             DataHolder.purchaseAmount = purchaseAmount.toString()
             DataHolder.orderNumber = orderNumber
             DataHolder.invoiceId = invoiceId
@@ -126,6 +120,9 @@ class AirbaPaySdk {
             onProcessingResult?.let {
                 DataHolder.frontendCallback = it
             }
+
+            // не переносить
+            Repository.initRepositories(context.applicationContext)
         }
 
         fun startAirbaPay(

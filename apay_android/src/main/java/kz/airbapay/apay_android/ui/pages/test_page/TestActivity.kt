@@ -1,5 +1,6 @@
 package kz.airbapay.apay_android.ui.pages.test_page
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -66,24 +67,8 @@ class TestActivity : ComponentActivity() {
                             TestAirbaPayStates.shutDownTestFeatureGooglePay = !featureGooglePay.value
                             TestAirbaPayStates.shutDownTestFeatureSavedCards = !featureSavedCards.value
 
-                            AirbaPaySdk.initOnCreate(
-                                context = this@TestActivity.application,
-                                isProd = false,
-                                accountId = "77051111111",
-                                phone = "77051111117",
-                                shopId = "test-merchant",
-                                lang = AirbaPaySdk.Lang.RU,
-                                password = "123456",
-                                terminalId = "64216e7ccc4a48db060dd689",
-                                failureCallback = "https://site.kz/failure-clb",
-                                successCallback = "https://site.kz/success-clb",
-                                userEmail = "test@test.com",
-                                colorBrandMain = Color(0xFFFC6B3F),
-                                autoCharge = if (autoCharge.value) 1 else 0,
-                                isGooglePayNative = featureGooglePayNative.value,
-//                                hideInternalGooglePayButton = true
-                            )
-                            initProcessing()
+                            initTestSdk(this@TestActivity)
+
                             AirbaPaySdk.startAirbaPay(
                                 activity = this@TestActivity,
                                 redirectToCustomSuccessPage = null//{
@@ -104,22 +89,6 @@ class TestActivity : ComponentActivity() {
                         onClick = {
                             isLoading.value = true
 
-                            AirbaPaySdk.initOnCreate(
-                                context = this@TestActivity.application,
-                                isProd = false,
-                                accountId = "77051111111",
-                                phone = "77051111117",
-                                shopId = "test-merchant",
-                                lang = AirbaPaySdk.Lang.RU,
-                                password = "123456",
-                                terminalId = "64216e7ccc4a48db060dd689",
-                                failureCallback = "https://site.kz/failure-clb",
-                                successCallback = "https://site.kz/success-clb",
-                                userEmail = "test@test.com",
-                                colorBrandMain = Color(0xFFFC6B3F),
-                                autoCharge = if (autoCharge.value) 1 else 0,
-                                isGooglePayNative = featureGooglePayNative.value
-                            )
 
                             val authRequest = AuthRequest(
                                 paymentId = null,
@@ -163,7 +132,7 @@ class TestActivity : ComponentActivity() {
                             .fillMaxWidth()
                             .padding(horizontal = 50.dp),
                         onClick = {
-                            initProcessing()
+                            initTestSdk(this@TestActivity)
 
                             startActivity(
                                 Intent(
@@ -174,7 +143,27 @@ class TestActivity : ComponentActivity() {
                         }
                     )
                     {
-                        Text("Открыть внешний тестовый GooglePay")
+                        Text("Открыть внешний тестовый GooglePay Compose")
+                    }
+
+                    Button(
+                        modifier = Modifier
+                            .padding(top = 20.dp, bottom = 20.dp)
+                            .fillMaxWidth()
+                            .padding(horizontal = 50.dp),
+                        onClick = {
+                            initTestSdk(this@TestActivity)
+
+                            startActivity(
+                                Intent(
+                                    this@TestActivity,
+                                    TestXmlGooglePayActivity::class.java
+                                )
+                            )
+                        }
+                    )
+                    {
+                        Text("Открыть внешний тестовый GooglePay Xml")
                     }
 
                     SwitchedView("AutoCharge 0 (off) / 1 (on)", autoCharge)
@@ -191,7 +180,9 @@ class TestActivity : ComponentActivity() {
     }
 }
 
-private fun initProcessing() {
+fun initTestSdk(
+    context: Context
+) {
     val someInvoiceId = Date().time
     val someOrderNumber = Date().time
 
@@ -223,8 +214,23 @@ private fun initProcessing() {
         )
     )
 
-    AirbaPaySdk.initProcessing(
+    AirbaPaySdk.initSdk(
+        context = context,
+        isProd = false,
+        accountId = "77051111111",
+        phone = "77051111117",
+        shopId = "test-merchant",
+        lang = AirbaPaySdk.Lang.RU,
+        password = "123456",
+        terminalId = "64216e7ccc4a48db060dd689",
+        failureCallback = "https://site.kz/failure-clb",
+        successCallback = "https://site.kz/success-clb",
+        userEmail = "test@test.com",
+        colorBrandMain = Color(0xFFFC6B3F),
+        autoCharge = 0,
+        hideInternalGooglePayButton = false,
         purchaseAmount = 1500,
+        isGooglePayNative = true,
         invoiceId = someInvoiceId.toString(),
         orderNumber = someOrderNumber.toString(),
         goods = goods,
@@ -238,5 +244,4 @@ private fun initProcessing() {
             activity.startActivity(Intent(activity, TestActivity::class.java))
         }
     )
-
 }

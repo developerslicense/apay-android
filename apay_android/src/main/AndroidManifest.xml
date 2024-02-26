@@ -3,64 +3,62 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.USE_BIOMETRIC" />
     <uses-permission android:name="android.permission.USE_FINGERPRINT" />
-
     <uses-permission android:name="android.permission.CAMERA" />
+
     <uses-feature android:name="android.hardware.camera" />
     <uses-feature android:name="android.hardware.camera.any" />
 
-<!--TODO почему куча активити, вместо навигации композа?
-        Это из-за того, что обнаружил проблемы с оптимизацией.
-        Создание экрана с несколькими полями ввода занимает до 7 секунд в дебаг сборке,
-        тогда как в активити всего 2 секунды.
-        Почему не фргаменты? До этого уже несколько раз переделывали флоу и в каких-то случаях был первым bottomSheet,
-        а это усложняет работу с навигацией и, на случай повторных переделок, решил облегчить задачу
-        -->
-
     <application>
+
         <meta-data
             android:name="com.google.android.gms.wallet.api.enabled"
             android:value="true" />
 
         <activity
-            android:name="kz.airbapay.apay_android.ui.pages.startview.StartProcessingActivity"
+            android:name=".ui.pages.startview.StartProcessingActivity"
             android:exported="true"
             android:noHistory="true"
-            android:windowSoftInputMode="adjustResize"/>
-
-        <activity android:name=".ui.pages.card_reader.ScanActivity"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".ui.pages.card_reader.ScanActivity"
             android:noHistory="true"
-            android:screenOrientation="portrait"/>
-
-        <activity android:name=".ui.pages.home.HomeActivity"
-            android:screenOrientation="portrait"/>
-
-        <activity android:name=".ui.pages.acquiring.AcquiringActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.pages.home.HomeActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.pages.acquiring.AcquiringActivity"
             android:noHistory="true"
-            android:screenOrientation="portrait"/>
-
-        <activity android:name=".ui.pages.googlepay.webview.GooglePayActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.pages.googlepay.webview.GooglePayActivity"
             android:noHistory="true"
-            android:screenOrientation="portrait"/>
-
-        <activity android:name=".ui.pages.success.SuccessActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.pages.success.SuccessActivity"
             android:noHistory="true"
-            android:screenOrientation="portrait"/>
-
-        <activity android:name=".ui.pages.error.RepeatActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.pages.error.RepeatActivity"
             android:noHistory="true"
-            android:screenOrientation="portrait"/>
-
-        <activity android:name=".ui.pages.error.ErrorActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.pages.error.ErrorActivity"
             android:noHistory="true"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
 
-        <activity android:name=".ui.pages.test_page.TestComposeGooglePayExternalActivity"
+
+        <activity
+            android:name=".ui.pages.test_page.TestComposeGooglePayExternalActivity"
             android:noHistory="true"
-            android:screenOrientation="portrait"/>
-
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.pages.test_page.TestXmlGooglePayActivity"
+            android:theme="@style/Theme.AppCompat"
+            android:exported="false" />
     </application>
 
 </manifest>
