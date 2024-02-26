@@ -55,7 +55,7 @@ import kz.airbapay.apay_android.network.repository.Repository
 import kz.airbapay.apay_android.ui.pages.card_reader.ScanActivity
 import kz.airbapay.apay_android.ui.pages.dialogs.InitDialogExit
 import kz.airbapay.apay_android.ui.pages.googlepay.GPayView
-import kz.airbapay.apay_android.ui.pages.googlepay.nativegp.BaseGooglePayActivity
+import kz.airbapay.apay_android.ui.pages.googlepay.nativegp.BaseComposeGooglePayActivity
 import kz.airbapay.apay_android.ui.pages.home.bl.checkValid
 import kz.airbapay.apay_android.ui.pages.home.bl.startPaymentProcessing
 import kz.airbapay.apay_android.ui.pages.home.presentation.BottomImages
@@ -70,7 +70,7 @@ import kz.airbapay.apay_android.ui.ui_components.TopInfoView
 import kz.airbapay.apay_android.ui.ui_components.ViewButton
 import kz.airbapay.apay_android.ui.ui_components.ViewToolbar
 
-internal class HomeActivity : BaseGooglePayActivity() {
+internal class HomeActivity : BaseComposeGooglePayActivity() {
 
     private val cardNumberText = mutableStateOf(TextFieldValue())
     private val paySystemIcon = mutableStateOf<Int?>(null)
@@ -126,7 +126,7 @@ internal fun HomePage(
     paySystemIcon: MutableState<Int?>,
     coroutineScope: CoroutineScope = rememberCoroutineScope()
 ) {
-    val activity = LocalContext.current as BaseGooglePayActivity
+    val activity = LocalContext.current as BaseComposeGooglePayActivity
     val keyguardManager = activity.getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager
 
     val isLoadingGooglePay = activity.paymentModel?.isLoading?.collectAsState()

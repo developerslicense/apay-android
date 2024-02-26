@@ -168,7 +168,7 @@ class TestActivity : ComponentActivity() {
                             startActivity(
                                 Intent(
                                     this@TestActivity,
-                                    TestGooglePayExternalActivity::class.java
+                                    TestComposeGooglePayExternalActivity::class.java
                                 )
                             )
                         }

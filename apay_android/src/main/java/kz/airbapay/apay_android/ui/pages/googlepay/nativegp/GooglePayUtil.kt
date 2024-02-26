@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-package kz.airbapay.apay_android.data.utils
+package kz.airbapay.apay_android.ui.pages.googlepay.nativegp
 
 import android.content.Context
 import com.google.android.gms.wallet.PaymentsClient
 import com.google.android.gms.wallet.Wallet
 import com.google.android.gms.wallet.WalletConstants
+import kz.airbapay.apay_android.data.utils.DataHolder
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
@@ -31,7 +32,7 @@ import org.json.JSONObject
  * existence. Please consult the documentation to learn more and feel free to remove ones not
  * relevant to your implementation.
  */
-object PaymentsUtil {
+object GooglePayUtil {
 
     /**
      * Create a Google Pay API base request object with properties used in all requests.

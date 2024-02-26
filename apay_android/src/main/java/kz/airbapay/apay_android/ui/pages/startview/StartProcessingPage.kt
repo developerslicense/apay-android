@@ -46,7 +46,7 @@ import kz.airbapay.apay_android.data.utils.recomposeHighlighter
 import kz.airbapay.apay_android.network.repository.Repository
 import kz.airbapay.apay_android.network.repository.startAuth
 import kz.airbapay.apay_android.ui.pages.googlepay.GPayView
-import kz.airbapay.apay_android.ui.pages.googlepay.nativegp.BaseGooglePayActivity
+import kz.airbapay.apay_android.ui.pages.googlepay.nativegp.BaseComposeGooglePayActivity
 import kz.airbapay.apay_android.ui.pages.startview.bl.fetchMerchantsWithNextStep
 import kz.airbapay.apay_android.ui.pages.startview.start_processing_ext.EnterCvvBottomSheet
 import kz.airbapay.apay_android.ui.pages.startview.start_processing_ext.InitViewStartProcessingButtonNext
@@ -57,7 +57,7 @@ import kz.airbapay.apay_android.ui.ui_components.ProgressBarView
 import kz.airbapay.apay_android.ui.ui_components.TopInfoView
 import kz.airbapay.apay_android.ui.ui_components.ViewToolbar
 
-internal class StartProcessingActivity : BaseGooglePayActivity() {
+internal class StartProcessingActivity : BaseComposeGooglePayActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -87,7 +87,7 @@ internal fun StartProcessingPage(
     )
 
     val coroutineScope = rememberCoroutineScope()
-    val activity = LocalContext.current as BaseGooglePayActivity
+    val activity = LocalContext.current as BaseComposeGooglePayActivity
     val keyguardManager = activity.getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager
 
     BackHandler {

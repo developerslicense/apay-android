@@ -33,11 +33,10 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
-import kz.airbapay.apay_android.data.utils.PaymentsUtil
 import org.json.JSONException
 import org.json.JSONObject
 
-internal class CheckoutViewModel(application: Application) : AndroidViewModel(application) {
+class GooglePayCheckoutViewModel(application: Application) : AndroidViewModel(application) {
 
     private val _paymentUiState: MutableStateFlow<PaymentUiState> =
         MutableStateFlow(PaymentUiState.NotStarted)
@@ -47,7 +46,7 @@ internal class CheckoutViewModel(application: Application) : AndroidViewModel(ap
     val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
 
     // A client for interacting with the Google Pay API.
-    private val paymentsClient: PaymentsClient = PaymentsUtil.createPaymentsClient(application)
+    private val paymentsClient: PaymentsClient = GooglePayUtil.createPaymentsClient(application)
 
     init {
         viewModelScope.launch {
@@ -81,7 +80,7 @@ internal class CheckoutViewModel(application: Application) : AndroidViewModel(ap
      * Determine the user's ability to pay with a payment method supported by your app.
     ) */
     private suspend fun fetchCanUseGooglePay(): Boolean {
-        val request = IsReadyToPayRequest.fromJson(PaymentsUtil.isReadyToPayRequest().toString())
+        val request = IsReadyToPayRequest.fromJson(GooglePayUtil.isReadyToPayRequest().toString())
         return paymentsClient.isReadyToPay(request).await()
     }
 
@@ -92,7 +91,7 @@ internal class CheckoutViewModel(application: Application) : AndroidViewModel(ap
      * @see [PaymentDataRequest](https://developers.google.com/android/reference/com/google/android/gms/wallet/PaymentsClient#loadPaymentData(com.google.android.gms.wallet.PaymentDataRequest)
     ) */
     fun getLoadPaymentDataTask(price: String): Task<PaymentData> {
-        val paymentDataRequestJson = PaymentsUtil.getPaymentDataRequest(price)
+        val paymentDataRequestJson = GooglePayUtil.getPaymentDataRequest(price)
         val request = PaymentDataRequest.fromJson(paymentDataRequestJson.toString())
         return paymentsClient.loadPaymentData(request)
     }

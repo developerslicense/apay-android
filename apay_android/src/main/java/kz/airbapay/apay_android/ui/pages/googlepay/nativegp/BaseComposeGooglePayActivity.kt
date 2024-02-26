@@ -10,12 +10,11 @@ import com.google.gson.Gson
 import kz.airbapay.apay_android.data.constant.ErrorsCode
 import kz.airbapay.apay_android.data.model.GooglePayTokenResponse
 import kz.airbapay.apay_android.data.utils.openErrorPageWithCondition
-import kz.airbapay.apay_android.ui.pages.googlepay.AirbaPayGooglePayViewModel
 
-internal abstract class BaseGooglePayActivity : ComponentActivity() {
+abstract class BaseComposeGooglePayActivity : ComponentActivity() {
 
-    var paymentModel: CheckoutViewModel? = null
-    private val googlePayViewModel = AirbaPayGooglePayViewModel()
+    var paymentModel: GooglePayCheckoutViewModel? = null
+    private val googlePayViewModel = GooglePayViewModel()
 
     val paymentDataLauncher = registerForActivityResult(GetPaymentDataResult()) { taskResult ->
         when (taskResult.status.statusCode) {
@@ -51,6 +50,17 @@ internal abstract class BaseGooglePayActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        paymentModel = CheckoutViewModel(this.application)
+        paymentModel = GooglePayCheckoutViewModel(this.application)
+    }
+
+    fun authGooglePay(
+        onSuccess: () -> Unit,
+        onFailed: () -> Unit
+    ) {
+        googlePayViewModel.auth(
+            activity = this,
+            onError = onFailed,
+            onSuccess = onSuccess
+        )
     }
 }

@@ -29,6 +29,8 @@ internal class BaseInterceptor(
                 .build()
         }
 
+        requestBuilder.addHeader("Platform", "Android, 1.0.36")
+
         requestBuilder.addHeader(
             "Authorization",
             if(DataHolder.accessToken.isNullOrBlank()) "" else "Bearer ${DataHolder.accessToken}"

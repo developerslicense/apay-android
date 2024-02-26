@@ -23,7 +23,14 @@ internal class AcquiringClient(
     @SuppressLint("WebViewClientOnReceivedSslError")
     override fun onReceivedSslError(view: WebView, handler: SslErrorHandler, error: SslError) {
         messageLog("onReceivedSslError error $error")
-        if (DataHolder.isProd) handler.cancel() else handler.proceed()
+        if (DataHolder.isProd) {
+            handler.cancel()
+            openErrorPageWithCondition(
+                errorCode = 0,
+                activity = activity
+            )
+
+        } else handler.proceed()
     }
 
     override fun onPageStarted(view: WebView, url: String, favicon: Bitmap?) {
@@ -35,9 +42,7 @@ internal class AcquiringClient(
     override fun onPageFinished(view: WebView?, url: String?) {
         super.onPageFinished(view, url)
         messageLog("onPageFinished, $url")
-        if (url?.contains("https://forward.airbapay.kz") == false) {
-            inProgress.value = false
-        }
+        inProgress.value = false
     }
 
     override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {

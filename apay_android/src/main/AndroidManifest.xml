@@ -57,7 +57,7 @@
             android:noHistory="true"
             android:screenOrientation="portrait"/>
 
-        <activity android:name=".ui.pages.test_page.TestGooglePayExternalActivity"
+        <activity android:name=".ui.pages.test_page.TestComposeGooglePayExternalActivity"
             android:noHistory="true"
             android:screenOrientation="portrait"/>
 

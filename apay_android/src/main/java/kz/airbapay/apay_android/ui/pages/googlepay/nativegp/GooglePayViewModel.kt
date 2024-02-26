@@ -1,8 +1,7 @@
-package kz.airbapay.apay_android.ui.pages.googlepay
+package kz.airbapay.apay_android.ui.pages.googlepay.nativegp
 
 import android.app.Activity
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import kz.airbapay.apay_android.data.constant.ErrorsCode
 import kz.airbapay.apay_android.data.constant.initErrorsCodeByCode
 import kz.airbapay.apay_android.data.model.AuthRequest
@@ -13,9 +12,8 @@ import kz.airbapay.apay_android.data.utils.openErrorPageWithCondition
 import kz.airbapay.apay_android.data.utils.openSuccess
 import kz.airbapay.apay_android.network.repository.Repository
 import kz.airbapay.apay_android.ui.pages.startview.bl.initPayments
-import kz.airbapay.apay_android.ui.ui_components.initAuth
 
-class AirbaPayGooglePayViewModel: ViewModel() {
+class GooglePayViewModel: ViewModel() {
 
     fun auth(
         activity: Activity,
@@ -50,19 +48,6 @@ class AirbaPayGooglePayViewModel: ViewModel() {
                 )
             },
             error = { onError() }
-        )
-    }
-
-    fun authBiometry(
-        activity: Activity,
-        onSuccess: () -> Unit
-    ) {
-        initAuth(
-            activity = activity,
-            coroutineScope = viewModelScope,
-            onSuccess = { onSuccess() },
-            onFailed = {},
-            onNotSecurity = { onSuccess() }
         )
     }
 
