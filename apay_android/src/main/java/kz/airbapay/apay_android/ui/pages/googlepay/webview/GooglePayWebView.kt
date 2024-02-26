@@ -22,7 +22,7 @@ import kz.airbapay.apay_android.ui.ui_components.LoadImageSrc
 import kz.airbapay.apay_android.ui.ui_components.initAuth
 
 @Composable
-internal fun GPayWebView(
+internal fun GooglePayWebView(
     openGooglePayForWebFlow: () -> Unit
 ) {
     val activity = LocalContext.current as Activity

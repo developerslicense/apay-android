@@ -1,0 +1,1 @@
+-keep class kz.airbapay.apay_android.data.model.** { *; }

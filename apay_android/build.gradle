@@ -43,6 +43,7 @@ android {
 }
 
 ext {
+    appCompat = '1.6.1'
     androidxJUnit = '1.1.4'
     androidxTest = '1.5.0'
     androidxTestRunner = '1.5.2'
@@ -100,6 +101,8 @@ dependencies {
     implementation "androidx.core:core-ktx:$androidxCore"
     // Activity ktx
     implementation "androidx.activity:activity-ktx:$activityKtx"
+    // AppCompat
+    implementation "androidx.appcompat:appcompat:$appCompat"
 
     // Biometric
     implementation "androidx.biometric:biometric:$biometricLibraryVersion"
@@ -192,7 +195,7 @@ dependencies {
 
 
 group 'kz.airbapay' // this is your groupId
-version '1.0.33' // this is your version
+version '1.0.37' // _2023_08_00'  // todo меняй и в BaseInterceptor в requestBuilder.addHeader("Platform", "Android,
 
 ext { // this are variables
     pomGroupId = group
