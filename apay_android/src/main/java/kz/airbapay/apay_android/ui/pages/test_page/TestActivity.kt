@@ -218,7 +218,7 @@ fun initTestSdk(
 
     AirbaPaySdk.initSdk(
         context = context,
-        isProd = false, //true //
+        isProd = false, //true, //
         accountId = "77051111111",
         phone = "77051111117",
         shopId = "test-merchant", //"airbapay-mfo", //
