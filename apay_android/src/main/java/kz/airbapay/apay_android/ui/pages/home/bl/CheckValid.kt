@@ -49,7 +49,9 @@ internal fun checkValid(
         hasError = true
         cvvError.value = needFillTheField()
 
-    } else if (cvv.length < 3) {
+    } else if (cardNumber?.startsWith("34") == true && cvv.length < 4
+        || cardNumber?.startsWith("34") == false && cvv.length != 3
+    ) {
         hasError = true
         cvvError.value = wrongCvv()
 

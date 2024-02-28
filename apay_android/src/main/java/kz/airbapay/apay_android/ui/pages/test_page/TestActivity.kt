@@ -53,7 +53,9 @@ class TestActivity : ComponentActivity() {
                         .verticalScroll(scrollState)
                 ) {
                     Text(
-                        text = "Тестовые карты \n 4111 1111 1111 1616 cvv 333 \n 4111 1111 1111 1111 cvv 123",
+                        text = "Тестовые карты \n 4111 1111 1111 1616 cvv 333 \n " +
+                                "4111 1111 1111 1111 cvv 123  \n" +
+                                "3411 1111 1111 111 cvv 7777",
                         modifier = Modifier.padding(16.dp)
                     )
 
@@ -216,13 +218,13 @@ fun initTestSdk(
 
     AirbaPaySdk.initSdk(
         context = context,
-        isProd = false,
+        isProd = false, //true //
         accountId = "77051111111",
         phone = "77051111117",
-        shopId = "test-merchant",
+        shopId = "test-merchant", //"airbapay-mfo", //
         lang = AirbaPaySdk.Lang.RU,
-        password = "123456",
-        terminalId = "64216e7ccc4a48db060dd689",
+        password = "123456", //"MtTh37TLV7", //
+        terminalId = "64216e7ccc4a48db060dd689",//"659e79e279a508566e35d299", //
         failureCallback = "https://site.kz/failure-clb",
         successCallback = "https://site.kz/success-clb",
         userEmail = "test@test.com",
@@ -230,7 +232,7 @@ fun initTestSdk(
         autoCharge = 0,
         hideInternalGooglePayButton = false,
         purchaseAmount = 1500,
-        isGooglePayNative = true,
+        isGooglePayNative = false,
         invoiceId = someInvoiceId.toString(),
         orderNumber = someOrderNumber.toString(),
         goods = goods,
