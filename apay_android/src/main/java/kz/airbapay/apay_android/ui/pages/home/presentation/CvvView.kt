@@ -29,7 +29,7 @@ internal fun CvvView(
     ViewEditText(
         text = cvvText,
         regex = Regex(RegexConst.NOT_DIGITS),
-        mask = "AAA",
+        mask = "AAAA",
         errorTitle = cvvError,
         focusRequester = cvvFocusRequester,
         placeholder = cvv(),

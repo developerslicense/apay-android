@@ -217,20 +217,24 @@ dependencies {
 Добавить в манифест описание этого активити
 
  ```
-<activity android:name=".pay.airba.AirbaPayActivity"
-    android:taskAffinity="kz.airbapay.apay_android"
+<activity android:name=".pay.airba.FlutterAirbaPayActivity"
     android:theme="@style/AppTheme.AppCompat"
     android:exported="false" />
  ```
 
-Вызвать
+И нужно добавить в нем
 
- ```
+```
+var isFlowStarted: Bool = false
 
-intent.flags = Intent.FLAG_ACTIVITY_MULTIPLE_TASK
-
-context.startActivityForResult(intent, ActivityRequestCode.AIRBA)
- ```
-
-Параметры  ```taskAffinity ``` в манифесте и  ```FLAG_ACTIVITY_MULTIPLE_TASK ``` для создания
-отдельного стэка.
+override fun onStart() {
+        super.onStart()
+        if(!isFlowStarted) {
+            // 1. started airba pay flow (invoked after onCreate)
+            isFlowStarted = true
+        } else {
+            // 2. finished airba pay flow (invoked after backButton pressed or etc)
+            close(false)
+        }
+    }
+```

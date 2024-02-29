@@ -39,7 +39,7 @@ internal fun ViewToolbar(
 
             InitActionIcon(
                 action = actionBack,
-                _outlinedButtonColor = ColorsSdk.bgBlock,
+                _outlinedButtonColor = ColorsSdk.transparent,
                 iconSrc = backIcon,
                 modifier = Modifier
                     .recomposeHighlighter()
