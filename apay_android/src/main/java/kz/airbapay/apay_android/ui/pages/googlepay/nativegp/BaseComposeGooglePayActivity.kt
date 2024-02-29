@@ -6,9 +6,7 @@ import androidx.activity.ComponentActivity
 import com.google.android.gms.common.api.CommonStatusCodes
 import com.google.android.gms.wallet.AutoResolveHelper
 import com.google.android.gms.wallet.contract.TaskResultContracts.GetPaymentDataResult
-import com.google.gson.Gson
 import kz.airbapay.apay_android.data.constant.ErrorsCode
-import kz.airbapay.apay_android.data.model.GooglePayTokenResponse
 import kz.airbapay.apay_android.data.utils.openErrorPageWithCondition
 
 abstract class BaseComposeGooglePayActivity : ComponentActivity() {
@@ -23,12 +21,12 @@ abstract class BaseComposeGooglePayActivity : ComponentActivity() {
                     Log.i("Google Pay result:", it.toJson())
                     paymentModel?.setLoadingState(true)
                     paymentModel?.setPaymentData(it)
-                    val response = Gson().fromJson(it.toJson(), GooglePayTokenResponse::class.java)
-                    val token = response.paymentMethodData?.tokenizationData?.token ?: ""
+//                    val response = Gson().fromJson(it.toJson(), GooglePayTokenResponse::class.java)
+//                    val token = response.paymentMethodData?.tokenizationData?.token ?: ""
 
                     googlePayViewModel.processingWallet(
                         activity = this,
-                        googlePayToken = token
+                        googlePayToken = it.toJson()
                     )
                 }
             }

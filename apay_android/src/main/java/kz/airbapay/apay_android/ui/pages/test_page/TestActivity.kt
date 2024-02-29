@@ -232,7 +232,7 @@ fun initTestSdk(
         autoCharge = 0,
         hideInternalGooglePayButton = false,
         purchaseAmount = 1500,
-        isGooglePayNative = false,
+        isGooglePayNative = true,
         invoiceId = someInvoiceId.toString(),
         orderNumber = someOrderNumber.toString(),
         goods = goods,
