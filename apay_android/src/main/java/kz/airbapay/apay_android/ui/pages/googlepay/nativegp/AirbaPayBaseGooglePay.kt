@@ -1,34 +1,35 @@
 package kz.airbapay.apay_android.ui.pages.googlepay.nativegp
 
-import android.os.Bundle
 import android.util.Log
-import androidx.appcompat.app.AppCompatActivity
+import androidx.activity.ComponentActivity
 import com.google.android.gms.common.api.CommonStatusCodes
 import com.google.android.gms.wallet.AutoResolveHelper
 import com.google.android.gms.wallet.contract.TaskResultContracts.GetPaymentDataResult
-import com.google.gson.Gson
 import kz.airbapay.apay_android.data.constant.ErrorsCode
-import kz.airbapay.apay_android.data.model.GooglePayTokenResponse
+import kz.airbapay.apay_android.data.utils.DataHolder
 import kz.airbapay.apay_android.data.utils.openErrorPageWithCondition
 
-abstract class BaseXmlGooglePayActivity : AppCompatActivity() {
+class AirbaPayBaseGooglePay(
+    val activity: ComponentActivity
+) {
 
     var paymentModel: GooglePayCheckoutViewModel? = null
     private val googlePayViewModel = GooglePayViewModel()
 
-    val paymentDataLauncher = registerForActivityResult(GetPaymentDataResult()) { taskResult ->
+    private val paymentDataLauncher = activity.registerForActivityResult(GetPaymentDataResult()) { taskResult ->
+
         when (taskResult.status.statusCode) {
             CommonStatusCodes.SUCCESS -> {
                 taskResult.result!!.let {
                     Log.i("Google Pay result:", it.toJson())
                     paymentModel?.setLoadingState(true)
                     paymentModel?.setPaymentData(it)
-                    val response = Gson().fromJson(it.toJson(), GooglePayTokenResponse::class.java)
-                    val token = response.paymentMethodData?.tokenizationData?.token ?: ""
+//                    val response = Gson().fromJson(it.toJson(), GooglePayTokenResponse::class.java)
+//                    val token = response.paymentMethodData?.tokenizationData?.token ?: ""
 
                     googlePayViewModel.processingWallet(
-                        activity = this,
-                        googlePayToken = token
+                        activity = activity,
+                        googlePayToken = it.toJson()
                     )
                 }
             }
@@ -36,21 +37,20 @@ abstract class BaseXmlGooglePayActivity : AppCompatActivity() {
             AutoResolveHelper.RESULT_ERROR -> {
                 openErrorPageWithCondition(
                     errorCode = ErrorsCode.error_1.code,
-                    activity = this
+                    activity = activity
                 )
             }
             CommonStatusCodes.INTERNAL_ERROR -> {
                 openErrorPageWithCondition(
                     errorCode = ErrorsCode.error_1.code,
-                    activity = this
+                    activity = activity
                 )
             }
         }
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        paymentModel = GooglePayCheckoutViewModel(this.application)
+    init {
+        paymentModel = GooglePayCheckoutViewModel(activity.application)
     }
 
     fun authGooglePay(
@@ -58,9 +58,14 @@ abstract class BaseXmlGooglePayActivity : AppCompatActivity() {
         onFailed: () -> Unit
     ) {
         googlePayViewModel.auth(
-            activity = this,
+            activity = activity,
             onError = onFailed,
             onSuccess = onSuccess
         )
+    }
+
+    fun onResultGooglePay() {
+        val task = paymentModel?.getLoadPaymentDataTask(DataHolder.purchaseAmount)
+        task?.addOnCompleteListener(paymentDataLauncher::launch)
     }
 }

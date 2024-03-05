@@ -5,6 +5,7 @@ import android.app.KeyguardManager
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -55,7 +56,7 @@ import kz.airbapay.apay_android.data.utils.openGooglePay
 import kz.airbapay.apay_android.network.repository.Repository
 import kz.airbapay.apay_android.ui.pages.dialogs.InitDialogExit
 import kz.airbapay.apay_android.ui.pages.googlepay.GPayView
-import kz.airbapay.apay_android.ui.pages.googlepay.nativegp.BaseComposeGooglePayActivity
+import kz.airbapay.apay_android.ui.pages.googlepay.nativegp.AirbaPayBaseGooglePay
 import kz.airbapay.apay_android.ui.pages.home.bl.checkValid
 import kz.airbapay.apay_android.ui.pages.home.bl.startPaymentProcessing
 import kz.airbapay.apay_android.ui.pages.home.presentation.BottomImages
@@ -70,7 +71,7 @@ import kz.airbapay.apay_android.ui.ui_components.TopInfoView
 import kz.airbapay.apay_android.ui.ui_components.ViewButton
 import kz.airbapay.apay_android.ui.ui_components.ViewToolbar
 
-internal class HomeActivity : BaseComposeGooglePayActivity() {
+internal class HomeActivity : ComponentActivity() {
 
     private val cardNumberText = mutableStateOf(TextFieldValue())
     private val paySystemIcon = mutableStateOf<Int?>(null)
@@ -88,9 +89,11 @@ internal class HomeActivity : BaseComposeGooglePayActivity() {
                 onResult(cardNumber)
             }
         }*/
+        val airbaPay = AirbaPayBaseGooglePay(this)
 
         setContent {
             HomePage(
+                airbaPayBaseGooglePay = airbaPay,
                 cardNumberText = cardNumberText,
                 paySystemIcon = paySystemIcon
             )
@@ -122,14 +125,15 @@ internal class HomeActivity : BaseComposeGooglePayActivity() {
 
 @Composable
 internal fun HomePage(
+    airbaPayBaseGooglePay: AirbaPayBaseGooglePay,
     cardNumberText: MutableState<TextFieldValue>,
     paySystemIcon: MutableState<Int?>,
     coroutineScope: CoroutineScope = rememberCoroutineScope()
 ) {
-    val activity = LocalContext.current as BaseComposeGooglePayActivity
+    val activity = LocalContext.current as Activity
     val keyguardManager = activity.getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager
 
-    val isLoadingGooglePay = activity.paymentModel?.isLoading?.collectAsState()
+    val isLoadingGooglePay = airbaPayBaseGooglePay.paymentModel?.isLoading?.collectAsState()
     val isLoading = remember { mutableStateOf(false) }
     val showDialogExit = remember { mutableStateOf(false) }
     val switchSaveCard = remember { mutableStateOf(false) }
@@ -210,6 +214,7 @@ internal fun HomePage(
                     && keyguardManager.isKeyguardSecure
                 ) {
                     GPayView(
+                        airbaPayBaseGooglePay = airbaPayBaseGooglePay,
                         openGooglePayForWebFlow = {
                             openGooglePay(
                                 redirectUrl = DataHolder.googlePayButtonUrl,

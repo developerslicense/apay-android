@@ -1,5 +1,6 @@
 package kz.airbapay.apay_android.ui.pages.googlepay.nativegp
 
+import android.app.Activity
 import android.content.Context
 import android.util.AttributeSet
 import android.widget.LinearLayout
@@ -14,10 +15,11 @@ import com.google.android.gms.wallet.button.ButtonConstants
 import com.google.android.gms.wallet.button.ButtonOptions
 import com.google.android.gms.wallet.button.PayButton
 import kz.airbapay.apay_android.R
-import kz.airbapay.apay_android.data.utils.DataHolder
 import kz.airbapay.apay_android.ui.ui_components.initAuth
 
 class GooglePayNativeXml: LinearLayout {
+
+    var baseGooglePay: AirbaPayBaseGooglePay? = null
 
     constructor(context: Context?) : super(context) {
         onCreate(context)
@@ -33,8 +35,8 @@ class GooglePayNativeXml: LinearLayout {
         val view = inflate(context, R.layout.airba_pay_google_pay_button, this)
         val composeView = view.findViewById<ComposeView>(R.id.googlePayComposeView)
         composeView.setContent {
-            val activity = LocalContext.current as BaseXmlGooglePayActivity
-            val hasGooglePay = activity.paymentModel?.paymentUiState?.collectAsState()
+            val activity = LocalContext.current as Activity
+            val hasGooglePay = baseGooglePay?.paymentModel?.paymentUiState?.collectAsState()
             val coroutineScope = rememberCoroutineScope()
 
             AndroidView(
@@ -59,19 +61,14 @@ class GooglePayNativeXml: LinearLayout {
                             initAuth(
                                 activity = activity,
                                 coroutineScope = coroutineScope,
-                                onSuccess = { onResult(activity) },
+                                onSuccess = { baseGooglePay?.onResultGooglePay() },
                                 onFailed = {},
-                                onNotSecurity = { onResult(activity) }
+                                onNotSecurity = { baseGooglePay?.onResultGooglePay() }
                             )
                         }
                     }
                 }
             )
         }
-    }
-
-    private fun onResult(activity: BaseXmlGooglePayActivity) {
-        val task = activity.paymentModel?.getLoadPaymentDataTask(DataHolder.purchaseAmount)
-        task?.addOnCompleteListener(activity.paymentDataLauncher::launch)
     }
 }
