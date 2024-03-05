@@ -10,7 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import kz.airbapay.apay_android.ui.pages.googlepay.nativegp.AirbaPayBaseGooglePay
-import kz.airbapay.apay_android.ui.pages.googlepay.nativegp.GooglePayNativeCompose
+import kz.airbapay.apay_android.ui.pages.googlepay.nativegp.AirbaPayGooglePayNativeView
 import kz.airbapay.apay_android.ui.ui_components.ProgressBarView
 
 internal class TestComposeGooglePayExternalActivity: ComponentActivity() {
@@ -35,8 +35,11 @@ internal class TestComposeGooglePayExternalActivity: ComponentActivity() {
 
         setContent {
             ConstraintLayout {
-                GooglePayNativeCompose(
+                AirbaPayGooglePayNativeView(
                     airbaPayBaseGooglePay = airbaPay,
+                    buttonTheme = 1,
+                    buttonType = 8,
+                    cornerRadius = 8,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 20.dp)

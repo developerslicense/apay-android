@@ -13,9 +13,12 @@ import com.google.android.gms.wallet.button.PayButton
 import kz.airbapay.apay_android.ui.ui_components.initAuth
 
 @Composable
-fun GooglePayNativeCompose(
+fun AirbaPayGooglePayNativeView(
     airbaPayBaseGooglePay: AirbaPayBaseGooglePay,
-    modifier: Modifier
+    modifier: Modifier = Modifier,
+    buttonTheme: Int = ButtonConstants.ButtonTheme.DARK,
+    buttonType: Int = ButtonConstants.ButtonType.PLAIN,
+    cornerRadius: Int = 8
 ) {
     val activity = LocalContext.current as Activity
     val hasGooglePay = airbaPayBaseGooglePay.paymentModel?.paymentUiState?.collectAsState()
@@ -27,9 +30,9 @@ fun GooglePayNativeCompose(
             PayButton(context).apply {
                 this.initialize(
                     ButtonOptions.newBuilder()
-                        .setButtonTheme(ButtonConstants.ButtonTheme.DARK)
-                        .setButtonType(ButtonConstants.ButtonType.PLAIN)
-                        .setCornerRadius(8)
+                        .setButtonTheme(buttonTheme)
+                        .setButtonType(buttonType)
+                        .setCornerRadius(cornerRadius)
                         .setAllowedPaymentMethods(GooglePayUtil.allowedPaymentMethods().toString())
                         .build()
                 )
@@ -53,4 +56,3 @@ fun GooglePayNativeCompose(
         }
     )
 }
-

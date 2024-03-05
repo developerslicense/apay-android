@@ -9,7 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import kz.airbapay.apay_android.data.utils.DataHolder
 import kz.airbapay.apay_android.ui.pages.googlepay.nativegp.AirbaPayBaseGooglePay
-import kz.airbapay.apay_android.ui.pages.googlepay.nativegp.GooglePayNativeCompose
+import kz.airbapay.apay_android.ui.pages.googlepay.nativegp.AirbaPayGooglePayNativeView
 import kz.airbapay.apay_android.ui.pages.googlepay.webview.GooglePayWebView
 
 @Composable
@@ -26,7 +26,7 @@ internal fun GPayView(
             && !DataHolder.gateway.isNullOrBlank()
         ) {
 
-            GooglePayNativeCompose(
+            AirbaPayGooglePayNativeView(
                 airbaPayBaseGooglePay = airbaPayBaseGooglePay,
                 modifier = Modifier
                     .fillMaxWidth()
