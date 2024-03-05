@@ -6,8 +6,6 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.compose.setContent
-import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Column
@@ -54,7 +52,6 @@ import kz.airbapay.apay_android.data.utils.card_utils.getCardTypeFromNumber
 import kz.airbapay.apay_android.data.utils.openCardScanner
 import kz.airbapay.apay_android.data.utils.openGooglePay
 import kz.airbapay.apay_android.network.repository.Repository
-import kz.airbapay.apay_android.ui.pages.card_reader.ScanActivity
 import kz.airbapay.apay_android.ui.pages.dialogs.InitDialogExit
 import kz.airbapay.apay_android.ui.pages.googlepay.GPayView
 import kz.airbapay.apay_android.ui.pages.googlepay.nativegp.BaseComposeGooglePayActivity
@@ -76,20 +73,20 @@ internal class HomeActivity : BaseComposeGooglePayActivity() {
 
     private val cardNumberText = mutableStateOf(TextFieldValue())
     private val paySystemIcon = mutableStateOf<Int?>(null)
-    var scanResultLauncher: ActivityResultLauncher<Intent>? = null
+//    var scanResultLauncher: ActivityResultLauncher<Intent>? = null // старый вариант ScanActivity. новый использует card io. старый оставил на всякий случай
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         // старый вариант ScanActivity. новый использует card io. старый оставил на всякий случай
-        scanResultLauncher = registerForActivityResult(
+       /* scanResultLauncher = registerForActivityResult(
             ActivityResultContracts.StartActivityForResult()
         ) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
                 val cardNumber = intent?.extras?.getString(ScanActivity.RESULT_CARD_NUMBER)
                 onResult(cardNumber)
             }
-        }
+        }*/
 
         setContent {
             HomePage(

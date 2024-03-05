@@ -59,14 +59,6 @@ internal fun AcquiringPage(
             modifier = Modifier.fillMaxSize()
         ) {
 
-            ViewToolbar(
-                title = "",
-                backIcon = R.drawable.cancel,
-                actionBack = {
-                    showDialogExit.value = true
-                }
-            )
-
             AndroidView(
                 factory = {
                     WebView(it).apply {
@@ -97,6 +89,14 @@ internal fun AcquiringPage(
                 }
             )
         }
+
+        ViewToolbar(
+            title = "",
+            backIcon = R.drawable.cancel,
+            actionBack = {
+                showDialogExit.value = true
+            }
+        )
 
         if (inProgress.value) {
             ProgressBarView()

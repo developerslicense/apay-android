@@ -20,40 +20,32 @@
         <activity
             android:name=".ui.pages.startview.StartProcessingActivity"
             android:exported="true"
-            android:noHistory="true"
             android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".ui.pages.card_reader.ScanActivity"
-            android:noHistory="true"
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.pages.home.HomeActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.pages.acquiring.AcquiringActivity"
-            android:noHistory="true"
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.pages.googlepay.webview.GooglePayActivity"
-            android:noHistory="true"
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.pages.success.SuccessActivity"
-            android:noHistory="true"
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.pages.error.RepeatActivity"
-            android:noHistory="true"
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.pages.error.ErrorActivity"
-            android:noHistory="true"
             android:screenOrientation="portrait" />
 
 
         <activity
             android:name=".ui.pages.test_page.TestComposeGooglePayExternalActivity"
-            android:noHistory="true"
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.pages.test_page.TestXmlGooglePayActivity"

@@ -134,6 +134,7 @@ class AirbaPaySdk {
                 DataHolder.redirectToCustomSuccessPage = redirectToCustomSuccessPage
                 DataHolder.redirectToCustomFinalErrorPage = redirectToCustomFinalErrorPage
                 activity.startActivity(Intent(activity, StartProcessingActivity::class.java))
+                activity.finish()
             } else {
                 println("Не выполнено initOnCreate")
             }

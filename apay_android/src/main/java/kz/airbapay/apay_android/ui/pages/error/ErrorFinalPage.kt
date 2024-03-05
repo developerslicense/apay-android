@@ -32,7 +32,8 @@ internal fun ErrorFinalPage() {
     val activity = LocalContext.current as Activity
 
     BackHandler {
-        activity.finish()
+        DataHolder.frontendCallback?.invoke(activity, false)
+        DataHolder.frontendCallback = null
     }
 
     ConstraintLayout(

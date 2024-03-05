@@ -12,8 +12,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.platform.LocalContext
@@ -34,7 +32,6 @@ import kz.airbapay.apay_android.data.constant.forChangeLimitInHomebank
 import kz.airbapay.apay_android.data.constant.forChangeLimitInKaspi
 import kz.airbapay.apay_android.data.constant.message
 import kz.airbapay.apay_android.data.utils.DataHolder
-import kz.airbapay.apay_android.ui.pages.dialogs.InitDialogExit
 import kz.airbapay.apay_android.ui.pages.videoplayer.VideoPlayerPage
 import kz.airbapay.apay_android.ui.resources.ColorsSdk
 import kz.airbapay.apay_android.ui.resources.LocalFonts
@@ -61,12 +58,9 @@ internal fun ErrorWithInstructionPage(
 
     val activity = LocalContext.current as Activity
 
-    val showDialogExit = remember {
-        mutableStateOf(false)
-    }
-
     BackHandler {
-        showDialogExit.value = true
+        DataHolder.frontendCallback?.invoke(activity, false)
+        DataHolder.frontendCallback = null
     }
 
     ConstraintLayout(
@@ -158,7 +152,10 @@ internal fun ErrorWithInstructionPage(
                     actionClick = {
                         errorCode.clickOnTop(
                             activity = activity,
-                            finish = { activity.finish() }
+                            finish = {
+                                DataHolder.frontendCallback?.invoke(activity, false)
+                                DataHolder.frontendCallback = null
+                            }
                         )
                     }
                 )
@@ -180,13 +177,5 @@ internal fun ErrorWithInstructionPage(
                 }
             )
         }
-    }
-
-    if (showDialogExit.value) {
-        InitDialogExit(
-            onDismissRequest = {
-                showDialogExit.value = false
-            }
-        )
     }
 }

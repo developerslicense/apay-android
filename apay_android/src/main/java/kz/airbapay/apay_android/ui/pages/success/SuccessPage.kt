@@ -44,8 +44,8 @@ internal fun SuccessPage() {
     val activity = LocalContext.current as Activity
 
     BackHandler {
-        activity.setResult(Activity.RESULT_CANCELED)
-        activity.finish()
+        DataHolder.frontendCallback?.invoke(activity, true)
+        DataHolder.frontendCallback = null
     }
 
     ConstraintLayout(
