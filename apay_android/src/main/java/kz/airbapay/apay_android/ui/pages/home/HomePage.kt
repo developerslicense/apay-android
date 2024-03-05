@@ -47,6 +47,7 @@ import kz.airbapay.apay_android.data.constant.paymentOfPurchase
 import kz.airbapay.apay_android.data.constant.saveCardData
 import kz.airbapay.apay_android.data.utils.DataHolder
 import kz.airbapay.apay_android.data.utils.MaskUtils
+import kz.airbapay.apay_android.data.utils.backToApp
 import kz.airbapay.apay_android.data.utils.backToStartPage
 import kz.airbapay.apay_android.data.utils.card_utils.getCardTypeFromNumber
 import kz.airbapay.apay_android.data.utils.openCardScanner
@@ -225,7 +226,7 @@ internal fun HomePage(
                     cardNumberFocusRequester = cardNumberFocusRequester,
                     dateExpiredFocusRequester = dateExpiredFocusRequester,
                     actionClickScanCard = {
-                        openCardScanner(activity as HomeActivity)
+                        openCardScanner(activity)
                     },
                     paySystemIcon = paySystemIcon
                 )
@@ -355,8 +356,7 @@ private fun onBackPressed(
         showDialogExit.value = true
 
     } else if (!DataHolder.featureSavedCards || !DataHolder.hasSavedCards) {
-        DataHolder.frontendCallback?.invoke(activity, false)
-        activity.finishAffinity()
+        activity.backToApp()
 
     } else {
         backToStartPage(activity)

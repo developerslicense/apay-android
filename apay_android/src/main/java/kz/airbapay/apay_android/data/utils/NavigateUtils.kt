@@ -14,6 +14,13 @@ import kz.airbapay.apay_android.ui.pages.home.HomeActivity
 import kz.airbapay.apay_android.ui.pages.startview.StartProcessingActivity
 import kz.airbapay.apay_android.ui.pages.success.SuccessActivity
 
+internal fun Activity.backToApp(
+    isSuccess: Boolean = false
+) {
+    DataHolder.frontendCallback?.invoke(this, isSuccess)
+    DataHolder.frontendCallback = null
+}
+
 internal fun backToStartPage(activity: Activity) {
     val intent = Intent(activity, StartProcessingActivity::class.java)
     activity.startActivity(intent)
@@ -75,7 +82,7 @@ internal fun openSuccess(activity: Activity) {
     }
 }
 
-internal fun openCardScanner(activity: HomeActivity) {
+internal fun openCardScanner(activity: Activity) {
     // todo если возникнут проблемы с камерой, то используй https://github.com/android/camera-samples
 
     // todo оставил на всякий сдучай

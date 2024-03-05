@@ -40,6 +40,7 @@ import kz.airbapay.apay_android.data.constant.cvvInfo
 import kz.airbapay.apay_android.data.constant.paymentByCard
 import kz.airbapay.apay_android.data.model.BankCard
 import kz.airbapay.apay_android.data.utils.DataHolder
+import kz.airbapay.apay_android.data.utils.backToApp
 import kz.airbapay.apay_android.data.utils.openErrorPageWithCondition
 import kz.airbapay.apay_android.data.utils.openGooglePay
 import kz.airbapay.apay_android.data.utils.recomposeHighlighter
@@ -64,7 +65,7 @@ internal class StartProcessingActivity : BaseComposeGooglePayActivity() {
 
         setContent {
             StartProcessingPage(
-                actionClose = { this@StartProcessingActivity.finish() }
+                actionClose = { backToApp() }
             )
         }
     }

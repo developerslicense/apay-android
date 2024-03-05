@@ -32,6 +32,7 @@ import kz.airbapay.apay_android.data.constant.forChangeLimitInHomebank
 import kz.airbapay.apay_android.data.constant.forChangeLimitInKaspi
 import kz.airbapay.apay_android.data.constant.message
 import kz.airbapay.apay_android.data.utils.DataHolder
+import kz.airbapay.apay_android.data.utils.backToApp
 import kz.airbapay.apay_android.ui.pages.videoplayer.VideoPlayerPage
 import kz.airbapay.apay_android.ui.resources.ColorsSdk
 import kz.airbapay.apay_android.ui.resources.LocalFonts
@@ -59,8 +60,7 @@ internal fun ErrorWithInstructionPage(
     val activity = LocalContext.current as Activity
 
     BackHandler {
-        DataHolder.frontendCallback?.invoke(activity, false)
-        DataHolder.frontendCallback = null
+        activity.backToApp()
     }
 
     ConstraintLayout(
@@ -152,10 +152,7 @@ internal fun ErrorWithInstructionPage(
                     actionClick = {
                         errorCode.clickOnTop(
                             activity = activity,
-                            finish = {
-                                DataHolder.frontendCallback?.invoke(activity, false)
-                                DataHolder.frontendCallback = null
-                            }
+                            finish = { activity.backToApp() }
                         )
                     }
                 )
@@ -169,10 +166,7 @@ internal fun ErrorWithInstructionPage(
                 actionClick = {
                     errorCode.clickOnBottom(
                         activity = activity,
-                        finish = {
-                            DataHolder.frontendCallback?.invoke(activity, false)
-                            DataHolder.frontendCallback = null
-                        }
+                        finish = { activity.backToApp() }
                     )
                 }
             )

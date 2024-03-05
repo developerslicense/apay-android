@@ -21,7 +21,7 @@ import kz.airbapay.apay_android.R
 import kz.airbapay.apay_android.data.constant.goToMarker
 import kz.airbapay.apay_android.data.constant.timeForPayExpired
 import kz.airbapay.apay_android.data.constant.tryFormedNewCart
-import kz.airbapay.apay_android.data.utils.DataHolder
+import kz.airbapay.apay_android.data.utils.backToApp
 import kz.airbapay.apay_android.ui.resources.ColorsSdk
 import kz.airbapay.apay_android.ui.resources.LocalFonts
 import kz.airbapay.apay_android.ui.ui_components.BackHandler
@@ -32,8 +32,7 @@ internal fun ErrorFinalPage() {
     val activity = LocalContext.current as Activity
 
     BackHandler {
-        DataHolder.frontendCallback?.invoke(activity, false)
-        DataHolder.frontendCallback = null
+        activity.backToApp()
     }
 
     ConstraintLayout(
@@ -90,10 +89,7 @@ internal fun ErrorFinalPage() {
 
         ViewButton(
             title = goToMarker(),
-            actionClick = {
-                DataHolder.frontendCallback?.invoke(activity, false)
-                DataHolder.frontendCallback = null
-            },
+            actionClick = { activity.backToApp() },
             modifierRoot = Modifier
                 .padding(horizontal = 16.dp)
                 .padding(vertical = 20.dp)
