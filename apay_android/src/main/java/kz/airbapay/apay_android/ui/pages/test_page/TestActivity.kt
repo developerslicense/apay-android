@@ -244,6 +244,7 @@ fun initTestSdk(
                 Log.e("AirbaPaySdk", "initProcessing error");
             }
             activity.startActivity(Intent(activity, TestActivity::class.java))
+            activity.finish()
         }
     )
 }

@@ -24,6 +24,7 @@ import kz.airbapay.apay_android.data.constant.dropPayment
 import kz.airbapay.apay_android.data.constant.dropPaymentDescription
 import kz.airbapay.apay_android.data.constant.no
 import kz.airbapay.apay_android.data.constant.yes
+import kz.airbapay.apay_android.data.utils.backToApp
 import kz.airbapay.apay_android.ui.resources.ColorsSdk
 import kz.airbapay.apay_android.ui.resources.LocalFonts
 import kz.airbapay.apay_android.ui.ui_components.ViewButton
@@ -32,7 +33,7 @@ import kz.airbapay.apay_android.ui.ui_components.ViewButton
 internal fun InitDialogExit(
     onDismissRequest: () -> Unit
 ) {
-    val context = LocalContext.current
+    val activity = LocalContext.current as Activity
 
     Dialog(
         onDismissRequest = onDismissRequest,
@@ -100,7 +101,7 @@ internal fun InitDialogExit(
                 isMainBrand = false,
                 actionClick = {
                     onDismissRequest()
-                    (context as Activity).finish()
+                    activity.backToApp()
                 }
             )
         }

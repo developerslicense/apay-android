@@ -5,9 +5,8 @@ import android.app.KeyguardManager
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Column
@@ -49,15 +48,15 @@ import kz.airbapay.apay_android.data.constant.paymentOfPurchase
 import kz.airbapay.apay_android.data.constant.saveCardData
 import kz.airbapay.apay_android.data.utils.DataHolder
 import kz.airbapay.apay_android.data.utils.MaskUtils
+import kz.airbapay.apay_android.data.utils.backToApp
 import kz.airbapay.apay_android.data.utils.backToStartPage
 import kz.airbapay.apay_android.data.utils.card_utils.getCardTypeFromNumber
 import kz.airbapay.apay_android.data.utils.openCardScanner
 import kz.airbapay.apay_android.data.utils.openGooglePay
 import kz.airbapay.apay_android.network.repository.Repository
-import kz.airbapay.apay_android.ui.pages.card_reader.ScanActivity
 import kz.airbapay.apay_android.ui.pages.dialogs.InitDialogExit
 import kz.airbapay.apay_android.ui.pages.googlepay.GPayView
-import kz.airbapay.apay_android.ui.pages.googlepay.nativegp.BaseComposeGooglePayActivity
+import kz.airbapay.apay_android.ui.pages.googlepay.nativegp.AirbaPayBaseGooglePay
 import kz.airbapay.apay_android.ui.pages.home.bl.checkValid
 import kz.airbapay.apay_android.ui.pages.home.bl.startPaymentProcessing
 import kz.airbapay.apay_android.ui.pages.home.presentation.BottomImages
@@ -72,27 +71,29 @@ import kz.airbapay.apay_android.ui.ui_components.TopInfoView
 import kz.airbapay.apay_android.ui.ui_components.ViewButton
 import kz.airbapay.apay_android.ui.ui_components.ViewToolbar
 
-internal class HomeActivity : BaseComposeGooglePayActivity() {
+internal class HomeActivity : ComponentActivity() {
 
     private val cardNumberText = mutableStateOf(TextFieldValue())
     private val paySystemIcon = mutableStateOf<Int?>(null)
-    var scanResultLauncher: ActivityResultLauncher<Intent>? = null
+//    var scanResultLauncher: ActivityResultLauncher<Intent>? = null // старый вариант ScanActivity. новый использует card io. старый оставил на всякий случай
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         // старый вариант ScanActivity. новый использует card io. старый оставил на всякий случай
-        scanResultLauncher = registerForActivityResult(
+       /* scanResultLauncher = registerForActivityResult(
             ActivityResultContracts.StartActivityForResult()
         ) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
                 val cardNumber = intent?.extras?.getString(ScanActivity.RESULT_CARD_NUMBER)
                 onResult(cardNumber)
             }
-        }
+        }*/
+        val airbaPay = AirbaPayBaseGooglePay(this)
 
         setContent {
             HomePage(
+                airbaPayBaseGooglePay = airbaPay,
                 cardNumberText = cardNumberText,
                 paySystemIcon = paySystemIcon
             )
@@ -124,14 +125,15 @@ internal class HomeActivity : BaseComposeGooglePayActivity() {
 
 @Composable
 internal fun HomePage(
+    airbaPayBaseGooglePay: AirbaPayBaseGooglePay,
     cardNumberText: MutableState<TextFieldValue>,
     paySystemIcon: MutableState<Int?>,
     coroutineScope: CoroutineScope = rememberCoroutineScope()
 ) {
-    val activity = LocalContext.current as BaseComposeGooglePayActivity
+    val activity = LocalContext.current as Activity
     val keyguardManager = activity.getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager
 
-    val isLoadingGooglePay = activity.paymentModel?.isLoading?.collectAsState()
+    val isLoadingGooglePay = airbaPayBaseGooglePay.paymentModel?.isLoading?.collectAsState()
     val isLoading = remember { mutableStateOf(false) }
     val showDialogExit = remember { mutableStateOf(false) }
     val switchSaveCard = remember { mutableStateOf(false) }
@@ -212,6 +214,7 @@ internal fun HomePage(
                     && keyguardManager.isKeyguardSecure
                 ) {
                     GPayView(
+                        airbaPayBaseGooglePay = airbaPayBaseGooglePay,
                         openGooglePayForWebFlow = {
                             openGooglePay(
                                 redirectUrl = DataHolder.googlePayButtonUrl,
@@ -228,7 +231,7 @@ internal fun HomePage(
                     cardNumberFocusRequester = cardNumberFocusRequester,
                     dateExpiredFocusRequester = dateExpiredFocusRequester,
                     actionClickScanCard = {
-                        openCardScanner(activity as HomeActivity)
+                        openCardScanner(activity)
                     },
                     paySystemIcon = paySystemIcon
                 )
@@ -358,8 +361,7 @@ private fun onBackPressed(
         showDialogExit.value = true
 
     } else if (!DataHolder.featureSavedCards || !DataHolder.hasSavedCards) {
-        DataHolder.frontendCallback?.invoke(activity, false)
-        activity.finishAffinity()
+        activity.backToApp()
 
     } else {
         backToStartPage(activity)

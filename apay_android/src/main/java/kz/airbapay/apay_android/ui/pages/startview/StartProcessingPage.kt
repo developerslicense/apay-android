@@ -1,8 +1,10 @@
 package kz.airbapay.apay_android.ui.pages.startview
 
+import android.app.Activity
 import android.app.KeyguardManager
 import android.content.Context
 import android.os.Bundle
+import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -40,13 +42,14 @@ import kz.airbapay.apay_android.data.constant.cvvInfo
 import kz.airbapay.apay_android.data.constant.paymentByCard
 import kz.airbapay.apay_android.data.model.BankCard
 import kz.airbapay.apay_android.data.utils.DataHolder
+import kz.airbapay.apay_android.data.utils.backToApp
 import kz.airbapay.apay_android.data.utils.openErrorPageWithCondition
 import kz.airbapay.apay_android.data.utils.openGooglePay
 import kz.airbapay.apay_android.data.utils.recomposeHighlighter
 import kz.airbapay.apay_android.network.repository.Repository
 import kz.airbapay.apay_android.network.repository.startAuth
 import kz.airbapay.apay_android.ui.pages.googlepay.GPayView
-import kz.airbapay.apay_android.ui.pages.googlepay.nativegp.BaseComposeGooglePayActivity
+import kz.airbapay.apay_android.ui.pages.googlepay.nativegp.AirbaPayBaseGooglePay
 import kz.airbapay.apay_android.ui.pages.startview.bl.fetchMerchantsWithNextStep
 import kz.airbapay.apay_android.ui.pages.startview.start_processing_ext.EnterCvvBottomSheet
 import kz.airbapay.apay_android.ui.pages.startview.start_processing_ext.InitViewStartProcessingButtonNext
@@ -57,14 +60,16 @@ import kz.airbapay.apay_android.ui.ui_components.ProgressBarView
 import kz.airbapay.apay_android.ui.ui_components.TopInfoView
 import kz.airbapay.apay_android.ui.ui_components.ViewToolbar
 
-internal class StartProcessingActivity : BaseComposeGooglePayActivity() {
+internal class StartProcessingActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val airbaPay = AirbaPayBaseGooglePay(this)
 
         setContent {
             StartProcessingPage(
-                actionClose = { this@StartProcessingActivity.finish() }
+                airbaPayBaseGooglePay = airbaPay,
+                actionClose = { backToApp() }
             )
         }
     }
@@ -77,6 +82,7 @@ internal class StartProcessingActivity : BaseComposeGooglePayActivity() {
 
 @Composable
 internal fun StartProcessingPage(
+    airbaPayBaseGooglePay: AirbaPayBaseGooglePay,
     actionClose: () -> Unit,
     backgroundColor: Color = ColorsSdk.bgBlock
 ) {
@@ -87,7 +93,7 @@ internal fun StartProcessingPage(
     )
 
     val coroutineScope = rememberCoroutineScope()
-    val activity = LocalContext.current as BaseComposeGooglePayActivity
+    val activity = LocalContext.current as Activity
     val keyguardManager = activity.getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager
 
     BackHandler {
@@ -102,7 +108,7 @@ internal fun StartProcessingPage(
     val size = remember { mutableStateOf(IntSize.Zero) }
     val googlePayRedirectUrl = rememberSaveable { mutableStateOf<String?>(null) }
     val isLoading = rememberSaveable { mutableStateOf(true) }
-    val isLoadingGooglePay = activity.paymentModel?.isLoading?.collectAsState()
+    val isLoadingGooglePay = airbaPayBaseGooglePay.paymentModel?.isLoading?.collectAsState()
 
     val selectedCard = rememberSaveable { mutableStateOf<BankCard?>(null) }
 
@@ -178,6 +184,7 @@ internal fun StartProcessingPage(
                             && keyguardManager.isKeyguardSecure
                         ) {
                             GPayView(
+                                airbaPayBaseGooglePay = airbaPayBaseGooglePay,
                                 openGooglePayForWebFlow = {
                                     openGooglePay(
                                         redirectUrl = googlePayRedirectUrl.value,

@@ -195,7 +195,7 @@ dependencies {
 
 
 group 'kz.airbapay' // this is your groupId
-version '1.0.38' //_2023_08_00'  // todo меняй и в BaseInterceptor в requestBuilder.addHeader("Platform", "Android,
+version '1.0.40' //_2023_08_00'  // todo меняй и в BaseInterceptor в requestBuilder.addHeader("Platform", "Android,
 
 ext { // this are variables
     pomGroupId = group

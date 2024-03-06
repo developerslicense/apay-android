@@ -10,39 +10,38 @@
 
 ## 1.5 Рекомендация в случае интеграции в flutter
 
-## 1.1  Подключение sdk
 
-Последняя версия 1.0.36 (для jetpackCompose 2024.01.00) и 1.0.36_23_08_00 (для jetpackCompose
-23.08.00)
+
+## 1.1  Подключение sdk
 
 В  ```build.gradle ``` модуля добавь ``` implementation 'kz.airbapay:apay_android:~'```
 
 Для инициализации sdk нужно выполнить ```AirbaPaySdk.initSdk()``` перед
 вызовом ```AirbaPaySdk.startAirbaPay() ```.
 
-| Параметр                    | Тип                                 | Обязательный | Описание                                                                                                                                             |
-|-----------------------------|-------------------------------------|--------------|------------------------------------------------------------------------------------------------------------------------------------------------------|
-| shopId                      | String                              | да           | ID магазина в системе AirbaPay                                                                                                                       |
-| context                     | Context                             | да           | Контекст приложения                                                                                                                                  |
-| password                    | String                              | да           | Пароль в системе AirbaPay                                                                                                                            |
-| terminalId                  | String                              | да           | ID терминала под которым создали платеж                                                                                                              |
-| lang                        | AirbaPaySdk.Lang                    | да           | Код языка для UI                                                                                                                                     |
-| isProd                      | Boolean                             | да           | Продовская или тестовая среда airbapay                                                                                                               |
-| phone                       | String                              | да           | Телефон пользователя                                                                                                                                 |
-| failureCallback             | String                              | да           | URL вебхука при ошибке                                                                                                                               |
-| successCallback             | String                              | да           | URL вебхука при успехе                                                                                                                               |
-| userEmail                   | String                              | да           | Емейл пользователя, куда будет отправлена квитанция. В случае отсутствия емейла                                                                      |
-| colorBrandMain              | androidx.compose.ui.graphics.Color  | нет          | Брендовый цвет кнопок, переключателей и текста                                                                                                       |
-| colorBrandInversion         | androidx.compose.ui.graphics.Color  | нет          | Цвет текста у кнопок с брендовым цветом                                                                                                              |
-| autoCharge                  | Int                                 | нет          | Автоматическое подтверждение при 2х-стадийном режиме 0 - нет, 1 - да                                                                                 |
-| enabledLogsForProd          | Boolean                             | нет          | Флаг для включения логов                                                                                                                             |
-| purchaseAmount              | Long                                | да           | Сумма платежа                                                                                                                                        |
-| invoiceId                   | String                              | да           | ID платежа в системе магазина                                                                                                                        | 
-| orderNumber                 | String                              | да           | Номер заказа в системе магазина                                                                                                                      |
-| goods                       | List<AirbaPaySdk.Goods>             | да           | Список продуктов для оплаты                                                                                                                          |
-| settlementPayments          | List<AirbaPaySdk.SettlementPayment> | нет          | Распределение платежа по компаниям. В случае одной компании, может быть null                                                                         |
-| onProcessingResult          | (Activity, Boolean) -> Unit         | да           | Лямбда, вызываемая при клике на кнопку "Вернуться в магазин" и при отмене процесса. Разработчику в ней нужно прописать код для возврата в приложение |
-| hideInternalGooglePayButton | Boolean                             | нет          | Флаг, определяющий, нужно ли скрывать кнопку гуглпэя на страницах сдк                                                                                |
+| Параметр                    | Тип                                 | Обязательный | Описание                                                                                                                                                                                             |
+|-----------------------------|-------------------------------------|--------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| shopId                      | String                              | да           | ID магазина в системе AirbaPay                                                                                                                                                                       |
+| context                     | Context                             | да           | Контекст приложения                                                                                                                                                                                  |
+| password                    | String                              | да           | Пароль в системе AirbaPay                                                                                                                                                                            |
+| terminalId                  | String                              | да           | ID терминала под которым создали платеж                                                                                                                                                              |
+| lang                        | AirbaPaySdk.Lang                    | да           | Код языка для UI                                                                                                                                                                                     |
+| isProd                      | Boolean                             | да           | Продовская или тестовая среда airbapay                                                                                                                                                               |
+| phone                       | String                              | да           | Телефон пользователя                                                                                                                                                                                 |
+| failureCallback             | String                              | да           | URL вебхука при ошибке                                                                                                                                                                               |
+| successCallback             | String                              | да           | URL вебхука при успехе                                                                                                                                                                               |
+| userEmail                   | String                              | да           | Емейл пользователя, куда будет отправлена квитанция. В случае отсутствия емейла                                                                                                                      |
+| colorBrandMain              | androidx.compose.ui.graphics.Color  | нет          | Брендовый цвет кнопок, переключателей и текста                                                                                                                                                       |
+| colorBrandInversion         | androidx.compose.ui.graphics.Color  | нет          | Цвет текста у кнопок с брендовым цветом                                                                                                                                                              |
+| autoCharge                  | Int                                 | нет          | Автоматическое подтверждение при 2х-стадийном режиме 0 - нет, 1 - да                                                                                                                                 |
+| enabledLogsForProd          | Boolean                             | нет          | Флаг для включения логов                                                                                                                                                                             |
+| purchaseAmount              | Long                                | да           | Сумма платежа                                                                                                                                                                                        |
+| invoiceId                   | String                              | да           | ID платежа в системе магазина                                                                                                                                                                        | 
+| orderNumber                 | String                              | да           | Номер заказа в системе магазина                                                                                                                                                                      |
+| goods                       | List<AirbaPaySdk.Goods>             | да           | Список продуктов для оплаты                                                                                                                                                                          |
+| settlementPayments          | List<AirbaPaySdk.SettlementPayment> | нет          | Распределение платежа по компаниям. В случае одной компании, может быть null                                                                                                                         |
+| onProcessingResult          | (Activity, Boolean) -> Unit         | да           | Лямбда, вызываемая при клике на кнопку "Вернуться в магазин" и при отмене процесса. Разработчику в ней нужно прописать код для возврата в приложение. Обязательно добавить в конце activity.finish() |
+| hideInternalGooglePayButton | Boolean                             | нет          | Флаг, определяющий, нужно ли скрывать кнопку гуглпэя на страницах сдк                                                                                                                                |
 
 При смене значения isProd, требуется выгрузить приложение из памяти.
 
@@ -89,7 +88,8 @@ AirbaPaySdk.initSdk(
                   startActivity(Intent(activity, SuccessActivity::class.java)) 
          } else {
                   startActivity(Intent(activity, ErrorActivity::class.java)) 
-          }
+         }
+         activity.finish()
     } 
 )
 
@@ -105,7 +105,7 @@ AirbaPaySdk.initSdk(
 | redirectToCustomSuccessPage    | (Activity) -> Unit | нет          | Лямбда, вызываемая для перехода на кастомную страницу успешного завершения. Разработчику в ней нужно прописать код для перехода на кастомную страницу                                                         |
 | redirectToCustomFinalErrorPage | (Activity) -> Unit | нет          | Лямбда, вызываемая для перехода на кастомную страницу Финальной ошибки (остальные ошибки показываются в дефолтной странице ошибки). Разработчику в ней нужно прописать код для перехода на кастомную страницу |
 
-Пример без кастомной страницы:
+## Пример без кастомной страницы:
 
  ```
 startAirbaPay(activity = this@MainActivity)
@@ -139,11 +139,15 @@ android {
     composeOptions {
        kotlinCompilerExtensionVersion '1.5.9'
     }
+    
+    kotlinOptions {
+      jvmTarget = 17
+    }
 }
  ```
 
-В зависимости от версии котлина, потребуется подобрать версию kotlinCompilerExtensionVersion Compose
-to Kotlin Compatibility Map | Android Developers
+В зависимости от версии котлина, потребуется подобрать версию kotlinCompilerExtensionVersion
+https://developer.android.com/jetpack/androidx/releases/compose-kotlin
 
  ``` 
 
@@ -178,35 +182,100 @@ dependencies {
 
 ## 1.4 Подключение API внешнего взаимодействия с GooglePay
 
-# JetpackCompose:
+1) Нужно, чтоб активити наследовалось от  ```ComponentActivity``` или ```AppCompatActivity```.
 
-1) Нужно, чтоб активити унаследовалось от  ```BaseComposeGooglePayActivity```.
+2) Перед рендерингом страницы вызвать ```AirbaPaySdk.initSdk(~)```
 
-2) На ```onCreate``` вызвать ```AirbaPaySdk.initSdk(~)``` и ```authGooglePay(~)```
+3) Создать экземпляр ```val airbaPay = AirbaPayBaseGooglePay(appCompatActivity или componentActivity)```
+   и вызвать ```airbaPay.authGooglePay(~)```
 
-3) Добавить в верстку ```GooglePayNativeCompose(Modifier.~)```
-
-# Xml:
-
-1) Нужно, чтоб активити унаследовалось от ```BaseXmlGooglePayActivity```. 
-Т.к. этот активити наследует ```AppCompatActivity```, то нужно убедиться, 
-что ваш активити использует ```@style/Theme.AppCompat```
-
-2) На ```onCreate``` вызвать ```AirbaPaySdk.initSdk(~)``` и ```authGooglePay(~)```
-
-3) Добавить в верстку ```GooglePayNativeXml```
-
-``` 
-<kz.airbapay.apay_android.ui.pages.googlepay.nativegp.GooglePayNativeXml
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
-```
 
 | Параметр  | Тип        | Обязательный | Описание                                   |
 |-----------|------------|--------------|--------------------------------------------|
 | onSuccess | () -> Unit | да           | Коллбэк для успешной авторизации в гуглпэй |
 | onFailed  | () -> Unit | да           | Коллбэк для ошибки авторизации в гуглпэй   |
 
+
+Для верстки используется ```AirbaPayGooglePayNativeView(~)```
+
+| Параметр              | Тип                                                                        | Обязательный | Описание                                                      |
+|-----------------------|----------------------------------------------------------------------------|--------------|---------------------------------------------------------------|
+| airbaPayBaseGooglePay | kz.airbapay.apay_android.ui.pages.googlepay.nativegp.AirbaPayBaseGooglePay | да           | Класс для работы с гугл пэй                                   |
+| modifier              | Modifier                                                                   | нет          | Modifier для кнопки                                           |
+| buttonTheme           | Int                                                                        | нет          | Темная или светлая тема кнопки. Параметры ниже, в ButtonTheme |
+| buttonType            | Int                                                                        | нет          | Оформление кнопки. Параметры ниже, в ButtonType               |
+| cornerRadius          | Int                                                                        | нет          | Радиус скругления кнопки                                      |
+
+Параметры кнопки GooglePay
+
+```
+ButtonTheme {
+    int DARK = 1;
+    int LIGHT = 2;
+}
+
+ButtonType {
+    int BUY = 1;
+    int BOOK = 2;
+    int CHECKOUT = 3;
+    int DONATE = 4;
+    int ORDER = 5;
+    int PAY = 6;
+    int SUBSCRIBE = 7;
+    int PLAIN = 8;
+}
+```
+
+# JetpackCompose 
+
+1) Нужно, чтоб активити наследовал ```ComponentActivity``` или ```AppCompatActivity``` 
+в случае фрагментов/активити, где частично используется JetpackCompose. В этом случае надо убедиться, 
+что ваш активити использует ```@style/Theme.AppCompat```
+
+2) Вставьте в верстку страницы с указанными выше параметрами
+
+```
+ AirbaPayGooglePayNativeView(
+                    airbaPayBaseGooglePay = airbaPay,
+                    buttonTheme = 1,
+                    buttonType = 8,
+                    cornerRadius = 8,
+                    modifier: Modifier.~
+                )
+ ```
+
+# Xml:
+
+1) Нужно, чтоб активити наследовал ```AppCompatActivity```, и убедиться,
+   что ваш активити использует ```@style/Theme.AppCompat```
+
+2) Добавить в верстку 
+
+``` 
+ <androidx.compose.ui.platform.ComposeView
+        android:id="@+id/googlePay"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="~"
+        android:paddingTop="~"
+        android:paddingEnd="~"
+        ~~~~~ />
+```
+
+3) Добавить инициализацию элемента
+
+```
+binding.googlePay?.apply {
+            setContent {
+                AirbaPayGooglePayNativeView(
+                    airbaPayBaseGooglePay = airbaPay,
+                    buttonTheme = 1,
+                    buttonType = 8,
+                    cornerRadius = 8
+                )
+            }
+        }
+```
 
 ## 1.5 Рекомендация в случае интеграции в flutter
 

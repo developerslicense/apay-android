@@ -23,7 +23,7 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import kz.airbapay.apay_android.R
 import kz.airbapay.apay_android.data.constant.goToMarker
 import kz.airbapay.apay_android.data.constant.paySuccess
-import kz.airbapay.apay_android.data.utils.DataHolder
+import kz.airbapay.apay_android.data.utils.backToApp
 import kz.airbapay.apay_android.ui.resources.ColorsSdk
 import kz.airbapay.apay_android.ui.resources.LocalFonts
 import kz.airbapay.apay_android.ui.ui_components.BackHandler
@@ -44,8 +44,7 @@ internal fun SuccessPage() {
     val activity = LocalContext.current as Activity
 
     BackHandler {
-        activity.setResult(Activity.RESULT_CANCELED)
-        activity.finish()
+        activity.backToApp(true)
     }
 
     ConstraintLayout(
@@ -90,10 +89,7 @@ internal fun SuccessPage() {
 
         ViewButton(
             title = goToMarker(),
-            actionClick = {
-                DataHolder.frontendCallback?.invoke(activity, true)
-                DataHolder.frontendCallback = null
-            },
+            actionClick = { activity.backToApp(true) },
             modifierRoot = Modifier
                 .padding(horizontal = 16.dp)
                 .padding(vertical = 20.dp)

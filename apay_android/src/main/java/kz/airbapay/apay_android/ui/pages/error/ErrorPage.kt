@@ -12,8 +12,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.platform.LocalContext
@@ -30,7 +28,7 @@ import kz.airbapay.apay_android.data.constant.clickOnTop
 import kz.airbapay.apay_android.data.constant.description
 import kz.airbapay.apay_android.data.constant.message
 import kz.airbapay.apay_android.data.utils.DataHolder
-import kz.airbapay.apay_android.ui.pages.dialogs.InitDialogExit
+import kz.airbapay.apay_android.data.utils.backToApp
 import kz.airbapay.apay_android.ui.resources.ColorsSdk
 import kz.airbapay.apay_android.ui.resources.LocalFonts
 import kz.airbapay.apay_android.ui.ui_components.BackHandler
@@ -42,12 +40,9 @@ internal fun ErrorPage(
 ) {
 
     val activity = LocalContext.current as Activity
-    val showDialogExit = remember {
-        mutableStateOf(false)
-    }
 
     BackHandler {
-        showDialogExit.value = true
+        activity.backToApp()
     }
 
     ConstraintLayout(
@@ -119,7 +114,7 @@ internal fun ErrorPage(
                     actionClick = {
                         errorCode.clickOnTop(
                             activity = activity,
-                            finish = { activity.finish() }
+                            finish = { activity.backToApp() }
                         )
                     }
                 )
@@ -133,21 +128,10 @@ internal fun ErrorPage(
                 actionClick = {
                     errorCode.clickOnBottom(
                         activity = activity,
-                        finish = {
-                            DataHolder.frontendCallback?.invoke(activity, false)
-                            DataHolder.frontendCallback = null
-                        }
+                        finish = { activity.backToApp() }
                     )
                 }
             )
         }
-    }
-
-    if (showDialogExit.value) {
-        InitDialogExit(
-            onDismissRequest = {
-                showDialogExit.value = false
-            }
-        )
     }
 }
