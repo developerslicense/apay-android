@@ -70,7 +70,7 @@ class AirbaPaySdk {
             orderNumber: String,
             goods: List<Goods>,
             settlementPayments: List<SettlementPayment>? = null, // параметр, нужный, если несколько айдишников компаний
-            onProcessingResult: ((Activity, Boolean) -> Unit)?
+            onProcessingResult: ((Activity, Boolean) -> Unit)
         ) {
 
             if (colorBrandInversion != null) {
@@ -117,9 +117,7 @@ class AirbaPaySdk {
 
             DataHolder.purchaseAmountFormatted.value = Money.initLong(purchaseAmount).getFormatted()
 
-            onProcessingResult?.let {
-                DataHolder.frontendCallback = it
-            }
+            DataHolder.frontendCallback = onProcessingResult
 
             // не переносить
             Repository.initRepositories(context.applicationContext)
