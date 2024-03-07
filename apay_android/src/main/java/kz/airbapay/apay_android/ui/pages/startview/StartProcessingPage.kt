@@ -4,7 +4,6 @@ import android.app.Activity
 import android.app.KeyguardManager
 import android.content.Context
 import android.os.Bundle
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -46,8 +45,10 @@ import kz.airbapay.apay_android.data.utils.backToApp
 import kz.airbapay.apay_android.data.utils.openErrorPageWithCondition
 import kz.airbapay.apay_android.data.utils.openGooglePay
 import kz.airbapay.apay_android.data.utils.recomposeHighlighter
+import kz.airbapay.apay_android.network.loggly.Logger
 import kz.airbapay.apay_android.network.repository.Repository
 import kz.airbapay.apay_android.network.repository.startAuth
+import kz.airbapay.apay_android.ui.pages.BaseActivity
 import kz.airbapay.apay_android.ui.pages.googlepay.GPayView
 import kz.airbapay.apay_android.ui.pages.googlepay.nativegp.AirbaPayBaseGooglePay
 import kz.airbapay.apay_android.ui.pages.startview.bl.fetchMerchantsWithNextStep
@@ -60,10 +61,14 @@ import kz.airbapay.apay_android.ui.ui_components.ProgressBarView
 import kz.airbapay.apay_android.ui.ui_components.TopInfoView
 import kz.airbapay.apay_android.ui.ui_components.ViewToolbar
 
-internal class StartProcessingActivity : ComponentActivity() {
+internal class StartProcessingActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Logger.log(
+            message = "onCreate StartProcessingActivity",
+        )
+
         val airbaPay = AirbaPayBaseGooglePay(this)
 
         setContent {
@@ -78,6 +83,8 @@ internal class StartProcessingActivity : ComponentActivity() {
         super.onResume()
         DataHolder.isGooglePayFlow = true
     }
+
+    override fun getPageName() = this.localClassName
 }
 
 @Composable

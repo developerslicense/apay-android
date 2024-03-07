@@ -53,7 +53,7 @@ private fun clearNumberForLocale(
         try {
             amountLocaleCleaned = "${comas[0]}.${comas[1].ifEmpty { comas[2] }}"
         } catch (e: Exception) {
-            messageLog("clearNumberForLocale error: $e")
+            e.printStackTrace()
         }
     }
 

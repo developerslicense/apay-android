@@ -4,7 +4,6 @@ import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
-import kz.airbapay.apay_android.data.utils.messageLog
 
 internal object InternetConnectionUtils {
     fun isOnline(context: Context): Boolean {
@@ -18,22 +17,22 @@ internal object InternetConnectionUtils {
 
             return when {
                 capabilities == null -> {
-                    messageLog("Internet Capabilities null")
+                    println("Internet Capabilities null")
                     false
                 }
 
                 capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> {
-                    messageLog("Internet NetworkCapabilities.TRANSPORT_CELLULAR")
+                    println("Internet NetworkCapabilities.TRANSPORT_CELLULAR")
                     true
                 }
 
                 capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> {
-                    messageLog("Internet NetworkCapabilities.TRANSPORT_WIFI")
+                    println("Internet NetworkCapabilities.TRANSPORT_WIFI")
                     true
                 }
 
                 capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> {
-                    messageLog("Internet NetworkCapabilities.TRANSPORT_ETHERNET")
+                    println("Internet NetworkCapabilities.TRANSPORT_ETHERNET")
                     true
                 }
 

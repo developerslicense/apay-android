@@ -56,7 +56,7 @@ internal data class GooglePayInfo(
 	val assuranceDetails: AssuranceDetails? = null
 )
 
-data class ShippingAddress(
+internal data class ShippingAddress(
 
 	@field:SerializedName("address3")
 	val address3: String? = null,

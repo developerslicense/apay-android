@@ -8,7 +8,7 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.compose.runtime.MutableState
 import kz.airbapay.apay_android.data.utils.DataHolder
-import kz.airbapay.apay_android.data.utils.messageLog
+import kz.airbapay.apay_android.network.loggly.Logger
 
 internal class VideoPlayerClient(
     private val inProgress: MutableState<Boolean>,
@@ -16,19 +16,25 @@ internal class VideoPlayerClient(
 
     @SuppressLint("WebViewClientOnReceivedSslError")
     override fun onReceivedSslError(view: WebView, handler: SslErrorHandler, error: SslError) {
-        messageLog("onReceivedSslError error $error")
+        Logger.log(
+            message = "onReceivedSslError error $error",
+        )
         if (DataHolder.isProd) handler.cancel() else handler.proceed()
     }
 
     override fun onPageStarted(view: WebView, url: String, favicon: Bitmap?) {
         super.onPageStarted(view, url, favicon)
-        messageLog("onPageStarted $url")
+        Logger.log(
+            message = "onPageStarted $url",
+        )
         inProgress.value = true
     }
 
     override fun onPageFinished(view: WebView?, url: String?) {
         super.onPageFinished(view, url)
-        messageLog("onPageFinished, $url")
+        Logger.log(
+            message = "onPageFinished $url",
+        )
         inProgress.value = false
     }
 }

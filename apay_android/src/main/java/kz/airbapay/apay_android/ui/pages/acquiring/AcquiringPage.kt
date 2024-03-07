@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import android.webkit.WebChromeClient
 import android.webkit.WebSettings
 import android.webkit.WebView
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -20,21 +19,30 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.constraintlayout.compose.ConstraintLayout
 import kz.airbapay.apay_android.R
 import kz.airbapay.apay_android.data.constant.ARG_ACTION
+import kz.airbapay.apay_android.data.utils.DataHolder
+import kz.airbapay.apay_android.network.loggly.Logger
+import kz.airbapay.apay_android.ui.pages.BaseActivity
 import kz.airbapay.apay_android.ui.pages.dialogs.InitDialogExit
 import kz.airbapay.apay_android.ui.ui_components.BackHandler
 import kz.airbapay.apay_android.ui.ui_components.ProgressBarView
 import kz.airbapay.apay_android.ui.ui_components.ViewToolbar
 
-internal class AcquiringActivity: ComponentActivity() {
+internal class AcquiringActivity: BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         val url = intent.getStringExtra(ARG_ACTION)
+
+        Logger.log(
+            message = "onCreate AcquiringActivity. url = $url",
+        )
+
         setContent {
             AcquiringPage(url = url)
         }
     }
+
+    override fun getPageName() = this.localClassName
 }
 
 @SuppressLint("SetJavaScriptEnabled")
@@ -98,7 +106,7 @@ internal fun AcquiringPage(
             }
         )
 
-        if (inProgress.value) {
+        if (inProgress.value && !DataHolder.enabledLogsForProd) {
             ProgressBarView()
         }
     }

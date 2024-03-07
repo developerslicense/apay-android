@@ -2,7 +2,7 @@ package kz.airbapay.apay_android.data.model
 
 import com.google.gson.annotations.SerializedName
 
-internal class PaymentEntryRequest(
+internal data class PaymentEntryRequest(
     @SerializedName("card_save")
     val cardSave: Boolean?,
 

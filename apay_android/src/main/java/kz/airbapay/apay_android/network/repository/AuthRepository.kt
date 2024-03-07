@@ -19,6 +19,7 @@ internal class AuthRepository(
         error: (Response<*>) -> Unit
     ) {
         launch(
+            paramsForLog = param,
             requestFlow = {
                 safeApiFlowCall {
                     api.auth(param)

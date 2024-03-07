@@ -2,7 +2,7 @@ package kz.airbapay.apay_android.data.model
 
 import com.google.gson.annotations.SerializedName
 
-internal class Secure3D(
+internal data class Secure3D(
     @SerializedName("action")
     val action: String?,
 

@@ -29,7 +29,7 @@ internal class BaseInterceptor(
                 .build()
         }
 
-        requestBuilder.addHeader("Platform", "Android, 1.0.40")
+        requestBuilder.addHeader("Platform", "Android, ${DataHolder.sdkVersion}")
 
         requestBuilder.addHeader(
             "Authorization",
