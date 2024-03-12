@@ -279,6 +279,22 @@ binding.googlePay?.apply {
 
 ## 1.5 Рекомендация в случае интеграции в flutter
 
+В dart добавьте:
+
+```
+  final MethodChannel channel = MethodChannel("com.example.testFlutter/AirbaPayChannel");
+
+  Future<void> callNativeMethod() async {
+    try {
+      await channel.invokeMethod('pay');
+    } catch (e) {
+      print('Error calling native method: $e');
+    }
+  }
+```
+
+И нужно вызвать ```callNativeMethod``` для перехода на страницы сдк.
+
 Нужно создать дополнительный промежуточный активити FlutterAirbaPayActivity,
 в котором будет производиться инициализация и переход на страницу сдк.
 Это нужно, чтоб при нажатии назад из сдк, не закрывалось приложение.
