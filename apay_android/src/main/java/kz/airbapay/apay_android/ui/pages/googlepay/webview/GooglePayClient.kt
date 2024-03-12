@@ -52,7 +52,7 @@ internal class GooglePayClient(
                 redirectUrl = redirectUrl,
                 activity = activity
             )
-        } else if (url?.contains("https://spf.airbapay.kz/sdk/google-pay-button") == true) {
+        } else if (url?.contains("airbapay.kz/sdk/google-pay-button") == true) {
             timer?.cancel()
             timer = object : CountDownTimer(5000, 1000) {
                 override fun onTick(millisUntilFinished: Long) {}
@@ -62,6 +62,7 @@ internal class GooglePayClient(
                         loadJs(view)
 
                     } catch (e: Exception) {
+                        e.printStackTrace()
                     }
                 }
             }

@@ -18,15 +18,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.constraintlayout.compose.ConstraintLayout
-import kz.airbapay.apay_android.R
 import kz.airbapay.apay_android.data.constant.ARG_ACTION
-import kz.airbapay.apay_android.data.utils.backToStartPage
 import kz.airbapay.apay_android.network.loggly.Logger
 import kz.airbapay.apay_android.ui.pages.BaseActivity
 import kz.airbapay.apay_android.ui.pages.dialogs.InitDialogExit
 import kz.airbapay.apay_android.ui.ui_components.BackHandler
 import kz.airbapay.apay_android.ui.ui_components.ProgressBarView
-import kz.airbapay.apay_android.ui.ui_components.ViewToolbar
 
 internal class GooglePayActivity: BaseActivity() {
 
@@ -131,14 +128,6 @@ internal fun GooglePayPage(
                 }
             )
         }
-
-        ViewToolbar(
-            title = "",
-            backIcon = R.drawable.cancel,
-            actionBack = {
-                backToStartPage(activity)
-            }
-        )
 
         if (inProgress.value) {
             ProgressBarView()
