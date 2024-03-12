@@ -68,14 +68,6 @@ internal fun GooglePayPage(
             modifier = Modifier.fillMaxSize()
         ) {
 
-            ViewToolbar(
-                title = "",
-                backIcon = R.drawable.cancel,
-                actionBack = {
-                    backToStartPage(activity)
-                }
-            )
-
             AndroidView(
                 factory = {
                     WebView(it).apply {
@@ -139,6 +131,14 @@ internal fun GooglePayPage(
                 }
             )
         }
+
+        ViewToolbar(
+            title = "",
+            backIcon = R.drawable.cancel,
+            actionBack = {
+                backToStartPage(activity)
+            }
+        )
 
         if (inProgress.value) {
             ProgressBarView()

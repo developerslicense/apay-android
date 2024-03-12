@@ -163,7 +163,7 @@ dependencies {
 
 ## 1.3 Подключение нативного GooglePay
 
-1) Изменить параметр isGooglePayNative в initOnCreate на true
+1) Изменить параметр isGooglePayNative в initSdk на true
 
 2) Перейти в консоль GooglePay  https://pay.google.com/business/console/ и перейти в пункт меню
    Google Pay API
