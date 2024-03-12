@@ -1,20 +1,25 @@
 package kz.airbapay.apay_android.ui.pages.error
 
 import android.os.Bundle
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import kz.airbapay.apay_android.data.constant.ARG_ERROR_CODE
 import kz.airbapay.apay_android.data.constant.ErrorsCode
 import kz.airbapay.apay_android.data.constant.initErrorsCodeByCode
 import kz.airbapay.apay_android.data.utils.DataHolder
+import kz.airbapay.apay_android.network.loggly.Logger
+import kz.airbapay.apay_android.ui.pages.BaseActivity
 
-internal class ErrorActivity: ComponentActivity() {
+internal class ErrorActivity: BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         val errorCode = intent.getIntExtra(ARG_ERROR_CODE, 1)
         val error = initErrorsCodeByCode(errorCode)
+
+        Logger.log(
+            message = "onCreate ErrorActivity. Error code = ${error.code}",
+        )
 
         setContent {
             if (error == ErrorsCode.error_1) {
@@ -35,4 +40,6 @@ internal class ErrorActivity: ComponentActivity() {
             }
         }
     }
+
+    override fun getPageName() = this.localClassName
 }

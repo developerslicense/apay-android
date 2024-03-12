@@ -4,16 +4,23 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.graphics.Bitmap
 import android.net.http.SslError
+import android.os.Build
+import android.os.Message
+import android.webkit.ClientCertRequest
+import android.webkit.HttpAuthHandler
+import android.webkit.RenderProcessGoneDetail
+import android.webkit.SafeBrowsingResponse
 import android.webkit.SslErrorHandler
+import android.webkit.WebResourceError
 import android.webkit.WebResourceRequest
+import android.webkit.WebResourceResponse
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.compose.runtime.MutableState
 import kz.airbapay.apay_android.data.utils.DataHolder
-import kz.airbapay.apay_android.data.utils.errorLog
-import kz.airbapay.apay_android.data.utils.messageLog
 import kz.airbapay.apay_android.data.utils.openErrorPageWithCondition
 import kz.airbapay.apay_android.data.utils.openSuccess
+import kz.airbapay.apay_android.network.loggly.Logger
 
 internal class AcquiringClient(
     private val activity: Activity,
@@ -22,7 +29,11 @@ internal class AcquiringClient(
 
     @SuppressLint("WebViewClientOnReceivedSslError")
     override fun onReceivedSslError(view: WebView, handler: SslErrorHandler, error: SslError) {
-        messageLog("onReceivedSslError error $error")
+        Logger.log(
+            message = "onReceivedSslError error $error",
+            url = view.url
+        )
+
         if (DataHolder.isProd) {
             handler.cancel()
             openErrorPageWithCondition(
@@ -35,28 +46,42 @@ internal class AcquiringClient(
 
     override fun onPageStarted(view: WebView, url: String, favicon: Bitmap?) {
         super.onPageStarted(view, url, favicon)
-        messageLog("onPageStarted $url")
+        Logger.log(
+            message = "onPageStarted",
+            url = url
+        )
         inProgress.value = true
     }
 
     override fun onPageFinished(view: WebView?, url: String?) {
         super.onPageFinished(view, url)
-        messageLog("onPageFinished, $url")
+        Logger.log(
+            message = "onPageFinished",
+            url = url
+        )
         inProgress.value = false
     }
 
     override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
         val url = request?.url?.toString() ?: ""
-        messageLog("shouldOverrideUrlLoading $url")
-
+        Logger.log(
+            message = "shouldOverrideUrlLoading",
+            url = url
+        )
         when {
             url.contains("status=auth")
                     || url.contains("status=success") -> {
-                messageLog("Status success")
+                Logger.log(
+                    message = "Status success",
+                    url = url
+                )
                 openSuccess(activity)
             }
             url.contains("status=error") -> {
-                messageLog("3D secure status error")
+                Logger.log(
+                    message = "3D secure status error",
+                    url = url
+                )
                 try {
                     val splitted = url.split(Regex("&"))
                     val result = splitted.first { element -> element.contains("errorCode") }
@@ -72,7 +97,8 @@ internal class AcquiringClient(
                     )
 
                 } catch (e: Exception) {
-                    errorLog(e)
+                    e.printStackTrace()
+
                     openErrorPageWithCondition(
                         errorCode = 0,
                         activity = activity
@@ -86,6 +112,130 @@ internal class AcquiringClient(
         return false
     }
 
+
+    override fun onSafeBrowsingHit(
+        view: WebView?,
+        request: WebResourceRequest?,
+        threatType: Int,
+        callback: SafeBrowsingResponse?
+    ) {
+        super.onSafeBrowsingHit(view, request, threatType, callback)
+        Logger.log(
+            message = "onSafeBrowsingHit",
+            url = view?.url
+        )
+    }
+
+    override fun onRenderProcessGone(view: WebView?, detail: RenderProcessGoneDetail?): Boolean {
+        Logger.log(
+            message = "onRenderProcessGone",
+            url = view?.url
+        )
+        return super.onRenderProcessGone(view, detail)
+    }
+
+    override fun onReceivedLoginRequest(
+        view: WebView?,
+        realm: String?,
+        account: String?,
+        args: String?
+    ) {
+        super.onReceivedLoginRequest(view, realm, account, args)
+        Logger.log(
+            message = "onReceivedLoginRequest | $realm | $account | $args |",
+            url = view?.url
+        )
+    }
+
+    override fun onReceivedHttpAuthRequest(
+        view: WebView?,
+        handler: HttpAuthHandler?,
+        host: String?,
+        realm: String?
+    ) {
+        super.onReceivedHttpAuthRequest(view, handler, host, realm)
+        Logger.log(
+            message = "onReceivedHttpAuthRequest | $host | $realm |",
+            url = view?.url
+        )
+    }
+
+    override fun onReceivedClientCertRequest(view: WebView?, request: ClientCertRequest?) {
+        super.onReceivedClientCertRequest(view, request)
+        Logger.log(
+            message = "onReceivedClientCertRequest",
+            url = view?.url
+        )
+    }
+
+    override fun onFormResubmission(view: WebView?, dontResend: Message?, resend: Message?) {
+        super.onFormResubmission(view, dontResend, resend)
+        Logger.log(
+            message = "onFormResubmission | $dontResend | $resend |",
+            url = view?.url
+        )
+    }
+
+    override fun onReceivedHttpError(
+        view: WebView?,
+        request: WebResourceRequest?,
+        errorResponse: WebResourceResponse?
+    ) {
+        super.onReceivedHttpError(view, request, errorResponse)
+        Logger.log(
+            message = "onReceivedHttpError  ${errorResponse?.statusCode}",
+            url = view?.url
+        )
+    }
+
+    override fun onReceivedError(
+        view: WebView?,
+        request: WebResourceRequest?,
+        error: WebResourceError?
+    ) {
+        super.onReceivedError(view, request, error)
+
+        val textError = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            "ErrorCode = ${error?.errorCode} | Description ${error?.description}"
+        } else {
+            ""
+        }
+        Logger.log(
+            message = "onReceivedError $textError",
+            url = view?.url
+        )
+    }
+
+    override fun onReceivedError(
+        view: WebView?,
+        errorCode: Int,
+        description: String?,
+        failingUrl: String?
+    ) {
+        super.onReceivedError(view, errorCode, description, failingUrl)
+        Logger.log(
+            message = "onReceivedError deprecated $errorCode | $failingUrl",
+            url = view?.url
+        )
+    }
+
+    override fun onTooManyRedirects(view: WebView?, cancelMsg: Message?, continueMsg: Message?) {
+        super.onTooManyRedirects(view, cancelMsg, continueMsg)
+        val url = view?.url
+
+        Logger.log(
+            message = "onTooManyRedirects deprecated. CancelMessage $cancelMsg. ContinueMessage $continueMsg",
+            url = url
+        )
+    }
+
+    override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
+        Logger.log(
+            message = "shouldOverrideUrlLoading deprecated",
+            url = url
+        )
+        return super.shouldOverrideUrlLoading(view, url)
+    }
 }
 
 

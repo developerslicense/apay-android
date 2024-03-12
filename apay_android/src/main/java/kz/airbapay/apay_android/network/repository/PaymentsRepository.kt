@@ -25,6 +25,7 @@ internal class PaymentsRepository(
         val param = initParamsForCreatePayment(saveCard)
 
         launch(
+            paramsForLog = param,
             requestFlow = {
                 safeApiFlowCall { api.createPayment(param) }
             },
@@ -99,6 +100,7 @@ internal class PaymentsRepository(
         }
 
         launch(
+            paramsForLog = param,
             requestFlow = {
                 safeApiFlowCall { api.putPayment(param) }
             },
@@ -123,6 +125,7 @@ internal class PaymentsRepository(
         }
 
         launch(
+            paramsForLog = param,
             requestFlow = {
                 safeApiFlowCall {
                     api.putPayment(
@@ -150,6 +153,7 @@ internal class PaymentsRepository(
         val param = GooglePaymentWalletRequest(wallet = wallet)
 
         launch(
+            paramsForLog = param,
             requestFlow = {
                 safeApiFlowCall {
                     api.putPaymentWallet(param)

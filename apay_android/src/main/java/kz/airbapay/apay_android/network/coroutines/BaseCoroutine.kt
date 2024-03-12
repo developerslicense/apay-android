@@ -9,7 +9,7 @@ interface BaseCoroutine {
     val scope: CoroutineScope
 
     /**
-     * Очиска coroutine (если спользовать в паре с CoreLaunchViewModel
+     * Очистка coroutine (если спользовать в паре с CoreLaunchViewModel
      * или CoreAndroidLaunchViewModel тогда отчистка происходит автоматически)
      */
     fun clearCoroutine()
@@ -22,6 +22,7 @@ interface BaseCoroutine {
      * Для дополнительной информации https://kotlinlang.org/docs/reference/coroutines/flow.html
      */
     fun <T : Any> launch(
+        paramsForLog: Any? = null,
         requestFlow: suspend () -> Flow<T>,
         result: (T) -> Unit,
         error: (Response<T>) -> Unit

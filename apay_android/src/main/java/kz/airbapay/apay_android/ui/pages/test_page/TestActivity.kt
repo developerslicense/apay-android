@@ -217,6 +217,7 @@ fun initTestSdk(
     )
 
     AirbaPaySdk.initSdk(
+        enabledLogsForProd = false, //todo этот же параметр отвечает за отправку логов в дебаг сборке, если == true
         context = context,
         isProd = false, //true, //
         accountId = "77051111111",

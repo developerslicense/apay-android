@@ -12,6 +12,7 @@ import android.os.Bundle
 import android.view.View
 import android.view.ViewTreeObserver
 import kz.airbapay.apay_android.R
+import kz.airbapay.apay_android.network.loggly.Logger
 import kz.airbapay.apay_android.ui.pages.card_reader.bl.ExecutorCamera
 import kz.airbapay.apay_android.ui.pages.card_reader.bl.ExecutorML
 import kz.airbapay.apay_android.ui.pages.card_reader.bl.MachineLearningThread
@@ -27,6 +28,11 @@ internal class ScanActivity : Activity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        Logger.log(
+            message = "onCreate ScanActivity",
+        )
+
         setContentView(R.layout.irdcs_activity_scan_card)
 
         findViewById<View>(R.id.cardRectangle).viewTreeObserver

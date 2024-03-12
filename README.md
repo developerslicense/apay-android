@@ -163,7 +163,7 @@ dependencies {
 
 ## 1.3 Подключение нативного GooglePay
 
-1) Изменить параметр isGooglePayNative в initOnCreate на true
+1) Изменить параметр isGooglePayNative в initSdk на true
 
 2) Перейти в консоль GooglePay  https://pay.google.com/business/console/ и перейти в пункт меню
    Google Pay API
@@ -291,12 +291,99 @@ binding.googlePay?.apply {
     android:exported="false" />
  ```
 
-И нужно добавить в нем
+В ```MainActivity``` нужно добавить
 
 ```
-var isFlowStarted: Bool = false
+ override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
+        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "com.example.testFlutter/AirbaPayChannel")
+            .setMethodCallHandler { call: MethodCall, result: Result ->
+                if (call.method == "pay") {
+                    result.success(null)
+                    AirbaPayActivity.start(this, call, result)
+                } else {
+                    result.notImplemented()
+                }
+            }
+    }
+```
 
-override fun onStart() {
+В ```FlutterAirbaPayActivity```
+
+```
+
+class FlutterAirbaPayActivity : AppCompatActivity() {
+    /**
+     * We have only only 2 states for this activity:
+     *
+     * 1. started airba pay flow
+     * 2. finished airba pay flow
+     */
+    private var isFlowStarted = false
+
+    companion object {
+        fun start(context: Activity, call: MethodCall, result: MethodChannel.Result) {
+            val intent = Intent(context, AirbaPayActivity::class.java)
+            context.startActivityForResult(intent, 123)
+        }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        val someInvoiceId = Date().time
+        val someOrderNumber = Date().time
+
+        val goods = listOf(
+            AirbaPaySdk.Goods(
+                model = "description",
+                brand = "TechnoFit",
+                category = "Services",
+                quantity = 1,
+                price = 1500L,
+            ),
+        )
+        AirbaPaySdk.initSdk(
+            context = this,
+            isProd = true,
+            phone = "+77051234567",
+            shopId = "airbapay-mfo",
+            lang = AirbaPaySdk.Lang.RU,
+            password = "MtTh37TLV7",
+            terminalId = "659e79e279a508566e35d299",
+            failureCallback = "https://site.kz/failure-clb",
+            successCallback = "https://site.kz/success-clb",
+            userEmail = "test@test.com",
+            accountId = "1000000000",
+            purchaseAmount = 1500L,
+            invoiceId = someInvoiceId.toString(),
+            orderNumber = someInvoiceId.toString(),
+            goods = goods,
+        ) { activity, paymentSubmittingResult ->
+            close(paymentSubmittingResult, activity)
+        }
+
+        AirbaPaySdk.startAirbaPay(
+            this,
+            redirectToCustomSuccessPage = { activity ->
+                close(true, activity)
+            },
+        )
+    }
+
+    /**
+     * Finishes this activity with setting result
+     *
+     * @see handleAirbaActivityResult
+     */
+    private fun close(result: Boolean, childActivity: Activity? = null) {
+        setResult(
+            Activity.RESULT_OK,
+            Intent().putExtra("result", result)
+        )
+        finish()
+        childActivity?.finish()
+    }
+
+    override fun onStart() {
         super.onStart()
         if(!isFlowStarted) {
             // 1. started airba pay flow (invoked after onCreate)
@@ -306,4 +393,5 @@ override fun onStart() {
             close(false)
         }
     }
+}
 ```

@@ -11,12 +11,11 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.compose.runtime.MutableState
 import kz.airbapay.apay_android.data.utils.DataHolder
-import kz.airbapay.apay_android.data.utils.errorLog
-import kz.airbapay.apay_android.data.utils.messageLog
 import kz.airbapay.apay_android.data.utils.openAcquiring
 import kz.airbapay.apay_android.data.utils.openErrorPageWithCondition
 import kz.airbapay.apay_android.data.utils.openGooglePay
 import kz.airbapay.apay_android.data.utils.openSuccess
+import kz.airbapay.apay_android.network.loggly.Logger
 
 internal class GooglePayClient(
     private val redirectUrl: String?,
@@ -28,26 +27,32 @@ internal class GooglePayClient(
 
     @SuppressLint("WebViewClientOnReceivedSslError")
     override fun onReceivedSslError(view: WebView, handler: SslErrorHandler, error: SslError) {
-        messageLog("onReceivedSslError error $error")
+        Logger.log(
+            message = "onReceivedSslError error $error",
+        )
         if (DataHolder.isProd) handler.cancel() else handler.proceed()
     }
 
     override fun onPageStarted(view: WebView, url: String, favicon: Bitmap?) {
         super.onPageStarted(view, url, favicon)
-        messageLog("onPageStarted $url")
+        Logger.log(
+            message = "onPageStarted $url",
+        )
         inProgress.value = true
     }
 
     override fun onPageFinished(view: WebView?, url: String?) {
         super.onPageFinished(view, url)
-        messageLog("onPageFinished, $url")
+        Logger.log(
+            message = "onPageFinished, $url",
+        )
 
         if (url?.contains("https://accounts.youtube.com/accounts/") == true) {
             openGooglePay(
                 redirectUrl = redirectUrl,
                 activity = activity
             )
-        } else if (url?.contains("https://spf.airbapay.kz/sdk/google-pay-button") == true) {
+        } else if (url?.contains("airbapay.kz/sdk/google-pay-button") == true) {
             timer?.cancel()
             timer = object : CountDownTimer(5000, 1000) {
                 override fun onTick(millisUntilFinished: Long) {}
@@ -57,11 +62,12 @@ internal class GooglePayClient(
                         loadJs(view)
 
                     } catch (e: Exception) {
+                        e.printStackTrace()
                     }
                 }
             }
             timer?.start()
-        } else if (url?.contains("https://forward.airbapay.kz") == false) {
+        } else {
             inProgress.value = false
         }
 
@@ -85,10 +91,16 @@ internal class GooglePayClient(
         request: WebResourceRequest?
     ): Boolean {
         val url = request?.url?.toString() ?: ""
-        messageLog("shouldOverrideUrlLoading $url")
+
+        Logger.log(
+            message = "shouldOverrideUrlLoading $url",
+        )
 
         when {
             url.contains("acquiring-api/sdk/api/v1/payments/three-ds") -> {
+                Logger.log(
+                    message = "Redirect to 3DS",
+                )
                 openAcquiring(
                     redirectUrl = url,
                     activity = activity
@@ -97,12 +109,17 @@ internal class GooglePayClient(
 
             url.contains("status=auth")
                     || url.contains("status=success") -> {
-                messageLog("Status success")
+                Logger.log(
+                    message = "Status success",
+                )
                 openSuccess(activity)
             }
 
             url.contains("status=error") -> {
-                messageLog("3D secure status error")
+                Logger.log(
+                    message = "3D secure status error",
+                )
+
                 try {
                     val splitted = url.split(Regex("&"))
                     val result = splitted.first { element -> element.contains("errorCode") }
@@ -118,7 +135,7 @@ internal class GooglePayClient(
                     )
 
                 } catch (e: Exception) {
-                    errorLog(e)
+                    e.printStackTrace()
                     openErrorPageWithCondition(
                         errorCode = 0,
                         activity = activity

@@ -5,7 +5,6 @@ import android.app.KeyguardManager
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -53,7 +52,9 @@ import kz.airbapay.apay_android.data.utils.backToStartPage
 import kz.airbapay.apay_android.data.utils.card_utils.getCardTypeFromNumber
 import kz.airbapay.apay_android.data.utils.openCardScanner
 import kz.airbapay.apay_android.data.utils.openGooglePay
+import kz.airbapay.apay_android.network.loggly.Logger
 import kz.airbapay.apay_android.network.repository.Repository
+import kz.airbapay.apay_android.ui.pages.BaseActivity
 import kz.airbapay.apay_android.ui.pages.dialogs.InitDialogExit
 import kz.airbapay.apay_android.ui.pages.googlepay.GPayView
 import kz.airbapay.apay_android.ui.pages.googlepay.nativegp.AirbaPayBaseGooglePay
@@ -71,7 +72,7 @@ import kz.airbapay.apay_android.ui.ui_components.TopInfoView
 import kz.airbapay.apay_android.ui.ui_components.ViewButton
 import kz.airbapay.apay_android.ui.ui_components.ViewToolbar
 
-internal class HomeActivity : ComponentActivity() {
+internal class HomeActivity : BaseActivity() {
 
     private val cardNumberText = mutableStateOf(TextFieldValue())
     private val paySystemIcon = mutableStateOf<Int?>(null)
@@ -79,6 +80,10 @@ internal class HomeActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        Logger.log(
+            message = "onCreate HomeActivity",
+        )
 
         // старый вариант ScanActivity. новый использует card io. старый оставил на всякий случай
        /* scanResultLauncher = registerForActivityResult(
@@ -121,6 +126,8 @@ internal class HomeActivity : ComponentActivity() {
 
         paySystemIcon.value = getCardTypeFromNumber(pan).icon
     }
+
+    override fun getPageName() = this.localClassName
 }
 
 @Composable

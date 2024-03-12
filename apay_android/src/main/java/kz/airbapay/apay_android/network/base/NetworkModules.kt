@@ -28,6 +28,14 @@ internal fun createOkHttpClientCoroutine(
     initLoggingInterceptor()
 )
 
+internal fun createOkHttpClientLogging(
+    interceptor: BaseInterceptor
+) = createOkHttpClient(
+    interceptor,
+    null
+)
+
+
 private fun createOkHttpClient(
     interceptor: Interceptor,
     httpLoggingInterceptor: HttpLoggingInterceptor?
@@ -102,6 +110,19 @@ internal fun provideRetrofit(
     val interceptor = BaseInterceptor(context)
     val gson = provideGson()
     val clientCoroutines: OkHttpClient = createOkHttpClientCoroutine(interceptor)
+    return provideRetrofit(clientCoroutines, gson)
+}
+
+internal fun provideRetrofitLoggly(
+    context: Context
+): Retrofit? {
+    if (DataHolder.baseUrl.isBlank()) {
+        Log.e("AirbaPay", "ВНИМАНИЕ! Не была выполнена функция initOnCreate()")
+        return null
+    }
+    val interceptor = BaseInterceptor(context)
+    val gson = provideGson()
+    val clientCoroutines: OkHttpClient = createOkHttpClientLogging(interceptor)
     return provideRetrofit(clientCoroutines, gson)
 }
 
