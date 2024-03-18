@@ -32,8 +32,6 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
-import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kz.airbapay.apay_android.R
 import kz.airbapay.apay_android.data.constant.ErrorsCode
@@ -218,12 +216,6 @@ internal fun StartProcessingPage(
                             coroutineScope.launch {
                                 sheetState.show()
                                 cvvFocusRequester.requestFocus()
-
-                                val def = coroutineScope.async(IO) {
-                                    Thread.sleep(1000)
-                                    isLoading.value = false
-                                }
-                                def.start()
                             }
                         },
                         modifier = Modifier
