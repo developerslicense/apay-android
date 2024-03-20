@@ -203,7 +203,7 @@ dependencies {
 
 
 group 'kz.airbapay' // this is your groupId
-version '1.0.44' //_2023_08_00'  // todo меняй и DataHolder.sdkVersion
+version '1.0.45' //_2023_08_00'  // todo меняй и DataHolder.sdkVersion
 
 ext { // this are variables
     pomGroupId = group

@@ -137,7 +137,7 @@ internal class GooglePayClient(
                 } catch (e: Exception) {
                     e.printStackTrace()
                     openErrorPageWithCondition(
-                        errorCode = 0,
+                        errorCode = 1,
                         activity = activity
                     )
                 }

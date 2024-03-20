@@ -26,9 +26,9 @@ internal object DataHolder {
   var userPhone = ""
   var password = ""
   var terminalId  = ""
-  var failureBackUrl = ""
+  const val failureBackUrl = "https://site.kz/failure" // не нужно менять
+  const val successBackUrl = "https://site.kz/success"// не нужно менять
   var failureCallback = ""
-  var successBackUrl = ""
   var successCallback = ""
   var autoCharge = 0
   var currentLang = AirbaPaySdk.Lang.RU.lang
