@@ -97,11 +97,13 @@ private fun ConstraintLayoutScope.initTitleModifier(
     title: String,
     titleRef: ConstrainedLayoutReference
 ) =
-    Modifier.constrainAs(titleRef) {
-        top.linkTo(parent.top, 0.dp)
-        bottom.linkTo(parent.bottom, 0.dp)
-        end.linkTo(parent.end, 9.dp)
-        start.linkTo(parent.start, 9.dp)
-    }.semantics { contentDescription = title }
+    Modifier
+        .constrainAs(titleRef) {
+            top.linkTo(parent.top, 0.dp)
+            bottom.linkTo(parent.bottom, 0.dp)
+            end.linkTo(parent.end, 9.dp)
+            start.linkTo(parent.start, 9.dp)
+        }
+        .semantics { contentDescription = title }
 
 

@@ -130,7 +130,7 @@ private fun onStart(
 
             } else if (response.errorCode != "0") {
                 openErrorPageWithCondition(
-                    errorCode = response.errorCode?.toInt() ?: 0,
+                    errorCode = response.errorCode?.toInt() ?: 1,
                     activity = activity
                 )
 

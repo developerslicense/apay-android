@@ -37,7 +37,7 @@ internal class AcquiringClient(
         if (DataHolder.isProd) {
             handler.cancel()
             openErrorPageWithCondition(
-                errorCode = 0,
+                errorCode = 1,
                 activity = activity
             )
 
@@ -70,14 +70,15 @@ internal class AcquiringClient(
         )
         when {
             url.contains("status=auth")
-                    || url.contains("status=success") -> {
+                    || url.contains("success") -> {
                 Logger.log(
                     message = "Status success",
                     url = url
                 )
                 openSuccess(activity)
             }
-            url.contains("status=error") -> {
+            url.contains("status=error")
+                    || url.contains("failure") -> {
                 Logger.log(
                     message = "3D secure status error",
                     url = url
@@ -100,7 +101,7 @@ internal class AcquiringClient(
                     e.printStackTrace()
 
                     openErrorPageWithCondition(
-                        errorCode = 0,
+                        errorCode = 1,
                         activity = activity
                     )
                 }

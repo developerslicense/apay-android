@@ -9,7 +9,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material.ModalBottomSheetLayout
 import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.Scaffold
@@ -19,17 +18,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import kotlinx.coroutines.launch
@@ -110,7 +106,6 @@ internal fun StartProcessingPage(
 
     val purchaseAmount = DataHolder.purchaseAmountFormatted.collectAsState()
 
-    val size = remember { mutableStateOf(IntSize.Zero) }
     val googlePayRedirectUrl = rememberSaveable { mutableStateOf<String?>(null) }
     val isLoading = rememberSaveable { mutableStateOf(true) }
     val isLoadingGooglePay = airbaPayBaseGooglePay.paymentModel?.isLoading?.collectAsState()
@@ -160,81 +155,73 @@ internal fun StartProcessingPage(
             },
             modifier = Modifier.fillMaxSize()
         ) {
-            if (!isLoading.value) {
-                ConstraintLayout {
-                    val (buttonRef) = createRefs()
+            ConstraintLayout {
+                val (buttonRef) = createRefs()
 
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        modifier = Modifier
-                            .recomposeHighlighter()
-                            .background(backgroundColor)
-                            .fillMaxSize()
-                            .padding(padding)
-                            .onSizeChanged {
-                                size.value = it
-                            }
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier
+                        .recomposeHighlighter()
+                        .background(backgroundColor)
+                        .fillMaxSize()
+                        .padding(padding)
 
+                ) {
+
+                    ViewToolbar(
+                        title = paymentByCard(),
+                        backIcon = R.drawable.ic_arrow_back,
+                        actionBack = actionClose
+                    )
+
+                    TopInfoView(purchaseAmount.value)
+
+                    if (DataHolder.featureGooglePay
+                        && keyguardManager.isKeyguardSecure
                     ) {
-
-                        ViewToolbar(
-                            title = paymentByCard(),
-                            backIcon = R.drawable.ic_arrow_back,
-                            actionBack = actionClose
+                        GPayView(
+                            airbaPayBaseGooglePay = airbaPayBaseGooglePay,
+                            openGooglePayForWebFlow = {
+                                openGooglePay(
+                                    redirectUrl = googlePayRedirectUrl.value,
+                                    activity = activity
+                                )
+                            }
                         )
-
-                        TopInfoView(purchaseAmount.value)
-
-                        if (DataHolder.featureGooglePay
-                            && keyguardManager.isKeyguardSecure
-                        ) {
-                            GPayView(
-                                airbaPayBaseGooglePay = airbaPayBaseGooglePay,
-                                openGooglePayForWebFlow = {
-                                    openGooglePay(
-                                        redirectUrl = googlePayRedirectUrl.value,
-                                        activity = activity
-                                    )
-                                }
-                            )
-                        }
-
-                        if (savedCards.value.isNotEmpty()) {
-                            InitViewStartProcessingCards(
-                                savedCards = savedCards.value,
-                                selectedCard = selectedCard,
-                                selectedIndex = selectedIndex
-                            )
-                        }
                     }
 
-                    InitViewStartProcessingButtonNext(
-                        isLoading = isLoading,
-                        purchaseAmount = purchaseAmount.value,
-                        selectedCard = selectedCard,
-                        showCvv = {
-                            coroutineScope.launch {
-                                sheetState.show()
-                                cvvFocusRequester.requestFocus()
-                            }
-                        },
-                        modifier = Modifier
-                            .recomposeHighlighter()
-                            .padding(horizontal = 16.dp)
-                            .padding(top = 16.dp)
-                            .padding(bottom = 32.dp)
-                            .constrainAs(buttonRef) {
-                                bottom.linkTo(parent.bottom)
-                            }
-                    )
+                    if (savedCards.value.isNotEmpty()) {
+                        InitViewStartProcessingCards(
+                            savedCards = savedCards.value,
+                            selectedCard = selectedCard,
+                            selectedIndex = selectedIndex
+                        )
+                    }
                 }
 
-                if (isLoading.value || isLoadingGooglePay?.value == true) {
-                    ProgressBarView(
-                        size = size,
-                        modifier = Modifier.wrapContentHeight()
-                    )
-                }
+                InitViewStartProcessingButtonNext(
+                    isLoading = isLoading,
+                    purchaseAmount = purchaseAmount.value,
+                    selectedCard = selectedCard,
+                    showCvv = {
+                        coroutineScope.launch {
+                            sheetState.show()
+                            cvvFocusRequester.requestFocus()
+                        }
+                    },
+                    modifier = Modifier
+                        .recomposeHighlighter()
+                        .padding(horizontal = 16.dp)
+                        .padding(top = 16.dp)
+                        .padding(bottom = 32.dp)
+                        .constrainAs(buttonRef) {
+                            bottom.linkTo(parent.bottom)
+                        }
+                )
+            }
+
+            if (isLoading.value || isLoadingGooglePay?.value == true) {
+                ProgressBarView()
             }
 
             LaunchedEffect("CardRepository") {

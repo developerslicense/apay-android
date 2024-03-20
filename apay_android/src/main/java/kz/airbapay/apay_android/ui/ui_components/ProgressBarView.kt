@@ -1,45 +1,24 @@
 package kz.airbapay.apay_android.ui.ui_components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.size
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clipToBounds
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.unit.IntSize
 import androidx.constraintlayout.compose.ConstraintLayout
-import kz.airbapay.apay_android.data.utils.recomposeHighlighter
 import kz.airbapay.apay_android.ui.resources.ColorsSdk
 
 @Composable
-internal fun ProgressBarView(
-    modifier: Modifier = Modifier.fillMaxSize(),
-    size: MutableState<IntSize> = remember {
-        mutableStateOf(IntSize.Zero)
-    }
-) {
+internal fun ProgressBarView() {
 
     BackHandler {}
 
     ConstraintLayout(
-        modifier = modifier
-            .recomposeHighlighter()
-            .then(
-                with(LocalDensity.current) {
-                    Modifier.size(
-                        width = size.value.width.toDp(),
-                        height = size.value.height.toDp(),
-                    )
-                }
-            )
+        modifier = Modifier.fillMaxSize()
             .background(ColorsSdk.bgBlock)
-            .clipToBounds()
+            .clickable(false){} // для блокировки клика
     ) {
 
         val (progressRef) = createRefs()
