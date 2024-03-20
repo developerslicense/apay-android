@@ -38,7 +38,7 @@ internal object Logger {
                         url = url,
                         method = method,
                         responseCode = responseCode,
-                        bodyParams = bodyParams,
+                        bodyParams = if (bodyParams?.contains("Card Holder") == true) "Содержимое скрыто для секьюрности, т.к. содержит данные карты" else bodyParams,
                         response = response,
                         message = message
                     )
