@@ -222,10 +222,10 @@ fun initTestSdk(
         isProd = false, //true, //
         accountId = "77051111111",
         phone = "77051111117",
-        shopId = "test-merchant", //"airbapay-mfo", //
+        shopId = "test-baykanat", //"airbapay-mfo", //
         lang = AirbaPaySdk.Lang.RU,
-        password = "123456", //"MtTh37TLV7", //
-        terminalId = "64216e7ccc4a48db060dd689",//"659e79e279a508566e35d299", //
+        password = "baykanat123!", //"MtTh37TLV7", //
+        terminalId = "65c5df69e8037f1b451a0594",//"659e79e279a508566e35d299", //
         failureCallback = "https://site.kz/failure-clb",
         successCallback = "https://site.kz/success-clb",
         userEmail = "test@test.com",
