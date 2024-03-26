@@ -60,6 +60,20 @@ internal class AcquiringClient(
             url = url
         )
         inProgress.value = false
+
+        when {
+            url?.contains(DataHolder.successBackUrl) == true -> {
+                Logger.log(
+                    message = "Status success",
+                    url = url
+                )
+                openSuccess(activity)
+            }
+
+            url?.contains(DataHolder.failureBackUrl) == true -> {
+                onFailure(url)
+            }
+        }
     }
 
     override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
@@ -79,38 +93,45 @@ internal class AcquiringClient(
             }
             url.contains("status=error")
                     || url.contains("failure") -> {
-                Logger.log(
-                    message = "3D secure status error",
-                    url = url
-                )
-                try {
-                    val splitted = url.split(Regex("&"))
-                    val result = splitted.first { element -> element.contains("errorCode") }
-                    val resultSplitted = result.split(Regex("="))
-
-                    val code = resultSplitted[1]
-                        .replace("errorMsg", "") //todo временный костыль удаления "errorMsg" на период, пока не будет исправлено на бэке
-                        .toInt()
-
-                    openErrorPageWithCondition(
-                        errorCode = code,
-                        activity = activity
-                    )
-
-                } catch (e: Exception) {
-                    e.printStackTrace()
-
-                    openErrorPageWithCondition(
-                        errorCode = 1,
-                        activity = activity
-                    )
-                }
+                onFailure(url)
             }
 
             else -> view?.loadUrl(url)
         }
 
         return false
+    }
+
+    private fun onFailure(url: String) {
+        Logger.log(
+            message = "3D secure status error",
+            url = url
+        )
+        try {
+            val splitted = url.split(Regex("&"))
+            val result = splitted.first { element -> element.contains("errorCode") }
+            val resultSplitted = result.split(Regex("="))
+
+            val code = resultSplitted[1]
+                .replace(
+                    "errorMsg",
+                    ""
+                ) //todo временный костыль удаления "errorMsg" на период, пока не будет исправлено на бэке
+                .toInt()
+
+            openErrorPageWithCondition(
+                errorCode = code,
+                activity = activity
+            )
+
+        } catch (e: Exception) {
+            e.printStackTrace()
+
+            openErrorPageWithCondition(
+                errorCode = 1,
+                activity = activity
+            )
+        }
     }
 
 
