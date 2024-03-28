@@ -67,9 +67,9 @@
        
 AirbaPaySdk.initSdk(
     context = this.application,
-    shopId = "test-merchant",
-    password = "123456",
-    terminalId = "64216e7ccc4a48db060dd689",
+    shopId = "test-baykanat",
+    password = "baykanat123!",
+    terminalId = "65c5df69e8037f1b451a0594",
     lang = AirbaPaySdk.Lang.RU,
     isProd = false, 
     phone = "77051000000",
@@ -315,7 +315,7 @@ binding.googlePay?.apply {
             .setMethodCallHandler { call: MethodCall, result: Result ->
                 if (call.method == "pay") {
                     result.success(null)
-                    AirbaPayActivity.start(this, call, result)
+                    FlutterAirbaPayActivity.start(this, call, result)
                 } else {
                     result.notImplemented()
                 }
@@ -329,7 +329,7 @@ binding.googlePay?.apply {
 
 class FlutterAirbaPayActivity : AppCompatActivity() {
     /**
-     * We have only only 2 states for this activity:
+     * Два состояния для activity:
      *
      * 1. started airba pay flow
      * 2. finished airba pay flow
@@ -338,15 +338,15 @@ class FlutterAirbaPayActivity : AppCompatActivity() {
 
     companion object {
         fun start(context: Activity, call: MethodCall, result: MethodChannel.Result) {
-            val intent = Intent(context, AirbaPayActivity::class.java)
+            val intent = Intent(context, FlutterAirbaPayActivity::class.java)
             context.startActivityForResult(intent, 123)
         }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val someInvoiceId = Date().time
-        val someOrderNumber = Date().time
+        val someInvoiceId = ~
+        val someOrderNumber = ~
 
         val goods = listOf(
             AirbaPaySdk.Goods(
@@ -361,17 +361,17 @@ class FlutterAirbaPayActivity : AppCompatActivity() {
             context = this,
             isProd = true,
             phone = "+77051234567",
-            shopId = "airbapay-mfo",
+            shopId = "test-baykanat",
             lang = AirbaPaySdk.Lang.RU,
-            password = "MtTh37TLV7",
-            terminalId = "659e79e279a508566e35d299",
+            password = "baykanat123!",
+            terminalId = "65c5df69e8037f1b451a0594",
             failureCallback = "https://site.kz/failure-clb",
             successCallback = "https://site.kz/success-clb",
             userEmail = "test@test.com",
             accountId = "1000000000",
             purchaseAmount = 1500L,
             invoiceId = someInvoiceId.toString(),
-            orderNumber = someInvoiceId.toString(),
+            orderNumber = someOrderId.toString(),
             goods = goods,
         ) { activity, paymentSubmittingResult ->
             close(paymentSubmittingResult, activity)
