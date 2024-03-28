@@ -24,6 +24,7 @@
 | shopId                      | String                              | да           | ID магазина в системе AirbaPay                                                                                                                                                                       |
 | context                     | Context                             | да           | Контекст приложения                                                                                                                                                                                  |
 | password                    | String                              | да           | Пароль в системе AirbaPay                                                                                                                                                                            |
+| accountId                   | String                              | да           | ID аккаунта пользователя                                                                                                                                                                             |
 | terminalId                  | String                              | да           | ID терминала под которым создали платеж                                                                                                                                                              |
 | lang                        | AirbaPaySdk.Lang                    | да           | Код языка для UI                                                                                                                                                                                     |
 | isProd                      | Boolean                             | да           | Продовская или тестовая среда airbapay                                                                                                                                                               |
@@ -70,6 +71,7 @@ AirbaPaySdk.initSdk(
     shopId = "test-baykanat",
     password = "baykanat123!",
     terminalId = "65c5df69e8037f1b451a0594",
+    accountId = "1000009806",
     lang = AirbaPaySdk.Lang.RU,
     isProd = false, 
     phone = "77051000000",
