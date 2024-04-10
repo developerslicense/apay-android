@@ -43,6 +43,7 @@
 | settlementPayments          | List<AirbaPaySdk.SettlementPayment> | нет          | Распределение платежа по компаниям. В случае одной компании, может быть null                                                                                                                         |
 | onProcessingResult          | (Activity, Boolean) -> Unit         | да           | Лямбда, вызываемая при клике на кнопку "Вернуться в магазин" и при отмене процесса. Разработчику в ней нужно прописать код для возврата в приложение. Обязательно добавить в конце activity.finish() |
 | hideInternalGooglePayButton | Boolean                             | нет          | Флаг, определяющий, нужно ли скрывать кнопку гуглпэя на страницах сдк                                                                                                                                |
+| isGooglePayNative           | Boolean                             | нет          | Флаг, определяющий показ нативной кнопки GooglePay вместо вебвьюшки                                                                                                                                  |
 
 При смене значения isProd, требуется выгрузить приложение из памяти.
 
@@ -228,11 +229,11 @@ ButtonType {
 }
 ```
 
-# JetpackCompose 
+# JetpackCompose
 
-1) Нужно, чтоб активити наследовал ```ComponentActivity``` или ```AppCompatActivity``` 
-в случае фрагментов/активити, где частично используется JetpackCompose. В этом случае надо убедиться, 
-что ваш активити использует ```@style/Theme.AppCompat```
+1) Нужно, чтоб активити наследовал ```ComponentActivity``` или ```AppCompatActivity```
+   в случае фрагментов/активити, где частично используется JetpackCompose. В этом случае надо
+   убедиться, что ваш активити использует ```@style/Theme.AppCompat```
 
 2) Вставьте в верстку страницы с указанными выше параметрами
 
@@ -251,7 +252,7 @@ ButtonType {
 1) Нужно, чтоб активити наследовал ```AppCompatActivity```, и убедиться,
    что ваш активити использует ```@style/Theme.AppCompat```
 
-2) Добавить в верстку 
+2) Добавить в верстку
 
 ``` 
  <androidx.compose.ui.platform.ComposeView
