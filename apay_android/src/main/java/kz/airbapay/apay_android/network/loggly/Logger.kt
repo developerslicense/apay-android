@@ -35,10 +35,11 @@ internal object Logger {
                 if (DataHolder.isProd || DataHolder.enabledLogsForProd) {
 
                     val request = ApiLogEntry(
-                        url = url,
+                        url = if(url?.contains("api/v1/cards/info-by-pan") == true) "api/v1/cards/info-by-pan/_pan_number_hiden" else url,
                         method = method,
                         responseCode = responseCode,
-                        bodyParams = if (bodyParams?.contains("Card Holder") == true) "Содержимое скрыто для секьюрности, т.к. содержит данные карты" else bodyParams,
+                        bodyParams = if (bodyParams?.contains("Card Holder") == true || bodyParams?.contains("password") == true)
+                    "Содержимое скрыто для секьюрности" else bodyParams,
                         response = response,
                         message = message
                     )

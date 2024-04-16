@@ -220,8 +220,8 @@ fun initTestSdk(
         enabledLogsForProd = false, //todo этот же параметр отвечает за отправку логов в дебаг сборке, если == true
         context = context,
         isProd = false, //true, //
-        accountId = "77051111111",
-        phone = "77051111117",
+        accountId = "77061111112",//"77051111111",
+        phone = "77061111112",//"77051111117",
         shopId = "test-baykanat", //"airbapay-mfo", //
         lang = AirbaPaySdk.Lang.RU,
         password = "baykanat123!", //"MtTh37TLV7", //

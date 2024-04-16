@@ -17,12 +17,11 @@ internal class PaymentsRepository(
 ) : BaseCoroutine by BaseCoroutineDelegate() {
 
     fun createPayment( // только один раз вызывается
-        saveCard: Boolean? = null,
         result: (PaymentCreateResponse) -> Unit,
         error: (Response<*>) -> Unit
     ) {
 
-        val param = initParamsForCreatePayment(saveCard)
+        val param = initParamsForCreatePayment()
 
         launch(
             paramsForLog = param,
@@ -38,9 +37,7 @@ internal class PaymentsRepository(
         )
     }
 
-    private fun initParamsForCreatePayment(
-        saveCard: Boolean? = null
-    ): HashMap<String, Any?> {
+    private fun initParamsForCreatePayment(): HashMap<String, Any?> {
         val cart = HashMap<String, Any?>().apply {
             put("goods", DataHolder.goods)
         }
@@ -48,7 +45,6 @@ internal class PaymentsRepository(
         val param = HashMap<String, Any?>().apply {
             put("account_id", DataHolder.accountId)
             put("amount", DataHolder.purchaseAmount.toDouble())
-            saveCard?.let { put("card_save", saveCard) }
             put("cart", cart)
             put("currency", "KZT")
             put("description", "description")
