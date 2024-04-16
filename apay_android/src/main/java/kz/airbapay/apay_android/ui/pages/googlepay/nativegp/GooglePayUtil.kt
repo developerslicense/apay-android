@@ -27,9 +27,13 @@ import org.json.JSONObject
 
 object GooglePayUtil {
 
-    private val baseRequest = JSONObject()
-        .put("apiVersion", 2)
-        .put("apiVersionMinor", 0)
+    fun createPaymentsClient(context: Context): PaymentsClient {
+        val walletOptions = Wallet.WalletOptions.Builder()
+            .setEnvironment(if(DataHolder.isProd) WalletConstants.ENVIRONMENT_PRODUCTION else WalletConstants.ENVIRONMENT_TEST)
+            .build()
+
+        return Wallet.getPaymentsClient(context, walletOptions)
+    }
 
     private fun gatewayTokenizationSpecification(): JSONObject =
         JSONObject()
@@ -42,26 +46,13 @@ object GooglePayUtil {
                 )
             ))
 
-    private val allowedCardNetworks = JSONArray(listOf(
-        "AMEX",
-        "MASTERCARD",
-        "VISA")
-    )
-
-    private val allowedCardAuthMethods = JSONArray(
-        listOf(
-            "PAN_ONLY",
-            "CRYPTOGRAM_3DS"
-        )
-    )
-
     private fun baseCardPaymentMethod(): JSONObject =
         JSONObject()
             .put("type", "CARD")
             .put(
                 "parameters", JSONObject()
-                    .put("allowedAuthMethods", allowedCardAuthMethods)
-                    .put("allowedCardNetworks", allowedCardNetworks)
+                    .put("allowedAuthMethods", JSONArray(listOf("PAN_ONLY", "CRYPTOGRAM_3DS")))
+                    .put("allowedCardNetworks", JSONArray(listOf("AMEX", "MASTERCARD", "VISA")))
                     .put("billingAddressRequired", true)
                     .put(
                         "billingAddressParameters", JSONObject()
@@ -76,36 +67,27 @@ object GooglePayUtil {
 
     fun isReadyToPayRequest(): JSONObject? =
         try {
-            baseRequest
+            JSONObject()
+                .put("apiVersion", 2)
+                .put("apiVersionMinor", 0)
                 .put("allowedPaymentMethods", JSONArray().put(baseCardPaymentMethod()))
         } catch (e: JSONException) {
             null
         }
 
-    private val merchantInfo: JSONObject =
-        JSONObject().put("merchantName", "AirbaPay")
-
-    fun createPaymentsClient(context: Context): PaymentsClient {
-        val walletOptions = Wallet.WalletOptions.Builder()
-            .setEnvironment(if(DataHolder.isProd) WalletConstants.ENVIRONMENT_PRODUCTION else WalletConstants.ENVIRONMENT_TEST)
-            .build()
-
-        return Wallet.getPaymentsClient(context, walletOptions)
-    }
-
-    private fun getTransactionInfo(price: String): JSONObject =
-        JSONObject()
-            .put("totalPrice", price)
-            .put("totalPriceStatus", "FINAL")
-            .put("countryCode", "KZ")
-            .put("currencyCode", "KZT")
-
     fun getPaymentDataRequest(price: String): JSONObject =
-        baseRequest
+        JSONObject()
+            .put("apiVersion", 2)
+            .put("apiVersionMinor", 0)
             .put("allowedPaymentMethods", allowedPaymentMethods())
-            .put("transactionInfo", getTransactionInfo(price))
-            .put("merchantInfo", merchantInfo)
+            .put("merchantInfo", JSONObject().put("merchantName", "AirbaPay"))
             .put("shippingAddressRequired", true)
+            .put("transactionInfo", JSONObject()
+                .put("totalPrice", price)
+                .put("totalPriceStatus", "FINAL")
+                .put("countryCode", "KZ")
+                .put("currencyCode", "KZT")
+            )
             .put(
                 "shippingAddressParameters", JSONObject()
                     .put("phoneNumberRequired", false)
