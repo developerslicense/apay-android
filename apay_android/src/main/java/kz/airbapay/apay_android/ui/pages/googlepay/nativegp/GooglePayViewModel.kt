@@ -2,9 +2,13 @@ package kz.airbapay.apay_android.ui.pages.googlepay.nativegp
 
 import android.app.Activity
 import androidx.lifecycle.ViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import kz.airbapay.apay_android.data.constant.ErrorsCode
 import kz.airbapay.apay_android.data.constant.initErrorsCodeByCode
 import kz.airbapay.apay_android.data.model.AuthRequest
+import kz.airbapay.apay_android.data.model.GooglePayMerchantResponse
+import kz.airbapay.apay_android.data.utils.AirbaPayBiometric
 import kz.airbapay.apay_android.data.utils.DataHolder
 import kz.airbapay.apay_android.data.utils.encode
 import kz.airbapay.apay_android.data.utils.openAcquiring
@@ -18,7 +22,7 @@ class GooglePayViewModel: ViewModel() {
     fun auth(
         activity: Activity,
         onError:() -> Unit,
-        onSuccess:() -> Unit
+        onSuccess:(GooglePayMerchantResponse) -> Unit
     ) {
         val authRequest = AuthRequest(
             paymentId = null,
@@ -34,13 +38,13 @@ class GooglePayViewModel: ViewModel() {
                 DataHolder.accessToken = response.accessToken
 
                 Repository.googlePayRepository?.getGooglePayMerchant(
-                    result = {
-                        DataHolder.gatewayMerchantId = it.gatewayMerchantId
-                        DataHolder.gateway = it.gateway
+                    result = { responseMerchant ->
+                        DataHolder.gatewayMerchantId = responseMerchant.gatewayMerchantId
+                        DataHolder.gateway = responseMerchant.gateway
 
                         initPayments(
                             activity = activity,
-                            onGooglePayResult = { onSuccess() },
+                            onGooglePayResult = { onSuccess(responseMerchant) },
                             onError = onError
                         )
                     },
@@ -51,7 +55,22 @@ class GooglePayViewModel: ViewModel() {
         )
     }
 
-    fun processingWallet(
+    fun processingWalletExternal(
+        googlePayToken: String,
+        activity: Activity,
+        coroutineScope: CoroutineScope
+    ) {
+        coroutineScope.launch {
+            val airbaPayBiometric = AirbaPayBiometric(activity)
+            airbaPayBiometric.authenticate(
+                onSuccess = { processingWalletInternal(googlePayToken, activity) },
+                onError = {},
+                onNotSecurity = { processingWalletInternal(googlePayToken, activity) }
+            )
+        }
+    }
+
+    internal fun processingWalletInternal(
         googlePayToken: String,
         activity: Activity
     ) {

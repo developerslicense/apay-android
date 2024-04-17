@@ -185,100 +185,75 @@ dependencies {
 
 ## 1.4 Подключение API внешнего взаимодействия с GooglePay
 
-1) Нужно, чтоб активити наследовалось от  ```ComponentActivity``` или ```AppCompatActivity```.
+1) Добавить ```val googlePayViewModel = GooglePayViewModel()``` 
 
-2) Перед рендерингом страницы вызвать ```AirbaPaySdk.initSdk(~)```
-
-3) Создать экземпляр ```val airbaPay = AirbaPayBaseGooglePay(appCompatActivity или componentActivity)```
-   и вызвать ```airbaPay.authGooglePay(~)```
-
-
-| Параметр  | Тип        | Обязательный | Описание                                   |
-|-----------|------------|--------------|--------------------------------------------|
-| onSuccess | () -> Unit | да           | Коллбэк для успешной авторизации в гуглпэй |
-| onFailed  | () -> Unit | да           | Коллбэк для ошибки авторизации в гуглпэй   |
-
-
-Для верстки используется ```AirbaPayGooglePayNativeView(~)```
-
-| Параметр              | Тип                                                                        | Обязательный | Описание                                                      |
-|-----------------------|----------------------------------------------------------------------------|--------------|---------------------------------------------------------------|
-| airbaPayBaseGooglePay | kz.airbapay.apay_android.ui.pages.googlepay.nativegp.AirbaPayBaseGooglePay | да           | Класс для работы с гугл пэй                                   |
-| modifier              | Modifier                                                                   | нет          | Modifier для кнопки                                           |
-| buttonTheme           | Int                                                                        | нет          | Темная или светлая тема кнопки. Параметры ниже, в ButtonTheme |
-| buttonType            | Int                                                                        | нет          | Оформление кнопки. Параметры ниже, в ButtonType               |
-| cornerRadius          | Int                                                                        | нет          | Радиус скругления кнопки                                      |
-
-Параметры кнопки GooglePay
+   и повесить на клик последовательный вызов функций: 
 
 ```
-ButtonTheme {
-    int DARK = 1;
-    int LIGHT = 2;
-}
+AirbaPaySdk.initSdk(
+   ~
+   isGooglePayNative = true
+)
 
-ButtonType {
-    int BUY = 1;
-    int BOOK = 2;
-    int CHECKOUT = 3;
-    int DONATE = 4;
-    int ORDER = 5;
-    int PAY = 6;
-    int SUBSCRIBE = 7;
-    int PLAIN = 8;
-}
-```
-
-# JetpackCompose
-
-1) Нужно, чтоб активити наследовал ```ComponentActivity``` или ```AppCompatActivity```
-   в случае фрагментов/активити, где частично используется JetpackCompose. В этом случае надо
-   убедиться, что ваш активити использует ```@style/Theme.AppCompat```
-
-2) Вставьте в верстку страницы с указанными выше параметрами
-
-```
- AirbaPayGooglePayNativeView(
-                    airbaPayBaseGooglePay = airbaPay,
-                    buttonTheme = 1,
-                    buttonType = 8,
-                    cornerRadius = 8,
-                    modifier: Modifier.~
-                )
- ```
-
-# Xml:
-
-1) Нужно, чтоб активити наследовал ```AppCompatActivity```, и убедиться,
-   что ваш активити использует ```@style/Theme.AppCompat```
-
-2) Добавить в верстку
-
-``` 
- <androidx.compose.ui.platform.ComposeView
-        android:id="@+id/googlePay"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingStart="~"
-        android:paddingTop="~"
-        android:paddingEnd="~"
-        ~~~~~ />
-```
-
-3) Добавить инициализацию элемента
-
-```
-binding.googlePay?.apply {
-            setContent {
-                AirbaPayGooglePayNativeView(
-                    airbaPayBaseGooglePay = airbaPay,
-                    buttonTheme = 1,
-                    buttonType = 8,
-                    cornerRadius = 8
-                )
+googlePayViewModel.auth(
+            activity = activity,
+            onSuccess = { response ->
+                isLoading.value = false
+              
+                val gatewayMerchantId: String? = response.gatewayMerchantId
+                val gateway: String? = response.gateway
+                
+                // Здесь вызвать получение токена гугл пэя через шаг №2
+            },
+            onError = {
+                isLoading.value = false
+                // вывод сообщения об ошибке
             }
-        }
+)
+               
 ```
+
+```auth(~)```
+
+| Параметр       | Тип                                 | Обязательный | Описание                                                |
+|----------------|-------------------------------------|--------------|---------------------------------------------------------|
+| googlePayToken | String                              | да           | Токен, полученный из гугл пэй                           |
+| onSuccess      | (GooglePayMerchantResponse) -> Unit | да           | Коллбэк возврата данных для gateway и gatewayMerchantId |
+| onError        | () -> Unit                          | да           | Коллбэк ошибки                                          |
+
+2) Пройти шаги интеграции из
+   https://developers.google.com/pay/api/android/guides/setup?hl=ru
+   и
+   https://developers.google.com/pay/api/android/guides/tutorial?hl=ru
+
+   В запросе на получение токена обязательно указать информацию как указано ниже
+
+   .put("merchantInfo", JSONObject().put("merchantName", "AirbaPay"))
+
+   .put("parameters", JSONObject(mapOf(
+   "gateway" to gateway,
+   "gatewayMerchantId" to gatewayMerchantId
+   )))
+
+3) Далее вызвать
+
+```
+googlePayViewModel.processingWalletExternal(
+        activity = activity,
+        coroutineScope = coroutineScope!!,
+        googlePayToken = googlePayToken
+) 
+```
+
+```processingWalletExternal(~)```
+
+| Параметр       | Тип            | Обязательный | Описание                      |
+|----------------|----------------|--------------|-------------------------------|
+| googlePayToken | String         | да           | Токен, полученный из гугл пэй |
+| activity       | Activity       | да           | Активити                      |
+| coroutineScope | CoroutineScope | да           | CoroutineScope                |
+
+
 
 ## 1.5 Рекомендация в случае интеграции в flutter
 

@@ -107,7 +107,7 @@ class AirbaPaySdk {
             DataHolder.isGooglePayNative = isGooglePayNative
             DataHolder.hideInternalGooglePayButton = hideInternalGooglePayButton
 
-            DataHolder.purchaseAmount = purchaseAmount.toString()
+            DataHolder.purchaseAmount = purchaseAmount
             DataHolder.orderNumber = orderNumber
             DataHolder.invoiceId = invoiceId
             DataHolder.goods = goods

@@ -116,7 +116,7 @@ internal fun EnterCvvBottomSheet(
 
 
             ViewButton(
-                title = "${payAmount()} ${getMoneyFormatted(DataHolder.purchaseAmount)}",
+                title = "${payAmount()} ${getMoneyFormatted(DataHolder.purchaseAmount.toString())}",
                 actionClick = {
                     if (cvvText.value.text.length in 3..4) {
                         cvvError.value = null

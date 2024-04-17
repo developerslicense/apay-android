@@ -139,34 +139,15 @@ class TestActivity : ComponentActivity() {
                             startActivity(
                                 Intent(
                                     this@TestActivity,
-                                    TestComposeGooglePayExternalActivity::class.java
+                                    TestGooglePayExternalActivity::class.java
                                 )
                             )
                         }
                     )
                     {
-                        Text("Открыть внешний тестовый GooglePay Compose")
+                        Text("Открыть внешний тестовый GooglePay")
                     }
 
-                    Button(
-                        modifier = Modifier
-                            .padding(top = 20.dp, bottom = 20.dp)
-                            .fillMaxWidth()
-                            .padding(horizontal = 50.dp),
-                        onClick = {
-                            initTestSdk(this@TestActivity)
-
-                            startActivity(
-                                Intent(
-                                    this@TestActivity,
-                                    TestXmlGooglePayActivity::class.java
-                                )
-                            )
-                        }
-                    )
-                    {
-                        Text("Открыть внешний тестовый GooglePay Xml")
-                    }
 
                     SwitchedView("AutoCharge 0 (off) / 1 (on)", autoCharge)
                     SwitchedView("Включить GooglePay", featureGooglePay)

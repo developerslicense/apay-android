@@ -9,7 +9,7 @@ import kz.airbapay.apay_android.data.constant.ErrorsCode
 import kz.airbapay.apay_android.data.utils.DataHolder
 import kz.airbapay.apay_android.data.utils.openErrorPageWithCondition
 
-class AirbaPayBaseGooglePay(
+internal class AirbaPayBaseGooglePay(
     val activity: ComponentActivity
 ) {
 
@@ -21,13 +21,15 @@ class AirbaPayBaseGooglePay(
         when (taskResult.status.statusCode) {
             CommonStatusCodes.SUCCESS -> {
                 taskResult.result!!.let {
-                    Log.i("Google Pay result:", it.toJson())
+                    if (!DataHolder.isProd || DataHolder.enabledLogsForProd) {
+                        Log.i("Google Pay result:", it.toJson())
+                    }
                     paymentModel?.setLoadingState(true)
                     paymentModel?.setPaymentData(it)
 //                    val response = Gson().fromJson(it.toJson(), GooglePayTokenResponse::class.java)
 //                    val token = response.paymentMethodData?.tokenizationData?.token ?: ""
 
-                    googlePayViewModel.processingWallet(
+                    googlePayViewModel.processingWalletInternal(
                         activity = activity,
                         googlePayToken = it.toJson()
                     )
@@ -51,17 +53,6 @@ class AirbaPayBaseGooglePay(
 
     init {
         paymentModel = GooglePayCheckoutViewModel(activity.application)
-    }
-
-    fun authGooglePay(
-        onSuccess: () -> Unit,
-        onFailed: () -> Unit
-    ) {
-        googlePayViewModel.auth(
-            activity = activity,
-            onError = onFailed,
-            onSuccess = onSuccess
-        )
     }
 
     fun onResultGooglePay() {

@@ -9,14 +9,13 @@ internal fun initAuth(
     activity: Activity,
     coroutineScope: CoroutineScope,
     onSuccess: () -> Unit,
-    onFailed: () -> Unit,
     onNotSecurity: () -> Unit,
 ) {
     coroutineScope.launch {
         val airbaPayBiometric = AirbaPayBiometric(activity)
         airbaPayBiometric.authenticate(
             onSuccess = onSuccess,
-            onError = onFailed,
+            onError = {},
             onNotSecurity = onNotSecurity
         )
     }
