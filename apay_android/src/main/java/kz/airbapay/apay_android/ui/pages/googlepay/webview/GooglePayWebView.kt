@@ -54,7 +54,6 @@ internal fun GooglePayWebView(
                         onSuccess = {
                             openGooglePayForWebFlow()
                         },
-                        onFailed = {},
                         onNotSecurity = {}
                     )
 

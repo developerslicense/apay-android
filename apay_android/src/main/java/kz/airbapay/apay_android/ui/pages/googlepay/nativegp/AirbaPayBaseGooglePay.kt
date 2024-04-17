@@ -6,10 +6,11 @@ import com.google.android.gms.common.api.CommonStatusCodes
 import com.google.android.gms.wallet.AutoResolveHelper
 import com.google.android.gms.wallet.contract.TaskResultContracts.GetPaymentDataResult
 import kz.airbapay.apay_android.data.constant.ErrorsCode
+import kz.airbapay.apay_android.data.model.GooglePayMerchantResponse
 import kz.airbapay.apay_android.data.utils.DataHolder
 import kz.airbapay.apay_android.data.utils.openErrorPageWithCondition
 
-class AirbaPayBaseGooglePay(
+internal class AirbaPayBaseGooglePay(
     val activity: ComponentActivity
 ) {
 
@@ -21,13 +22,15 @@ class AirbaPayBaseGooglePay(
         when (taskResult.status.statusCode) {
             CommonStatusCodes.SUCCESS -> {
                 taskResult.result!!.let {
-                    Log.i("Google Pay result:", it.toJson())
+                    if (!DataHolder.isProd || DataHolder.enabledLogsForProd) {
+                        Log.i("Google Pay result:", it.toJson())
+                    }
                     paymentModel?.setLoadingState(true)
                     paymentModel?.setPaymentData(it)
 //                    val response = Gson().fromJson(it.toJson(), GooglePayTokenResponse::class.java)
 //                    val token = response.paymentMethodData?.tokenizationData?.token ?: ""
 
-                    googlePayViewModel.processingWallet(
+                    googlePayViewModel.processingWalletInternal(
                         activity = activity,
                         googlePayToken = it.toJson()
                     )
@@ -54,7 +57,7 @@ class AirbaPayBaseGooglePay(
     }
 
     fun authGooglePay(
-        onSuccess: () -> Unit,
+        onSuccess: (GooglePayMerchantResponse) -> Unit,
         onFailed: () -> Unit
     ) {
         googlePayViewModel.auth(

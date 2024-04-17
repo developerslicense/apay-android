@@ -25,7 +25,7 @@ import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
 
-object GooglePayUtil {
+internal object GooglePayUtil {
 
     fun createPaymentsClient(context: Context): PaymentsClient {
         val walletOptions = Wallet.WalletOptions.Builder()
@@ -60,10 +60,10 @@ object GooglePayUtil {
                     )
             )
 
+    fun allowedPaymentMethods(): JSONArray = JSONArray().put(cardPaymentMethod())
+
     private fun cardPaymentMethod(): JSONObject = baseCardPaymentMethod()
         .put("tokenizationSpecification", gatewayTokenizationSpecification())
-
-    fun allowedPaymentMethods(): JSONArray = JSONArray().put(cardPaymentMethod())
 
     fun isReadyToPayRequest(): JSONObject? =
         try {

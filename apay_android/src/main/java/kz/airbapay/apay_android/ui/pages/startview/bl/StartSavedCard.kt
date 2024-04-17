@@ -31,7 +31,6 @@ internal fun checkNeedCvv(
                 initAuth(
                     activity = activity,
                     coroutineScope = coroutineScope,
-                    onFailed = {},
                     onSuccess = {
                         isLoading?.value = true
                         startSavedCard(

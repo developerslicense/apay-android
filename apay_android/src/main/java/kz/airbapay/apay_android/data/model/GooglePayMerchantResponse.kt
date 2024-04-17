@@ -2,7 +2,7 @@ package kz.airbapay.apay_android.data.model
 
 import com.google.gson.annotations.SerializedName
 
-internal data class GooglePayMerchantResponse(
+data class GooglePayMerchantResponse(
 
 	@field:SerializedName("gateway_merchant_id")
 	val gatewayMerchantId: String? = null,
