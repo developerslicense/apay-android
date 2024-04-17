@@ -45,12 +45,8 @@
 
 
         <activity
-            android:name=".ui.pages.test_page.TestComposeGooglePayExternalActivity"
+            android:name=".ui.pages.test_page.TestGooglePayExternalActivity"
             android:screenOrientation="portrait" />
-        <activity
-            android:name=".ui.pages.test_page.TestXmlGooglePayActivity"
-            android:theme="@style/Theme.AppCompat"
-            android:exported="false" />
     </application>
 
 </manifest>

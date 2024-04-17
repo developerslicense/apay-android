@@ -23,7 +23,7 @@ import kz.airbapay.apay_android.ui.pages.googlepay.nativegp.GooglePayUtil
 import kz.airbapay.apay_android.ui.pages.googlepay.nativegp.GooglePayViewModel
 import kz.airbapay.apay_android.ui.ui_components.ProgressBarView
 
-internal class TestComposeGooglePayExternalActivity: ComponentActivity() {
+internal class TestGooglePayExternalActivity: ComponentActivity() {
 
     private val isLoading = mutableStateOf(true)
     private var paymentModel: GooglePayCheckoutViewModel? = null
@@ -32,11 +32,11 @@ internal class TestComposeGooglePayExternalActivity: ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        initTestSdk(this@TestComposeGooglePayExternalActivity)
+        initTestSdk(this@TestGooglePayExternalActivity)
         paymentModel = GooglePayCheckoutViewModel(this.application)
 
         googlePayViewModel.auth(
-            activity = this@TestComposeGooglePayExternalActivity,
+            activity = this@TestGooglePayExternalActivity,
             onSuccess = {
                 isLoading.value = false
                 // needShowGooglePayButton = true
@@ -95,7 +95,7 @@ internal class TestComposeGooglePayExternalActivity: ComponentActivity() {
             CommonStatusCodes.SUCCESS -> {
                 taskResult.result!!.let {
                     googlePayViewModel.processingWalletExternal(
-                        activity = this@TestComposeGooglePayExternalActivity,
+                        activity = this@TestGooglePayExternalActivity,
                         coroutineScope = coroutineScope!!,
                         googlePayToken = it.toJson()
                     )

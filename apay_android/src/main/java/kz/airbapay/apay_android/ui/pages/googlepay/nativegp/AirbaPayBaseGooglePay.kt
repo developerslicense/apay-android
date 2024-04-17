@@ -6,7 +6,6 @@ import com.google.android.gms.common.api.CommonStatusCodes
 import com.google.android.gms.wallet.AutoResolveHelper
 import com.google.android.gms.wallet.contract.TaskResultContracts.GetPaymentDataResult
 import kz.airbapay.apay_android.data.constant.ErrorsCode
-import kz.airbapay.apay_android.data.model.GooglePayMerchantResponse
 import kz.airbapay.apay_android.data.utils.DataHolder
 import kz.airbapay.apay_android.data.utils.openErrorPageWithCondition
 
@@ -54,17 +53,6 @@ internal class AirbaPayBaseGooglePay(
 
     init {
         paymentModel = GooglePayCheckoutViewModel(activity.application)
-    }
-
-    fun authGooglePay(
-        onSuccess: (GooglePayMerchantResponse) -> Unit,
-        onFailed: () -> Unit
-    ) {
-        googlePayViewModel.auth(
-            activity = activity,
-            onError = onFailed,
-            onSuccess = onSuccess
-        )
     }
 
     fun onResultGooglePay() {
