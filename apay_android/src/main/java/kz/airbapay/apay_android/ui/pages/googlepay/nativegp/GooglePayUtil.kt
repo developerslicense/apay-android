@@ -81,7 +81,7 @@ internal object GooglePayUtil {
             .put("apiVersionMinor", 0)
             .put("allowedPaymentMethods", allowedPaymentMethods())
             .put("merchantInfo", JSONObject().put("merchantName", "AirbaPay"))
-            .put("shippingAddressRequired", true)
+            .put("shippingAddressRequired", false)
             .put("transactionInfo", JSONObject()
                 .put("totalPrice", price)
                 .put("totalPriceStatus", "FINAL")
