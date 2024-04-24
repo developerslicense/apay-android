@@ -94,8 +94,8 @@ private fun initOkHttpBuilder(
         sslSocketFactory(sslSocketFactory, trustAllCerts[0] as X509TrustManager)
         hostnameVerifier { _, _ -> true }
         connectTimeout(10L, TimeUnit.SECONDS)
-        readTimeout(60L, TimeUnit.SECONDS)
-        writeTimeout(60L, TimeUnit.SECONDS)
+        readTimeout(300L, TimeUnit.SECONDS)
+        writeTimeout(300L, TimeUnit.SECONDS)
         addInterceptor(interceptor)
         httpLoggingInterceptor?.let { addInterceptor(it) }
     }

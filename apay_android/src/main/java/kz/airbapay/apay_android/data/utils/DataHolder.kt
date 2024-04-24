@@ -5,7 +5,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kz.airbapay.apay_android.AirbaPaySdk
 
 internal object DataHolder {
-  const val sdkVersion: String = "1.1.1"
+  const val sdkVersion: String = "1.1.3"
   var baseUrl = ""
 
   var connectTimeout = 60
