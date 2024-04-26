@@ -5,7 +5,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kz.airbapay.apay_android.AirbaPaySdk
 
 internal object DataHolder {
-  const val sdkVersion: String = "1.1.3"
+  const val sdkVersion: String = "1.1.4"
   var baseUrl = ""
 
   var connectTimeout = 60
@@ -54,6 +54,7 @@ internal object DataHolder {
 
   var gateway: String? = null
   var gatewayMerchantId: String? = null
+  var needDisableScreenShot: Boolean = false
 }
 
 object TestAirbaPayStates {

@@ -227,6 +227,7 @@ fun initTestSdk(
             }
             activity.startActivity(Intent(activity, TestActivity::class.java))
             activity.finish()
-        }
+        },
+        needDisableScreenShot = true
     )
 }

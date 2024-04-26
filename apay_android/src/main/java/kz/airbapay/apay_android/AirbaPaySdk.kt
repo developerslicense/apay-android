@@ -70,7 +70,8 @@ class AirbaPaySdk {
             orderNumber: String,
             goods: List<Goods>,
             settlementPayments: List<SettlementPayment>? = null, // параметр, нужный, если несколько айдишников компаний
-            onProcessingResult: ((Activity, Boolean) -> Unit)
+            onProcessingResult: ((Activity, Boolean) -> Unit),
+            needDisableScreenShot: Boolean = false
         ) {
 
             if (colorBrandInversion != null) {
@@ -116,6 +117,7 @@ class AirbaPaySdk {
             DataHolder.purchaseAmountFormatted.value = Money.initLong(purchaseAmount).getFormatted()
 
             DataHolder.frontendCallback = onProcessingResult
+            DataHolder.needDisableScreenShot = needDisableScreenShot
 
             // не переносить
             Repository.initRepositories(context.applicationContext)
