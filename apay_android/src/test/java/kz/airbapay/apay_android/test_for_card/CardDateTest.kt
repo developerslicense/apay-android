@@ -6,6 +6,15 @@ import org.junit.Test
 
 internal class CardDateTest {
 
+    /** здесь может вылетать ошибка в зависимости от месяца нынешнего года и самого года.
+    поэтому, нужно менять год и checkError с checkSuccess в зависимости от того, какой сейчас
+    месяц или год. на момент написания теста это было 4е августа 2023
+    поэтому, были
+    val year = 2024
+    checkError("08", year)
+    и checkSuccess("09", year)*/
+
+
     @Test
     fun dateUtilsValidationTest() {
         isAssert(checkDateValid(null), false)
@@ -55,7 +64,7 @@ internal class CardDateTest {
             checkError("12", i)
         }
 
-        for(i in 24..99) {
+        for(i in 25..99) {
             checkError("00", i)
             checkError("13", i)
             checkError("14", i)
@@ -75,15 +84,9 @@ internal class CardDateTest {
             checkSuccess("12", i)
         }
 
-       /** здесь может вылетать ошибка в зависимости от месяца нынешнего года и самого года.
-         поэтому, нужно менять год и checkError с checkSuccess в зависимости от того, какой сейчас
-         месяц или год. на момент написания теста это было 4е августа 2023
-         поэтому, были
-         val year = 2023
-         checkError("08", year)
-         и checkSuccess("09", year)*/
 
-        val year = 2023
+
+        val year = 2024
         checkError("0", year)
         checkError("00", year)
         checkError("01", year)
@@ -91,9 +94,9 @@ internal class CardDateTest {
         checkError("03", year)
         checkError("04", year)
         checkError("05", year)
-        checkError("06", year)
-        checkError("07", year)
-        checkError("08", year)
+        checkSuccess("06", year)
+        checkSuccess("07", year)
+        checkSuccess("08", year)
         checkSuccess("09", year)
         checkSuccess("10", year)
         checkSuccess("11", year)
