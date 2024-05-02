@@ -36,7 +36,7 @@ internal class Money(
             currency: String = kzt
         ) = Money(
             amount = getNumberClearedWithMaxSymbol(
-                amount = amount,
+                amount = amount
             ).toDouble(),
             currency = currency
         )
@@ -44,9 +44,7 @@ internal class Money(
         fun initMoney(
             amount: Money,
         ) = Money(
-            amount = getNumberClearedWithMaxSymbol(
-                amount = amount.amount.toString(),
-            ).toDouble(),
+            amount = amount.amount,
             currency = amount.currency
         )
 
@@ -59,7 +57,6 @@ internal class Money(
 
 internal fun getMoneyFormatted(amount: String, currency: String = "KZT"): String {
     return try {
-
         val format = NumberFormat.getInstance(Locale("ru"))
         format.currency = Currency.getInstance(currency)
 
@@ -68,15 +65,17 @@ internal fun getMoneyFormatted(amount: String, currency: String = "KZT"): String
 
         var tempAmount = getNumberClearedWithMaxSymbol(amount)
 
-        while (tempAmount.startsWith("0")) {
-            tempAmount = tempAmount.drop(1)
+        if (tempAmount.length > 1) {
+            while (tempAmount.startsWith("0")) {
+                tempAmount = tempAmount.drop(1)
+            }
         }
 
         val amountNumberFormatted = format.format(tempAmount.toDouble())
         replaceCurrencyIso4217(amountNumberFormatted, currency)
     } catch (e: Exception) {
         e.printStackTrace()
-        "0 $kzt"
+        "0.0 $kzt"
     }
 }
 
@@ -93,7 +92,7 @@ internal fun getMoneyFormatted(amount: Double, currency: String = "KZT"): String
         replaceCurrencyIso4217(amountNumberFormatted, currency)
     } catch (e: Exception) {
         e.printStackTrace()
-        "0 $kzt"
+        "0.0 $kzt"
     }
 }
 
