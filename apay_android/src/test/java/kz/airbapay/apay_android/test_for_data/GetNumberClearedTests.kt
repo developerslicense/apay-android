@@ -20,11 +20,11 @@ class GetNumberClearedTests {
     @Test
     fun testsGetNumberCleared() {
 
-        isAssert(testGetNumberCleared("±§!@#\$&*:[]`~%^&100000.0"), "100000")
-        isAssert(testGetNumberCleared("100000&*()^.0"), "100000")
-        isAssert(testGetNumberCleared("100000&*()^,0"), "100000")
-        isAssert(testGetNumberCleared("100000&*()^.00"), "100000")
-        isAssert(testGetNumberCleared("100000&*()^,00"), "100000")
+        isAssert(testGetNumberCleared("±§!@#\$&*:[]`~%^&100000.0"), "100000.0")
+        isAssert(testGetNumberCleared("100000&*()^.0"), "100000.0")
+        isAssert(testGetNumberCleared("100000&*()^,01"), "100000.01")
+        isAssert(testGetNumberCleared("100000&*()^.00"), "100000.00")
+        isAssert(testGetNumberCleared("100000&*()^,00"), "100000.00")
         isAssert(testGetNumberCleared("100000&*()^"), "100000")
         isAssert(testGetNumberCleared("1000&*()^00"), "100000")
 
@@ -32,10 +32,10 @@ class GetNumberClearedTests {
             testGetNumberCleared("±§!@#\$&*:[]`~%^&1000000", isUserEntered = true),
             "1000000"
         )
-        isAssert(testGetNumberCleared("100000&*()^.0", isUserEntered = true), "1000000")
-        isAssert(testGetNumberCleared("100000&*()^,0", isUserEntered = true), "1000000")
-        isAssert(testGetNumberCleared("100000&*()^.00", isUserEntered = true), "10000000")
-        isAssert(testGetNumberCleared("100000&*()^,00", isUserEntered = true), "10000000")
+        isAssert(testGetNumberCleared("100000&*()^.0", isUserEntered = true), "100000.0")
+        isAssert(testGetNumberCleared("100000&*()^,0", isUserEntered = true), "100000.0")
+        isAssert(testGetNumberCleared("100000&*()^.00", isUserEntered = true), "100000.00")
+        isAssert(testGetNumberCleared("100000&*()^,00", isUserEntered = true), "100000.00")
         isAssert(testGetNumberCleared("100000&*()^", isUserEntered = true), "100000")
         isAssert(testGetNumberCleared("1000&*()^00", isUserEntered = true), "100000")
 
@@ -45,29 +45,25 @@ class GetNumberClearedTests {
             "1234567890"
         )
 
-        testWithMinus()
-    }
-
-    private fun testWithMinus() {
         isAssert(testGetNumberCleared("-100000"), "-100000")
         isAssert(testGetNumberCleared("--100000"), "-100000")
         isAssert(testGetNumberCleared("--100-000"), "-100000")
-        isAssert(testGetNumberCleared("-100000.0"), "-100000")
+        isAssert(testGetNumberCleared("-100000.0"), "-100000.0")
         isAssert(testGetNumberCleared("-1000zXьЛ00"), "-100000")
         isAssert(testGetNumberCleared("1-000zXьЛ00"), "100000")
         isAssert(testGetNumberCleared("1000-zXьЛ00"), "100000")
         isAssert(testGetNumberCleared("1000zXьЛ-00"), "100000")
         isAssert(testGetNumberCleared("1000zXьЛ00-"), "100000")
         isAssert(testGetNumberCleared("1000zXьЛ00.-"), "100000")
-        isAssert(testGetNumberCleared("1000zXьЛ00.-0"), "100000")
-        isAssert(testGetNumberCleared("1000zXьЛ00.-00"), "100000")
-        isAssert(testGetNumberCleared("1000zXьЛ00.-0-0"), "100000")
-        isAssert(testGetNumberCleared("-1000zXьЛ00.-0-0"), "-100000")
+        isAssert(testGetNumberCleared("1000zXьЛ00.-0"), "100000.0")
+        isAssert(testGetNumberCleared("1000zXьЛ00.-00"), "100000.00")
+        isAssert(testGetNumberCleared("1000zXьЛ00.-0-0"), "100000.00")
+        isAssert(testGetNumberCleared("-1000zXьЛ00.-0-1"), "-100000.01")
 
         isAssert(testGetNumberCleared("-100000", isUserEntered = true), "100000")
         isAssert(testGetNumberCleared("--100000", isUserEntered = true), "100000")
         isAssert(testGetNumberCleared("--100-000", isUserEntered = true), "100000")
-        isAssert(testGetNumberCleared("-100000.0", isUserEntered = true), "1000000")
+        isAssert(testGetNumberCleared("-100000.0", isUserEntered = true), "100000.0")
         isAssert(testGetNumberCleared("-1000zXьЛ00", isUserEntered = true), "100000")
         isAssert(testGetNumberCleared("1-000zXьЛ00", isUserEntered = true), "100000")
         isAssert(testGetNumberCleared("1000-zXьЛ00", isUserEntered = true), "100000")
@@ -76,19 +72,19 @@ class GetNumberClearedTests {
         isAssert(testGetNumberCleared("1000zXьЛ00.-", isUserEntered = true), "100000")
         isAssert(
             testGetNumberCleared("1000zXьЛ00.-0", isUserEntered = true),
-            "1000000"
+            "100000.0"
         )
         isAssert(
             testGetNumberCleared("1000zXьЛ00.-00", isUserEntered = true),
-            "10000000"
+            "100000.00"
         )
         isAssert(
             testGetNumberCleared("1000zXьЛ00.-0-0", isUserEntered = true),
-            "10000000"
+            "100000.00"
         )
         isAssert(
             testGetNumberCleared("-1000zXьЛ00.-0-0", isUserEntered = true),
-            "10000000"
+            "100000.00"
         )
 
     }
