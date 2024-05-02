@@ -57,12 +57,12 @@ private fun clearNumberForLocale(
         }
     }
 
-    if (!isUserEntered && amount.startsWith("-")) {
-        amountLocaleCleaned = "-$amountLocaleCleaned"
+    if (amountLocaleCleaned.endsWith(".") || amountLocaleCleaned.endsWith(",")) {
+        amountLocaleCleaned = amountLocaleCleaned.dropLast(1)
     }
 
-    if (isUserEntered) {
-        amountLocaleCleaned = amountLocaleCleaned.replace(".", "")
+    if (!isUserEntered && amount.startsWith("-")) {
+        amountLocaleCleaned = "-$amountLocaleCleaned"
     }
 
     return amountLocaleCleaned
