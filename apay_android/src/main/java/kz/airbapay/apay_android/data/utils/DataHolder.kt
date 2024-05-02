@@ -17,7 +17,7 @@ internal object DataHolder {
 
   var bankCode: String? = null
   var accessToken: String? = null
-  var purchaseAmount: Long = 0
+  var purchaseAmount: Double = 0.0
   var orderNumber = ""
   var invoiceId = ""
   var shopId = ""

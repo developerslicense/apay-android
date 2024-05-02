@@ -44,7 +44,7 @@ internal class PaymentsRepository(
 
         val param = HashMap<String, Any?>().apply {
             put("account_id", DataHolder.accountId)
-            put("amount", DataHolder.purchaseAmount.toDouble())
+            put("amount", DataHolder.purchaseAmount)
             put("cart", cart)
             put("currency", "KZT")
             put("description", "description")

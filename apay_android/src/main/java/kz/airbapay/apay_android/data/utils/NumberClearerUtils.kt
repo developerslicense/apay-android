@@ -45,7 +45,7 @@ private fun clearNumberForLocale(
         }
     }
 
-    var amountLocaleCleaned = amount.replace(regex, "").replace(",", ".") ?: "0"
+    var amountLocaleCleaned = amount.replace(regex, "").replace(",", ".")
 
     val comas = amountLocaleCleaned.split(".")
 

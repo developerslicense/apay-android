@@ -90,7 +90,7 @@ class GooglePayCheckoutViewModel(application: Application) : AndroidViewModel(ap
      * @return a [Task] with the payment information.
      * @see [PaymentDataRequest](https://developers.google.com/android/reference/com/google/android/gms/wallet/PaymentsClient#loadPaymentData(com.google.android.gms.wallet.PaymentDataRequest)
     ) */
-    fun getLoadPaymentDataTask(price: Long): Task<PaymentData> {
+    fun getLoadPaymentDataTask(price: Double): Task<PaymentData> {
         val paymentDataRequestJson = GooglePayUtil.getPaymentDataRequest(price.toString())
         val request = PaymentDataRequest.fromJson(paymentDataRequestJson.toString())
         return paymentsClient.loadPaymentData(request)

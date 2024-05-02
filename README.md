@@ -36,7 +36,7 @@
 | colorBrandInversion         | androidx.compose.ui.graphics.Color  | нет          | Цвет текста у кнопок с брендовым цветом                                                                                                                                                              |
 | autoCharge                  | Int                                 | нет          | Автоматическое подтверждение при 2х-стадийном режиме 0 - нет, 1 - да                                                                                                                                 |
 | enabledLogsForProd          | Boolean                             | нет          | Флаг для включения логов                                                                                                                                                                             |
-| purchaseAmount              | Long                                | да           | Сумма платежа                                                                                                                                                                                        |
+| purchaseAmount              | Double                              | да           | Сумма платежа                                                                                                                                                                                        |
 | invoiceId                   | String                              | да           | ID платежа в системе магазина                                                                                                                                                                        | 
 | orderNumber                 | String                              | да           | Номер заказа в системе магазина                                                                                                                                                                      |
 | goods                       | List<AirbaPaySdk.Goods>             | да           | Список продуктов для оплаты                                                                                                                                                                          |
@@ -63,7 +63,7 @@
 
        val settlementPayment = listOf(
            AirbaPaySdk.SettlementPayment(
-               amount = 1000,
+               amount = 1000.0,
                companyId = "test_id"
            )
        )
@@ -81,7 +81,7 @@ AirbaPaySdk.initSdk(
     successCallback = "https://site.kz/success-clb",                
     userEmail = "test@test.com", 
     colorBrandMain = Color.Red,
-    purchaseAmount = 1000,
+    purchaseAmount = 1000.0,
     invoiceId = invoiceId,
     orderNumber = orderNumber,
     goods = goods,
@@ -348,7 +348,7 @@ class FlutterAirbaPayActivity : AppCompatActivity() {
             successCallback = "https://site.kz/success-clb",
             userEmail = "test@test.com",
             accountId = "1000000000",
-            purchaseAmount = 1500L,
+            purchaseAmount = 1500.0,
             invoiceId = someInvoiceId.toString(),
             orderNumber = someOrderId.toString(),
             goods = goods,
