@@ -17,6 +17,13 @@ internal fun isAssert(
 }
 
 internal fun isAssert(
+    actual: Double?,
+    expected: Double
+) {
+    assertEquals(expected, actual)
+}
+
+internal fun isAssert(
     actual: Long?,
     expected: String
 ) {

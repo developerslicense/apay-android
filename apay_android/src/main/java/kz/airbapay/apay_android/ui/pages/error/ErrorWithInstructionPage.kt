@@ -128,8 +128,8 @@ internal fun ErrorWithInstructionPage(
                 .padding(horizontal = 16.dp)
                 .constrainAs(playerRef) {
                     top.linkTo(text3Ref.bottom, margin = 16.dp)
-                    start.linkTo(parent.start, margin = 16.dp)
-                    end.linkTo(parent.end, margin = 16.dp)
+                    start.linkTo(parent.start)
+                    end.linkTo(parent.end)
                 }
         ) {
             VideoPlayerPage(faqUrl)

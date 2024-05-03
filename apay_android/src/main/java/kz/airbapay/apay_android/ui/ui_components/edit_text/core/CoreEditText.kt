@@ -76,7 +76,7 @@ internal fun CoreEditText(
         visualTransformation = visualTransformation ?: VisualTransformation.None,
         colors = TextFieldDefaults.outlinedTextFieldColors(
             backgroundColor = if (isError) ColorsSdk.stateBgError else ColorsSdk.bgBlock,
-            textColor = if (isError) ColorsSdk.stateError else ColorsSdk.textMain,
+            textColor = ColorsSdk.textMain,
             focusedLabelColor = if (isError) ColorsSdk.stateError else ColorsSdk.colorBrand,
             unfocusedLabelColor = if (isError) ColorsSdk.stateError else ColorsSdk.textLight,
             focusedBorderColor = ColorsSdk.transparent,

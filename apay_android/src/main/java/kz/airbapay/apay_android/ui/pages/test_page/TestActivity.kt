@@ -188,11 +188,11 @@ fun initTestSdk(
 
     val settlementPayment = listOf(
         AirbaPaySdk.SettlementPayment(
-            amount = 1000,
+            amount = 1000.0,
             companyId = "210840019439"
         ),
         AirbaPaySdk.SettlementPayment(
-            amount = 500,
+            amount = 500.45,
             companyId = "254353"
         )
     )
@@ -213,7 +213,7 @@ fun initTestSdk(
         colorBrandMain = Color(0xFFFC6B3F),
         autoCharge = 0,
         hideInternalGooglePayButton = false,
-        purchaseAmount = 1500,
+        purchaseAmount = 1500.45,
         isGooglePayNative = true,
         invoiceId = someInvoiceId.toString(),
         orderNumber = someOrderNumber.toString(),
@@ -228,6 +228,6 @@ fun initTestSdk(
             activity.startActivity(Intent(activity, TestActivity::class.java))
             activity.finish()
         },
-        needDisableScreenShot = true
+        needDisableScreenShot = false
     )
 }

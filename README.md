@@ -2,13 +2,15 @@
 
 ## 1.1 Подключение sdk
 
-## 1.2 Вызов стартовой формы
+## 1.2 Настройки PROGUARD
 
-## 1.3 Подключение нативного GooglePay
+## 1.3 Вызов стартовой формы
 
-## 1.4 Подключение API внешнего взаимодействия с GooglePay
+## 1.4 Подключение нативного GooglePay
 
-## 1.5 Рекомендация в случае интеграции в flutter
+## 1.5 Подключение API внешнего взаимодействия с GooglePay
+
+## 1.6 Рекомендация в случае интеграции в flutter
 
 
 
@@ -36,7 +38,7 @@
 | colorBrandInversion         | androidx.compose.ui.graphics.Color  | нет          | Цвет текста у кнопок с брендовым цветом                                                                                                                                                              |
 | autoCharge                  | Int                                 | нет          | Автоматическое подтверждение при 2х-стадийном режиме 0 - нет, 1 - да                                                                                                                                 |
 | enabledLogsForProd          | Boolean                             | нет          | Флаг для включения логов                                                                                                                                                                             |
-| purchaseAmount              | Long                                | да           | Сумма платежа                                                                                                                                                                                        |
+| purchaseAmount              | Double                              | да           | Сумма платежа                                                                                                                                                                                        |
 | invoiceId                   | String                              | да           | ID платежа в системе магазина                                                                                                                                                                        | 
 | orderNumber                 | String                              | да           | Номер заказа в системе магазина                                                                                                                                                                      |
 | goods                       | List<AirbaPaySdk.Goods>             | да           | Список продуктов для оплаты                                                                                                                                                                          |
@@ -63,7 +65,7 @@
 
        val settlementPayment = listOf(
            AirbaPaySdk.SettlementPayment(
-               amount = 1000,
+               amount = 1000.0,
                companyId = "test_id"
            )
        )
@@ -81,7 +83,7 @@ AirbaPaySdk.initSdk(
     successCallback = "https://site.kz/success-clb",                
     userEmail = "test@test.com", 
     colorBrandMain = Color.Red,
-    purchaseAmount = 1000,
+    purchaseAmount = 1000.0,
     invoiceId = invoiceId,
     orderNumber = orderNumber,
     goods = goods,
@@ -99,7 +101,62 @@ AirbaPaySdk.initSdk(
 
 ```
 
-## 1.2 Вызов стартовой формы
+## 1.2 Настройки PROGUARD
+
+В случае, если используется Proguard, нужно добавить настройки
+```
+# Retrofit does reflection on generic parameters. InnerClasses is required to use Signature and
+# EnclosingMethod is required to use InnerClasses.
+-keepattributes Signature, InnerClasses, EnclosingMethod
+
+# Retrofit does reflection on method and parameter annotations.
+-keepattributes RuntimeVisibleAnnotations, RuntimeVisibleParameterAnnotations
+
+# Keep annotation default values (e.g., retrofit2.http.Field.encoded).
+-keepattributes AnnotationDefault
+
+# Retain service method parameters when optimizing.
+-keepclassmembers,allowshrinking,allowobfuscation interface * {
+    @retrofit2.http.* <methods>;
+}
+
+# Ignore annotation used for build tooling.
+-dontwarn org.codehaus.mojo.animal_sniffer.IgnoreJRERequirement
+
+# Ignore JSR 305 annotations for embedding nullability information.
+-dontwarn javax.annotation.**
+
+# Guarded by a NoClassDefFoundError try/catch and only used when on the classpath.
+-dontwarn kotlin.Unit
+
+# Top-level functions that can only be used by Kotlin.
+-dontwarn retrofit2.KotlinExtensions
+-dontwarn retrofit2.KotlinExtensions$*
+
+# With R8 full mode, it sees no subtypes of Retrofit interfaces since they are created with a Proxy
+# and replaces all potential values with null. Explicitly keeping the interfaces prevents this.
+-if interface * { @retrofit2.http.* <methods>; }
+-keep,allowobfuscation interface <1>
+
+# Keep inherited services.
+-if interface * { @retrofit2.http.* <methods>; }
+-keep,allowobfuscation interface * extends <1>
+
+# With R8 full mode generic signatures are stripped for classes that are not
+# kept. Suspend functions are wrapped in continuations where the type argument
+# is used.
+-keep,allowobfuscation,allowshrinking class kotlin.coroutines.Continuation
+
+# R8 full mode strips generic signatures from return types if not kept.
+-if interface * { @retrofit2.http.* public *** *(...); }
+-keep,allowoptimization,allowshrinking,allowobfuscation class <3>
+
+# With R8 full mode generic signatures are stripped for classes that are not kept.
+-keep,allowobfuscation,allowshrinking class retrofit2.Response
+```
+
+
+## 1.3 Вызов стартовой формы
 
 Открытие формы AirbaPay выполняется через  ```AirbaPaySdk.startAirbaPay() ```.
 
@@ -165,7 +222,7 @@ dependencies {
 }
  ```
 
-## 1.3 Подключение нативного GooglePay
+## 1.4 Подключение нативного GooglePay
 
 1) Изменить параметр isGooglePayNative в initSdk на true
 
@@ -184,7 +241,7 @@ dependencies {
    требованиям), нужно будет ответить на письмо гугла, что вы используете стороннее решение компании
    Airba Pay
 
-## 1.4 Подключение API внешнего взаимодействия с GooglePay
+## 1.5 Подключение API внешнего взаимодействия с GooglePay
 
 1) Добавить ```val googlePayViewModel = GooglePayViewModel()``` 
 
@@ -256,7 +313,7 @@ googlePayViewModel.processingWalletExternal(
 
 
 
-## 1.5 Рекомендация в случае интеграции в flutter
+## 1.6 Рекомендация в случае интеграции в flutter
 
 В dart добавьте:
 
@@ -348,7 +405,7 @@ class FlutterAirbaPayActivity : AppCompatActivity() {
             successCallback = "https://site.kz/success-clb",
             userEmail = "test@test.com",
             accountId = "1000000000",
-            purchaseAmount = 1500L,
+            purchaseAmount = 1500.0,
             invoiceId = someInvoiceId.toString(),
             orderNumber = someOrderId.toString(),
             goods = goods,

@@ -8,7 +8,7 @@ import java.util.Locale
 
 // тесты в MoneyTests
 internal class Money(
-    val amount: Long = 0,
+    val amount: Double = 0.0,
     val currency: String = kzt
 ) {
 
@@ -19,7 +19,7 @@ internal class Money(
         ) = Money(
             amount = getNumberClearedWithMaxSymbol(
                 amount = amount.toString(),
-            ).toLong(),
+            ).toDouble(),
             currency = currency
         )
 
@@ -27,9 +27,7 @@ internal class Money(
             amount: Double,
             currency: String = kzt
         ) = Money(
-            amount = getNumberClearedWithMaxSymbol(
-                amount = amount.toLong().toString(),
-            ).toLong(),
+            amount = amount,
             currency = currency
         )
 
@@ -38,47 +36,63 @@ internal class Money(
             currency: String = kzt
         ) = Money(
             amount = getNumberClearedWithMaxSymbol(
-                amount = amount,
-            ).toLong(),
+                amount = amount
+            ).toDouble(),
             currency = currency
         )
 
         fun initMoney(
             amount: Money,
         ) = Money(
-            amount = getNumberClearedWithMaxSymbol(
-                amount = amount.amount.toString(),
-            ).toLong(),
+            amount = amount.amount,
             currency = amount.currency
         )
 
     }
 
     fun getFormatted(): String {
-        return getMoneyFormatted(amount.toString());
+        return getMoneyFormatted(amount)
     }
 }
 
 internal fun getMoneyFormatted(amount: String, currency: String = "KZT"): String {
+    return try {
+        val format = NumberFormat.getInstance(Locale("ru"))
+        format.currency = Currency.getInstance(currency)
+
+        format.minimumFractionDigits = 0
+        format.maximumFractionDigits = 2
+
+        var tempAmount = getNumberClearedWithMaxSymbol(amount)
+
+        if (tempAmount.length > 1) {
+            while (tempAmount.startsWith("0")) {
+                tempAmount = tempAmount.drop(1)
+            }
+        }
+
+        val amountNumberFormatted = format.format(tempAmount.toDouble())
+        replaceCurrencyIso4217(amountNumberFormatted, currency)
+    } catch (e: Exception) {
+        e.printStackTrace()
+        "0.0 $kzt"
+    }
+}
+
+internal fun getMoneyFormatted(amount: Double, currency: String = "KZT"): String {
     return try {
 
         val format = NumberFormat.getInstance(Locale("ru"))
         format.currency = Currency.getInstance(currency)
 
         format.minimumFractionDigits = 0
-        format.maximumFractionDigits = 0 // отключил десятичные. было значение 2
+        format.maximumFractionDigits = 2
 
-        var tempAmount = getNumberClearedWithMaxSymbol(amount)
-
-        while (tempAmount.startsWith("0")) {
-            tempAmount = tempAmount.drop(1)
-        }
-
-        val amountNumberFormatted = format.format(tempAmount.toLong())
+        val amountNumberFormatted = format.format(amount)
         replaceCurrencyIso4217(amountNumberFormatted, currency)
     } catch (e: Exception) {
-//        e.printStackTrace()
-        "0 $kzt"
+        e.printStackTrace()
+        "0.0 $kzt"
     }
 }
 

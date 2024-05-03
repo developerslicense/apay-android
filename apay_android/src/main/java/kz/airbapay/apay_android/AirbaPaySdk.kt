@@ -37,7 +37,7 @@ class AirbaPaySdk {
 
     class SettlementPayment(
         @SerializedName("amount")
-        val amount: Long,
+        val amount: Double,
 
         @SerializedName("company_id")
         val companyId: String?
@@ -65,7 +65,7 @@ class AirbaPaySdk {
             enabledLogsForProd: Boolean = false,
             isGooglePayNative: Boolean = false,
             hideInternalGooglePayButton: Boolean = false,
-            purchaseAmount: Long,
+            purchaseAmount: Double,
             invoiceId: String,
             orderNumber: String,
             goods: List<Goods>,
@@ -114,7 +114,7 @@ class AirbaPaySdk {
             DataHolder.goods = goods
             DataHolder.settlementPayments = settlementPayments
 
-            DataHolder.purchaseAmountFormatted.value = Money.initLong(purchaseAmount).getFormatted()
+            DataHolder.purchaseAmountFormatted.value = Money.initDouble(purchaseAmount).getFormatted()
 
             DataHolder.frontendCallback = onProcessingResult
             DataHolder.needDisableScreenShot = needDisableScreenShot

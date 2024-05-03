@@ -66,7 +66,7 @@ internal fun subtitleBold() = TextStyle(
 
 internal fun semiBold() = TextStyle(
     color = ColorsSdk.textMain,
-    fontFamily = regular,
+    fontFamily = semibold,
     fontWeight = FontWeight.W600,
     fontSize = 14.sp,
     lineHeight = 22.sp

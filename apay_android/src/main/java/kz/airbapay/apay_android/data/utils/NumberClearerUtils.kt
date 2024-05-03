@@ -17,7 +17,7 @@ internal fun getNumberClearedWithMaxSymbol(
     amount: String?,
     isUserEntered: Boolean = false,
     isPhoneNumber: Boolean = false,
-    maxSize: Int = 10
+    maxSize: Int = 15
 ): String {
     val amountLocaleCleaned = clearNumberForLocale(amount, isUserEntered, isPhoneNumber)
     return clearNumberMaxSymbols(
@@ -45,11 +45,11 @@ private fun clearNumberForLocale(
         }
     }
 
-    var amountLocaleCleaned = amount.replace(regex, "").replace(",", ".") ?: "0"
+    var amountLocaleCleaned = amount.replace(regex, "").replace(",", ".")
 
     val comas = amountLocaleCleaned.split(".")
 
-    if (comas.size > 2) {
+    if (comas.size > 1) {
         try {
             amountLocaleCleaned = "${comas[0]}.${comas[1].ifEmpty { comas[2] }}"
         } catch (e: Exception) {
@@ -57,12 +57,12 @@ private fun clearNumberForLocale(
         }
     }
 
-    if (!isUserEntered && amount.startsWith("-")) {
-        amountLocaleCleaned = "-$amountLocaleCleaned"
+    if (amountLocaleCleaned.endsWith(".") || amountLocaleCleaned.endsWith(",")) {
+        amountLocaleCleaned = amountLocaleCleaned.dropLast(1)
     }
 
-    if (isUserEntered) {
-        amountLocaleCleaned = amountLocaleCleaned.replace(".", "")
+    if (!isUserEntered && amount.startsWith("-")) {
+        amountLocaleCleaned = "-$amountLocaleCleaned"
     }
 
     return amountLocaleCleaned
@@ -73,15 +73,11 @@ private fun clearNumberMaxSymbols(
     maxSize: Int = 10,
     needClearMax: Boolean = false
 ): String {
-    val amountSplited = amountLocaleCleaned
-        .split(".")
-        .get(0)
-        .split(",")
 
-    return if (needClearMax && amountSplited[0].length > maxSize) {
-        amountSplited[0].substring(0, maxSize)
+    return if (needClearMax && amountLocaleCleaned.length > maxSize) {
+        amountLocaleCleaned.substring(0, maxSize)
 
     } else {
-        amountSplited[0]
+        amountLocaleCleaned
     }
 }
