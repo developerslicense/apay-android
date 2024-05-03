@@ -3,9 +3,9 @@ package kz.airbapay.apay_android.ui.ui_components.edit_text.core
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
@@ -17,6 +17,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.res.painterResource
@@ -150,36 +151,38 @@ private fun ConstraintLayoutScope.InitIconEnd(
     clearIconRef: ConstrainedLayoutReference
 ) {
 
-    if (
-        text.isNotBlank()
-        && hasFocus
-        && !isCardNumberMask
-    ) {
-        InitActionIcon(
-            action = actionClickClear,
-            iconSrc = R.drawable.ic_close,
-            modifier = Modifier
-                .size(40.dp)
-                .constrainAs(clearIconRef) {
-                    end.linkTo(parent.end)
-                    top.linkTo(parent.top)
-                    bottom.linkTo(parent.bottom)
-                },
-            _outlinedButtonColor = if (isError) ColorsSdk.stateBgError else ColorsSdk.bgBlock
-        )
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .height(40.dp)
+            .padding(horizontal = 10.dp)
+            .constrainAs(clearIconRef) {
+                end.linkTo(parent.end)
+                top.linkTo(parent.top)
+                bottom.linkTo(parent.bottom)
+            }
 
-    } else if (isCardNumberMask) {
-        InitActionIcon(
-            action = { actionClickScanCard?.invoke() },
-            iconSrc = R.drawable.ic_card_scanner,
-            modifier = Modifier
-                .size(40.dp)
-                .constrainAs(clearIconRef) {
-                    end.linkTo(parent.end)
-                    top.linkTo(parent.top)
-                    bottom.linkTo(parent.bottom)
-                },
-            _outlinedButtonColor = if (isError) ColorsSdk.stateBgError else ColorsSdk.bgBlock
-        )
+    ) {
+        if (
+            text.isNotBlank()
+            && hasFocus
+        ) {
+            InitActionIcon(
+                action = actionClickClear,
+                iconSrc = R.drawable.ic_close,
+                modifier = Modifier,
+                _outlinedButtonColor = if (isError) ColorsSdk.stateBgError else ColorsSdk.bgBlock
+            )
+
+        }
+
+        if (isCardNumberMask) {
+            InitActionIcon(
+                action = { actionClickScanCard?.invoke() },
+                iconSrc = R.drawable.ic_card_scanner,
+                modifier = Modifier.padding(start = 10.dp),
+                _outlinedButtonColor = if (isError) ColorsSdk.stateBgError else ColorsSdk.bgBlock
+            )
+        }
     }
 }
