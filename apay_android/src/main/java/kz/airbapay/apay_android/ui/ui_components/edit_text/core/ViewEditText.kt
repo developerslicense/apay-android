@@ -132,7 +132,9 @@ internal fun ViewEditText(
                     style = LocalFonts.current.caption400,
                     text = errorTitle.value!!,
                     color = ColorsSdk.stateError,
-                    modifier = Modifier.padding(vertical = 4.dp)
+                    modifier = Modifier
+                        .padding(vertical = 4.dp)
+                        .padding(start = 6.dp)
                 )
             }
 
