@@ -1,6 +1,5 @@
 package kz.airbapay.apay_android.ui.pages.success
 
-import android.app.Activity
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
@@ -14,7 +13,6 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -48,10 +46,8 @@ internal class SuccessActivity : BaseActivity() {
 
 @Composable
 internal fun SuccessPage() {
-    val activity = LocalContext.current as Activity
-
     BackHandler {
-        activity.backToApp(true)
+        backToApp(true)
     }
 
     ConstraintLayout(
@@ -96,7 +92,7 @@ internal fun SuccessPage() {
 
         ViewButton(
             title = goToMarker(),
-            actionClick = { activity.backToApp(true) },
+            actionClick = { backToApp(true) },
             modifierRoot = Modifier
                 .padding(horizontal = 16.dp)
                 .padding(vertical = 20.dp)

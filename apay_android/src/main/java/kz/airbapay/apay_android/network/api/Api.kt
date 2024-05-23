@@ -25,6 +25,9 @@ internal interface Api {
     @POST("api/v1/auth/sign-in")
     suspend fun auth(@Body param: AuthRequest): Response<AuthResponse>
 
+    @PUT("api/v1/auth/update-token/{paymentId}")
+    suspend fun updateAuth(@Path("paymentId") paymentId: String): Response<AuthResponse>
+
     // cards
 
     @GET("api/v1/cards/{accountId}")
@@ -74,6 +77,9 @@ internal interface Api {
     suspend fun getCvv(
         @Path("cardId") cardId: String
     ): Response<GetCvvResponse>
+
+    @GET("api/v1/payments")
+    suspend fun getPayment(): Response<PaymentEntryResponse>
 
     @GET("api/v1/merchants")
     suspend fun getMerchantInfo(): Response<MerchantsResponse>

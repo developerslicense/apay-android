@@ -13,6 +13,7 @@ internal object Repository {
     var merchantRepository: MerchantsRepository? = null
     var googlePayRepository: GooglePayRepository? = null
     var paymentsRepository: PaymentsRepository? = null
+    var createPaymentsRepository: CreatePaymentRepository? = null
 
     var logglyRepository: LogglyRepository? = null
 
@@ -29,6 +30,7 @@ internal object Repository {
         cardRepository = CardRepository(api)
         googlePayRepository = GooglePayRepository(api)
         paymentsRepository = PaymentsRepository(api)
+        createPaymentsRepository = CreatePaymentRepository(api)
         merchantRepository = MerchantsRepository(api)
 
         logglyRepository = LogglyRepository(logglyApi)

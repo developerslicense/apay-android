@@ -22,12 +22,14 @@ internal fun checkNeedCvv(
     Repository.paymentsRepository?.paymentGetCvv(
         cardId = cardId,
         result = {
-            DataHolder.isGooglePayFlow = false
 
-            if (it.requestCvv) {
+            if (it.requestCvv
+                || !DataHolder.renderGlobalSecurityBiometry
+                && DataHolder.renderGlobalSecurityCvv
+            ) {
                 showCvv()
 
-            } else {
+            } else if(DataHolder.renderGlobalSecurityBiometry) {
                 initAuth(
                     activity = activity,
                     coroutineScope = coroutineScope,
@@ -41,8 +43,28 @@ internal fun checkNeedCvv(
                         )
                     },
                     onNotSecurity = {
-                        showCvv()
+                        if(DataHolder.renderGlobalSecurityCvv) {
+                            showCvv()
+
+                        } else {
+                            isLoading?.value = true
+                            startSavedCard(
+                                cardId = cardId,
+                                cvv = null,
+                                isLoading = isLoading,
+                                activity = activity
+                            )
+                        }
                     }
+                )
+
+            } else {
+                isLoading?.value = true
+                startSavedCard(
+                    cardId = cardId,
+                    cvv = null,
+                    isLoading = isLoading,
+                    activity = activity
                 )
             }
         },

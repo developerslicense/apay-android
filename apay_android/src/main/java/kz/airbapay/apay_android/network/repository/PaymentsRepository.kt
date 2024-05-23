@@ -3,7 +3,6 @@ package kz.airbapay.apay_android.network.repository
 import kz.airbapay.apay_android.data.model.GetCvvResponse
 import kz.airbapay.apay_android.data.model.GooglePaymentWallet
 import kz.airbapay.apay_android.data.model.GooglePaymentWalletRequest
-import kz.airbapay.apay_android.data.model.PaymentCreateResponse
 import kz.airbapay.apay_android.data.model.PaymentEntryResponse
 import kz.airbapay.apay_android.data.utils.DataHolder
 import kz.airbapay.apay_android.network.api.Api
@@ -16,68 +15,13 @@ internal class PaymentsRepository(
     private val api: Api
 ) : BaseCoroutine by BaseCoroutineDelegate() {
 
-    fun createPayment( // только один раз вызывается
-        result: (PaymentCreateResponse) -> Unit,
-        error: (Response<*>) -> Unit
-    ) {
-
-        val param = initParamsForCreatePayment()
-
-        launch(
-            paramsForLog = param,
-            requestFlow = {
-                safeApiFlowCall { api.createPayment(param) }
-            },
-            result = { body ->
-                body.body()?.let {
-                    result(it)
-                } ?: error(Unit)
-            },
-            error = error
-        )
-    }
-
-    private fun initParamsForCreatePayment(): HashMap<String, Any?> {
-        val cart = HashMap<String, Any?>().apply {
-            put("goods", DataHolder.goods)
-        }
-
-        val param = HashMap<String, Any?>().apply {
-            put("account_id", DataHolder.accountId)
-            put("amount", DataHolder.purchaseAmount)
-            put("cart", cart)
-            put("currency", "KZT")
-            put("description", "description")
-            if (!DataHolder.userEmail.isNullOrEmpty()) {
-                put("email", DataHolder.userEmail)
-            }
-            put("invoice_id", DataHolder.invoiceId)
-            put("language", DataHolder.currentLang)
-            put("order_number", DataHolder.orderNumber)
-            put("phone", DataHolder.userPhone)
-            put("auto_charge", DataHolder.autoCharge)
-            put("failure_back_url", DataHolder.failureBackUrl)
-            put("failure_callback", DataHolder.failureCallback)
-            put("success_back_url", DataHolder.successBackUrl)
-            put("success_callback", DataHolder.successCallback)
-
-            /** параметр, нужный, если несколько айдишников компаний*/
-            if (!DataHolder.settlementPayments.isNullOrEmpty()) {
-                val settlement = HashMap<String, Any>()
-                settlement["payments"] = DataHolder.settlementPayments!!
-                put("settlement", settlement)
-            }
-        }
-        return param
-    }
-
     fun startPaymentDefault(
         cvv: String,
         expiry: String,
         pan: String,
         cardSave: Boolean,
         result: (PaymentEntryResponse) -> Unit,
-        error: (Response<*>) -> Unit
+        error: (Response<*>?) -> Unit
     ) {
 
         val param = HashMap<String, Any?>().apply {
@@ -113,7 +57,7 @@ internal class PaymentsRepository(
         cardId: String,
         cvv: String?,
         result: (PaymentEntryResponse) -> Unit,
-        error: (Response<*>) -> Unit
+        error: (Response<*>?) -> Unit
     ) {
 
         val param = HashMap<String, Any?>().apply {
@@ -142,8 +86,9 @@ internal class PaymentsRepository(
     fun startPaymentWallet(
         googlePayToken: String,
         result: (PaymentEntryResponse) -> Unit,
-        error: (Response<*>) -> Unit
+        error: (Response<*>?) -> Unit
     ) {
+        DataHolder.isGooglePayFlow = true
 
         val wallet = GooglePaymentWallet(token = googlePayToken)
         val param = GooglePaymentWalletRequest(wallet = wallet)
@@ -166,7 +111,7 @@ internal class PaymentsRepository(
 
     fun paymentAccountEntryRetry(
         result: (PaymentEntryResponse) -> Unit,
-        error: (Response<*>) -> Unit
+        error: (Response<*>?) -> Unit
     ) {
 
         launch(
@@ -187,13 +132,33 @@ internal class PaymentsRepository(
     fun paymentGetCvv(
         cardId: String,
         result: (GetCvvResponse) -> Unit,
-        error: (Response<*>) -> Unit
+        error: (Response<*>?) -> Unit
     ) {
 
         launch(
             requestFlow = {
                 safeApiFlowCall {
                     api.getCvv(cardId)
+                }
+            },
+            result = { body ->
+                body.body()?.let {
+                    result(it)
+                } ?: error(Unit)
+            },
+            error = error
+        )
+    }
+
+    fun paymentGetInfo(
+        result: (PaymentEntryResponse) -> Unit,
+        error: (Response<*>?) -> Unit
+    ) {
+
+        launch(
+            requestFlow = {
+                safeApiFlowCall {
+                    api.getPayment()
                 }
             },
             result = { body ->

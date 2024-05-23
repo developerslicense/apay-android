@@ -33,7 +33,7 @@ internal class BaseInterceptor(
 
         requestBuilder.addHeader(
             "Authorization",
-            if(DataHolder.accessToken.isNullOrBlank()) "" else "Bearer ${DataHolder.accessToken}"
+            if(DataHolder.token.isNullOrBlank()) "" else "Bearer ${DataHolder.token}"
         )
 
         try {

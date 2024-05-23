@@ -1,8 +1,6 @@
 package kz.airbapay.apay_android.ui.pages.startview
 
 import android.app.Activity
-import android.app.KeyguardManager
-import android.content.Context
 import android.os.Bundle
 import android.view.WindowManager
 import androidx.activity.compose.setContent
@@ -31,18 +29,14 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import kotlinx.coroutines.launch
 import kz.airbapay.apay_android.R
-import kz.airbapay.apay_android.data.constant.ErrorsCode
 import kz.airbapay.apay_android.data.constant.cvvInfo
 import kz.airbapay.apay_android.data.constant.paymentByCard
 import kz.airbapay.apay_android.data.model.BankCard
 import kz.airbapay.apay_android.data.utils.DataHolder
 import kz.airbapay.apay_android.data.utils.backToApp
-import kz.airbapay.apay_android.data.utils.openErrorPageWithCondition
 import kz.airbapay.apay_android.data.utils.openGooglePay
 import kz.airbapay.apay_android.data.utils.recomposeHighlighter
 import kz.airbapay.apay_android.network.loggly.Logger
-import kz.airbapay.apay_android.network.repository.Repository
-import kz.airbapay.apay_android.network.repository.startAuth
 import kz.airbapay.apay_android.ui.pages.BaseActivity
 import kz.airbapay.apay_android.ui.pages.googlepay.GPayView
 import kz.airbapay.apay_android.ui.pages.googlepay.nativegp.AirbaPayBaseGooglePay
@@ -81,11 +75,6 @@ internal class StartProcessingActivity : BaseActivity() {
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-        DataHolder.isGooglePayFlow = true
-    }
-
     override fun getPageName() = this.localClassName
 }
 
@@ -103,7 +92,6 @@ internal fun StartProcessingPage(
 
     val coroutineScope = rememberCoroutineScope()
     val activity = LocalContext.current as Activity
-    val keyguardManager = activity.getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager
 
     BackHandler {
         coroutineScope.launch {
@@ -184,19 +172,15 @@ internal fun StartProcessingPage(
 
                     TopInfoView(purchaseAmount.value)
 
-                    if (DataHolder.featureGooglePay
-                        && keyguardManager.isKeyguardSecure
-                    ) {
-                        GPayView(
-                            airbaPayBaseGooglePay = airbaPayBaseGooglePay,
-                            openGooglePayForWebFlow = {
-                                openGooglePay(
-                                    redirectUrl = googlePayRedirectUrl.value,
-                                    activity = activity
-                                )
-                            }
-                        )
-                    }
+                    GPayView(
+                        airbaPayBaseGooglePay = airbaPayBaseGooglePay,
+                        openGooglePayForWebFlow = {
+                            openGooglePay(
+                                redirectUrl = googlePayRedirectUrl.value,
+                                activity = activity
+                            )
+                        }
+                    )
 
                     if (savedCards.value.isNotEmpty()) {
                         InitViewStartProcessingCards(
@@ -235,24 +219,12 @@ internal fun StartProcessingPage(
             LaunchedEffect("CardRepository") {
 
                 launch {
-
-                    startAuth(
-                        authRepository = Repository.authRepository!!,
-                        onError = {
-                            openErrorPageWithCondition(
-                                errorCode = ErrorsCode.error_1.code,
-                                activity = activity
-                            )
-                        },
-                        onSuccess = {
-                            fetchMerchantsWithNextStep(
-                                activity = activity,
-                                googlePayRedirectUrl = googlePayRedirectUrl,
-                                savedCards = savedCards,
-                                selectedCard = selectedCard,
-                                isLoading = isLoading
-                            )
-                        }
+                    fetchMerchantsWithNextStep(
+                        activity = activity,
+                        googlePayRedirectUrl = googlePayRedirectUrl,
+                        savedCards = savedCards,
+                        selectedCard = selectedCard,
+                        isLoading = isLoading
                     )
                 }
             }

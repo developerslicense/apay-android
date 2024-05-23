@@ -20,7 +20,7 @@ internal class TestCardsExternalActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         testInitSdk(
-            context = this@TestCardsExternalActivity,
+            activity = this@TestCardsExternalActivity,
             autoCharge = 0
         )
 

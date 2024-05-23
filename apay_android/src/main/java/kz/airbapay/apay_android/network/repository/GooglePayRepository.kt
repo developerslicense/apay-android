@@ -14,7 +14,7 @@ internal class GooglePayRepository(
 
     fun getGooglePayButton(
         result: (GooglePayButtonResponse) -> Unit,
-        error: (Response<*>) -> Unit
+        error: (Response<*>?) -> Unit
     ) {
         launch(
             requestFlow = {
@@ -33,7 +33,7 @@ internal class GooglePayRepository(
 
     fun getGooglePayMerchant(
         result: (GooglePayMerchantResponse) -> Unit,
-        error: (Response<*>) -> Unit
+        error: (Response<*>?) -> Unit
     ) {
         launch(
             requestFlow = {

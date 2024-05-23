@@ -1,6 +1,5 @@
 package kz.airbapay.apay_android.data.utils
 
-import android.app.Activity
 import kotlinx.coroutines.flow.MutableStateFlow
 import kz.airbapay.apay_android.AirbaPaySdk
 
@@ -15,17 +14,17 @@ internal object DataHolder {
   var isProd = true
   var enabledLogsForProd = false
 
-  var bankCode: String? = null
-  var accessToken: String? = null
   var purchaseAmount: Double = 0.0
   var orderNumber = ""
   var invoiceId = ""
-  var shopId = ""
+
+  var bankCode: String? = null
+  var token: String? = null // todo rename to authToken
+
   var userEmail: String? = null
-  var accountId = ""
   var userPhone = ""
-  var password = ""
-  var terminalId  = ""
+  var accountId: String = ""
+
   const val failureBackUrl = "https://site.kz/failure" // не нужно менять
   const val successBackUrl = "https://site.kz/success"// не нужно менять
   var failureCallback = ""
@@ -33,28 +32,26 @@ internal object DataHolder {
   var autoCharge = 0
   var currentLang = AirbaPaySdk.Lang.RU.lang
 
-  var goods: List<AirbaPaySdk.Goods>? = null
-  var settlementPayments: List<AirbaPaySdk.SettlementPayment>? = null
-
   val purchaseAmountFormatted = MutableStateFlow("")
 
-  var actionOnCloseProcessing: ((activity: Activity, paymentSubmittingResult: Boolean) -> Unit)? = null
+  var actionOnCloseProcessing: ((paymentSubmittingResult: Boolean) -> Unit)? = null
 
-  var openCustomPageSuccess: ((Activity) -> Unit)? = null
-  var openCustomPageFinalError: ((Activity) -> Unit)? = null
-  var featureGooglePay: Boolean = false
-  var featureSavedCards: Boolean = false
-
-  var googlePayButtonUrl: String? = null
-  var isGooglePayFlow: Boolean = true
-
-  var hasSavedCards: Boolean = false
-  var isGooglePayNative: Boolean = false
+  var openCustomPageSuccess: (() -> Unit)? = null
+  var openCustomPageFinalError: (() -> Unit)? = null
 
   var gateway: String? = null
   var gatewayMerchantId: String? = null
+  var googlePayButtonUrl: String? = null
+
+  var isGooglePayFlow: Boolean = true
+  var hasSavedCards: Boolean = false
+
   var needDisableScreenShot: Boolean = false
 
-  var manualDisableFeatureGooglePay: Boolean = false
-  var manualDisableFeatureSavedCards: Boolean = false
+  var isGooglePayNative: Boolean = true
+
+  var renderInStandardFlowGooglePay: Boolean = true
+  var renderInStandardFlowSavedCards: Boolean = true
+  var renderGlobalSecurityCvv: Boolean = true
+  var renderGlobalSecurityBiometry: Boolean = true
 }

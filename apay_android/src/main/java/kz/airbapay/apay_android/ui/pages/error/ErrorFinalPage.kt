@@ -32,7 +32,7 @@ internal fun ErrorFinalPage() {
     val activity = LocalContext.current as Activity
 
     BackHandler {
-        activity.backToApp()
+        backToApp()
     }
 
     ConstraintLayout(
@@ -89,7 +89,7 @@ internal fun ErrorFinalPage() {
 
         ViewButton(
             title = goToMarker(),
-            actionClick = { activity.backToApp() },
+            actionClick = { backToApp() },
             modifierRoot = Modifier
                 .padding(horizontal = 16.dp)
                 .padding(vertical = 20.dp)

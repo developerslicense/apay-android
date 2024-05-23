@@ -34,13 +34,13 @@ internal class TestGooglePayExternalActivity: ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         testInitSdk(
-            context = this@TestGooglePayExternalActivity,
+            activity = this@TestGooglePayExternalActivity,
             autoCharge = 0
         )
 
         paymentModel = GooglePayCheckoutViewModel(this.application)
 
-        googlePayViewModel.auth(
+        /*googlePayViewModel.auth(
             activity = this@TestGooglePayExternalActivity,
             onSuccess = {
                 isLoading.value = false
@@ -50,7 +50,8 @@ internal class TestGooglePayExternalActivity: ComponentActivity() {
                 isLoading.value = false
                 // needShowGooglePayButton = false
             }
-        )
+        )*/
+
 
         setContent {
             coroutineScope = rememberCoroutineScope()

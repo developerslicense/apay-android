@@ -106,7 +106,7 @@ internal fun InitDialogExit(
                 isMainBrand = false,
                 actionClick = {
                     onDismissRequest()
-                    activity.backToApp()
+                    backToApp()
                 }
             )
         }

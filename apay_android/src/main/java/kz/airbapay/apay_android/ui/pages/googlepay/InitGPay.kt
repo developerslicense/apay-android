@@ -1,6 +1,8 @@
 package kz.airbapay.apay_android.ui.pages.googlepay
 
 import android.app.Activity
+import android.app.KeyguardManager
+import android.content.Context
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -27,7 +29,9 @@ internal fun GPayView(
     airbaPayBaseGooglePay: AirbaPayBaseGooglePay,
     openGooglePayForWebFlow: () -> Unit,
 ) {
-    if (!DataHolder.manualDisableFeatureGooglePay) {
+    val keyguardManager = (LocalContext.current as Activity).getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager
+
+    if (DataHolder.renderInStandardFlowGooglePay) {
 
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -62,12 +66,17 @@ internal fun GPayView(
                         this.isEnabled = hasGooglePay?.value == PaymentUiState.Available
 
                         setOnClickListener {
-                            initAuth(
-                                activity = activity,
-                                coroutineScope = coroutineScope,
-                                onSuccess = { airbaPayBaseGooglePay.onResultGooglePay() },
-                                onNotSecurity = { airbaPayBaseGooglePay.onResultGooglePay() }
-                            )
+                            if (keyguardManager.isKeyguardSecure) {
+                                initAuth(
+                                    activity = activity,
+                                    coroutineScope = coroutineScope,
+                                    onSuccess = { airbaPayBaseGooglePay.onResultGooglePay() },
+                                    onNotSecurity = { airbaPayBaseGooglePay.onResultGooglePay() }
+                                )
+
+                            } else {
+                                airbaPayBaseGooglePay.onResultGooglePay()
+                            }
                         }
                     }
                 }

@@ -98,6 +98,7 @@ ext {
     retrofitVersion = '2.9.0'
 
     tensorflow = '2.14.0'
+    tokenGenerate = '0.7.0'
 }
 dependencies {
 
@@ -199,6 +200,8 @@ dependencies {
     // Tensorflow
     implementation "org.tensorflow:tensorflow-lite:$tensorflow"
 
+    // Token
+    implementation "io.jsonwebtoken:jjwt:$tokenGenerate"
 }
 
 

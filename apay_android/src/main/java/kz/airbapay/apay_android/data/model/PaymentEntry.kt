@@ -34,4 +34,10 @@ internal data class PaymentEntryResponse(
 
     @SerializedName("is_secure3D")
     val isSecure3D: Boolean?,
+
+    @SerializedName("payform_url")
+    val payFormUrl: String?,
+
+    @SerializedName("add_parameters")
+    val addParameters: AddParameters?
 )

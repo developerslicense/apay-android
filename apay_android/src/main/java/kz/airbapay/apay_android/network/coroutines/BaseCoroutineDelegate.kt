@@ -7,6 +7,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
+import kz.airbapay.apay_android.data.utils.DataHolder
 import kz.airbapay.apay_android.network.loggly.Logger
 import retrofit2.Response
 
@@ -24,30 +25,35 @@ class BaseCoroutineDelegate : BaseCoroutine {
         paramsForLog: Any?,
         requestFlow: suspend () -> Flow<T>,
         result: (T) -> Unit,
-        error: (Response<T>) -> Unit
+        error: (Response<T>?) -> Unit
     ) {
 
-        scope.launch {
-            requestFlow
-                .invoke()
-                .collect {
-                    val response = (it as Response<T>)
-                    if (response.isSuccessful) {
-                        result(it)
-                    } else {
-                        error(it)
-                    }
-                    val params = gson.toJson(paramsForLog)
+        if (DataHolder.baseUrl.isNotEmpty()) {
+            scope.launch {
+                requestFlow
+                    .invoke()
+                    .collect {
+                        val response = (it as Response<T>)
+                        if (response.isSuccessful) {
+                            result(it)
+                        } else {
+                            error(it)
+                        }
+                        val params = gson.toJson(paramsForLog)
 
-                    Logger.log(
-                        url = response.raw().request.url.toString(),
-                        responseCode = response.raw().code.toString(),
-                        method = response.raw().request.method,
-                        response = response.body()?.toString(),
-                        bodyParams = params,
-                        message = "launchRequest in delegate: " + response.message()
-                    )
-                }
+                        Logger.log(
+                            url = response.raw().request.url.toString(),
+                            responseCode = response.raw().code.toString(),
+                            method = response.raw().request.method,
+                            response = response.body()?.toString(),
+                            bodyParams = params,
+                            message = "launchRequest in delegate: " + response.message()
+                        )
+                    }
+            }
+        } else {
+            println("Не выполнен initSdk")
+            error(null)
         }
     }
 }

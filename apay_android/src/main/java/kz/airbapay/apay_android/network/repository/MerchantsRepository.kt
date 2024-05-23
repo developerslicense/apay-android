@@ -13,7 +13,7 @@ internal class MerchantsRepository(
 
     fun getMerchantInfo(
         result: (MerchantsResponse) -> Unit,
-        error: (Response<*>) -> Unit
+        error: (Response<*>?) -> Unit
     ) {
         launch(
             requestFlow = {

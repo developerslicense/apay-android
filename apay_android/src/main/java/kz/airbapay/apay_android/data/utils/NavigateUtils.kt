@@ -14,10 +14,10 @@ import kz.airbapay.apay_android.ui.pages.home.HomeActivity
 import kz.airbapay.apay_android.ui.pages.startview.StartProcessingActivity
 import kz.airbapay.apay_android.ui.pages.success.SuccessActivity
 
-internal fun Activity.backToApp(
+internal fun backToApp(
     isSuccess: Boolean = false
 ) {
-    DataHolder.actionOnCloseProcessing?.invoke(this, isSuccess)
+    DataHolder.actionOnCloseProcessing?.invoke(isSuccess)
     DataHolder.actionOnCloseProcessing = null
 }
 
@@ -73,7 +73,7 @@ internal fun openGooglePay(
 
 internal fun openSuccess(activity: Activity) {
     if (DataHolder.openCustomPageSuccess != null) {
-        DataHolder.openCustomPageSuccess?.invoke(activity)
+        DataHolder.openCustomPageSuccess?.invoke()
 
     } else {
         val intent = Intent(activity, SuccessActivity::class.java)
@@ -83,11 +83,6 @@ internal fun openSuccess(activity: Activity) {
 }
 
 internal fun openCardScanner(activity: Activity) {
-    // todo если возникнут проблемы с камерой, то используй https://github.com/android/camera-samples
-
-    // todo оставил на всякий сдучай
-//    activity.scanResultLauncher?.launch(Intent(activity, ScanActivity::class.java))
-
     val scanIntent = Intent(activity, CardIOActivity::class.java)
 
     scanIntent.putExtra(CardIOActivity.EXTRA_REQUIRE_EXPIRY, true)

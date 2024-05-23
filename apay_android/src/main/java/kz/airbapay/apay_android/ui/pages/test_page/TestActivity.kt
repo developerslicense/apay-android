@@ -1,9 +1,10 @@
 package kz.airbapay.apay_android.ui.pages.test_page
 
-import android.content.Context
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Arrangement
@@ -15,6 +16,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Button
 import androidx.compose.material.Text
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -22,9 +24,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import kz.airbapay.apay_android.AirbaPaySdk
-import kz.airbapay.apay_android.data.model.AuthRequest
 import kz.airbapay.apay_android.data.utils.DataHolder
-import kz.airbapay.apay_android.network.repository.Repository
 import kz.airbapay.apay_android.ui.pages.home.presentation.SwitchedView
 import kz.airbapay.apay_android.ui.ui_components.ProgressBarView
 import java.util.Date
@@ -38,10 +38,12 @@ class TestActivity : ComponentActivity() {
             val scrollState = rememberScrollState()
 
             val autoCharge = remember { mutableStateOf(false) }
-            val enableFeatureGooglePay = remember { mutableStateOf(true) }
-            val enableFeatureSavedCards = remember { mutableStateOf(true) }
-            val nativeGooglePay = remember { mutableStateOf(true) }
-            val needDisableScreenShot = remember { mutableStateOf(false) }
+            val renderGlobalSecurityCvv = remember { mutableStateOf(DataHolder.renderGlobalSecurityCvv) }
+            val renderGlobalSecurityBiometry = remember { mutableStateOf(DataHolder.renderGlobalSecurityBiometry) }
+            val renderInStandardFlowSavedCards = remember { mutableStateOf(DataHolder.renderInStandardFlowSavedCards) }
+            val renderInStandardFlowGooglePay = remember { mutableStateOf(DataHolder.renderInStandardFlowGooglePay) }
+            val nativeGooglePay = remember { mutableStateOf(DataHolder.isGooglePayNative) }
+            val needDisableScreenShot = remember { mutableStateOf(DataHolder.needDisableScreenShot) }
 
             val isLoading = remember { mutableStateOf(false) }
 
@@ -68,18 +70,21 @@ class TestActivity : ComponentActivity() {
                             .padding(horizontal = 50.dp),
                         onClick = {
                             testInitSdk(
-                                context = this@TestActivity,
+                                activity = this@TestActivity,
                                 autoCharge = if (autoCharge.value) 1 else 0,
                                 nativeGooglePay = nativeGooglePay.value,
                                 needDisableScreenShot = needDisableScreenShot.value,
-                                manualDisableFeatureGooglePay = !enableFeatureGooglePay.value,
-                                manualDisableFeatureSavedCards = !enableFeatureSavedCards.value
+                                renderGlobalSecurityCvv = renderGlobalSecurityCvv.value,
+                                renderGlobalSecurityBiometry = renderGlobalSecurityBiometry.value,
+                                renderInStandardFlowSavedCards = renderInStandardFlowSavedCards.value,
+                                renderInStandardFlowGooglePay = renderInStandardFlowGooglePay.value
                             )
 
-                            AirbaPaySdk.startProcessing(this@TestActivity)
+                            onStandardFlowPassword(isLoading)
+
                         }
                     ) {
-                        Text("Стандартный флоу")
+                        Text("Стандартный флоу Password")
                     }
 
                     Button(
@@ -88,13 +93,34 @@ class TestActivity : ComponentActivity() {
                             .fillMaxWidth()
                             .padding(horizontal = 50.dp),
                         onClick = {
+                           /* testInitSdk(
+                                activity = this@TestActivity,
+                                autoCharge = if (autoCharge.value) 1 else 0,
+                                nativeGooglePay = nativeGooglePay.value,
+                                needDisableScreenShot = needDisableScreenShot.value,
+                                manualDisableFeatureGooglePay = !enableFeatureGooglePay.value,
+                                manualDisableFeatureSavedCards = !enableFeatureSavedCards.value
+                            )
 
+                            onStandardFlowJWT(isLoading)*/
+                        }
+                    ) {
+                        Text("Стандартный флоу JWT")
+                    }
+
+                    Button(
+                        modifier = Modifier
+                            .padding(top = 20.dp)
+                            .fillMaxWidth()
+                            .padding(horizontal = 50.dp),
+                        onClick = {
+/*
                             startActivity(
                                 Intent(
                                     this@TestActivity,
                                     TestGooglePayExternalActivity::class.java
                                 )
-                            )
+                            )*/
                         }
                     ) {
                         Text("Тест внешнего API GooglePay")
@@ -106,12 +132,12 @@ class TestActivity : ComponentActivity() {
                             .fillMaxWidth()
                             .padding(horizontal = 50.dp),
                         onClick = {
-                            startActivity(
+                            /*startActivity(
                                 Intent(
                                     this@TestActivity,
                                     TestCardsExternalActivity::class.java
                                 )
-                            )
+                            )*/
                         }
                     ) {
                         Text("Тест внешнего API сохраненных карт")
@@ -126,7 +152,7 @@ class TestActivity : ComponentActivity() {
                             isLoading.value = true
 
 
-                            val authRequest = AuthRequest(
+                           /* val authRequest = AuthRequest(
                                 paymentId = null,
                                 password = DataHolder.password,
                                 terminalId = DataHolder.terminalId,
@@ -154,7 +180,7 @@ class TestActivity : ComponentActivity() {
                                     )
                                 },
                                 error = { isLoading.value = false }
-                            )
+                            )*/
 
                         }
                     )
@@ -163,11 +189,13 @@ class TestActivity : ComponentActivity() {
                     }
 
 
-                    SwitchedView("AutoCharge 0 (off) / 1 (on)", autoCharge)
-                    SwitchedView("Есть Сохраненные картыs", enableFeatureSavedCards)
-                    SwitchedView("Есть GooglePay", enableFeatureGooglePay)
+                    SwitchedView("Есть Сохраненные карты", renderInStandardFlowSavedCards)
+                    SwitchedView("Есть GooglePay", renderInStandardFlowGooglePay)
+                    SwitchedView("Есть CVV", renderGlobalSecurityCvv)
+                    SwitchedView("Есть Биометрия", renderGlobalSecurityBiometry)
                     SwitchedView("Нативный GooglePay", nativeGooglePay)
                     SwitchedView("Блокировать скриншот", needDisableScreenShot)
+                    SwitchedView("AutoCharge 0 (off) / 1 (on)", autoCharge)
                 }
 
                 if (isLoading.value) {
@@ -176,59 +204,159 @@ class TestActivity : ComponentActivity() {
             }
         }
     }
+
+    private fun onStandardFlowPassword(
+        isLoading: MutableState<Boolean>
+    ) {
+        isLoading.value = true
+        AirbaPaySdk.authV1(
+            onSuccess = { token ->
+                val goods = listOf(
+                    AirbaPaySdk.Goods(
+                        model = "Чай Tess Banana Split черный 20 пирамидок",
+                        brand = "Tess",
+                        category = "Черный чай",
+                        quantity = 1,
+                        price = 1000
+                    ),
+                    AirbaPaySdk.Goods(
+                        model = "Чай Tess Green",
+                        brand = "Tess",
+                        category = "Green чай",
+                        quantity = 1,
+                        price = 500
+                    )
+                )
+
+                val settlementPayment = listOf(
+                    AirbaPaySdk.SettlementPayment(
+                        amount = 1000.0,
+                        companyId = "210840019439"
+                    ),
+                    AirbaPaySdk.SettlementPayment(
+                        amount = 500.45,
+                        companyId = "254353"
+                    )
+                )
+
+                AirbaPaySdk.createPaymentV1(
+                    authToken = token,
+                    onSuccess = { paymentId ->
+                        onStandardFlowPasswordNextStep(isLoading, paymentId)
+                    },
+                    onError = {
+                        isLoading.value = false
+                        Toast.makeText(this@TestActivity, "Что-то пошло не так", Toast.LENGTH_SHORT).show()
+                    },
+                    goods = goods,
+                    settlementPayments = settlementPayment
+                )
+            },
+            onError = {
+                isLoading.value = false
+                Toast.makeText(this@TestActivity, "Что-то пошло не так", Toast.LENGTH_SHORT).show()
+            },
+            shopId = "test-baykanat", //"airbapay-mfo", //
+            password = "baykanat123!", //"MtTh37TLV7", //
+            terminalId = "65c5df69e8037f1b451a0594",//"659e79e279a508566e35d299", //
+            paymentId = null
+        )
+    }
+
+    private fun onStandardFlowPasswordNextStep(
+        isLoading: MutableState<Boolean>,
+        paymentId: String
+    ) {
+        AirbaPaySdk.authV1(
+            onSuccess = {
+                isLoading.value = false
+                AirbaPaySdk.standardFlow(this@TestActivity)
+            },
+            onError = {
+                isLoading.value = false
+                Toast.makeText(this@TestActivity, "Что-то пошло не так", Toast.LENGTH_SHORT).show()
+            },
+            paymentId = paymentId,
+            shopId = "test-baykanat", //"airbapay-mfo", //
+            password = "baykanat123!", //"MtTh37TLV7", //
+            terminalId = "65c5df69e8037f1b451a0594",//"659e79e279a508566e35d299", //
+        )
+    }
+/*
+    private fun onStandardFlowJWT(
+        isLoading: MutableState<Boolean>
+    ) {
+        isLoading.value = true
+        AirbaPaySdk.auth(
+            // имитация получения токена на стороне бэка клиента
+            onSuccess = { token ->
+
+                AirbaPaySdk.createPayment( // имитация получения paymentId на стороне бэка клиента
+                    authToken = token,
+                    onSuccess = { paymentId ->
+                        val jwt = ""
+                        onStandardFlowJWTNextStep(isLoading, paymentId, jwt)
+                    },
+                    onError = {
+                        isLoading.value = false
+                        Toast.makeText(this@TestActivity, "Что-то пошло не так", Toast.LENGTH_SHORT).show()
+                    }
+                )
+
+            },
+            onError = {
+                isLoading.value = false
+                Toast.makeText(this@TestActivity, "Что-то пошло не так", Toast.LENGTH_SHORT).show()
+            },
+            shopId = "test-baykanat", //"airbapay-mfo", //
+            password = "baykanat123!", //"MtTh37TLV7", //
+            terminalId = "65c5df69e8037f1b451a0594",//"659e79e279a508566e35d299", //
+            paymentId = null
+        )
+    }
+
+    private fun onStandardFlowJWTNextStep(
+        isLoading: MutableState<Boolean>,
+        paymentId: String,
+        jwt: String
+    ) {
+        AirbaPaySdk.auth(
+            onSuccess = {
+                isLoading.value = false
+                AirbaPaySdk.startProcessing(this@TestActivity)
+            },
+            onError = {
+                isLoading.value = false
+                Toast.makeText(this@TestActivity, "Что-то пошло не так", Toast.LENGTH_SHORT).show()
+            },
+            paymentId = paymentId,
+            jwt = jwt
+        )
+    }*/
 }
 
 fun testInitSdk(
-    context: Context,
+    activity: Activity,
     autoCharge: Int = 0,
     nativeGooglePay: Boolean = true,
     needDisableScreenShot: Boolean = false,
-    manualDisableFeatureGooglePay: Boolean = false,
-    manualDisableFeatureSavedCards: Boolean = false
+    renderInStandardFlowGooglePay: Boolean = true,
+    renderInStandardFlowSavedCards: Boolean = true,
+    renderGlobalSecurityCvv: Boolean = true,
+    renderGlobalSecurityBiometry: Boolean = true
 ) {
     DataHolder.hasSavedCards = false
 
     val someInvoiceId = Date().time
     val someOrderNumber = Date().time
 
-    val goods = listOf(
-        AirbaPaySdk.Goods(
-            model = "Чай Tess Banana Split черный 20 пирамидок",
-            brand = "Tess",
-            category = "Черный чай",
-            quantity = 1,
-            price = 1000
-        ),
-        AirbaPaySdk.Goods(
-            model = "Чай Tess Green",
-            brand = "Tess",
-            category = "Green чай",
-            quantity = 1,
-            price = 500
-        )
-    )
-
-    val settlementPayment = listOf(
-        AirbaPaySdk.SettlementPayment(
-            amount = 1000.0,
-            companyId = "210840019439"
-        ),
-        AirbaPaySdk.SettlementPayment(
-            amount = 500.45,
-            companyId = "254353"
-        )
-    )
-
     AirbaPaySdk.initSdk(
         enabledLogsForProd = false, //todo этот же параметр отвечает за отправку логов в дебаг сборке, если == true
-        context = context,
+        context = activity,
         isProd = false, //true, //
         accountId = "77061111112",//"77051111111",
         phone = "77061111112",//"77051111117",
-        shopId = "test-baykanat", //"airbapay-mfo", //
         lang = AirbaPaySdk.Lang.RU,
-        password = "baykanat123!", //"MtTh37TLV7", //
-        terminalId = "65c5df69e8037f1b451a0594",//"659e79e279a508566e35d299", //
         failureCallback = "https://site.kz/failure-clb",
         successCallback = "https://site.kz/success-clb",
         userEmail = "test@test.com",
@@ -238,9 +366,7 @@ fun testInitSdk(
         isGooglePayNative = nativeGooglePay,
         invoiceId = someInvoiceId.toString(),
         orderNumber = someOrderNumber.toString(),
-        goods = goods,
-        settlementPayments = settlementPayment,
-        actionOnCloseProcessing = { activity, result ->
+        actionOnCloseProcessing = { result ->
             if (result) {
                 Log.e("AirbaPaySdk", "initProcessing success");
             } else {
@@ -251,7 +377,9 @@ fun testInitSdk(
         },
         needDisableScreenShot = needDisableScreenShot,
 //        openCustomPageSuccess = {  context.startActivity(Intent(context, CustomSuccessActivity::java.class)) },
-        manualDisableFeatureGooglePay = manualDisableFeatureGooglePay,
-        manualDisableFeatureSavedCards = manualDisableFeatureSavedCards
+        renderInStandardFlowGooglePay = renderInStandardFlowGooglePay,
+        renderInStandardFlowSavedCards = renderInStandardFlowSavedCards,
+        renderGlobalSecurityBiometry = renderGlobalSecurityBiometry,
+        renderGlobalSecurityCvv = renderGlobalSecurityCvv
     )
 }

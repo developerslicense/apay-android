@@ -23,37 +23,12 @@ internal fun fetchMerchantsWithNextStep(
         error = {}
     )
 
-    Repository.merchantRepository?.getMerchantInfo(
-        result = { response ->
-            DataHolder.featureSavedCards = if (DataHolder.manualDisableFeatureSavedCards) {
-                false
-            } else {
-                response.configuration?.renderSaveCards ?: false
-            }
-
-            DataHolder.featureGooglePay = if (DataHolder.manualDisableFeatureGooglePay) {
-                false
-            } else {
-                response.configuration?.renderGooglePayButton ?: false
-            }
-
-            initPaymentsWithNextStep(
-                activity = activity,
-                googlePayRedirectUrl = googlePayRedirectUrl,
-                savedCards = savedCards,
-                selectedCard = selectedCard,
-                isLoading = isLoading
-            )
-        },
-        error = {
-            initPaymentsWithNextStep(
-                activity = activity,
-                googlePayRedirectUrl = googlePayRedirectUrl,
-                savedCards = savedCards,
-                selectedCard = selectedCard,
-                isLoading = isLoading
-            )
-        }
+    initPaymentsWithNextStep(
+        activity = activity,
+        googlePayRedirectUrl = googlePayRedirectUrl,
+        savedCards = savedCards,
+        selectedCard = selectedCard,
+        isLoading = isLoading
     )
 }
 
@@ -64,28 +39,38 @@ private fun initPaymentsWithNextStep(
     selectedCard: MutableState<BankCard?>,
     isLoading: MutableState<Boolean>
 ) {
-    initPayments(
-        activity = activity,
-        onGooglePayResult = { url ->
-            if (url != null) {
-                DataHolder.googlePayButtonUrl = url
-                googlePayRedirectUrl.value = url
-            }
-
-            if (DataHolder.featureSavedCards) {
-                fetchCards(
-                    activity = activity,
-                    savedCards = savedCards,
-                    selectedCard = selectedCard,
-                    isLoading = isLoading
-                )
-
-            } else {
-                openHome(activity)
-            }
-
+    val onGooglePayResult = { url: String? ->
+        if (url != null) {
+            DataHolder.googlePayButtonUrl = url
+            googlePayRedirectUrl.value = url
         }
-    )
+
+        if (DataHolder.renderInStandardFlowSavedCards) {
+            fetchCards(
+                activity = activity,
+                savedCards = savedCards,
+                selectedCard = selectedCard,
+                isLoading = isLoading
+            )
+
+        } else {
+            openHome(activity)
+        }
+    }
+
+    if (DataHolder.isGooglePayNative) {
+        onGooglePayResult(null)
+
+    } else {
+        Repository.googlePayRepository?.getGooglePayButton(
+            result = { response ->
+                onGooglePayResult(response.buttonUrl)
+            },
+            error = {
+                onGooglePayResult(null)
+            }
+        )
+    }
 }
 
 private fun fetchCards(

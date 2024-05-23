@@ -6,30 +6,26 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kz.airbapay.apay_android.data.constant.ErrorsCode
 import kz.airbapay.apay_android.data.constant.initErrorsCodeByCode
-import kz.airbapay.apay_android.data.model.AuthRequest
-import kz.airbapay.apay_android.data.model.GooglePayMerchantResponse
 import kz.airbapay.apay_android.data.utils.AirbaPayBiometric
-import kz.airbapay.apay_android.data.utils.DataHolder
 import kz.airbapay.apay_android.data.utils.encode
 import kz.airbapay.apay_android.data.utils.openAcquiring
 import kz.airbapay.apay_android.data.utils.openErrorPageWithCondition
 import kz.airbapay.apay_android.data.utils.openSuccess
 import kz.airbapay.apay_android.network.repository.Repository
-import kz.airbapay.apay_android.ui.pages.startview.bl.initPayments
 
 class GooglePayViewModel: ViewModel() {
 
-    fun auth(
+   /* fun auth(
         activity: Activity,
         onError:() -> Unit,
         onSuccess:(GooglePayMerchantResponse) -> Unit
     ) {
-        val authRequest = AuthRequest(
-            paymentId = null,
-            password = DataHolder.password,
-            terminalId = DataHolder.terminalId,
-            user = DataHolder.shopId
-        )
+//        val authRequest = AuthRequest(
+//            paymentId = null,
+//            password = DataHolder.password,
+//            terminalId = DataHolder.terminalId,
+//            user = DataHolder.shopId
+//        )
         Repository.initRepositories(activity.applicationContext)
 
         Repository.authRepository?.auth(
@@ -53,7 +49,7 @@ class GooglePayViewModel: ViewModel() {
             },
             error = { onError() }
         )
-    }
+    }*/
 
     fun processingWalletExternal(
         googlePayToken: String,
@@ -98,7 +94,7 @@ class GooglePayViewModel: ViewModel() {
             },
             error = {
 
-                if (it.errorBody()?.string()?.contains("invalid pan") == true) {
+                if (it?.errorBody()?.string()?.contains("invalid pan") == true) {
                     openErrorPageWithCondition(
                         errorCode = ErrorsCode.error_5002.code,
                         activity = activity
