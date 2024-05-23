@@ -27,7 +27,7 @@ internal fun GPayView(
     airbaPayBaseGooglePay: AirbaPayBaseGooglePay,
     openGooglePayForWebFlow: () -> Unit,
 ) {
-    if (!DataHolder.hideInternalGooglePayButton) {
+    if (!DataHolder.manualDisableFeatureGooglePay) {
 
         Spacer(modifier = Modifier.height(16.dp))
 

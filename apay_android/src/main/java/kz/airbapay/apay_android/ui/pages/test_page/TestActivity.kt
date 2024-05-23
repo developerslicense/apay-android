@@ -24,7 +24,6 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import kz.airbapay.apay_android.AirbaPaySdk
 import kz.airbapay.apay_android.data.model.AuthRequest
 import kz.airbapay.apay_android.data.utils.DataHolder
-import kz.airbapay.apay_android.data.utils.TestAirbaPayStates
 import kz.airbapay.apay_android.network.repository.Repository
 import kz.airbapay.apay_android.ui.pages.home.presentation.SwitchedView
 import kz.airbapay.apay_android.ui.ui_components.ProgressBarView
@@ -37,10 +36,13 @@ class TestActivity : ComponentActivity() {
 
         setContent {
             val scrollState = rememberScrollState()
+
             val autoCharge = remember { mutableStateOf(false) }
-            val featureGooglePay = remember { mutableStateOf(true) }
-            val featureGooglePayNative = remember { mutableStateOf(true) }
-            val featureSavedCards = remember { mutableStateOf(true) }
+            val enableFeatureGooglePay = remember { mutableStateOf(true) }
+            val enableFeatureSavedCards = remember { mutableStateOf(true) }
+            val nativeGooglePay = remember { mutableStateOf(true) }
+            val needDisableScreenShot = remember { mutableStateOf(false) }
+
             val isLoading = remember { mutableStateOf(false) }
 
             ConstraintLayout {
@@ -65,22 +67,54 @@ class TestActivity : ComponentActivity() {
                             .fillMaxWidth()
                             .padding(horizontal = 50.dp),
                         onClick = {
-                            DataHolder.hasSavedCards = featureSavedCards.value
-                            TestAirbaPayStates.shutDownTestFeatureGooglePay = !featureGooglePay.value
-                            TestAirbaPayStates.shutDownTestFeatureSavedCards = !featureSavedCards.value
+                            testInitSdk(
+                                context = this@TestActivity,
+                                autoCharge = if (autoCharge.value) 1 else 0,
+                                nativeGooglePay = nativeGooglePay.value,
+                                needDisableScreenShot = needDisableScreenShot.value,
+                                manualDisableFeatureGooglePay = !enableFeatureGooglePay.value,
+                                manualDisableFeatureSavedCards = !enableFeatureSavedCards.value
+                            )
 
-                            initTestSdk(this@TestActivity)
+                            AirbaPaySdk.startProcessing(this@TestActivity)
+                        }
+                    ) {
+                        Text("Стандартный флоу")
+                    }
 
-                            AirbaPaySdk.startAirbaPay(
-                                activity = this@TestActivity,
-                                redirectToCustomSuccessPage = null//{
-//                                    activity.startActivity(Intent(activity, CustomSuccessActivity::java.class))
-//                                    activity.finish()
-                                //  }
+                    Button(
+                        modifier = Modifier
+                            .padding(top = 20.dp)
+                            .fillMaxWidth()
+                            .padding(horizontal = 50.dp),
+                        onClick = {
+
+                            startActivity(
+                                Intent(
+                                    this@TestActivity,
+                                    TestGooglePayExternalActivity::class.java
+                                )
                             )
                         }
                     ) {
-                        Text("Переход на эквайринг")
+                        Text("Тест внешнего API GooglePay")
+                    }
+
+                    Button(
+                        modifier = Modifier
+                            .padding(top = 20.dp)
+                            .fillMaxWidth()
+                            .padding(horizontal = 50.dp),
+                        onClick = {
+                            startActivity(
+                                Intent(
+                                    this@TestActivity,
+                                    TestCardsExternalActivity::class.java
+                                )
+                            )
+                        }
+                    ) {
+                        Text("Тест внешнего API сохраненных карт")
                     }
 
                     Button(
@@ -128,31 +162,12 @@ class TestActivity : ComponentActivity() {
                         Text("Удалить привязанные карты")
                     }
 
-                    Button(
-                        modifier = Modifier
-                            .padding(top = 20.dp, bottom = 20.dp)
-                            .fillMaxWidth()
-                            .padding(horizontal = 50.dp),
-                        onClick = {
-                            initTestSdk(this@TestActivity)
-
-                            startActivity(
-                                Intent(
-                                    this@TestActivity,
-                                    TestGooglePayExternalActivity::class.java
-                                )
-                            )
-                        }
-                    )
-                    {
-                        Text("Открыть внешний тестовый GooglePay")
-                    }
-
 
                     SwitchedView("AutoCharge 0 (off) / 1 (on)", autoCharge)
-                    SwitchedView("Включить GooglePay", featureGooglePay)
-                    SwitchedView("Нативный GooglePay", featureGooglePayNative)
-                    SwitchedView("Feature Saved cards", featureSavedCards)
+                    SwitchedView("Есть Сохраненные картыs", enableFeatureSavedCards)
+                    SwitchedView("Есть GooglePay", enableFeatureGooglePay)
+                    SwitchedView("Нативный GooglePay", nativeGooglePay)
+                    SwitchedView("Блокировать скриншот", needDisableScreenShot)
                 }
 
                 if (isLoading.value) {
@@ -163,9 +178,16 @@ class TestActivity : ComponentActivity() {
     }
 }
 
-fun initTestSdk(
-    context: Context
+fun testInitSdk(
+    context: Context,
+    autoCharge: Int = 0,
+    nativeGooglePay: Boolean = true,
+    needDisableScreenShot: Boolean = false,
+    manualDisableFeatureGooglePay: Boolean = false,
+    manualDisableFeatureSavedCards: Boolean = false
 ) {
+    DataHolder.hasSavedCards = false
+
     val someInvoiceId = Date().time
     val someOrderNumber = Date().time
 
@@ -211,15 +233,14 @@ fun initTestSdk(
         successCallback = "https://site.kz/success-clb",
         userEmail = "test@test.com",
         colorBrandMain = Color(0xFFFC6B3F),
-        autoCharge = 0,
-        hideInternalGooglePayButton = false,
+        autoCharge = autoCharge,
         purchaseAmount = 1500.45,
-        isGooglePayNative = true,
+        isGooglePayNative = nativeGooglePay,
         invoiceId = someInvoiceId.toString(),
         orderNumber = someOrderNumber.toString(),
         goods = goods,
         settlementPayments = settlementPayment,
-        onProcessingResult = { activity, result ->
+        actionOnCloseProcessing = { activity, result ->
             if (result) {
                 Log.e("AirbaPaySdk", "initProcessing success");
             } else {
@@ -228,6 +249,9 @@ fun initTestSdk(
             activity.startActivity(Intent(activity, TestActivity::class.java))
             activity.finish()
         },
-        needDisableScreenShot = false
+        needDisableScreenShot = needDisableScreenShot,
+//        openCustomPageSuccess = {  context.startActivity(Intent(context, CustomSuccessActivity::java.class)) },
+        manualDisableFeatureGooglePay = manualDisableFeatureGooglePay,
+        manualDisableFeatureSavedCards = manualDisableFeatureSavedCards
     )
 }

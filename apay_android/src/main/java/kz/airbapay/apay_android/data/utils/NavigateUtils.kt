@@ -17,8 +17,8 @@ import kz.airbapay.apay_android.ui.pages.success.SuccessActivity
 internal fun Activity.backToApp(
     isSuccess: Boolean = false
 ) {
-    DataHolder.frontendCallback?.invoke(this, isSuccess)
-    DataHolder.frontendCallback = null
+    DataHolder.actionOnCloseProcessing?.invoke(this, isSuccess)
+    DataHolder.actionOnCloseProcessing = null
 }
 
 internal fun backToStartPage(activity: Activity) {
@@ -72,8 +72,8 @@ internal fun openGooglePay(
 }
 
 internal fun openSuccess(activity: Activity) {
-    if (DataHolder.redirectToCustomSuccessPage != null) {
-        DataHolder.redirectToCustomSuccessPage?.invoke(activity)
+    if (DataHolder.openCustomPageSuccess != null) {
+        DataHolder.openCustomPageSuccess?.invoke(activity)
 
     } else {
         val intent = Intent(activity, SuccessActivity::class.java)

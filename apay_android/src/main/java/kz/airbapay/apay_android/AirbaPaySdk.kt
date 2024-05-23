@@ -64,14 +64,17 @@ class AirbaPaySdk {
             autoCharge: Int = 0,
             enabledLogsForProd: Boolean = false,
             isGooglePayNative: Boolean = false,
-            hideInternalGooglePayButton: Boolean = false,
             purchaseAmount: Double,
             invoiceId: String,
             orderNumber: String,
             goods: List<Goods>,
             settlementPayments: List<SettlementPayment>? = null, // параметр, нужный, если несколько айдишников компаний
-            onProcessingResult: ((Activity, Boolean) -> Unit),
-            needDisableScreenShot: Boolean = false
+            actionOnCloseProcessing: ((Activity, Boolean) -> Unit),
+            needDisableScreenShot: Boolean = false,
+            openCustomPageSuccess: ((Activity) -> Unit)? = null,
+            openCustomPageFinalError: ((Activity) -> Unit)? = null,
+            manualDisableFeatureGooglePay: Boolean = false,
+            manualDisableFeatureSavedCards: Boolean = false
         ) {
 
             if (colorBrandInversion != null) {
@@ -106,7 +109,6 @@ class AirbaPaySdk {
 
             DataHolder.currentLang = lang.lang
             DataHolder.isGooglePayNative = isGooglePayNative
-            DataHolder.hideInternalGooglePayButton = hideInternalGooglePayButton
 
             DataHolder.purchaseAmount = purchaseAmount
             DataHolder.orderNumber = orderNumber
@@ -116,13 +118,20 @@ class AirbaPaySdk {
 
             DataHolder.purchaseAmountFormatted.value = Money.initDouble(purchaseAmount).getFormatted()
 
-            DataHolder.frontendCallback = onProcessingResult
+            DataHolder.actionOnCloseProcessing = actionOnCloseProcessing
             DataHolder.needDisableScreenShot = needDisableScreenShot
+
+            DataHolder.openCustomPageSuccess = openCustomPageSuccess
+            DataHolder.openCustomPageFinalError = openCustomPageFinalError
+
+            DataHolder.manualDisableFeatureGooglePay = manualDisableFeatureGooglePay
+            DataHolder.manualDisableFeatureSavedCards = manualDisableFeatureSavedCards
 
             // не переносить
             Repository.initRepositories(context.applicationContext)
         }
 
+        /* todo del
         fun startAirbaPay(
             activity: Activity,
             redirectToCustomSuccessPage: ((Activity) -> Unit)? = null,
@@ -135,6 +144,15 @@ class AirbaPaySdk {
                 activity.finish()
             } else {
                 println("Не выполнено initOnCreate")
+            }
+        }*/
+
+        fun startProcessing(activity: Activity) {
+            if (DataHolder.baseUrl.isNotEmpty()) {
+                activity.startActivity(Intent(activity, StartProcessingActivity::class.java))
+                activity.finish()
+            } else {
+                println("Не выполнен initSdk")
             }
         }
     }

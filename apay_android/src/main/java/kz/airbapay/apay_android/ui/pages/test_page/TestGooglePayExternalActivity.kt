@@ -24,7 +24,7 @@ import kz.airbapay.apay_android.ui.pages.googlepay.nativegp.GooglePayViewModel
 import kz.airbapay.apay_android.ui.ui_components.ProgressBarView
 
 internal class TestGooglePayExternalActivity: ComponentActivity() {
-
+//                             airbaPaySdk.processExternalApplePay()
     private val isLoading = mutableStateOf(true)
     private var paymentModel: GooglePayCheckoutViewModel? = null
     private val googlePayViewModel = GooglePayViewModel()
@@ -32,7 +32,12 @@ internal class TestGooglePayExternalActivity: ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        initTestSdk(this@TestGooglePayExternalActivity)
+
+        testInitSdk(
+            context = this@TestGooglePayExternalActivity,
+            autoCharge = 0
+        )
+
         paymentModel = GooglePayCheckoutViewModel(this.application)
 
         googlePayViewModel.auth(

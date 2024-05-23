@@ -5,7 +5,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kz.airbapay.apay_android.AirbaPaySdk
 
 internal object DataHolder {
-  const val sdkVersion: String = "1.1.5"
+  const val sdkVersion: String = "2.0.0"
   var baseUrl = ""
 
   var connectTimeout = 60
@@ -38,10 +38,10 @@ internal object DataHolder {
 
   val purchaseAmountFormatted = MutableStateFlow("")
 
-  var frontendCallback: ((activity: Activity, paymentSubmittingResult: Boolean) -> Unit)? = null
+  var actionOnCloseProcessing: ((activity: Activity, paymentSubmittingResult: Boolean) -> Unit)? = null
 
-  var redirectToCustomSuccessPage: ((Activity) -> Unit)? = null
-  var redirectToCustomFinalErrorPage: ((Activity) -> Unit)? = null
+  var openCustomPageSuccess: ((Activity) -> Unit)? = null
+  var openCustomPageFinalError: ((Activity) -> Unit)? = null
   var featureGooglePay: Boolean = false
   var featureSavedCards: Boolean = false
 
@@ -50,14 +50,11 @@ internal object DataHolder {
 
   var hasSavedCards: Boolean = false
   var isGooglePayNative: Boolean = false
-  var hideInternalGooglePayButton: Boolean = false
 
   var gateway: String? = null
   var gatewayMerchantId: String? = null
   var needDisableScreenShot: Boolean = false
-}
 
-object TestAirbaPayStates {
-  var shutDownTestFeatureGooglePay: Boolean = false
-  var shutDownTestFeatureSavedCards: Boolean = false
+  var manualDisableFeatureGooglePay: Boolean = false
+  var manualDisableFeatureSavedCards: Boolean = false
 }
