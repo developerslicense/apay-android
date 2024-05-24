@@ -23,10 +23,7 @@ internal fun checkNeedCvv(
         cardId = cardId,
         result = {
 
-            if (it.requestCvv
-                || !DataHolder.renderGlobalSecurityBiometry
-                && DataHolder.renderGlobalSecurityCvv
-            ) {
+            if (it.requestCvv) {
                 showCvv()
 
             } else if(DataHolder.renderGlobalSecurityBiometry) {
@@ -57,6 +54,9 @@ internal fun checkNeedCvv(
                         }
                     }
                 )
+
+            } else if (DataHolder.renderGlobalSecurityCvv) {// не объединять с 1-м, т.к. у этого приоритет ниже, чем у renderGlobalSecurityBiometry
+                showCvv()
 
             } else {
                 isLoading?.value = true

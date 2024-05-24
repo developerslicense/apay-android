@@ -12,7 +12,10 @@ internal data class GooglePaymentWalletRequest(
 	val wallet: GooglePaymentWallet? = null,
 
 	@field:SerializedName("email")
-	val email: String? = DataHolder.userEmail
+	val email: String? = DataHolder.userEmail,
+
+	@field:SerializedName("params")
+	val params: GooglePaymentParams? = GooglePaymentParams()
 )
 
 internal data class GooglePaymentWallet(
@@ -22,4 +25,13 @@ internal data class GooglePaymentWallet(
 
 	@field:SerializedName("token")
 	val token: String? = null
+)
+
+internal data class GooglePaymentParams(
+
+	@field:SerializedName("screen_height")
+	val screenHeight: Int? = DataHolder.height,
+
+	@field:SerializedName("screen_width")
+	val screenWidth: Int? = DataHolder.width
 )

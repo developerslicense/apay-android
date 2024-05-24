@@ -32,6 +32,8 @@ internal class PaymentsRepository(
                 put("card_name", "Card Holder")
             }
 
+            addScreenParams()
+
             put("card", card)
             put("card_save", cardSave)
             put("email", DataHolder.userEmail)
@@ -62,6 +64,7 @@ internal class PaymentsRepository(
 
         val param = HashMap<String, Any?>().apply {
             put("cvv", cvv ?: "")
+            addScreenParams()
         }
 
         launch(
@@ -107,6 +110,17 @@ internal class PaymentsRepository(
             },
             error = error
         )
+    }
+
+    private fun HashMap<String, Any?>.addScreenParams() {
+        if (DataHolder.height != null && DataHolder.width != null) {
+            val params = HashMap<String, Any?>().apply {
+                put("screen_height", DataHolder.height)
+                put("screen_width", DataHolder.width)
+            }
+
+            put("params", params)
+        }
     }
 
     fun paymentAccountEntryRetry(

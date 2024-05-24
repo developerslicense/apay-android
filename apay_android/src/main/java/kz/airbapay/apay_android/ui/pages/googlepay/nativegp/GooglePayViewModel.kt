@@ -13,7 +13,7 @@ import kz.airbapay.apay_android.data.utils.openErrorPageWithCondition
 import kz.airbapay.apay_android.data.utils.openSuccess
 import kz.airbapay.apay_android.network.repository.Repository
 
-class GooglePayViewModel: ViewModel() {
+internal class GooglePayViewModel: ViewModel() {
 
    /* fun auth(
         activity: Activity,

@@ -2,7 +2,10 @@ package kz.airbapay.apay_android
 
 import android.content.Context
 import android.content.Intent
+import android.os.Build
+import android.util.DisplayMetrics
 import android.util.Log
+import android.view.WindowManager
 import android.widget.Toast
 import androidx.compose.ui.graphics.Color
 import com.google.gson.annotations.SerializedName
@@ -75,6 +78,20 @@ class AirbaPaySdk {
             renderGlobalSecurityCvv: Boolean,
             renderGlobalSecurityBiometry: Boolean
         ) {
+
+            try {
+                val wm = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                    DataHolder.height = wm.currentWindowMetrics.bounds.height()
+                    DataHolder.width = wm.currentWindowMetrics.bounds.width()
+
+                } else {
+                    val displaymetrics = DisplayMetrics()
+                    wm.defaultDisplay.getMetrics(displaymetrics)
+                    DataHolder.height = displaymetrics.heightPixels
+                    DataHolder.width = displaymetrics.widthPixels
+                }
+            } catch (e: Exception) {}
 
             if (colorBrandInversion != null) {
                 ColorsSdk.colorBrandInversionMS.value = colorBrandInversion

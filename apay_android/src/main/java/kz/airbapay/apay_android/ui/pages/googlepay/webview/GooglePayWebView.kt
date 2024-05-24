@@ -16,7 +16,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import kz.airbapay.apay_android.R
-import kz.airbapay.apay_android.data.utils.checkIsDeviceSecure
 import kz.airbapay.apay_android.ui.resources.ColorsSdk
 import kz.airbapay.apay_android.ui.ui_components.LoadImageSrc
 import kz.airbapay.apay_android.ui.ui_components.initAuth
@@ -28,38 +27,32 @@ internal fun GooglePayWebView(
     val activity = LocalContext.current as Activity
     val coroutineScope = rememberCoroutineScope()
 
-    val isDeviceSecure = checkIsDeviceSecure(activity)
-
-    if (isDeviceSecure) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
-            modifier = Modifier
-                .padding(horizontal = 16.dp)
-                .fillMaxWidth()
-                .height(48.dp)
-                .background(
-                    color = ColorsSdk.bgGPAY,
-                    shape = RoundedCornerShape(
-                        topStart = 8.dp,
-                        topEnd = 8.dp,
-                        bottomEnd = 8.dp,
-                        bottomStart = 8.dp
-                    )
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+        modifier = Modifier
+            .padding(horizontal = 16.dp)
+            .fillMaxWidth()
+            .height(48.dp)
+            .background(
+                color = ColorsSdk.bgGPAY,
+                shape = RoundedCornerShape(
+                    topStart = 8.dp,
+                    topEnd = 8.dp,
+                    bottomEnd = 8.dp,
+                    bottomStart = 8.dp
                 )
-                .clickable {
-                    initAuth(
-                        activity = activity,
-                        coroutineScope = coroutineScope,
-                        onSuccess = {
-                            openGooglePayForWebFlow()
-                        },
-                        onNotSecurity = {}
-                    )
+            )
+            .clickable {
+                initAuth(
+                    activity = activity,
+                    coroutineScope = coroutineScope,
+                    onSuccess = { openGooglePayForWebFlow() },
+                    onNotSecurity = { openGooglePayForWebFlow() }
+                )
 
-                }
-        ) {
-            LoadImageSrc(imageSrc = R.drawable.g_pay)
-        }
+            }
+    ) {
+        LoadImageSrc(imageSrc = R.drawable.g_pay)
     }
 }

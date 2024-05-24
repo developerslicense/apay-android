@@ -54,4 +54,7 @@ internal object DataHolder {
   var renderInStandardFlowSavedCards: Boolean = true
   var renderGlobalSecurityCvv: Boolean = true
   var renderGlobalSecurityBiometry: Boolean = true
+
+  var height: Int? = null
+  var width: Int? = null
 }

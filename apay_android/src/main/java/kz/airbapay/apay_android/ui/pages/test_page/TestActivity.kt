@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import kz.airbapay.apay_android.AirbaPaySdk
 import kz.airbapay.apay_android.data.utils.DataHolder
+import kz.airbapay.apay_android.network.repository.Repository
 import kz.airbapay.apay_android.ui.pages.home.presentation.SwitchedView
 import kz.airbapay.apay_android.ui.ui_components.ProgressBarView
 import java.util.Date
@@ -151,20 +152,10 @@ class TestActivity : ComponentActivity() {
                         onClick = {
                             isLoading.value = true
 
+                            testInitSdk(activity = this@TestActivity)
 
-                           /* val authRequest = AuthRequest(
-                                paymentId = null,
-                                password = DataHolder.password,
-                                terminalId = DataHolder.terminalId,
-                                user = DataHolder.shopId
-                            )
-                            Repository.initRepositories(this@TestActivity)
-
-                            Repository.authRepository?.auth(
-                                param = authRequest,
-                                result = {
-                                    DataHolder.accessToken = it.accessToken
-
+                            AirbaPaySdk.authV1(
+                                onSuccess = { token ->
                                     Repository.cardRepository?.getCards(
                                         accountId = DataHolder.accountId,
                                         result = {
@@ -179,9 +170,11 @@ class TestActivity : ComponentActivity() {
                                         error = { isLoading.value = false }
                                     )
                                 },
-                                error = { isLoading.value = false }
-                            )*/
-
+                                onError = {},
+                                shopId = "test-baykanat", //"airbapay-mfo", //
+                                password = "baykanat123!", //"MtTh37TLV7", //
+                                terminalId = "65c5df69e8037f1b451a0594",//"659e79e279a508566e35d299", //
+                            )
                         }
                     )
                     {
