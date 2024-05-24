@@ -11,7 +11,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -28,8 +27,8 @@ import kz.airbapay.apay_android.data.constant.wrongCvv
 import kz.airbapay.apay_android.data.utils.DataHolder
 import kz.airbapay.apay_android.data.utils.getMoneyFormatted
 import kz.airbapay.apay_android.data.utils.recomposeHighlighter
+import kz.airbapay.apay_android.ui.bl_components.saved_cards.blProcessSavedCard
 import kz.airbapay.apay_android.ui.pages.home.presentation.CvvView
-import kz.airbapay.apay_android.ui.pages.startview.bl.startSavedCard
 import kz.airbapay.apay_android.ui.resources.ColorsSdk
 import kz.airbapay.apay_android.ui.resources.LocalFonts
 import kz.airbapay.apay_android.ui.ui_components.InitHeader
@@ -41,7 +40,7 @@ internal fun EnterCvvBottomSheet(
     showCvvInfo: () -> Unit,
     cardMasked: String?,
     cardId: String?,
-    isLoading: MutableState<Boolean>,
+    isLoading: (Boolean) -> Unit,
     cvvFocusRequester: FocusRequester
 ) {
 
@@ -121,8 +120,8 @@ internal fun EnterCvvBottomSheet(
                     if (cvvText.value.text.length in 3..4) {
                         cvvError.value = null
                         actionClose()
-                        isLoading.value = true
-                        startSavedCard(
+                        isLoading(true)
+                        blProcessSavedCard(
                             activity = activity,
                             cardId = cardId ?: "",
                             cvv = cvvText.value.text,

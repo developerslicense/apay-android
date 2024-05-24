@@ -10,6 +10,7 @@ import android.view.WindowManager
 import android.widget.Toast
 import androidx.compose.ui.graphics.Color
 import com.google.gson.annotations.SerializedName
+import kz.airbapay.apay_android.data.model.BankCard
 import kz.airbapay.apay_android.data.model.GooglePayMerchantResponse
 import kz.airbapay.apay_android.data.utils.DataHolder
 import kz.airbapay.apay_android.data.utils.Money
@@ -18,6 +19,9 @@ import kz.airbapay.apay_android.ui.bl_components.blAuth
 import kz.airbapay.apay_android.ui.bl_components.blCreatePaymentV1
 import kz.airbapay.apay_android.ui.bl_components.blGetGooglePayMerchantIdAndGateway
 import kz.airbapay.apay_android.ui.bl_components.blProcessGooglePay
+import kz.airbapay.apay_android.ui.bl_components.saved_cards.blCheckSavedCardNeedCvv
+import kz.airbapay.apay_android.ui.bl_components.saved_cards.blDeleteCard
+import kz.airbapay.apay_android.ui.bl_components.saved_cards.blGetSavedCards
 import kz.airbapay.apay_android.ui.pages.startview.StartProcessingActivity
 import kz.airbapay.apay_android.ui.resources.ColorsSdk
 
@@ -163,6 +167,8 @@ class AirbaPaySdk {
             )
         }*/
 
+        // Auth
+
         fun authV1(
             terminalId: String,
             shopId: String,
@@ -181,6 +187,8 @@ class AirbaPaySdk {
             )
         }
 
+        // Create payment
+
         fun createPaymentV1(
             authToken: String,
             goods: List<Goods>,
@@ -197,6 +205,8 @@ class AirbaPaySdk {
            )
         }
 
+        // Standard flow
+
         fun standardFlow(context: Context) {
             if (DataHolder.token != null) {
                 context.startActivity(Intent(context, StartProcessingActivity::class.java))
@@ -205,6 +215,8 @@ class AirbaPaySdk {
                 Log.e("AirbaPay", "Нужно предварительно выполнить авторизацию и создание платежа")
             }
         }
+
+        // GooglePay
 
         fun getGooglePayMerchantIdAndGateway(
             onSuccess: (GooglePayMerchantResponse) -> Unit,
@@ -218,6 +230,37 @@ class AirbaPaySdk {
             activity: Activity
         ) {
             blProcessGooglePay(googlePayToken, activity)
+        }
+
+        // Cards
+
+        fun getCards(
+            onSuccess: (List<BankCard>) -> Unit,
+            onNoCards: () -> Unit
+        ) {
+            blGetSavedCards(onSuccess, onNoCards)
+        }
+
+        fun paySavedCard(
+            activity: Activity,
+            bankCard: BankCard,
+            isLoading: (Boolean) -> Unit,
+            onError: () -> Unit
+        ) {
+            blCheckSavedCardNeedCvv(
+                activity = activity,
+                selectedCard = bankCard,
+                isLoading = isLoading,
+                onError = onError
+            )
+        }
+
+        fun deleteCard(
+            cardId: String,
+            onSuccess: () -> Unit,
+            onError: () -> Unit
+        ) {
+            blDeleteCard(cardId, onSuccess, onError)
         }
     }
 }

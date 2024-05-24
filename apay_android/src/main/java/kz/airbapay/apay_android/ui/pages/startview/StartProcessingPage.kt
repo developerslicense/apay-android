@@ -40,7 +40,6 @@ import kz.airbapay.apay_android.network.loggly.Logger
 import kz.airbapay.apay_android.ui.pages.BaseActivity
 import kz.airbapay.apay_android.ui.pages.googlepay.GPayView
 import kz.airbapay.apay_android.ui.pages.googlepay.nativegp.AirbaPayBaseGooglePay
-import kz.airbapay.apay_android.ui.pages.startview.bl.fetchMerchantsWithNextStep
 import kz.airbapay.apay_android.ui.pages.startview.start_processing_ext.EnterCvvBottomSheet
 import kz.airbapay.apay_android.ui.pages.startview.start_processing_ext.InitViewStartProcessingButtonNext
 import kz.airbapay.apay_android.ui.pages.startview.start_processing_ext.InitViewStartProcessingCards
@@ -137,7 +136,7 @@ internal fun StartProcessingPage(
                         }
                     },
                     cardMasked = selectedCard.value?.getMaskedPanClearedWithPoint(),
-                    isLoading = isLoading,
+                    isLoading = { b -> isLoading.value = b },
                     cardId = selectedCard.value?.id,
                     cvvFocusRequester = cvvFocusRequester,
                     showCvvInfo = {

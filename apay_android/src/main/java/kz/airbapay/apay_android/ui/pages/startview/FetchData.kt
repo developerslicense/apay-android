@@ -1,4 +1,4 @@
-package kz.airbapay.apay_android.ui.pages.startview.bl
+package kz.airbapay.apay_android.ui.pages.startview
 
 import android.app.Activity
 import androidx.compose.runtime.MutableState
@@ -6,6 +6,7 @@ import kz.airbapay.apay_android.data.model.BankCard
 import kz.airbapay.apay_android.data.utils.DataHolder
 import kz.airbapay.apay_android.data.utils.openHome
 import kz.airbapay.apay_android.network.repository.Repository
+import kz.airbapay.apay_android.ui.bl_components.saved_cards.blGetSavedCards
 
 internal fun fetchMerchantsWithNextStep(
     activity: Activity,
@@ -46,11 +47,21 @@ private fun initPaymentsWithNextStep(
         }
 
         if (DataHolder.renderInStandardFlowSavedCards) {
-            fetchCards(
-                activity = activity,
-                savedCards = savedCards,
-                selectedCard = selectedCard,
-                isLoading = isLoading
+            blGetSavedCards(
+                onSuccess = {
+                    savedCards.value = it
+                    DataHolder.hasSavedCards = it.isNotEmpty()
+
+                    if (it.isEmpty()) {
+                        openHome(activity)
+                    } else {
+                        selectedCard.value = it[0]
+                        isLoading.value = false
+                    }
+                },
+                onNoCards = {
+                    openHome(activity)
+                }
             )
 
         } else {
@@ -73,27 +84,3 @@ private fun initPaymentsWithNextStep(
     }
 }
 
-private fun fetchCards(
-    activity: Activity,
-    savedCards: MutableState<List<BankCard>>,
-    selectedCard: MutableState<BankCard?>,
-    isLoading: MutableState<Boolean>
-) {
-    Repository.cardRepository?.getCards(
-        accountId = DataHolder.accountId,
-        error = {
-            openHome(activity)
-        },
-        result = {
-            savedCards.value = it
-            DataHolder.hasSavedCards = it.isNotEmpty()
-
-            if (it.isEmpty()) {
-                openHome(activity)
-            } else {
-                selectedCard.value = it[0]
-                isLoading.value = false
-            }
-        }
-    )
-}

@@ -3,42 +3,103 @@ package kz.airbapay.apay_android.ui.pages.test_page
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.CoroutineScope
+import kz.airbapay.apay_android.AirbaPaySdk
+import kz.airbapay.apay_android.data.model.BankCard
+import kz.airbapay.apay_android.data.utils.recomposeHighlighter
 import kz.airbapay.apay_android.ui.ui_components.ProgressBarView
 
 internal class TestCardsExternalActivity : ComponentActivity() {
 
     private val isLoading = mutableStateOf(true)
-    var coroutineScope: CoroutineScope? = null
+    private val cards = mutableStateOf<List<BankCard>>(emptyList())
+    private var coroutineScope: CoroutineScope? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        testInitSdk(
-            activity = this@TestCardsExternalActivity,
-            autoCharge = 0
-        )
 
+        onStandardFlowPassword(
+            isLoading = isLoading,
+            onSuccess = {
+                AirbaPaySdk.getCards(
+                    onSuccess = {
+                        cards.value = it
+                    },
+                    onNoCards = {}
+                )
+            }
+        )
         setContent {
             coroutineScope = rememberCoroutineScope()
 
             Column(
-
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center,
                 modifier = Modifier
+                    .padding(top = 100.dp)
+                    .fillMaxWidth()
             ) {
-                Button(
-                    onClick = { this@TestCardsExternalActivity.finish() },
-                    content = {
-                        Text("Нет карт. Вернуться назад")
-                    }
-                )
-            }
+                if (cards.value.isEmpty()) {
+                    Button(
+                        onClick = { this@TestCardsExternalActivity.finish() },
+                        content = {
+                            Text("Нет карт. Вернуться назад")
+                        }
+                    )
+                } else {
+                    LazyColumn(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center,
+                        modifier = Modifier
+                            .recomposeHighlighter()
+                            .fillMaxWidth()
+                            .wrapContentHeight()
+                    ) {
+                        items(
+                            count = cards.value.size,
+                            itemContent = { index ->
+                                val card = cards.value[index]
 
+                                Button(
+                                    onClick = {
+                                        AirbaPaySdk.paySavedCard(
+                                            activity = this@TestCardsExternalActivity,
+                                            bankCard = card,
+                                            onError = {},
+                                            isLoading = { b ->
+                                                isLoading.value = b
+                                            }
+                                        )
+                                    },
+                                    content = {
+                                        Text("Оплатить картой " + card.getMaskedPanClearedWithPoint())
+                                    }
+                                )
+                            }
+                        )
+                    }
+
+                    Button(
+                        onClick = { this@TestCardsExternalActivity.finish() },
+                        content = {
+                            Text("Вернуться назад")
+                        }
+                    )
+                }
+            }
 
 
             if (isLoading.value) {
@@ -47,36 +108,3 @@ internal class TestCardsExternalActivity : ComponentActivity() {
         }
     }
 }
-
-/*
-airbaPaySdk.auth(
-                            onSuccess: {
-                                airbaPaySdk.getCards(
-                                        onSuccess: { cards in
-                                            savedCards = []
-                                            cards.forEach { card in
-                                                if card.getMaskedPanClearedWithPoint().contains("1111") {
-
-                                                    var card1 = card
-                                                    card1.name = card.getMaskedPanClearedWithPoint() + " Оплата сохраненной картой c FaceId"
-                                                    savedCards.append(card1)
-
-                                                    var card2 = card
-                                                    card2.name = card.getMaskedPanClearedWithPoint() + " Оплата сохраненной картой без FaceId"
-                                                    savedCards.append(card2)
-
-                                                } else {
-                                                    var card1 = card
-                                                    card1.name = card.getMaskedPanClearedWithPoint() + " Оплата сохраненной картой CVV"
-                                                    savedCards.append(card1)
-                                                }
-                                            }
-                                        },
-                                        onNoCards: { }
-                                )
-                            },
-                            onError: {
-
-                            }
-                    )
- */

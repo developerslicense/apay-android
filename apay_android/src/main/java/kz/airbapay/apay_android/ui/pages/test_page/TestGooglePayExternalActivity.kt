@@ -31,7 +31,6 @@ internal class TestGooglePayExternalActivity: ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        testInitSdk(this@TestGooglePayExternalActivity)
         airbaPayBaseGooglePay = AirbaPayBaseGooglePay(this)
 
         onStandardFlowPassword(

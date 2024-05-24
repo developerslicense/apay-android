@@ -98,7 +98,7 @@ class TestActivity : ComponentActivity() {
                             .fillMaxWidth()
                             .padding(horizontal = 50.dp),
                         onClick = {
-                           /* testInitSdk(
+                            /* testInitSdk( //todo
                                 activity = this@TestActivity,
                                 autoCharge = if (autoCharge.value) 1 else 0,
                                 nativeGooglePay = nativeGooglePay.value,
@@ -120,6 +120,17 @@ class TestActivity : ComponentActivity() {
                             .padding(horizontal = 50.dp),
                         onClick = {
 
+                            testInitSdk(
+                                activity = this@TestActivity,
+                                autoCharge = if (autoCharge.value) 1 else 0,
+                                nativeGooglePay = nativeGooglePay.value,
+                                needDisableScreenShot = needDisableScreenShot.value,
+                                renderGlobalSecurityCvv = renderGlobalSecurityCvv.value,
+                                renderGlobalSecurityBiometry = renderGlobalSecurityBiometry.value,
+                                renderInStandardFlowSavedCards = renderInStandardFlowSavedCards.value,
+                                renderInStandardFlowGooglePay = renderInStandardFlowGooglePay.value
+                            )
+
                             startActivity(
                                 Intent(
                                     this@TestActivity,
@@ -137,12 +148,23 @@ class TestActivity : ComponentActivity() {
                             .fillMaxWidth()
                             .padding(horizontal = 50.dp),
                         onClick = {
-                            /*startActivity(
+                            testInitSdk(
+                                activity = this@TestActivity,
+                                autoCharge = if (autoCharge.value) 1 else 0,
+                                nativeGooglePay = nativeGooglePay.value,
+                                needDisableScreenShot = needDisableScreenShot.value,
+                                renderGlobalSecurityCvv = renderGlobalSecurityCvv.value,
+                                renderGlobalSecurityBiometry = renderGlobalSecurityBiometry.value,
+                                renderInStandardFlowSavedCards = renderInStandardFlowSavedCards.value,
+                                renderInStandardFlowGooglePay = renderInStandardFlowGooglePay.value
+                            )
+
+                            startActivity(
                                 Intent(
                                     this@TestActivity,
                                     TestCardsExternalActivity::class.java
                                 )
-                            )*/
+                            )
                         }
                     ) {
                         Text("Тест внешнего API сохраненных карт")

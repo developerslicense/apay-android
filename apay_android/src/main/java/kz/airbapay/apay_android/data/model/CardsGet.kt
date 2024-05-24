@@ -7,7 +7,7 @@ import kotlinx.parcelize.Parcelize
 internal class CardsGetResponse : ArrayList<BankCard>()
 
 @Parcelize
-internal data class BankCard(
+data class BankCard(
     @SerializedName("pan")
     val pan: String? = null,
 
