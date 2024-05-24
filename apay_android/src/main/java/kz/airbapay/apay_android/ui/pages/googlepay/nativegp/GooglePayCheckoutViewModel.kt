@@ -36,7 +36,7 @@ import kotlinx.coroutines.tasks.await
 import org.json.JSONException
 import org.json.JSONObject
 
-class GooglePayCheckoutViewModel(application: Application) : AndroidViewModel(application) {
+internal class GooglePayCheckoutViewModel(application: Application) : AndroidViewModel(application) {
 
     private val _paymentUiState: MutableStateFlow<PaymentUiState> =
         MutableStateFlow(PaymentUiState.NotStarted)

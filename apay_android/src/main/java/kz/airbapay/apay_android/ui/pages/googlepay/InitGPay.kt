@@ -43,7 +43,6 @@ internal fun GPayView(
             val coroutineScope = rememberCoroutineScope()
             val activity = LocalContext.current as Activity
 
-
             AndroidView(
                 modifier = Modifier
                     .fillMaxWidth()

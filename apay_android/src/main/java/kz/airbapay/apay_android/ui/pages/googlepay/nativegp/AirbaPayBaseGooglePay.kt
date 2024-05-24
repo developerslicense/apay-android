@@ -5,6 +5,7 @@ import androidx.activity.ComponentActivity
 import com.google.android.gms.common.api.CommonStatusCodes
 import com.google.android.gms.wallet.AutoResolveHelper
 import com.google.android.gms.wallet.contract.TaskResultContracts.GetPaymentDataResult
+import kz.airbapay.apay_android.AirbaPaySdk
 import kz.airbapay.apay_android.data.constant.ErrorsCode
 import kz.airbapay.apay_android.data.utils.DataHolder
 import kz.airbapay.apay_android.data.utils.openErrorPageWithCondition
@@ -14,7 +15,6 @@ internal class AirbaPayBaseGooglePay(
 ) {
 
     var paymentModel: GooglePayCheckoutViewModel? = null
-    private val googlePayViewModel = GooglePayViewModel()
 
     private val paymentDataLauncher = activity.registerForActivityResult(GetPaymentDataResult()) { taskResult ->
 
@@ -29,7 +29,7 @@ internal class AirbaPayBaseGooglePay(
 //                    val response = Gson().fromJson(it.toJson(), GooglePayTokenResponse::class.java)
 //                    val token = response.paymentMethodData?.tokenizationData?.token ?: ""
 
-                    googlePayViewModel.processingWalletInternal(
+                    AirbaPaySdk.processExternalGooglePay(
                         activity = activity,
                         googlePayToken = it.toJson()
                     )

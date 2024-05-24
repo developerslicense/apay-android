@@ -53,11 +53,6 @@ internal object GooglePayUtil {
                 "parameters", JSONObject()
                     .put("allowedAuthMethods", JSONArray(listOf("PAN_ONLY", "CRYPTOGRAM_3DS")))
                     .put("allowedCardNetworks", JSONArray(listOf("AMEX", "MASTERCARD", "VISA")))
-                    .put("billingAddressRequired", true)
-                    .put(
-                        "billingAddressParameters", JSONObject()
-                            .put("format", "FULL")
-                    )
             )
 
     fun allowedPaymentMethods(): JSONArray = JSONArray().put(cardPaymentMethod())

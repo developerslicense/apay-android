@@ -1,5 +1,6 @@
 package kz.airbapay.apay_android
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Build
@@ -9,11 +10,14 @@ import android.view.WindowManager
 import android.widget.Toast
 import androidx.compose.ui.graphics.Color
 import com.google.gson.annotations.SerializedName
+import kz.airbapay.apay_android.data.model.GooglePayMerchantResponse
 import kz.airbapay.apay_android.data.utils.DataHolder
 import kz.airbapay.apay_android.data.utils.Money
 import kz.airbapay.apay_android.network.repository.Repository
 import kz.airbapay.apay_android.ui.bl_components.blAuth
 import kz.airbapay.apay_android.ui.bl_components.blCreatePaymentV1
+import kz.airbapay.apay_android.ui.bl_components.blGetGooglePayMerchantIdAndGateway
+import kz.airbapay.apay_android.ui.bl_components.blProcessGooglePay
 import kz.airbapay.apay_android.ui.pages.startview.StartProcessingActivity
 import kz.airbapay.apay_android.ui.resources.ColorsSdk
 
@@ -202,5 +206,18 @@ class AirbaPaySdk {
             }
         }
 
+        fun getGooglePayMerchantIdAndGateway(
+            onSuccess: (GooglePayMerchantResponse) -> Unit,
+            onError: () -> Unit
+        ) {
+            blGetGooglePayMerchantIdAndGateway(onSuccess, onError)
+        }
+
+        fun processExternalGooglePay(
+            googlePayToken: String,
+            activity: Activity
+        ) {
+            blProcessGooglePay(googlePayToken, activity)
+        }
     }
 }
