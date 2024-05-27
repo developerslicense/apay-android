@@ -19,7 +19,7 @@ internal class CardRepository(
     fun getCards(
         accountId: String,
         result: (List<BankCard>) -> Unit,
-        error: (Response<*>) -> Unit
+        error: (Response<*>?) -> Unit
     ) {
         launch(
             requestFlow = {
@@ -66,7 +66,7 @@ internal class CardRepository(
     fun deleteCard(
         cardId: String,
         result: (Any) -> Unit,
-        error: (Response<*>) -> Unit
+        error: (Response<*>?) -> Unit
     ) {
         launch(
             requestFlow = {

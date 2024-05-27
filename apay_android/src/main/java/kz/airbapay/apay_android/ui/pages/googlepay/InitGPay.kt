@@ -1,13 +1,14 @@
 package kz.airbapay.apay_android.ui.pages.googlepay
 
 import android.app.Activity
+import android.app.KeyguardManager
+import android.content.Context
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
@@ -27,7 +28,9 @@ internal fun GPayView(
     airbaPayBaseGooglePay: AirbaPayBaseGooglePay,
     openGooglePayForWebFlow: () -> Unit,
 ) {
-    if (!DataHolder.hideInternalGooglePayButton) {
+    val keyguardManager = (LocalContext.current as Activity).getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager
+
+    if (DataHolder.renderInStandardFlowGooglePay) {
 
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -36,9 +39,7 @@ internal fun GPayView(
             && !DataHolder.gateway.isNullOrBlank()
         ) {
             val hasGooglePay = airbaPayBaseGooglePay.paymentModel?.paymentUiState?.collectAsState()
-            val coroutineScope = rememberCoroutineScope()
             val activity = LocalContext.current as Activity
-
 
             AndroidView(
                 modifier = Modifier
@@ -62,12 +63,16 @@ internal fun GPayView(
                         this.isEnabled = hasGooglePay?.value == PaymentUiState.Available
 
                         setOnClickListener {
-                            initAuth(
-                                activity = activity,
-                                coroutineScope = coroutineScope,
-                                onSuccess = { airbaPayBaseGooglePay.onResultGooglePay() },
-                                onNotSecurity = { airbaPayBaseGooglePay.onResultGooglePay() }
-                            )
+                            if (keyguardManager.isKeyguardSecure) {
+                                initAuth(
+                                    activity = activity,
+                                    onSuccess = { airbaPayBaseGooglePay.onResultGooglePay() },
+                                    onNotSecurity = { airbaPayBaseGooglePay.onResultGooglePay() }
+                                )
+
+                            } else {
+                                airbaPayBaseGooglePay.onResultGooglePay()
+                            }
                         }
                     }
                 }

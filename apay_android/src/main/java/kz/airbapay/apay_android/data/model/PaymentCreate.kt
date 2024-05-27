@@ -13,5 +13,32 @@ internal data class PaymentCreateResponse(
     val status: String?,
 
     @SerializedName("redirectURL")
-    val redirectURL: String?
+    val redirectURL: String?,
+
+    @SerializedName("add_parameters")
+    val addParameters: AddParameters?
+)
+
+internal data class AddParameters(
+
+    @field:SerializedName("payform")
+    val payForm: PayForm? = null
+)
+
+internal data class PayForm(
+
+    @field:SerializedName("render_google_pay")
+    val renderGooglePay: Boolean? = null,
+
+    @field:SerializedName("request_cvv")
+    val requestCvv: Boolean? = null,
+
+    @field:SerializedName("request_face_id")
+    val requestFaceId: Boolean? = null,
+
+    @field:SerializedName("render_apple_pay")
+    val renderApplePay: Boolean? = null,
+
+    @field:SerializedName("render_save_cards")
+    val renderSaveCards: Boolean? = null
 )

@@ -90,10 +90,12 @@ internal class AcquiringClient(
                     url = url
                 )
                 openSuccess(activity)
+                return true
             }
             url.contains("status=error")
                     || url.contains("failure") -> {
                 onFailure(url)
+                return true
             }
 
             else -> view?.loadUrl(url)

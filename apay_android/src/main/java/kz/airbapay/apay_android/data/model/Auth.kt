@@ -13,7 +13,7 @@ internal data class AuthRequest(
     val terminalId: String?,
 
     @SerializedName("user")
-    val user: String?,
+    val user: String?
 )
 
 internal data class AuthResponse(

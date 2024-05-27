@@ -47,12 +47,6 @@ internal data class ApiLogEntry(
     @SerializedName("page")
     var page: String = LoggerHelper.getPageName(),
 
-    @SerializedName("merchantId")
-    var merchantId: String = DataHolder.shopId,
-
-    @SerializedName("terminalId")
-    var terminalId: String = DataHolder.terminalId,
-
     @SerializedName("orderNumber")
     var orderNumber: String = DataHolder.orderNumber,
 

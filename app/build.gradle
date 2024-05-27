@@ -8,12 +8,11 @@ android {
     compileSdk airbaPayCompileSdk
 
     defaultConfig {
-//        applicationId "kz.technodom.mobile"
-         applicationId "kz.airbapayandroid.composesdkstand" // для заливки тестовой сборки в firebase
+        applicationId "kz.airbapayandroid.composesdkstand" // для заливки тестовой сборки в firebase
         minSdk 21
         targetSdk airbaPayCompileSdk
-        versionCode 12 // 745
-        versionName "1.12"
+        versionCode 13 // 745
+        versionName "2.1"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {

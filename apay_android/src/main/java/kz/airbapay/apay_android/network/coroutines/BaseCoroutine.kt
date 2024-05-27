@@ -25,7 +25,7 @@ interface BaseCoroutine {
         paramsForLog: Any? = null,
         requestFlow: suspend () -> Flow<T>,
         result: (T) -> Unit,
-        error: (Response<T>) -> Unit
+        error: (Response<T>?) -> Unit
     )
 }
 

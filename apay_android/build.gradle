@@ -98,6 +98,7 @@ ext {
     retrofitVersion = '2.9.0'
 
     tensorflow = '2.14.0'
+    tokenGenerate = '0.7.0'
 }
 dependencies {
 
@@ -199,11 +200,13 @@ dependencies {
     // Tensorflow
     implementation "org.tensorflow:tensorflow-lite:$tensorflow"
 
+    // Token
+    implementation "io.jsonwebtoken:jjwt:$tokenGenerate"
 }
 
 
 group 'kz.airbapay' // this is your groupId
-version '1.1.5' //_2023_08_00'  // todo меняй и DataHolder.sdkVersion
+version '2.0.4' //_2023_08_00'  // todo меняй и DataHolder.sdkVersion
 
 ext { // this are variables
     pomGroupId = group

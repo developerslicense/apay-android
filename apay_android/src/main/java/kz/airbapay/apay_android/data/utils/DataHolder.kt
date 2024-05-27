@@ -5,7 +5,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kz.airbapay.apay_android.AirbaPaySdk
 
 internal object DataHolder {
-  const val sdkVersion: String = "1.1.5"
+  const val sdkVersion: String = "2.0.4"
   var baseUrl = ""
 
   var connectTimeout = 60
@@ -15,17 +15,17 @@ internal object DataHolder {
   var isProd = true
   var enabledLogsForProd = false
 
-  var bankCode: String? = null
-  var accessToken: String? = null
   var purchaseAmount: Double = 0.0
   var orderNumber = ""
   var invoiceId = ""
-  var shopId = ""
+
+  var bankCode: String? = null
+  var token: String? = null // todo rename to authToken
+
   var userEmail: String? = null
-  var accountId = ""
   var userPhone = ""
-  var password = ""
-  var terminalId  = ""
+  var accountId: String = ""
+
   const val failureBackUrl = "https://site.kz/failure" // не нужно менять
   const val successBackUrl = "https://site.kz/success"// не нужно менять
   var failureCallback = ""
@@ -33,31 +33,29 @@ internal object DataHolder {
   var autoCharge = 0
   var currentLang = AirbaPaySdk.Lang.RU.lang
 
-  var goods: List<AirbaPaySdk.Goods>? = null
-  var settlementPayments: List<AirbaPaySdk.SettlementPayment>? = null
-
   val purchaseAmountFormatted = MutableStateFlow("")
 
-  var frontendCallback: ((activity: Activity, paymentSubmittingResult: Boolean) -> Unit)? = null
+  var actionOnCloseProcessing: ((activity: Activity, paymentSubmittingResult: Boolean) -> Unit)? = null
 
-  var redirectToCustomSuccessPage: ((Activity) -> Unit)? = null
-  var redirectToCustomFinalErrorPage: ((Activity) -> Unit)? = null
-  var featureGooglePay: Boolean = false
-  var featureSavedCards: Boolean = false
-
-  var googlePayButtonUrl: String? = null
-  var isGooglePayFlow: Boolean = true
-
-  var hasSavedCards: Boolean = false
-  var isGooglePayNative: Boolean = false
-  var hideInternalGooglePayButton: Boolean = false
+  var openCustomPageSuccess: ((activity: Activity) -> Unit)? = null
+  var openCustomPageFinalError: ((activity: Activity) -> Unit)? = null
 
   var gateway: String? = null
   var gatewayMerchantId: String? = null
-  var needDisableScreenShot: Boolean = false
-}
+  var googlePayButtonUrl: String? = null
 
-object TestAirbaPayStates {
-  var shutDownTestFeatureGooglePay: Boolean = false
-  var shutDownTestFeatureSavedCards: Boolean = false
+  var isGooglePayFlow: Boolean = true
+  var hasSavedCards: Boolean = false
+
+  var needDisableScreenShot: Boolean = false
+
+  var isGooglePayNative: Boolean = true
+
+  var renderInStandardFlowGooglePay: Boolean = true
+  var renderInStandardFlowSavedCards: Boolean = true
+  var renderGlobalSecurityCvv: Boolean = true
+  var renderGlobalSecurityBiometry: Boolean = true
+
+  var height: Int? = null
+  var width: Int? = null
 }

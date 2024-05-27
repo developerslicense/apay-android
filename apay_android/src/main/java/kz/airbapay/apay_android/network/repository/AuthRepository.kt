@@ -16,7 +16,7 @@ internal class AuthRepository(
     fun auth(
         param: AuthRequest,
         result: (AuthResponse) -> Unit,
-        error: (Response<*>) -> Unit
+        error: (Response<*>?) -> Unit
     ) {
         launch(
             paramsForLog = param,
@@ -27,35 +27,33 @@ internal class AuthRepository(
             },
             result = { body ->
                 body.body()?.let {
-                    DataHolder.accessToken = it.accessToken
+                    DataHolder.token = it.accessToken
                     result(it)
                 } ?: error(Unit)
             },
             error = error
         )
     }
-}
 
-internal fun startAuth(
-    authRepository: AuthRepository,
-    onSuccess: () -> Unit,
-    onError: () -> Unit,
-    paymentId: String? = null
-) {
-    val authRequest = AuthRequest(
-        paymentId = paymentId,
-        password = DataHolder.password,
-        terminalId = DataHolder.terminalId,
-        user = DataHolder.shopId
-    )
-
-    authRepository.auth(
-        param = authRequest,
-        result = {
-            onSuccess()
-        },
-        error = {
-            onError()
-        }
-    )
+    fun updateAuth(
+        paymentId: String,
+        result: (AuthResponse) -> Unit,
+        error: (Response<*>?) -> Unit
+    ) {
+        launch(
+            paramsForLog = paymentId,
+            requestFlow = {
+                safeApiFlowCall {
+                    api.updateAuth(paymentId)
+                }
+            },
+            result = { body ->
+                body.body()?.let {
+                    DataHolder.token = it.accessToken
+                    result(it)
+                } ?: error(Unit)
+            },
+            error = error
+        )
+    }
 }

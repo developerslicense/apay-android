@@ -19,6 +19,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.constraintlayout.compose.ConstraintLayout
 import kz.airbapay.apay_android.data.constant.ARG_ACTION
+import kz.airbapay.apay_android.data.utils.DataHolder
 import kz.airbapay.apay_android.network.loggly.Logger
 import kz.airbapay.apay_android.ui.pages.BaseActivity
 import kz.airbapay.apay_android.ui.pages.dialogs.InitDialogExit
@@ -34,6 +35,8 @@ internal class GooglePayActivity: BaseActivity() {
         )
 
         val url = intent.getStringExtra(ARG_ACTION)
+        DataHolder.isGooglePayFlow = true
+
         setContent {
             GooglePayPage(url = url)
         }

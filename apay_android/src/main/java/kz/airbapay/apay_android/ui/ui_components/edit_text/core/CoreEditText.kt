@@ -10,6 +10,8 @@ import androidx.compose.material.TextField
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
@@ -41,6 +43,9 @@ internal fun CoreEditText(
     isDateExpiredMask: Boolean = false
 ) {
 
+    val positionDefault = remember { mutableStateOf(true) }
+    val positionSaved = remember { mutableStateOf(0) }
+
     val maskUtils: MaskUtils? =
         if (mask == null || Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) null
         else MaskUtils(mask, isDateExpiredMask)
@@ -55,9 +60,20 @@ internal fun CoreEditText(
                     regex = regex
                 ) else it.text
 
+            val range = if(it.text.length > text.value.text.length && positionDefault.value) {
+                if (positionSaved.value >= it.selection.end) {
+                    positionDefault.value = false
+                }
+                val position = TextRange(it.text.length)
+                positionSaved.value = position.end
+                position
+            } else {
+                TextRange(maskUtils.getNextCursorPosition(it.selection.end))
+            }
+
             text.value = TextFieldValue(
                 text = maskUtils.format(result),
-                selection = TextRange(maskUtils.getNextCursorPosition(it.selection.end))
+                selection = range
             )
 
         } else {
