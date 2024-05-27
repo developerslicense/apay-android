@@ -294,14 +294,14 @@ internal fun testInitSdk(
         isGooglePayNative = nativeGooglePay,
         invoiceId = someInvoiceId.toString(),
         orderNumber = someOrderNumber.toString(),
-        actionOnCloseProcessing = { result ->
-            if (result) {
+        actionOnCloseProcessing = { _activity, paymentSubmittingResult ->
+            if (paymentSubmittingResult) {
                 Log.e("AirbaPaySdk", "initProcessing success");
             } else {
                 Log.e("AirbaPaySdk", "initProcessing error");
             }
-            activity.startActivity(Intent(activity, TestActivity::class.java))
-            activity.finish()
+            _activity.startActivity(Intent(_activity, TestActivity::class.java))
+            _activity.finish()
         },
         needDisableScreenShot = needDisableScreenShot,
 //        openCustomPageSuccess = {  context.startActivity(Intent(context, CustomSuccessActivity::java.class)) },

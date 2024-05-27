@@ -78,9 +78,9 @@ class AirbaPaySdk {
             orderNumber: String,
             needDisableScreenShot: Boolean = false,
 
-            actionOnCloseProcessing: (Boolean) -> Unit,
-            openCustomPageSuccess: (() -> Unit)? = null,
-            openCustomPageFinalError: (() -> Unit)? = null,
+            actionOnCloseProcessing: (activity: Activity, paymentSubmittingResult: Boolean) -> Unit,
+            openCustomPageSuccess: ((Activity) -> Unit)? = null,
+            openCustomPageFinalError: ((Activity) -> Unit)? = null,
             renderInStandardFlowGooglePay: Boolean,
             renderInStandardFlowSavedCards: Boolean,
             renderGlobalSecurityCvv: Boolean,

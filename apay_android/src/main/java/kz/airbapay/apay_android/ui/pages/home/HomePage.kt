@@ -358,7 +358,7 @@ private fun onBackPressed(
         showDialogExit.value = true
 
     } else if (!DataHolder.renderInStandardFlowSavedCards || !DataHolder.hasSavedCards) {
-        backToApp()
+        activity.backToApp()
 
     } else {
         backToStartPage(activity)

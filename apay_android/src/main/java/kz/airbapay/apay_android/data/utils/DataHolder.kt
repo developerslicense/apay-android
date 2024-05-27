@@ -1,5 +1,6 @@
 package kz.airbapay.apay_android.data.utils
 
+import android.app.Activity
 import kotlinx.coroutines.flow.MutableStateFlow
 import kz.airbapay.apay_android.AirbaPaySdk
 
@@ -34,10 +35,10 @@ internal object DataHolder {
 
   val purchaseAmountFormatted = MutableStateFlow("")
 
-  var actionOnCloseProcessing: ((paymentSubmittingResult: Boolean) -> Unit)? = null
+  var actionOnCloseProcessing: ((activity: Activity, paymentSubmittingResult: Boolean) -> Unit)? = null
 
-  var openCustomPageSuccess: (() -> Unit)? = null
-  var openCustomPageFinalError: (() -> Unit)? = null
+  var openCustomPageSuccess: ((activity: Activity) -> Unit)? = null
+  var openCustomPageFinalError: ((activity: Activity) -> Unit)? = null
 
   var gateway: String? = null
   var gatewayMerchantId: String? = null

@@ -42,7 +42,7 @@ internal fun ErrorPage(
     val activity = LocalContext.current as Activity
 
     BackHandler {
-        backToApp()
+        activity.backToApp()
     }
 
     ConstraintLayout(
@@ -114,7 +114,7 @@ internal fun ErrorPage(
                     actionClick = {
                         errorCode.clickOnTop(
                             activity = activity,
-                            finish = { backToApp() }
+                            finish = { activity.backToApp() }
                         )
                     }
                 )
@@ -128,7 +128,7 @@ internal fun ErrorPage(
                 actionClick = {
                     errorCode.clickOnBottom(
                         activity = activity,
-                        finish = { backToApp() }
+                        finish = { activity.backToApp() }
                     )
                 }
             )

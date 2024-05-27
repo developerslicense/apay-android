@@ -27,7 +27,7 @@ internal class ErrorActivity: BaseActivity() {
 
             } else if (error.code == ErrorsCode.error_5020.code) {
                 if (DataHolder.openCustomPageFinalError != null) {
-                    DataHolder.openCustomPageFinalError?.invoke()
+                    DataHolder.openCustomPageFinalError?.invoke(this)
                 } else {
                     ErrorFinalPage()
                 }

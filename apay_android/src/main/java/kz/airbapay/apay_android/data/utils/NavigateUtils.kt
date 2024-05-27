@@ -14,10 +14,10 @@ import kz.airbapay.apay_android.ui.pages.home.HomeActivity
 import kz.airbapay.apay_android.ui.pages.startview.StartProcessingActivity
 import kz.airbapay.apay_android.ui.pages.success.SuccessActivity
 
-internal fun backToApp(
+internal fun Activity.backToApp(
     isSuccess: Boolean = false
 ) {
-    DataHolder.actionOnCloseProcessing?.invoke(isSuccess)
+    DataHolder.actionOnCloseProcessing?.invoke(this, isSuccess)
     DataHolder.actionOnCloseProcessing = null
 }
 
@@ -73,7 +73,7 @@ internal fun openGooglePay(
 
 internal fun openSuccess(activity: Activity) {
     if (DataHolder.openCustomPageSuccess != null) {
-        DataHolder.openCustomPageSuccess?.invoke()
+        DataHolder.openCustomPageSuccess?.invoke(activity)
 
     } else {
         val intent = Intent(activity, SuccessActivity::class.java)
