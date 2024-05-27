@@ -1,20 +1,470 @@
 ## Техническая документация для интеграции sdk AirbaPay в мобильные приложения
 
-## 1.1 Подключение sdk
+------------------------------------------------------------------------------------------------------------------------
+## V2
+------------------------------------------------------------------------------------------------------------------------
 
-## 1.2 Настройки PROGUARD
+## 1 Подключение sdk
 
-## 1.3 Вызов стартовой формы
+## 2 Настройки PROGUARD
 
-## 1.4 Подключение нативного GooglePay
+## 3 Flutter - дополнительные шаги интеграции
 
-## 1.5 Подключение API внешнего взаимодействия с GooglePay
+## 4 Подключение нативного GooglePay
 
-## 1.6 Рекомендация в случае интеграции в flutter
+## 5 API создания платежа
+
+## 6 API формы стандартного флоу
+
+## 7 API GooglePay
+
+## 8 API сохраненных карт
 
 
 
-## 1.1  Подключение sdk
+## 1 Подключение sdk
+
+
+В  ```build.gradle ``` модуля добавь ``` implementation 'kz.airbapay:apay_android:~'```
+
+Для инициализации sdk нужно выполнить ```AirbaPaySdk.initSdk()```
+
+| Параметр                       | Тип                                | Обязательный | Описание                                                                                                                                                                                             |
+|--------------------------------|------------------------------------|--------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| context                        | Context                            | да           | Контекст приложения                                                                                                                                                                                  |
+| accountId                      | String                             | да           | ID аккаунта пользователя                                                                                                                                                                             |
+| lang                           | AirbaPaySdk.Lang                   | да           | Код языка для UI                                                                                                                                                                                     |
+| isProd                         | Boolean                            | да           | Продовская или тестовая среда airbapay                                                                                                                                                               |
+| phone                          | String                             | да           | Телефон пользователя                                                                                                                                                                                 |
+| failureCallback                | String                             | да           | URL вебхука при ошибке                                                                                                                                                                               |
+| successCallback                | String                             | да           | URL вебхука при успехе                                                                                                                                                                               |
+| userEmail                      | String                             | да           | Емейл пользователя, куда будет отправлена квитанция. В случае отсутствия емейла                                                                                                                      |
+| colorBrandMain                 | androidx.compose.ui.graphics.Color | нет          | Брендовый цвет кнопок, переключателей и текста                                                                                                                                                       |
+| colorBrandInversion            | androidx.compose.ui.graphics.Color | нет          | Цвет текста у кнопок с брендовым цветом                                                                                                                                                              |
+| autoCharge                     | Int                                | нет          | Автоматическое подтверждение при 2х-стадийном режиме 0 - нет, 1 - да                                                                                                                                 |
+| enabledLogsForProd             | Boolean                            | нет          | Флаг для включения логов                                                                                                                                                                             |
+| purchaseAmount                 | Double                             | да           | Сумма платежа                                                                                                                                                                                        |
+| invoiceId                      | String                             | да           | ID платежа в системе магазина                                                                                                                                                                        | 
+| orderNumber                    | String                             | да           | Номер заказа в системе магазина                                                                                                                                                                      |
+| actionOnCloseProcessing        | (Activity, Boolean) -> Unit        | да           | Лямбда, вызываемая при клике на кнопку "Вернуться в магазин" и при отмене процесса. Разработчику в ней нужно прописать код для возврата в приложение. Обязательно добавить в конце activity.finish() |
+| isGooglePayNative              | Boolean                            | нет          | Флаг, определяющий показ нативной кнопки GooglePay вместо вебвьюшки                                                                                                                                  |
+| needDisableScreenShot          | Boolean                            | нет          | Флаг включения/отключения защиты от скриншота страниц. По дефолту выключен                                                                                                                           |
+| renderInStandardFlowGooglePay  | Boolean                            | да           | Флаг настройки показа функционала GooglePay в стандартном флоу                                                                                                                                       |
+| renderInStandardFlowSavedCards | Boolean                            | да           | Флаг настройки показа функционала сохраненных карт в стандартном флоу                                                                                                                                |
+| renderGlobalSecurityBiometry   | Boolean                            | да           | Флаг глобальной настройки в сдк для биометрии при оплате сохраненной картой или GooglePay                                                                                                            |
+| renderGlobalSecurityCvv        | Boolean                            | да           | Флаг глобальной настройки в сдк для показа боттомщита с CVV при оплате сохраненной картой                                                                                                            |
+
+При смене значения isProd, требуется выгрузить приложение из памяти.
+
+Пример:
+
+```
+    
+AirbaPaySdk.initSdk(
+    context = this.application,
+    accountId = "1000009806",
+    lang = AirbaPaySdk.Lang.RU,
+    isProd = false, 
+    phone = "77051000000",
+    failureCallback = "https://site.kz/failure-clb", 
+    successCallback = "https://site.kz/success-clb",                
+    userEmail = "test@test.com", 
+    colorBrandMain = Color.Red,
+    purchaseAmount = 1000.0,
+    invoiceId = invoiceId,
+    orderNumber = orderNumber,
+    isGooglePayNative = true,
+    actionOnCloseProcessing = { activity, isSuccess ->
+
+         if (isSuccess) { 
+                  startActivity(Intent(activity, SuccessActivity::class.java)) 
+         } else {
+                  startActivity(Intent(activity, ErrorActivity::class.java)) 
+         }
+         activity.finish()
+    },
+    needDisableScreenShot = false,
+    renderInStandardFlowGooglePay = true,
+    renderInStandardFlowSavedCards = true,
+    renderGlobalSecurityBiometry = true,
+    renderGlobalSecurityCvv = true
+   
+)
+
+```
+
+Для проекта без Jetpack Compose потребуются дополнительные настройки проекта.
+
+Добавить в build.gradle app и, в случае модульной архитектуры, в модуль, где будет использоваться:
+
+ ```
+android {
+ 
+    buildFeatures {
+       compose true
+       viewBinding true
+    }
+    
+    composeOptions {
+       kotlinCompilerExtensionVersion '1.5.9'
+    }
+    
+    kotlinOptions {
+      jvmTarget = 17
+    }
+}
+ ```
+
+В зависимости от версии котлина, потребуется подобрать версию kotlinCompilerExtensionVersion
+https://developer.android.com/jetpack/androidx/releases/compose-kotlin
+
+ ``` 
+
+dependencies {
+
+    implementation "kz.airbapay:apay_android:$apay_version"
+    implementation platform("androidx.compose:compose-bom:2024.01.00")
+    implementation 'androidx.compose.ui:ui-graphics'
+    implementation 'androidx.compose.ui:ui'
+
+}
+ ```
+
+## 2 Настройки PROGUARD
+
+В случае, если используется Proguard, нужно добавить настройки
+
+```
+# Retrofit does reflection on generic parameters. InnerClasses is required to use Signature and
+# EnclosingMethod is required to use InnerClasses.
+-keepattributes Signature, InnerClasses, EnclosingMethod
+
+# Retrofit does reflection on method and parameter annotations.
+-keepattributes RuntimeVisibleAnnotations, RuntimeVisibleParameterAnnotations
+
+# Keep annotation default values (e.g., retrofit2.http.Field.encoded).
+-keepattributes AnnotationDefault
+
+# Retain service method parameters when optimizing.
+-keepclassmembers,allowshrinking,allowobfuscation interface * {
+    @retrofit2.http.* <methods>;
+}
+
+# Ignore annotation used for build tooling.
+-dontwarn org.codehaus.mojo.animal_sniffer.IgnoreJRERequirement
+
+# Ignore JSR 305 annotations for embedding nullability information.
+-dontwarn javax.annotation.**
+
+# Guarded by a NoClassDefFoundError try/catch and only used when on the classpath.
+-dontwarn kotlin.Unit
+
+# Top-level functions that can only be used by Kotlin.
+-dontwarn retrofit2.KotlinExtensions
+-dontwarn retrofit2.KotlinExtensions$*
+
+# With R8 full mode, it sees no subtypes of Retrofit interfaces since they are created with a Proxy
+# and replaces all potential values with null. Explicitly keeping the interfaces prevents this.
+-if interface * { @retrofit2.http.* <methods>; }
+-keep,allowobfuscation interface <1>
+
+# Keep inherited services.
+-if interface * { @retrofit2.http.* <methods>; }
+-keep,allowobfuscation interface * extends <1>
+
+# With R8 full mode generic signatures are stripped for classes that are not
+# kept. Suspend functions are wrapped in continuations where the type argument
+# is used.
+-keep,allowobfuscation,allowshrinking class kotlin.coroutines.Continuation
+
+# R8 full mode strips generic signatures from return types if not kept.
+-if interface * { @retrofit2.http.* public *** *(...); }
+-keep,allowoptimization,allowshrinking,allowobfuscation class <3>
+
+# With R8 full mode generic signatures are stripped for classes that are not kept.
+-keep,allowobfuscation,allowshrinking class retrofit2.Response
+```
+
+## 3 Flutter - дополнительные шаги интеграции
+
+В dart добавьте:
+
+   ```
+     final MethodChannel channel = MethodChannel("com.example.testFlutter/AirbaPayChannel");
+   
+     Future<void> callNativeMethod() async {
+       try {
+         await channel.invokeMethod('pay');
+       } catch (e) {
+         print('Error calling native method: $e');
+       }
+     }
+   ```
+
+И нужно вызвать ```callNativeMethod``` для перехода на страницы сдк.
+
+Нужно создать дополнительный промежуточный активити FlutterAirbaPayActivity,  
+в котором будет производиться инициализация и переход на страницу сдк.
+Это нужно, чтоб при нажатии назад из сдк, не закрывалось приложение.
+
+Добавить в манифест описание этого активити
+
+ ```
+<activity android:name=".pay.airba.FlutterAirbaPayActivity"
+    android:theme="@style/AppTheme.AppCompat"
+    android:exported="false" />
+ ```
+
+В ```MainActivity``` нужно добавить
+
+```
+ override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
+        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "com.example.testFlutter/AirbaPayChannel")
+            .setMethodCallHandler { call: MethodCall, result: Result ->
+                if (call.method == "pay") {
+                    result.success(null)
+                    FlutterAirbaPayActivity.start(this, call, result)
+                } else {
+                    result.notImplemented()
+                }
+            }
+    }
+```
+
+В ```FlutterAirbaPayActivity```
+
+```
+
+class FlutterAirbaPayActivity : AppCompatActivity() {
+    /**
+     * Два состояния для activity:
+     *
+     * 1. started airba pay flow
+     * 2. finished airba pay flow
+     */
+    private var isFlowStarted = false
+
+    companion object {
+        fun start(context: Activity, call: MethodCall, result: MethodChannel.Result) {
+            val intent = Intent(context, FlutterAirbaPayActivity::class.java)
+            context.startActivityForResult(intent, 123)
+        }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        
+        AirbaPaySdk.initSdk(
+            ~~~,
+            actionOnCloseProcessing = { activity, paymentSubmittingResult ->
+               close(paymentSubmittingResult, activity)
+            }
+        )
+
+        AirbaPaySdk.standardFlow(this)
+    }
+
+    /**
+     * Finishes this activity with setting result
+     *
+     * @see handleAirbaActivityResult
+     */
+    private fun close(result: Boolean, childActivity: Activity? = null) {
+        setResult(
+            Activity.RESULT_OK,
+            Intent().putExtra("result", result)
+        )
+        finish()
+        childActivity?.finish()
+    }
+
+    override fun onStart() {
+        super.onStart()
+        if(!isFlowStarted) {
+            // 1. started airba pay flow (invoked after onCreate)
+            isFlowStarted = true
+        } else {
+            // 2. finished airba pay flow (invoked after backButton pressed or etc)
+            close(false)
+        }
+    }
+}
+```
+
+## 4 Подключение нативного GooglePay
+
+1) Изменить параметр isGooglePayNative в initSdk на true
+
+2) Перейти в консоль GooglePay  https://pay.google.com/business/console/ и перейти в пункт меню
+   Google Pay API
+
+3) Найти в списке “Integrate with your Android app” ваше приложение и кликнуть “Управление”
+
+4) Выберите тип интеграции “Через шлюз”.
+
+5) Загрузите скриншоты по списку указанному ниже и нажмите “Сохранить”
+
+6) Кликните “Submit for approval”
+
+7) В случае отказа по каким-либо причинам (к примеру, дизайн кнопки не соответствует их
+   требованиям), нужно будет ответить на письмо гугла, что вы используете стороннее решение компании
+   Airba Pay
+
+   
+## 5 API создания платежа
+
+Запрос на авторизацию в системе AirbaPay (Для случая, когда нет другой реализации получения токена в систему)
+
+Возвращает токен.
+```auth() -> String```
+
+| Параметр     | Тип              | Обязательный | Описание                                                               |
+|--------------|------------------|--------------|------------------------------------------------------------------------|
+| terminalId   | String           | да           | ID терминала под которым создали платеж                                |
+| shopId       | String           | да           | ID магазина в системе AirbaPay                                         |
+| paymentId    | String?          | нет          | ID платежа. В абсолютном большинстве случаев в этом запросе будет null |
+| onSuccess    | (String) -> Unit | да           | Лямбда на успех                                                        |
+| onError      | () -> Unit       | да           | Лямбда на ошибку                                                       |
+
+
+```
+AirbaPaySdk.auth(
+        onSuccess = { token -> ~  },
+        onError = { ~ },
+        shopId = "test", 
+        password = "test123!", 
+        terminalId = "123qdfssdf"
+)
+        
+```
+
+Запрос на инициализацию платежа в системе AirbaPay
+```createPayment()```
+
+| Параметр                     | Тип                                 | Обязательный | Описание                                                                                |
+|------------------------------|-------------------------------------|--------------|-----------------------------------------------------------------------------------------|
+| authToken                    | String                              | да           | Токен, полученный из auth или другой реализацией получения токена                       |
+| onSuccess                    | () -> Unit                          | да           | Лямбда на успех                                                                         |
+| onError                      | () -> Unit                          | да           | Лямбда на ошибку                                                                        |
+| goods                        | List<AirbaPaySdk.Goods>             | нет          | Список продуктов для оплаты. Если есть необходимость передачи списка товаров в систему  |
+| settlementPayments           | List<AirbaPaySdk.SettlementPayment> | нет          | Распределение платежа по компаниям. В случае одной компании, может быть null            |
+
+```
+AirbaPaySdk.createPayment(
+             authToken = token,
+             onSuccess = { paymentId -> ~ },
+             onError = { ~ }
+)             
+```
+
+## 6 API формы стандартного флоу
+
+Предварительно выполнить ```AirbaPaySdk.auth()``` и ```AirbaPaySdk.createPayment()```
+
+Открытие стандартной формы AirbaPay выполняется через ```AirbaPaySdk.standardFlow(context: context)```.
+
+| Параметр                    | Тип                                 | Обязательный | Описание                                                                                                                                                                                             |
+|-----------------------------|-------------------------------------|--------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| context                     | Context                             | да           | Контекст приложения                                                                                                                                                                                  |
+
+
+
+## 7 API GooglePay
+
+Для работы с GooglePay за пределами стандартного флоу:
+
+1) Полностью реализовать на стороне приложения механизм вызова GooglePay боттомщита 
+   и получения GooglePay токена. Как получить ```gatewayMerchantId``` и ```merchantId```, 
+   необходимые для GooglePay, будет указано ниже  
+
+2) Выполнить пункт "4 Подключение нативного GooglePay"
+
+3) Выполнить ```AirbaPaySdk.auth()``` и ```AirbaPaySdk.createPayment()```
+
+4) Вызвать ```AirbaPaySdk.getGooglePayMerchantIdAndGateway()``` для получения объекта ```GooglePayMerchantResponse```
+     
+    | Параметр                     | Тип                                  | Обязательный | Описание                              |
+    |------------------------------|--------------------------------------|--------------|---------------------------------------|
+    | onSuccess                    | (GooglePayMerchantResponse) -> Unit  | да           | Лямбда на успех                       |
+    | onError                      | () -> Unit                           | да           | Лямбда на ошибку                      |
+    
+     ```GooglePayMerchantResponse```
+   
+    | Параметр            | Тип     | Описание                        |
+    |---------------------|---------|---------------------------------|
+    | gatewayMerchantId   | String? | gatewayMerchantId для GooglePay |
+    | merchantId          | String? | merchanId для GooglePay         |
+ 
+5) Вызвать после получения токена GooglePay функцию  ```processExternalGooglePay()```
+
+   | Параметр       | Тип      | Обязательный | Описание                 |
+   |----------------|----------|--------------|--------------------------|
+   | googlePayToken | String   | да           | Токен GooglePay          |
+   | activity       | Activity | да           | Активити                 |
+   
+
+   ``` 
+    AirbaPaySdk.processExternalGooglePay(
+                   activity = activity,
+                   googlePayToken = googlePayToken
+    )
+   ```
+
+## 8 API сохраненных карт
+
+Запрос списка сохраненных карт пользователя
+```getCards()```
+Предварительно выполнить ```AirbaPaySdk.auth()``` 
+
+| Параметр  | Тип                      | Обязательный | Описание                                    |
+|-----------|--------------------------|--------------|---------------------------------------------|
+| onSuccess | (List<BankCard>) -> Unit | да           | Лямбда на успех со списком сохраненных карт |
+| onNoCards | () -> Unit               | да           | Лямбда на отсутствие сохраненных карт       |
+
+
+Запрос удаления сохраненной карты пользователя
+```deleteCard()```
+Предварительно выполнить ```AirbaPaySdk.auth()```
+
+| Параметр  | Тип          | Обязательный | Описание                                             |
+|-----------|--------------|--------------|------------------------------------------------------|
+| cardId    | String       | да           | ```id``` сохраненной карты из запроса ```getCards``` |
+| onSuccess | () -> Unit   | да           | Лямбда на успех                                      |
+| onError   | () -> Unit   | да           | Лямбда на ошибку                                     |
+
+
+Запрос проведения оплаты по сохраненной карте пользователя
+```paySavedCard()```
+Предварительно выполнить ```AirbaPaySdk.auth()``` и ```AirbaPaySdk.createPayment()```
+
+| Параметр   | Тип              | Обязательный | Описание                                              |
+|------------|------------------|--------------|-------------------------------------------------------|
+| bankCard   | BankCard         | да           | Экземпляр карты, получаемый из запроса ```getCards``` |
+| isLoading  | (Bool) -> Unit   | да           | Лямбда для показа прогрессбара                        |
+| onError    | () -> Unit       | да           | Лямбда на ошибку                                      |
+
+
+
+
+------------------------------------------------------------------------------------------------------------------------
+## V1
+------------------------------------------------------------------------------------------------------------------------
+
+## 1 Подключение sdk
+
+## 2 Настройки PROGUARD
+
+## 3 Вызов стартовой формы
+
+## 4 Подключение нативного GooglePay
+
+## 5 Подключение API внешнего взаимодействия с GooglePay
+
+## 6 Рекомендация в случае интеграции в flutter
+
+
+
+## 1  Подключение sdk
 
 В  ```build.gradle ``` модуля добавь ``` implementation 'kz.airbapay:apay_android:~'```
 
@@ -101,9 +551,10 @@ AirbaPaySdk.initSdk(
 
 ```
 
-## 1.2 Настройки PROGUARD
+## 2 Настройки PROGUARD
 
 В случае, если используется Proguard, нужно добавить настройки
+
 ```
 # Retrofit does reflection on generic parameters. InnerClasses is required to use Signature and
 # EnclosingMethod is required to use InnerClasses.
@@ -155,8 +606,7 @@ AirbaPaySdk.initSdk(
 -keep,allowobfuscation,allowshrinking class retrofit2.Response
 ```
 
-
-## 1.3 Вызов стартовой формы
+## 3 Вызов стартовой формы
 
 Открытие формы AirbaPay выполняется через  ```AirbaPaySdk.startAirbaPay() ```.
 
@@ -222,7 +672,7 @@ dependencies {
 }
  ```
 
-## 1.4 Подключение нативного GooglePay
+## 4 Подключение нативного GooglePay
 
 1) Изменить параметр isGooglePayNative в initSdk на true
 
@@ -241,11 +691,11 @@ dependencies {
    требованиям), нужно будет ответить на письмо гугла, что вы используете стороннее решение компании
    Airba Pay
 
-## 1.5 Подключение API внешнего взаимодействия с GooglePay
+## 5 Подключение API внешнего взаимодействия с GooglePay
 
-1) Добавить ```val googlePayViewModel = GooglePayViewModel()``` 
+1) Добавить ```val googlePayViewModel = GooglePayViewModel()```
 
-   и повесить на клик последовательный вызов функций: 
+   и повесить на клик последовательный вызов функций:
 
 ```
 AirbaPaySdk.initSdk(
@@ -311,9 +761,7 @@ googlePayViewModel.processingWalletExternal(
 | activity       | Activity       | да           | Активити                      |
 | coroutineScope | CoroutineScope | да           | CoroutineScope                |
 
-
-
-## 1.6 Рекомендация в случае интеграции в flutter
+## 6 Рекомендация в случае интеграции в flutter
 
 В dart добавьте:
 
