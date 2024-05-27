@@ -74,9 +74,7 @@ internal interface Api {
     suspend fun paymentAccountEntryRetry(): Response<PaymentEntryResponse>
 
     @GET("api/v1/payments/cvv/{cardId}")
-    suspend fun getCvv(
-        @Path("cardId") cardId: String
-    ): Response<GetCvvResponse>
+    suspend fun getCvv(@Path("cardId") cardId: String): Response<GetCvvResponse>
 
     @GET("api/v1/payments")
     suspend fun getPayment(): Response<PaymentEntryResponse>

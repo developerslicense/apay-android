@@ -89,28 +89,7 @@ class TestActivity : ComponentActivity() {
 
                         }
                     ) {
-                        Text("Стандартный флоу Password")
-                    }
-
-                    Button(
-                        modifier = Modifier
-                            .padding(top = 20.dp)
-                            .fillMaxWidth()
-                            .padding(horizontal = 50.dp),
-                        onClick = {
-                            /* testInitSdk( //todo
-                                activity = this@TestActivity,
-                                autoCharge = if (autoCharge.value) 1 else 0,
-                                nativeGooglePay = nativeGooglePay.value,
-                                needDisableScreenShot = needDisableScreenShot.value,
-                                manualDisableFeatureGooglePay = !enableFeatureGooglePay.value,
-                                manualDisableFeatureSavedCards = !enableFeatureSavedCards.value
-                            )
-
-                            onStandardFlowJWT(isLoading)*/
-                        }
-                    ) {
-                        Text("Стандартный флоу JWT")
+                        Text("Стандартный флоу")
                     }
 
                     Button(
@@ -180,7 +159,7 @@ class TestActivity : ComponentActivity() {
 
                             testInitSdk(activity = this@TestActivity)
 
-                            AirbaPaySdk.authV1(
+                            AirbaPaySdk.auth(
                                 onSuccess = { token ->
                                     Repository.cardRepository?.getCards(
                                         accountId = DataHolder.accountId,
@@ -230,7 +209,7 @@ internal fun Context.onStandardFlowPassword(
     onSuccess: () -> Unit
 ) {
     isLoading.value = true
-    AirbaPaySdk.authV1(
+    AirbaPaySdk.auth(
         onSuccess = { token ->
             val goods = listOf(
                 AirbaPaySdk.Goods(
@@ -260,17 +239,17 @@ internal fun Context.onStandardFlowPassword(
                 )
             )
 
-            AirbaPaySdk.createPaymentV1(
+            AirbaPaySdk.createPayment(
                 authToken = token,
                 onSuccess = { paymentId ->
-                    onStandardFlowPasswordNextStep(isLoading, paymentId, onSuccess)
+                    onSuccess()
                 },
                 onError = {
                     isLoading.value = false
                     Toast.makeText(this, "Что-то пошло не так", Toast.LENGTH_SHORT).show()
                 },
-                goods = goods,
-                settlementPayments = settlementPayment
+//                goods = goods,
+//                settlementPayments = settlementPayment
             )
         },
         onError = {
@@ -283,79 +262,6 @@ internal fun Context.onStandardFlowPassword(
         paymentId = null
     )
 }
-
-internal fun Context.onStandardFlowPasswordNextStep(
-    isLoading: MutableState<Boolean>,
-    paymentId: String,
-    onSuccess: () -> Unit
-) {
-    AirbaPaySdk.authV1(
-        onSuccess = {
-            isLoading.value = false
-            onSuccess()
-        },
-        onError = {
-            isLoading.value = false
-            Toast.makeText(this, "Что-то пошло не так", Toast.LENGTH_SHORT).show()
-        },
-        paymentId = paymentId,
-        shopId = "test-baykanat", //"airbapay-mfo", //
-        password = "baykanat123!", //"MtTh37TLV7", //
-        terminalId = "65c5df69e8037f1b451a0594",//"659e79e279a508566e35d299", //
-    )
-}
-/*
-    private fun onStandardFlowJWT(
-        isLoading: MutableState<Boolean>
-    ) {
-        isLoading.value = true
-        AirbaPaySdk.auth(
-            // имитация получения токена на стороне бэка клиента
-            onSuccess = { token ->
-
-                AirbaPaySdk.createPayment( // имитация получения paymentId на стороне бэка клиента
-                    authToken = token,
-                    onSuccess = { paymentId ->
-                        val jwt = ""
-                        onStandardFlowJWTNextStep(isLoading, paymentId, jwt)
-                    },
-                    onError = {
-                        isLoading.value = false
-                        Toast.makeText(this@TestActivity, "Что-то пошло не так", Toast.LENGTH_SHORT).show()
-                    }
-                )
-
-            },
-            onError = {
-                isLoading.value = false
-                Toast.makeText(this@TestActivity, "Что-то пошло не так", Toast.LENGTH_SHORT).show()
-            },
-            shopId = "test-baykanat", //"airbapay-mfo", //
-            password = "baykanat123!", //"MtTh37TLV7", //
-            terminalId = "65c5df69e8037f1b451a0594",//"659e79e279a508566e35d299", //
-            paymentId = null
-        )
-    }
-
-    private fun onStandardFlowJWTNextStep(
-        isLoading: MutableState<Boolean>,
-        paymentId: String,
-        jwt: String
-    ) {
-        AirbaPaySdk.auth(
-            onSuccess = {
-                isLoading.value = false
-                AirbaPaySdk.startProcessing(this@TestActivity)
-            },
-            onError = {
-                isLoading.value = false
-                Toast.makeText(this@TestActivity, "Что-то пошло не так", Toast.LENGTH_SHORT).show()
-            },
-            paymentId = paymentId,
-            jwt = jwt
-        )
-    }*/
-
 
 internal fun testInitSdk(
     activity: Activity,

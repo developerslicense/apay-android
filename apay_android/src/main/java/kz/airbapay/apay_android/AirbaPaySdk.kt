@@ -16,7 +16,7 @@ import kz.airbapay.apay_android.data.utils.DataHolder
 import kz.airbapay.apay_android.data.utils.Money
 import kz.airbapay.apay_android.network.repository.Repository
 import kz.airbapay.apay_android.ui.bl_components.blAuth
-import kz.airbapay.apay_android.ui.bl_components.blCreatePaymentV1
+import kz.airbapay.apay_android.ui.bl_components.blCreatePayment
 import kz.airbapay.apay_android.ui.bl_components.blGetGooglePayMerchantIdAndGateway
 import kz.airbapay.apay_android.ui.bl_components.blProcessGooglePay
 import kz.airbapay.apay_android.ui.bl_components.saved_cards.blCheckSavedCardNeedCvv
@@ -153,23 +153,10 @@ class AirbaPaySdk {
 
         }
 
-       /* fun auth(
-            jwt: String,
-            paymentId: String,
-            onSuccess: (String) -> Unit,
-            onError: () -> Unit
-        ) {
-            blAuth(
-                jwt = jwt,
-                paymentId = paymentId,
-                onSuccess = onSuccess,
-                onError = onError
-            )
-        }*/
 
         // Auth
 
-        fun authV1(
+        fun auth(
             terminalId: String,
             shopId: String,
             password: String,
@@ -189,14 +176,14 @@ class AirbaPaySdk {
 
         // Create payment
 
-        fun createPaymentV1(
+        fun createPayment(
             authToken: String,
-            goods: List<Goods>,
-            settlementPayments: List<SettlementPayment>? = null,
             onSuccess: (String) -> Unit,
-            onError: () -> Unit
+            onError: () -> Unit,
+            goods: List<Goods>? = null,
+            settlementPayments: List<SettlementPayment>? = null
         ) {
-           blCreatePaymentV1(
+           blCreatePayment(
                authToken = authToken,
                goods = goods,
                settlementPayments = settlementPayments,
