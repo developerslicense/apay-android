@@ -37,8 +37,11 @@ internal class TestCardsExternalActivity : ComponentActivity() {
                 AirbaPaySdk.getCards(
                     onSuccess = {
                         cards.value = it
+                        isLoading.value = false
                     },
-                    onNoCards = {}
+                    onNoCards = {
+                        isLoading.value = false
+                    }
                 )
             }
         )
