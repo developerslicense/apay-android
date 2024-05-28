@@ -31,3 +31,19 @@ internal fun blAuth(
         }
     )
 }
+
+internal fun blUpdateToken(
+    paymentId: String,
+    onSuccess: (String) -> Unit,
+    onError: () -> Unit
+) {
+    Repository.authRepository?.updateAuth(
+        paymentId = paymentId,
+        result = {
+            onSuccess(paymentId)
+        },
+        error = {
+            onError()
+        }
+    )
+}

@@ -10,10 +10,11 @@ import android.view.WindowManager
 import android.widget.Toast
 import androidx.compose.ui.graphics.Color
 import com.google.gson.annotations.SerializedName
+import kz.airbapay.apay_android.data.constant.ErrorsCode
 import kz.airbapay.apay_android.data.model.BankCard
 import kz.airbapay.apay_android.data.model.GooglePayMerchantResponse
 import kz.airbapay.apay_android.data.utils.DataHolder
-import kz.airbapay.apay_android.data.utils.Money
+import kz.airbapay.apay_android.data.utils.openErrorPageWithCondition
 import kz.airbapay.apay_android.network.repository.Repository
 import kz.airbapay.apay_android.ui.bl_components.blAuth
 import kz.airbapay.apay_android.ui.bl_components.blCreatePayment
@@ -63,28 +64,16 @@ class AirbaPaySdk {
             context: Context,
             isProd: Boolean,
             lang: Lang,
-            accountId: String,
             phone: String,
             userEmail: String? = null,
-            failureCallback: String,
-            successCallback: String,
             colorBrandMain: Color? = null,
             colorBrandInversion: Color? = null,
-            autoCharge: Int = 0,
             enabledLogsForProd: Boolean = false,
-            isGooglePayNative: Boolean = false,
-            purchaseAmount: Double,
-            invoiceId: String,
-            orderNumber: String,
             needDisableScreenShot: Boolean = false,
 
             actionOnCloseProcessing: (activity: Activity, paymentSubmittingResult: Boolean) -> Unit,
             openCustomPageSuccess: ((Activity) -> Unit)? = null,
-            openCustomPageFinalError: ((Activity) -> Unit)? = null,
-            renderInStandardFlowGooglePay: Boolean,
-            renderInStandardFlowSavedCards: Boolean,
-            renderGlobalSecurityCvv: Boolean,
-            renderGlobalSecurityBiometry: Boolean
+            openCustomPageFinalError: ((Activity) -> Unit)? = null
         ) {
 
             try {
@@ -117,35 +106,23 @@ class AirbaPaySdk {
             else "https://sps.airbapay.kz/acquiring-api/sdk/"
 
             DataHolder.userPhone = phone
-            DataHolder.accountId = accountId
             DataHolder.userEmail = userEmail
-
-            DataHolder.failureCallback = failureCallback
-            DataHolder.successCallback = successCallback
 
             DataHolder.sendTimeout = 60
             DataHolder.connectTimeout = 60
             DataHolder.receiveTimeout = 60
-            DataHolder.autoCharge = autoCharge
 
             DataHolder.currentLang = lang.lang
-            DataHolder.isGooglePayNative = isGooglePayNative
             DataHolder.needDisableScreenShot = needDisableScreenShot
-
-            DataHolder.purchaseAmount = purchaseAmount
-            DataHolder.orderNumber = orderNumber
-            DataHolder.invoiceId = invoiceId
-
-            DataHolder.purchaseAmountFormatted.value = Money.initDouble(purchaseAmount).getFormatted()
 
             DataHolder.openCustomPageSuccess = openCustomPageSuccess
             DataHolder.openCustomPageFinalError = openCustomPageFinalError
             DataHolder.actionOnCloseProcessing = actionOnCloseProcessing
 
-            DataHolder.renderInStandardFlowGooglePay = renderInStandardFlowGooglePay
-            DataHolder.renderInStandardFlowSavedCards = renderInStandardFlowSavedCards
-            DataHolder.renderGlobalSecurityCvv = renderGlobalSecurityCvv
-            DataHolder.renderGlobalSecurityBiometry = renderGlobalSecurityBiometry
+            DataHolder.renderSecurityCvv = null
+            DataHolder.renderSecurityBiometry = null
+            DataHolder.renderSavedCards = null
+            DataHolder.renderGooglePay = null
 
 
             // не переносить
@@ -156,7 +133,7 @@ class AirbaPaySdk {
 
         // Auth
 
-        fun auth(
+        fun authPassword(
             terminalId: String,
             shopId: String,
             password: String,
@@ -174,28 +151,67 @@ class AirbaPaySdk {
             )
         }
 
+        fun authJwt(
+            jwt: String,
+            onSuccess: () -> Unit,
+            onError: () -> Unit
+        ) {
+            DataHolder.token = jwt
+            Repository.paymentsRepository?.getPaymentInfo(
+                result = { onSuccess() },
+                error = { onError() }
+            )
+        }
+
         // Create payment
 
         fun createPayment(
             authToken: String,
+            failureCallback: String,
+            successCallback: String,
+            purchaseAmount: Double,
+            accountId: String,
+            invoiceId: String,
+            orderNumber: String,
             onSuccess: (String) -> Unit,
             onError: () -> Unit,
+            renderSecurityCvv: Boolean?,
+            renderSecurityBiometry: Boolean?,
+            renderGooglePay: Boolean?,
+            renderSavedCards: Boolean?,
+            autoCharge: Int = 0,
             goods: List<Goods>? = null,
             settlementPayments: List<SettlementPayment>? = null
         ) {
-           blCreatePayment(
-               authToken = authToken,
-               goods = goods,
-               settlementPayments = settlementPayments,
-               onSuccess = onSuccess,
-               onError = onError
-           )
+            DataHolder.accountId = accountId
+
+            blCreatePayment(
+                authToken = authToken,
+                failureCallback = failureCallback,
+                successCallback = successCallback,
+                autoCharge = autoCharge,
+                purchaseAmount = purchaseAmount,
+                orderNumber = orderNumber,
+                invoiceId = invoiceId,
+                goods = goods,
+                settlementPayments = settlementPayments,
+                renderGooglePay = renderGooglePay,
+                renderSavedCards = renderSavedCards,
+                renderSecurityBiometry = renderSecurityBiometry,
+                renderSecurityCvv = renderSecurityCvv,
+                onSuccess = onSuccess,
+                onError = onError
+            )
         }
 
         // Standard flow
 
-        fun standardFlow(context: Context) {
+        fun standardFlow(
+            context: Context,
+            isGooglePayNative: Boolean = false
+        ) {
             if (DataHolder.token != null) {
+                DataHolder.isGooglePayNative = isGooglePayNative
                 context.startActivity(Intent(context, StartProcessingActivity::class.java))
             } else {
                 Toast.makeText(context, "Что-то пошло не так", Toast.LENGTH_SHORT).show()
@@ -234,11 +250,16 @@ class AirbaPaySdk {
             isLoading: (Boolean) -> Unit,
             onError: () -> Unit
         ) {
-            blCheckSavedCardNeedCvv(
-                activity = activity,
-                selectedCard = bankCard,
-                isLoading = isLoading,
-                onError = onError
+            Repository.paymentsRepository?.getPaymentInfo(
+                result = {
+                    blCheckSavedCardNeedCvv(activity, bankCard, isLoading, onError)
+                },
+                error = {
+                    openErrorPageWithCondition(
+                        errorCode = ErrorsCode.error_1.code,
+                        activity = activity
+                    )
+                }
             )
         }
 

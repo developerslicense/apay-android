@@ -267,7 +267,7 @@ internal fun HomePage(
                 }
 
 
-                if (DataHolder.renderInStandardFlowSavedCards) {
+                if (DataHolder.isRenderSavedCards()) {
                     Spacer(modifier = Modifier.height(24.dp))
                     SwitchedView(
                         text = saveCardData(),
@@ -357,7 +357,7 @@ private fun onBackPressed(
     ) {
         showDialogExit.value = true
 
-    } else if (!DataHolder.renderInStandardFlowSavedCards || !DataHolder.hasSavedCards) {
+    } else if (!DataHolder.isRenderSavedCards() || !DataHolder.hasSavedCards) {
         activity.backToApp()
 
     } else {

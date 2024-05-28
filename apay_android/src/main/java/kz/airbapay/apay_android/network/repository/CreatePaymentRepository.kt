@@ -14,6 +14,16 @@ internal class CreatePaymentRepository(
 ) : BaseCoroutine by BaseCoroutineDelegate() {
 
     fun createPayment(
+        failureCallback: String,
+        successCallback: String,
+        autoCharge: Int = 0,
+        purchaseAmount: Double,
+        invoiceId: String,
+        orderNumber: String,
+        renderSecurityCvv: Boolean?,
+        renderSecurityBiometry: Boolean?,
+        renderGooglePay: Boolean?,
+        renderSavedCards: Boolean?,
         goods: List<AirbaPaySdk.Goods>?,
         settlementPayments: List<AirbaPaySdk.SettlementPayment>?,
         result: (PaymentCreateResponse) -> Unit,
@@ -24,7 +34,17 @@ internal class CreatePaymentRepository(
 
         val param = initParamsForCreatePaymentV1(
             goods = goods,
-            settlementPayments = settlementPayments
+            settlementPayments = settlementPayments,
+            failureCallback = failureCallback,
+            successCallback = successCallback,
+            autoCharge = autoCharge,
+            purchaseAmount = purchaseAmount,
+            orderNumber = orderNumber,
+            invoiceId = invoiceId,
+            renderSecurityCvv = renderSecurityCvv,
+            renderSecurityBiometry = renderSecurityBiometry,
+            renderSavedCards = renderSavedCards,
+            renderGooglePay = renderGooglePay
         )
 
         launch(
@@ -42,6 +62,16 @@ internal class CreatePaymentRepository(
     }
 
     private fun initParamsForCreatePaymentV1(
+        failureCallback: String,
+        successCallback: String,
+        autoCharge: Int = 0,
+        purchaseAmount: Double,
+        invoiceId: String,
+        orderNumber: String,
+        renderSecurityCvv: Boolean?,
+        renderSecurityBiometry: Boolean?,
+        renderGooglePay: Boolean?,
+        renderSavedCards: Boolean?,
         goods: List<AirbaPaySdk.Goods>?,
         settlementPayments: List<AirbaPaySdk.SettlementPayment>?
     ): HashMap<String, Any?> {
@@ -49,24 +79,44 @@ internal class CreatePaymentRepository(
             put("goods", goods)
         }
 
+        val payform = HashMap<String, Any?>().apply {
+            val payformInner = HashMap<String, Any?>().apply {
+                if (renderGooglePay != null) {
+                    put("render_google_pay", renderGooglePay)
+                }
+                if (renderSavedCards != null) {
+                    put("render_save_cards", renderSavedCards)
+                }
+                if (renderSecurityCvv != null) {
+                    put("request_cvv", renderSecurityCvv)
+                }
+                if (renderSecurityBiometry != null) {
+                    put("request_face_id", renderSecurityBiometry)
+                }
+            }
+            put("payform", payformInner)
+        }
+
         val param = HashMap<String, Any?>().apply {
             put("account_id", DataHolder.accountId)
-            put("amount", DataHolder.purchaseAmount)
+            put("amount", purchaseAmount)
             put("cart", cart)
             put("currency", "KZT")
             put("description", "description")
             if (!DataHolder.userEmail.isNullOrEmpty()) {
                 put("email", DataHolder.userEmail)
             }
-            put("invoice_id", DataHolder.invoiceId)
             put("language", DataHolder.currentLang)
-            put("order_number", DataHolder.orderNumber)
             put("phone", DataHolder.userPhone)
-            put("auto_charge", DataHolder.autoCharge)
+            put("invoice_id", invoiceId)
+            put("order_number", orderNumber)
+            put("auto_charge", autoCharge)
             put("failure_back_url", DataHolder.failureBackUrl)
-            put("failure_callback", DataHolder.failureCallback)
+            put("failure_callback", failureCallback)
             put("success_back_url", DataHolder.successBackUrl)
-            put("success_callback", DataHolder.successCallback)
+            put("success_callback", successCallback)
+
+            put("add_parameters", payform)
 
             /** параметр, нужный, если несколько айдишников компаний*/
             if (!settlementPayments.isNullOrEmpty()) {
