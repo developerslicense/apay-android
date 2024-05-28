@@ -20,7 +20,7 @@ internal object DataHolder {
   var invoiceId = ""
 
   var bankCode: String? = null
-  var token: String? = null // todo rename to authToken
+  var token: String? = null
 
   var userEmail: String? = null
   var userPhone = ""

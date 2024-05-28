@@ -12,64 +12,8 @@ import retrofit2.Response
 internal class CreatePaymentRepository(
     private val api: Api
 ) : BaseCoroutine by BaseCoroutineDelegate() {
-/*
-    fun createPaymentV2(
-        result: (PaymentCreateResponse) -> Unit,
-        error: (Response<*>?) -> Unit
-    ) {
-        DataHolder.isGooglePayFlow = false
 
-        val param = initParamsForCreatePaymentV2()
-
-        launch(
-            paramsForLog = param,
-            requestFlow = {
-                safeApiFlowCall { api.createPayment(param) }
-            },
-            result = { body ->
-                body.body()?.let {
-                    result(it)
-                } ?: error(Unit)
-            },
-            error = error
-        )
-    }
-
-    private fun initParamsForCreatePaymentV2(): HashMap<String, Any?> {
-        val cart = HashMap<String, Any?>().apply {
-//            put("goods", DataHolder.goods)
-        }
-
-        val param = HashMap<String, Any?>().apply {
-            put("account_id", DataHolder.accountId)
-            put("amount", DataHolder.purchaseAmount)
-            put("cart", cart)
-            put("currency", "KZT")
-            put("description", "description")
-            if (!DataHolder.userEmail.isNullOrEmpty()) {
-                put("email", DataHolder.userEmail)
-            }
-            put("invoice_id", DataHolder.invoiceId)
-            put("language", DataHolder.currentLang)
-            put("order_number", DataHolder.orderNumber)
-            put("phone", DataHolder.userPhone)
-            put("auto_charge", DataHolder.autoCharge)
-            put("failure_back_url", DataHolder.failureBackUrl)
-            put("failure_callback", DataHolder.failureCallback)
-            put("success_back_url", DataHolder.successBackUrl)
-            put("success_callback", DataHolder.successCallback)
-
-            *//** параметр, нужный, если несколько айдишников компаний*//*
-//            if (!DataHolder.settlementPayments.isNullOrEmpty()) {
-//                val settlement = HashMap<String, Any>()
-//                settlement["payments"] = DataHolder.settlementPayments!!
-//                put("settlement", settlement)
-//            }
-        }
-        return param
-    }*/
-
-    fun createPaymentV1(
+    fun createPayment(
         goods: List<AirbaPaySdk.Goods>?,
         settlementPayments: List<AirbaPaySdk.SettlementPayment>?,
         result: (PaymentCreateResponse) -> Unit,

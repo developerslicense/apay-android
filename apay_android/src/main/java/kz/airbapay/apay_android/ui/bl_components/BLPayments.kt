@@ -16,7 +16,7 @@ internal fun blCreatePayment(
 
     DataHolder.token = authToken
 
-    repository.createPaymentV1(
+    repository.createPayment(
         result = { response ->
             Repository.authRepository?.updateAuth(
                 paymentId = response.id!!,
