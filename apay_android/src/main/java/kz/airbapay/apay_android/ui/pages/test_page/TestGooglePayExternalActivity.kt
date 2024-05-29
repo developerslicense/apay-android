@@ -25,7 +25,7 @@ import kz.airbapay.apay_android.ui.ui_components.ProgressBarView
 
 internal class TestGooglePayExternalActivity: ComponentActivity() {
     private val isLoading = mutableStateOf(true)
-    var coroutineScope: CoroutineScope? = null
+    private var coroutineScope: CoroutineScope? = null
     private var airbaPayBaseGooglePay: AirbaPayBaseGooglePay? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -33,16 +33,32 @@ internal class TestGooglePayExternalActivity: ComponentActivity() {
 
         airbaPayBaseGooglePay = AirbaPayBaseGooglePay(this)
 
-        onStandardFlowPassword(
-            isLoading = isLoading,
-            onSuccess = {
-                isLoading.value = true
-                AirbaPaySdk.getGooglePayMerchantIdAndGateway(
-                    onSuccess = { isLoading.value = false },
-                    onError = { isLoading.value = false }
-                )
-            }
-        )
+        val jwt = intent.getStringExtra("jwt")
+
+        if (jwt != null) {
+            AirbaPaySdk.authJwt(
+                jwt = jwt,
+                onSuccess = {
+                    isLoading.value = true
+                    AirbaPaySdk.getGooglePayMerchantIdAndGateway(
+                        onSuccess = { isLoading.value = false },
+                        onError = { isLoading.value = false }
+                    )
+                },
+                onError = {}
+            )
+        } else {
+            onStandardFlowPassword(
+                isLoading = isLoading,
+                onSuccess = {
+                    isLoading.value = true
+                    AirbaPaySdk.getGooglePayMerchantIdAndGateway(
+                        onSuccess = { isLoading.value = false },
+                        onError = { isLoading.value = false }
+                    )
+                }
+            )
+        }
 
         setContent {
             val isLoadingGooglePay = airbaPayBaseGooglePay?.paymentModel?.isLoading?.collectAsState()
