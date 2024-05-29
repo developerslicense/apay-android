@@ -29,30 +29,21 @@
 
 Для инициализации sdk нужно выполнить ```AirbaPaySdk.initSdk()```
 
-| Параметр                | Тип                                | Обязательный | Описание                                                                                                                                                                                             |
-|-------------------------|------------------------------------|--------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| context                 | Context                            | да           | Контекст приложения                                                                                                                                                                                  |
-| accountId               | String                             | да           | ID аккаунта пользователя                                                                                                                                                                             |
-| lang                    | AirbaPaySdk.Lang                   | да           | Код языка для UI                                                                                                                                                                                     |
-| isProd                  | Boolean                            | да           | Продовская или тестовая среда airbapay                                                                                                                                                               |
-| phone                   | String                             | да           | Телефон пользователя                                                                                                                                                                                 |
-| failureCallback         | String                             | да           | URL вебхука при ошибке                                                                                                                                                                               |
-| successCallback         | String                             | да           | URL вебхука при успехе                                                                                                                                                                               |
-| userEmail               | String                             | да           | Емейл пользователя, куда будет отправлена квитанция. В случае отсутствия емейла                                                                                                                      |
-| colorBrandMain          | androidx.compose.ui.graphics.Color | нет          | Брендовый цвет кнопок, переключателей и текста                                                                                                                                                       |
-| colorBrandInversion     | androidx.compose.ui.graphics.Color | нет          | Цвет текста у кнопок с брендовым цветом                                                                                                                                                              |
-| autoCharge              | Int                                | нет          | Автоматическое подтверждение при 2х-стадийном режиме 0 - нет, 1 - да                                                                                                                                 |
-| enabledLogsForProd      | Boolean                            | нет          | Флаг для включения логов                                                                                                                                                                             |
-| purchaseAmount          | Double                             | да           | Сумма платежа                                                                                                                                                                                        |
-| invoiceId               | String                             | да           | ID платежа в системе магазина                                                                                                                                                                        | 
-| orderNumber             | String                             | да           | Номер заказа в системе магазина                                                                                                                                                                      |
-| actionOnCloseProcessing | (Activity, Boolean) -> Unit        | да           | Лямбда, вызываемая при клике на кнопку "Вернуться в магазин" и при отмене процесса. Разработчику в ней нужно прописать код для возврата в приложение. Обязательно добавить в конце activity.finish() |
-| isGooglePayNative       | Boolean                            | нет          | Флаг, определяющий показ нативной кнопки GooglePay вместо вебвьюшки                                                                                                                                  |
-| needDisableScreenShot   | Boolean                            | нет          | Флаг включения/отключения защиты от скриншота страниц. По дефолту выключен                                                                                                                           |
-| renderGooglePay         | Boolean                            | да           | Флаг настройки показа функционала GooglePay в стандартном флоу                                                                                                                                       |
-| renderSavedCards        | Boolean                            | да           | Флаг настройки показа функционала сохраненных карт в стандартном флоу                                                                                                                                |
-| renderSecurityBiometry  | Boolean                            | да           | Флаг глобальной настройки в сдк для биометрии при оплате сохраненной картой или GooglePay                                                                                                            |
-| renderSecurityCvv       | Boolean                            | да           | Флаг глобальной настройки в сдк для показа боттомщита с CVV при оплате сохраненной картой                                                                                                            |
+| Параметр                  | Тип                                | Обязательный | Описание                                                                                                                                              |
+|---------------------------|------------------------------------|--------------|-------------------------------------------------------------------------------------------------------------------------------------------------------|
+| context                   | Context                            | да           | Контекст приложения                                                                                                                                   |
+| isProd                    | Boolean                            | да           | Продовская или тестовая среда airbapay                                                                                                                |
+| lang                      | AirbaPaySdk.Lang                   | да           | Код языка для UI                                                                                                                                      |
+| phone                     | String                             | да           | Телефон пользователя                                                                                                                                  |
+| userEmail                 | String                             | нет          | Емейл пользователя, куда будет отправлена квитанция. В случае отсутствия емейла                                                                       |
+| colorBrandMain            | androidx.compose.ui.graphics.Color | нет          | Брендовый цвет кнопок, переключателей и текста                                                                                                        |
+| colorBrandInversion       | androidx.compose.ui.graphics.Color | нет          | Цвет текста у кнопок с брендовым цветом                                                                                                               |
+| enabledLogsForProd        | Boolean                            | нет          | Флаг для включения логов                                                                                                                              |
+| needDisableScreenShot     | Boolean                            | нет          | Флаг включения/отключения защиты от скриншота страниц. По дефолту выключен                                                                            |
+| actionOnCloseProcessing   | (Activity, Boolean) -> Unit        | да           | Лямбда, вызываемая при клике на кнопку "Вернуться в магазин" и при отмене процесса. Разработчику в ней нужно прописать код для возврата в приложение. |
+| openCustomPageSuccess     | ((Activity) -> Unit)?              | нет          | Лямбда кастомной страницы успеха                                                                                                                      |
+| openCustomPageFinalError  | ((Activity) -> Unit)?              | нет          | Лямбда кастомной страницы финальной ошибки                                                                                                            |
+
 
 При смене значения isProd, требуется выгрузить приложение из памяти.
 
@@ -62,17 +53,12 @@
     
 AirbaPaySdk.initSdk(
     context = this.application,
-    accountId = "1000009806",
-    lang = AirbaPaySdk.Lang.RU,
     isProd = false, 
+    lang = AirbaPaySdk.Lang.RU,
     phone = "77051000000",
-    failureCallback = "https://site.kz/failure-clb", 
-    successCallback = "https://site.kz/success-clb",                
     userEmail = "test@test.com", 
     colorBrandMain = Color.Red,
     purchaseAmount = 1000.0,
-    invoiceId = invoiceId,
-    orderNumber = orderNumber,
     isGooglePayNative = true,
     actionOnCloseProcessing = { activity, isSuccess ->
 
@@ -82,13 +68,7 @@ AirbaPaySdk.initSdk(
                   startActivity(Intent(activity, ErrorActivity::class.java)) 
          }
          activity.finish()
-    },
-    needDisableScreenShot = false,
-    renderGooglePay = true,
-    renderSavedCards = true,
-    renderSecurityBiometry = true,
-    renderSecurityCvv = true
-   
+    }
 )
 
 ```
@@ -293,42 +273,39 @@ class FlutterAirbaPayActivity : AppCompatActivity() {
 
 ## 4 Подключение нативного GooglePay
 
-1) Изменить параметр isGooglePayNative в initSdk на true
-
-2) Перейти в консоль GooglePay  https://pay.google.com/business/console/ и перейти в пункт меню
+1) Перейти в консоль GooglePay  https://pay.google.com/business/console/ и перейти в пункт меню
    Google Pay API
 
-3) Найти в списке “Integrate with your Android app” ваше приложение и кликнуть “Управление”
+2) Найти в списке “Integrate with your Android app” ваше приложение и кликнуть “Управление”
 
-4) Выберите тип интеграции “Через шлюз”.
+3) Выберите тип интеграции “Через шлюз”.
 
-5) Загрузите скриншоты по списку указанному ниже и нажмите “Сохранить”
+4) Загрузите скриншоты по списку указанному ниже и нажмите “Сохранить”
 
-6) Кликните “Submit for approval”
+5) Кликните “Submit for approval”
 
-7) В случае отказа по каким-либо причинам (к примеру, дизайн кнопки не соответствует их
+6) В случае отказа по каким-либо причинам (к примеру, дизайн кнопки не соответствует их
    требованиям), нужно будет ответить на письмо гугла, что вы используете стороннее решение компании
    Airba Pay
 
    
 ## 5 API создания платежа
 
-Запрос на авторизацию в системе AirbaPay (Для случая, когда нет другой реализации получения токена в систему)
+Запрос на авторизацию в системе AirbaPay через передачу логина с паролем. Возвращает токен.
+```authPassword()```
 
-Возвращает токен.
-```auth() -> String```
-
-| Параметр     | Тип              | Обязательный | Описание                                                               |
-|--------------|------------------|--------------|------------------------------------------------------------------------|
-| terminalId   | String           | да           | ID терминала под которым создали платеж                                |
-| shopId       | String           | да           | ID магазина в системе AirbaPay                                         |
-| paymentId    | String?          | нет          | ID платежа. В абсолютном большинстве случаев в этом запросе будет null |
-| onSuccess    | (String) -> Unit | да           | Лямбда на успех                                                        |
-| onError      | () -> Unit       | да           | Лямбда на ошибку                                                       |
+| Параметр   | Тип              | Обязательный | Описание                                                               |
+|------------|------------------|--------------|------------------------------------------------------------------------|
+| terminalId | String           | да           | ID терминала под которым создаётся платеж                              |
+| shopId     | String           | да           | ID магазина в системе AirbaPay                                         |
+| password   | String           | да           | Пароль в системе AirbaPay                                              |
+| paymentId  | String?          | нет          | ID платежа. В абсолютном большинстве случаев в этом запросе будет null |
+| onSuccess  | (String) -> Unit | да           | Лямбда на успех. Возвращает токен                                      |
+| onError    | () -> Unit       | да           | Лямбда на ошибку                                                       |
 
 
 ```
-AirbaPaySdk.auth(
+AirbaPaySdk.authPassword(
         onSuccess = { token -> ~  },
         onError = { ~ },
         shopId = "test", 
@@ -338,35 +315,73 @@ AirbaPaySdk.auth(
         
 ```
 
+Запрос на авторизацию в системе AirbaPay через передачу JWT. 
+```authJwt()```
+
+| Параметр    | Тип          | Обязательный | Описание           |
+|-------------|--------------|--------------|--------------------|
+| jwt         | String       | да           | JWT токен          |
+| onSuccess   | () -> Unit   | да           | Лямбда на успех.   |
+| onError     | () -> Unit   | да           | Лямбда на ошибку   |
+
+
+```
+AirbaPaySdk.authJwt(
+        onSuccess = { ~  },
+        onError = { ~ },
+        jwt = "~"
+)
+        
+```
+
 Запрос на инициализацию платежа в системе AirbaPay
 ```createPayment()```
 
-| Параметр                     | Тип                                 | Обязательный | Описание                                                                                |
-|------------------------------|-------------------------------------|--------------|-----------------------------------------------------------------------------------------|
-| authToken                    | String                              | да           | Токен, полученный из auth или другой реализацией получения токена                       |
-| onSuccess                    | () -> Unit                          | да           | Лямбда на успех                                                                         |
-| onError                      | () -> Unit                          | да           | Лямбда на ошибку                                                                        |
-| goods                        | List<AirbaPaySdk.Goods>             | нет          | Список продуктов для оплаты. Если есть необходимость передачи списка товаров в систему  |
-| settlementPayments           | List<AirbaPaySdk.SettlementPayment> | нет          | Распределение платежа по компаниям. В случае одной компании, может быть null            |
+| Параметр               | Тип                                 | Обязательный    | Описание                                                                                                              |
+|------------------------|-------------------------------------|-----------------|-----------------------------------------------------------------------------------------------------------------------|
+| authToken              | String                              | да              | Токен, полученный из auth или другой реализацией получения токена                                                     |
+| failureCallback        | String                              | да              | URL вебхука при ошибке                                                                                                |
+| successCallback        | String                              | да              | URL вебхука при успехе                                                                                                |
+| purchaseAmount         | Double                              | да              | Сумма платежа                                                                                                         |
+| accountId              | String                              | да              | ID аккаунта пользователя                                                                                              |
+| invoiceId              | String                              | да              | ID платежа в системе магазина                                                                                         |
+| orderNumber            | String                              | да              | Номер заказа в системе магазина                                                                                       |
+| onSuccess              | (String) -> Unit                    | да              | Лямбда на успех. Возвращает paymentId                                                                                 |
+| onError                | () -> Unit                          | да              | Лямбда на ошибку                                                                                                      |
+| renderGooglePay        | Boolean?                            | нет             | Флаг настройки показа функционала GooglePay в стандартном флоу. NULL - параметры с сервера                            |
+| renderSavedCards       | Boolean?                            | нет             | Флаг настройки показа функционала сохраненных карт в стандартном флоу. NULL - параметры с сервера                     |
+| renderSecurityBiometry | Boolean?                            | нет             | Флаг глобальной настройки в сдк для биометрии при оплате сохраненной картой или GooglePay. NULL - параметры с сервера |
+| renderSecurityCvv      | Boolean?                            | нет             | Флаг глобальной настройки в сдк для показа боттомщита с CVV при оплате сохраненной картой. NULL - параметры с сервера |
+| autoCharge             | Int                                 | нет             | Автоматическое подтверждение при 2х-стадийном режиме 0 - нет, 1 - да                                                  |
+| goods                  | List<AirbaPaySdk.Goods>             | нет             | Список продуктов для оплаты. Если есть необходимость передачи списка товаров в систему                                |
+| settlementPayments     | List<AirbaPaySdk.SettlementPayment> | нет             | Распределение платежа по компаниям. В случае одной компании, может быть null                                          |
+
 
 ```
 AirbaPaySdk.createPayment(
-             authToken = token,
-             onSuccess = { paymentId -> ~ },
-             onError = { ~ }
-)             
+                authToken = token,
+                accountId = "77061111112",
+                onSuccess = { paymentId -> ~ },
+                onError = { ~ },
+                failureCallback = "https://site.kz/failure-clb",
+                successCallback = "https://site.kz/success-clb",
+                purchaseAmount = 1500.45,
+                invoiceId = "1111111111",
+                orderNumber = "ab1111111111"
+            )            
 ```
 
 ## 6 API формы стандартного флоу
 
-Предварительно выполнить ```AirbaPaySdk.auth()``` и ```AirbaPaySdk.createPayment()```
+Предварительно выполнить ```AirbaPaySdk.authPassword()``` вместе с ```AirbaPaySdk.createPayment()```
+Или выполнить только ```AirbaPaySdk.authJwt()```
 
-Открытие стандартной формы AirbaPay выполняется через ```AirbaPaySdk.standardFlow(context: context)```.
+Открытие стандартной формы AirbaPay выполняется через ```AirbaPaySdk.standardFlow()```.
 
-| Параметр                    | Тип                                 | Обязательный | Описание                                                                                                                                                                                             |
-|-----------------------------|-------------------------------------|--------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| context                     | Context                             | да           | Контекст приложения                                                                                                                                                                                  |
-
+| Параметр                | Тип                  | Обязательный | Описание                                                                      |
+|-------------------------|----------------------|--------------|-------------------------------------------------------------------------------|
+| context                 | Context              | да           | Контекст приложения                                                           |
+| isGooglePayNative       | Boolean              | нет          | Флаг, определяющий показ нативной кнопки GooglePay вместо вебвьюшки           |
 
 
 ## 7 API GooglePay
@@ -379,7 +394,8 @@ AirbaPaySdk.createPayment(
 
 2) Выполнить пункт "4 Подключение нативного GooglePay"
 
-3) Выполнить ```AirbaPaySdk.auth()``` и ```AirbaPaySdk.createPayment()```
+3) Предварительно выполнить ```AirbaPaySdk.authPassword()``` вместе с ```AirbaPaySdk.createPayment()```
+   Или выполнить только ```AirbaPaySdk.authJwt()```
 
 4) Вызвать ```AirbaPaySdk.getGooglePayMerchantIdAndGateway()``` для получения объекта ```GooglePayMerchantResponse```
      
@@ -414,7 +430,7 @@ AirbaPaySdk.createPayment(
 
 Запрос списка сохраненных карт пользователя
 ```getCards()```
-Предварительно выполнить ```AirbaPaySdk.auth()``` 
+Предварительно выполнить ```AirbaPaySdk.authPassword()``` или ```AirbaPaySdk.authJwt()```
 
 | Параметр  | Тип                      | Обязательный | Описание                                    |
 |-----------|--------------------------|--------------|---------------------------------------------|
@@ -424,7 +440,7 @@ AirbaPaySdk.createPayment(
 
 Запрос удаления сохраненной карты пользователя
 ```deleteCard()```
-Предварительно выполнить ```AirbaPaySdk.auth()```
+Предварительно выполнить ```AirbaPaySdk.authPassword()``` или ```AirbaPaySdk.authJwt()```
 
 | Параметр  | Тип          | Обязательный | Описание                                             |
 |-----------|--------------|--------------|------------------------------------------------------|
@@ -435,13 +451,14 @@ AirbaPaySdk.createPayment(
 
 Запрос проведения оплаты по сохраненной карте пользователя
 ```paySavedCard()```
-Предварительно выполнить ```AirbaPaySdk.auth()``` и ```AirbaPaySdk.createPayment()```
+Предварительно выполнить ```AirbaPaySdk.authPassword()``` или ```AirbaPaySdk.authJwt()```
 
-| Параметр   | Тип              | Обязательный | Описание                                              |
-|------------|------------------|--------------|-------------------------------------------------------|
-| bankCard   | BankCard         | да           | Экземпляр карты, получаемый из запроса ```getCards``` |
-| isLoading  | (Bool) -> Unit   | да           | Лямбда для показа прогрессбара                        |
-| onError    | () -> Unit       | да           | Лямбда на ошибку                                      |
+| Параметр  | Тип            | Обязательный | Описание                                              |
+|-----------|----------------|--------------|-------------------------------------------------------|
+| activity  | Activity       | да           | Activity                                              |
+| bankCard  | BankCard       | да           | Экземпляр карты, получаемый из запроса ```getCards``` |
+| isLoading | (Bool) -> Unit | да           | Лямбда для показа прогрессбара                        |
+| onError   | () -> Unit     | да           | Лямбда на ошибку                                      |
 
 
 
