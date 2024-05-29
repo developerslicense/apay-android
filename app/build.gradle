@@ -11,8 +11,8 @@ android {
         applicationId "kz.airbapayandroid.composesdkstand" // для заливки тестовой сборки в firebase
         minSdk 21
         targetSdk airbaPayCompileSdk
-        versionCode 13 // 745
-        versionName "2.1"
+        versionCode 15 // 745
+        versionName "2.3"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
