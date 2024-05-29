@@ -5,7 +5,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kz.airbapay.apay_android.AirbaPaySdk
 
 internal object DataHolder {
-  const val sdkVersion: String = "2.0.4"
+  const val sdkVersion: String = "2.0.9"
   var baseUrl = ""
 
   var connectTimeout = 60
@@ -20,17 +20,15 @@ internal object DataHolder {
   var invoiceId = ""
 
   var bankCode: String? = null
-  var token: String? = null // todo rename to authToken
+  var token: String? = null
 
   var userEmail: String? = null
   var userPhone = ""
   var accountId: String = ""
 
-  const val failureBackUrl = "https://site.kz/failure" // не нужно менять
-  const val successBackUrl = "https://site.kz/success"// не нужно менять
-  var failureCallback = ""
-  var successCallback = ""
-  var autoCharge = 0
+  var failureBackUrl = "https://site.kz/failure"
+  var successBackUrl = "https://site.kz/success"
+
   var currentLang = AirbaPaySdk.Lang.RU.lang
 
   val purchaseAmountFormatted = MutableStateFlow("")
@@ -51,11 +49,16 @@ internal object DataHolder {
 
   var isGooglePayNative: Boolean = true
 
-  var renderInStandardFlowGooglePay: Boolean = true
-  var renderInStandardFlowSavedCards: Boolean = true
-  var renderGlobalSecurityCvv: Boolean = true
-  var renderGlobalSecurityBiometry: Boolean = true
+  var renderGooglePay: Boolean? = null
+  var renderSavedCards: Boolean? = null
+  var renderSecurityCvv: Boolean? = null
+  var renderSecurityBiometry: Boolean? = null
 
   var height: Int? = null
   var width: Int? = null
+
+  fun isRenderGooglePay() = renderGooglePay ?: true
+  fun isRenderSavedCards() = renderSavedCards ?: true
+  fun isRenderSecurityCvv() = renderSecurityCvv ?: true
+  fun isRenderSecurityBiometry() = renderSecurityBiometry ?: true
 }

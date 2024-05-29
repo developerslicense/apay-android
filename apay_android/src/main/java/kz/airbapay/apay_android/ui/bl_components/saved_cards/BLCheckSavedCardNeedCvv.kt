@@ -51,7 +51,7 @@ internal fun blCheckSavedCardNeedCvv(
             if (it.requestCvv) {
                 showCvv()
 
-            } else if (DataHolder.renderGlobalSecurityBiometry) {
+            } else if (DataHolder.isRenderSecurityBiometry()) {
                 initAuth(
                     activity = activity,
                     onSuccess = {
@@ -64,7 +64,7 @@ internal fun blCheckSavedCardNeedCvv(
                         )
                     },
                     onNotSecurity = {
-                        if (DataHolder.renderGlobalSecurityCvv) {
+                        if (DataHolder.isRenderSecurityCvv()) {
                             showCvv()
 
                         } else {
@@ -79,7 +79,7 @@ internal fun blCheckSavedCardNeedCvv(
                     }
                 )
 
-            } else if (DataHolder.renderGlobalSecurityCvv) {// не объединять с 1-м, т.к. у этого приоритет ниже, чем у renderGlobalSecurityBiometry
+            } else if (DataHolder.isRenderSecurityCvv()) {// не объединять с 1-м, т.к. у этого приоритет ниже, чем у renderSecurityBiometry
                 showCvv()
 
             } else {

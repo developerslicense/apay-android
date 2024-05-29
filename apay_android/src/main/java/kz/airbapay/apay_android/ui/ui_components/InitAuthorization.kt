@@ -12,7 +12,7 @@ internal fun initAuth(
     onSuccess: () -> Unit,
     onNotSecurity: () -> Unit,
 ) {
-    if (DataHolder.renderGlobalSecurityBiometry) {
+    if (DataHolder.isRenderSecurityBiometry()) {
         CoroutineScope(Main).launch {
             val airbaPayBiometric = AirbaPayBiometric(activity)
             airbaPayBiometric.authenticate(

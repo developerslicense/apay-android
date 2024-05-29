@@ -5,6 +5,7 @@ import kz.airbapay.apay_android.data.model.GooglePaymentWallet
 import kz.airbapay.apay_android.data.model.GooglePaymentWalletRequest
 import kz.airbapay.apay_android.data.model.PaymentEntryResponse
 import kz.airbapay.apay_android.data.utils.DataHolder
+import kz.airbapay.apay_android.data.utils.Money
 import kz.airbapay.apay_android.network.api.Api
 import kz.airbapay.apay_android.network.base.safeApiFlowCall
 import kz.airbapay.apay_android.network.coroutines.BaseCoroutine
@@ -164,7 +165,7 @@ internal class PaymentsRepository(
         )
     }
 
-    fun paymentGetInfo(
+    fun getPaymentInfo(
         result: (PaymentEntryResponse) -> Unit,
         error: (Response<*>?) -> Unit
     ) {
@@ -177,6 +178,19 @@ internal class PaymentsRepository(
             },
             result = { body ->
                 body.body()?.let {
+                    DataHolder.purchaseAmount = it.amount ?: 0.0
+                    DataHolder.purchaseAmountFormatted.value = Money.initDouble(DataHolder.purchaseAmount).getFormatted()
+                    DataHolder.orderNumber = it.orderNumber ?: ""
+                    DataHolder.invoiceId = it.invoiceId ?: ""
+                    DataHolder.accountId = it.accountId ?: ""
+                    DataHolder.renderSecurityCvv = it.addParameters?.payForm?.requestCvv
+                    DataHolder.renderSecurityBiometry = it.addParameters?.payForm?.requestFaceId
+                    DataHolder.renderSavedCards = it.addParameters?.payForm?.renderSaveCards
+                    DataHolder.renderGooglePay = it.addParameters?.payForm?.renderGooglePay
+
+                    DataHolder.failureBackUrl = it.failureBackUrl ?: DataHolder.failureBackUrl
+                    DataHolder.successBackUrl = it.successBackUrl ?: DataHolder.successBackUrl
+
                     result(it)
                 } ?: error(Unit)
             },

@@ -30,7 +30,7 @@ internal fun GPayView(
 ) {
     val keyguardManager = (LocalContext.current as Activity).getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager
 
-    if (DataHolder.renderInStandardFlowGooglePay) {
+    if (DataHolder.isRenderGooglePay()) {
 
         Spacer(modifier = Modifier.height(16.dp))
 

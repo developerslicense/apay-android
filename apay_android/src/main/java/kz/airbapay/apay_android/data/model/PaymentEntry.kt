@@ -23,6 +23,9 @@ internal data class PaymentEntryResponse(
     @SerializedName("error_code")
     val errorCode: String?,
 
+    @SerializedName("account_id")
+    val accountId: String?,
+
     @SerializedName("status")
     val status: String?,
 
@@ -39,5 +42,21 @@ internal data class PaymentEntryResponse(
     val payFormUrl: String?,
 
     @SerializedName("add_parameters")
-    val addParameters: AddParameters?
+    val addParameters: AddParameters?,
+
+    @SerializedName("amount")
+    val amount: Double?,
+
+    @SerializedName("invoice_id")
+    val invoiceId: String?,
+
+    @SerializedName("order_number")
+    val orderNumber: String?,
+
+    @SerializedName("failure_back_url")
+    val failureBackUrl: String?,
+
+    @SerializedName("success_back_url")
+    val successBackUrl: String?,
+
 )

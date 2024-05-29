@@ -2,8 +2,10 @@ package kz.airbapay.apay_android.ui.pages.startview
 
 import android.app.Activity
 import androidx.compose.runtime.MutableState
+import kz.airbapay.apay_android.data.constant.ErrorsCode
 import kz.airbapay.apay_android.data.model.BankCard
 import kz.airbapay.apay_android.data.utils.DataHolder
+import kz.airbapay.apay_android.data.utils.openErrorPageWithCondition
 import kz.airbapay.apay_android.data.utils.openHome
 import kz.airbapay.apay_android.network.repository.Repository
 import kz.airbapay.apay_android.ui.bl_components.saved_cards.blGetSavedCards
@@ -24,12 +26,22 @@ internal fun fetchMerchantsWithNextStep(
         error = {}
     )
 
-    initPaymentsWithNextStep(
-        activity = activity,
-        googlePayRedirectUrl = googlePayRedirectUrl,
-        savedCards = savedCards,
-        selectedCard = selectedCard,
-        isLoading = isLoading
+    Repository.paymentsRepository?.getPaymentInfo(
+        result = {
+            initPaymentsWithNextStep(
+                activity = activity,
+                googlePayRedirectUrl = googlePayRedirectUrl,
+                savedCards = savedCards,
+                selectedCard = selectedCard,
+                isLoading = isLoading
+            )
+        },
+        error = {
+            openErrorPageWithCondition(
+                errorCode = ErrorsCode.error_1.code,
+                activity = activity
+            )
+        }
     )
 }
 
@@ -46,7 +58,7 @@ private fun initPaymentsWithNextStep(
             googlePayRedirectUrl.value = url
         }
 
-        if (DataHolder.renderInStandardFlowSavedCards) {
+        if (DataHolder.isRenderSavedCards()) {
             blGetSavedCards(
                 onSuccess = {
                     savedCards.value = it

@@ -31,20 +31,40 @@ internal class TestCardsExternalActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        onStandardFlowPassword(
-            isLoading = isLoading,
-            onSuccess = {
-                AirbaPaySdk.getCards(
-                    onSuccess = {
-                        cards.value = it
-                        isLoading.value = false
-                    },
-                    onNoCards = {
-                        isLoading.value = false
-                    }
-                )
-            }
-        )
+        val jwt = intent.getStringExtra("jwt")
+
+        if (jwt != null) {
+            AirbaPaySdk.authJwt(
+                jwt = jwt,
+                onSuccess = {
+                    AirbaPaySdk.getCards(
+                        onSuccess = {
+                            cards.value = it
+                            isLoading.value = false
+                        },
+                        onNoCards = {
+                            isLoading.value = false
+                        }
+                    )
+                },
+                onError = {}
+            )
+        } else {
+            onStandardFlowPassword(
+                isLoading = isLoading,
+                onSuccess = {
+                    AirbaPaySdk.getCards(
+                        onSuccess = {
+                            cards.value = it
+                            isLoading.value = false
+                        },
+                        onNoCards = {
+                            isLoading.value = false
+                        }
+                    )
+                }
+            )
+        }
         setContent {
             coroutineScope = rememberCoroutineScope()
 
