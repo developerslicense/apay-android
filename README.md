@@ -58,8 +58,6 @@ AirbaPaySdk.initSdk(
     phone = "77051000000",
     userEmail = "test@test.com", 
     colorBrandMain = Color.Red,
-    purchaseAmount = 1000.0,
-    isGooglePayNative = true,
     actionOnCloseProcessing = { activity, isSuccess ->
 
          if (isSuccess) { 
@@ -383,6 +381,12 @@ AirbaPaySdk.createPayment(
 | context                 | Context              | да           | Контекст приложения                                                           |
 | isGooglePayNative       | Boolean              | нет          | Флаг, определяющий показ нативной кнопки GooglePay вместо вебвьюшки           |
 
+```
+    AirbaPaySdk.standardFlow(
+        context = context,
+        isGooglePayNative = true
+    )
+```
 
 ## 7 API GooglePay
 
