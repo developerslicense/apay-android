@@ -20,7 +20,7 @@ internal fun blCreatePayment(
     renderSavedCards: Boolean?,
     goods: List<AirbaPaySdk.Goods>?,
     settlementPayments: List<AirbaPaySdk.SettlementPayment>? = null,
-    onSuccess: (String) -> Unit,
+    onSuccess: (String, String) -> Unit,
     onError: () -> Unit
 ) {
 

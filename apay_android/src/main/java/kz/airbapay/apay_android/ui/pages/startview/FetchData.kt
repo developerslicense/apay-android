@@ -28,13 +28,36 @@ internal fun fetchMerchantsWithNextStep(
 
     Repository.paymentsRepository?.getPaymentInfo(
         result = {
-            initPaymentsWithNextStep(
-                activity = activity,
-                googlePayRedirectUrl = googlePayRedirectUrl,
-                savedCards = savedCards,
-                selectedCard = selectedCard,
-                isLoading = isLoading
-            )
+
+            val nextStep = {
+                initPaymentsWithNextStep(
+                    activity = activity,
+                    googlePayRedirectUrl = googlePayRedirectUrl,
+                    savedCards = savedCards,
+                    selectedCard = selectedCard,
+                    isLoading = isLoading
+                )
+            }
+
+            if (DataHolder.renderSavedCards == null || DataHolder.renderGooglePay == null) {
+                Repository.merchantRepository?.getMerchantInfo(
+                    result = {
+                        if (DataHolder.renderGooglePay == null) {
+                            DataHolder.renderGooglePay = it.configuration?.renderGooglePayButton
+                        }
+
+                        if (DataHolder.renderSavedCards == null) {
+                            DataHolder.renderSavedCards = it.configuration?.renderSaveCards
+                        }
+
+                        nextStep()
+                    },
+                    error = { nextStep() }
+                )
+            } else {
+                nextStep()
+            }
+
         },
         error = {
             openErrorPageWithCondition(

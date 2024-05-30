@@ -166,7 +166,7 @@ internal class PaymentsRepository(
     }
 
     fun getPaymentInfo(
-        result: (PaymentEntryResponse) -> Unit,
+        result: () -> Unit,
         error: (Response<*>?) -> Unit
     ) {
 
@@ -180,9 +180,10 @@ internal class PaymentsRepository(
                 body.body()?.let {
                     DataHolder.purchaseAmount = it.amount ?: 0.0
                     DataHolder.purchaseAmountFormatted.value = Money.initDouble(DataHolder.purchaseAmount).getFormatted()
-                    DataHolder.orderNumber = it.orderNumber ?: ""
-                    DataHolder.invoiceId = it.invoiceId ?: ""
-                    DataHolder.accountId = it.accountId ?: ""
+                    DataHolder.purchaseNumber.value = if(it.orderNumber?.isNotBlank() == true) it.orderNumber else it.invoiceId ?: ""
+                    DataHolder.orderNumber = it.orderNumber
+                    it.invoiceId?.let { DataHolder.invoiceId = it }
+                    it.accountId?.let { DataHolder.accountId = it }
                     DataHolder.renderSecurityCvv = it.addParameters?.payForm?.requestCvv
                     DataHolder.renderSecurityBiometry = it.addParameters?.payForm?.requestFaceId
                     DataHolder.renderSavedCards = it.addParameters?.payForm?.renderSaveCards
@@ -191,7 +192,8 @@ internal class PaymentsRepository(
                     DataHolder.failureBackUrl = it.failureBackUrl ?: DataHolder.failureBackUrl
                     DataHolder.successBackUrl = it.successBackUrl ?: DataHolder.successBackUrl
 
-                    result(it)
+                    result()
+
                 } ?: error(Unit)
             },
             error = error

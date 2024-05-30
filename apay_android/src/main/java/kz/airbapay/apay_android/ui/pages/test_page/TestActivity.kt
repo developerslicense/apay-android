@@ -268,6 +268,10 @@ class TestActivity : ComponentActivity() {
                             .fillMaxWidth()
                             .padding(horizontal = 50.dp),
                         onClick = {
+                            isRenderSecurityCvv = renderSecurityCvv.value
+                            isRenderSecurityBiometry = renderSecurityBiometry.value
+                            isRenderSavedCards = renderSavedCards.value
+                            isRenderGooglePay = renderGooglePay.value
 
                             if (tokenText.value.text.isEmpty()) {
                                 Toast.makeText(context, "Добавьте JWT в поле ввода", Toast.LENGTH_LONG).show()
@@ -433,8 +437,8 @@ internal fun Context.onStandardFlowPassword(
             AirbaPaySdk.createPayment(
                 authToken = token,
                 accountId = "77061111112",
-                onSuccess = { paymentId ->
-                    onSuccess(DataHolder.token ?: "")
+                onSuccess = { paymentId, newToken ->
+                    onSuccess(newToken)
                 },
                 onError = {
                     isLoading.value = false

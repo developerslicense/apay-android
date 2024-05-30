@@ -158,6 +158,7 @@ internal fun HomePage(
     )
 
     val purchaseAmount = DataHolder.purchaseAmountFormatted.collectAsState()
+    val purchaseNumber = DataHolder.purchaseNumber.collectAsState()
 
     BackHandler {
         onBackPressed(
@@ -207,7 +208,10 @@ internal fun HomePage(
                 )
 
 
-                TopInfoView(purchaseAmount.value)
+                TopInfoView(
+                    purchaseAmount = purchaseAmount.value,
+                    numberOfPurchase = purchaseNumber.value
+                )
 
                 if (!DataHolder.hasSavedCards) {
                     GPayView(
