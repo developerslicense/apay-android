@@ -75,7 +75,7 @@ internal class ExecutorML(
     }
 
     private fun onCardScanned(numberResult: String?) {
-        println("aaaaa $numberResult")
+        println("$numberResult")
         val intent = Intent()
         intent.putExtra(ScanActivity.RESULT_CARD_NUMBER, numberResult)
         activity.setResult(Activity.RESULT_OK, intent)

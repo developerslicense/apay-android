@@ -48,7 +48,7 @@ internal data class ApiLogEntry(
     var page: String = LoggerHelper.getPageName(),
 
     @SerializedName("orderNumber")
-    var orderNumber: String = DataHolder.orderNumber,
+    var orderNumber: String = DataHolder.orderNumber ?: "",
 
     @SerializedName("invoiceId")
     var invoiceId: String = DataHolder.invoiceId,

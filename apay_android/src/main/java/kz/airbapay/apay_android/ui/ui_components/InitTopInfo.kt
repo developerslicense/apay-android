@@ -15,14 +15,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import kz.airbapay.apay_android.data.constant.amountOfPurchase
 import kz.airbapay.apay_android.data.constant.numberOfPurchase
-import kz.airbapay.apay_android.data.utils.DataHolder
 import kz.airbapay.apay_android.data.utils.recomposeHighlighter
 import kz.airbapay.apay_android.ui.resources.ColorsSdk
 import kz.airbapay.apay_android.ui.resources.LocalFonts
 
 @Composable
 internal fun TopInfoView(
-    purchaseAmount: String?
+    purchaseAmount: String?,
+    numberOfPurchase: String?
 ) {
 
     Column(
@@ -75,7 +75,7 @@ internal fun TopInfoView(
                 style = LocalFonts.current.regular
             )
             Text(
-                text = DataHolder.orderNumber,
+                text = numberOfPurchase ?: "",
                 textAlign = TextAlign.End,
                 style = LocalFonts.current.semiBold,
                 modifier = Modifier.recomposeHighlighter()

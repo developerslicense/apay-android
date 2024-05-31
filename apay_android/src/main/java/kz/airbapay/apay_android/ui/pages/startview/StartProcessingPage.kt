@@ -100,6 +100,7 @@ internal fun StartProcessingPage(
     }
 
     val purchaseAmount = DataHolder.purchaseAmountFormatted.collectAsState()
+    val purchaseNumber = DataHolder.purchaseNumber.collectAsState()
 
     val googlePayRedirectUrl = rememberSaveable { mutableStateOf<String?>(null) }
     val isLoading = rememberSaveable { mutableStateOf(true) }
@@ -169,7 +170,10 @@ internal fun StartProcessingPage(
                         actionBack = actionClose
                     )
 
-                    TopInfoView(purchaseAmount.value)
+                    TopInfoView(
+                        purchaseAmount = purchaseAmount.value,
+                        numberOfPurchase = purchaseNumber.value
+                    )
 
                     GPayView(
                         airbaPayBaseGooglePay = airbaPayBaseGooglePay,

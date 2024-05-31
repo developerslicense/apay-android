@@ -173,7 +173,7 @@ class AirbaPaySdk {
             accountId: String,
             invoiceId: String,
             orderNumber: String,
-            onSuccess: (String) -> Unit,
+            onSuccess: (String, String) -> Unit,
             onError: () -> Unit,
             renderSecurityCvv: Boolean? = null,
             renderSecurityBiometry: Boolean? = null,
