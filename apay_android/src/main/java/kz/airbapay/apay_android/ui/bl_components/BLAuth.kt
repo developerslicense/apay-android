@@ -1,5 +1,6 @@
 package kz.airbapay.apay_android.ui.bl_components
 
+import kz.airbapay.apay_android.AirbaPaySdk
 import kz.airbapay.apay_android.data.model.AuthRequest
 import kz.airbapay.apay_android.data.utils.DataHolder
 import kz.airbapay.apay_android.network.repository.AuthRepository
@@ -35,13 +36,17 @@ internal fun blAuth(
 
 internal fun blUpdateToken(
     paymentId: String,
-    onSuccess: (String, String) -> Unit,
+    onSuccess: (AirbaPaySdk.CreatePaymentResult) -> Unit,
     onError: () -> Unit
 ) {
     Repository.authRepository?.updateAuth(
         paymentId = paymentId,
         result = {
-            onSuccess(paymentId, DataHolder.token ?: "")
+            val r = AirbaPaySdk.CreatePaymentResult(
+                token = DataHolder.token ?: "",
+                paymentId = paymentId
+            )
+            onSuccess(r)
         },
         error = {
             onError()

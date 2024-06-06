@@ -10,6 +10,7 @@ import android.view.WindowManager
 import android.widget.Toast
 import androidx.compose.ui.graphics.Color
 import com.google.gson.annotations.SerializedName
+import kz.airbapay.apay_android.data.constant.ARG_ACTION
 import kz.airbapay.apay_android.data.constant.ErrorsCode
 import kz.airbapay.apay_android.data.model.BankCard
 import kz.airbapay.apay_android.data.model.GooglePayMerchantResponse
@@ -23,6 +24,7 @@ import kz.airbapay.apay_android.ui.bl_components.blProcessGooglePay
 import kz.airbapay.apay_android.ui.bl_components.saved_cards.blCheckSavedCardNeedCvv
 import kz.airbapay.apay_android.ui.bl_components.saved_cards.blDeleteCard
 import kz.airbapay.apay_android.ui.bl_components.saved_cards.blGetSavedCards
+import kz.airbapay.apay_android.ui.pages.external_webview.ExternalStandardFlowWebViewActivity
 import kz.airbapay.apay_android.ui.pages.startview.StartProcessingActivity
 import kz.airbapay.apay_android.ui.resources.ColorsSdk
 
@@ -32,6 +34,11 @@ class AirbaPaySdk {
         RU("ru"),
         KZ("kz"),
     }
+
+    class CreatePaymentResult(
+        var token: String? = null,
+        var paymentId: String? = null
+    )
 
     class Goods(
         @SerializedName("brand")
@@ -173,7 +180,7 @@ class AirbaPaySdk {
             accountId: String,
             invoiceId: String,
             orderNumber: String,
-            onSuccess: (String, String) -> Unit,
+            onSuccess: (CreatePaymentResult) -> Unit,
             onError: () -> Unit,
             renderSecurityCvv: Boolean? = null,
             renderSecurityBiometry: Boolean? = null,
@@ -216,6 +223,24 @@ class AirbaPaySdk {
             } else {
                 Toast.makeText(context, "Что-то пошло не так", Toast.LENGTH_SHORT).show()
                 Log.e("AirbaPay", "Нужно предварительно выполнить авторизацию и создание платежа")
+            }
+        }
+
+        fun standardFlowWebView(
+            context: Context,
+            onError: () -> Unit
+        ) {
+            if (DataHolder.token != null) {
+                Repository.paymentsRepository?.getPaymentInfo(
+                    result = { payformUrl ->
+                        val intent = Intent(context, ExternalStandardFlowWebViewActivity::class.java)
+                        intent.putExtra(ARG_ACTION, payformUrl)
+                        context.startActivity(intent)
+                    },
+                    error = { onError() }
+                )
+            } else {
+                print("AirbaPay. Нужно предварительно выполнить авторизацию и создание платежа")
             }
         }
 

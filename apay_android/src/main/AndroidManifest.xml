@@ -31,6 +31,9 @@
             android:name=".ui.pages.acquiring.AcquiringActivity"
             android:screenOrientation="portrait" />
         <activity
+            android:name=".ui.pages.external_webview.ExternalStandardFlowWebViewActivity"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".ui.pages.googlepay.webview.GooglePayActivity"
             android:screenOrientation="portrait" />
         <activity
