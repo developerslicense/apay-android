@@ -334,35 +334,43 @@ AirbaPaySdk.authJwt(
         
 ```
 
-Запрос на инициализацию платежа в системе AirbaPay. 
-Возвращает ```paymentId``` и вторым параметром обновленный токен. 
+Запрос на инициализацию платежа в системе AirbaPay.
+Возвращает ```AirbaPaySdk.CreatePaymentResult```.
 ```createPayment()```
 
-| Параметр               | Тип                                 | Обязательный    | Описание                                                                                                              |
-|------------------------|-------------------------------------|-----------------|-----------------------------------------------------------------------------------------------------------------------|
-| authToken              | String                              | да              | Токен, полученный из auth или другой реализацией получения токена                                                     |
-| failureCallback        | String                              | да              | URL вебхука при ошибке                                                                                                |
-| successCallback        | String                              | да              | URL вебхука при успехе                                                                                                |
-| purchaseAmount         | Double                              | да              | Сумма платежа                                                                                                         |
-| accountId              | String                              | да              | ID аккаунта пользователя                                                                                              |
-| invoiceId              | String                              | да              | ID платежа в системе магазина                                                                                         |
-| orderNumber            | String                              | да              | Номер заказа в системе магазина                                                                                       |
-| onSuccess              | (String) -> Unit                    | да              | Лямбда на успех. Возвращает paymentId                                                                                 |
-| onError                | () -> Unit                          | да              | Лямбда на ошибку                                                                                                      |
-| renderGooglePay        | Boolean?                            | нет             | Флаг настройки показа функционала GooglePay в стандартном флоу. NULL - параметры с сервера                            |
-| renderSavedCards       | Boolean?                            | нет             | Флаг настройки показа функционала сохраненных карт в стандартном флоу. NULL - параметры с сервера                     |
-| renderSecurityBiometry | Boolean?                            | нет             | Флаг глобальной настройки в сдк для биометрии при оплате сохраненной картой или GooglePay. NULL - параметры с сервера |
-| renderSecurityCvv      | Boolean?                            | нет             | Флаг глобальной настройки в сдк для показа боттомщита с CVV при оплате сохраненной картой. NULL - параметры с сервера |
-| autoCharge             | Int                                 | нет             | Автоматическое подтверждение при 2х-стадийном режиме 0 - нет, 1 - да                                                  |
-| goods                  | List<AirbaPaySdk.Goods>             | нет             | Список продуктов для оплаты. Если есть необходимость передачи списка товаров в систему                                |
-| settlementPayments     | List<AirbaPaySdk.SettlementPayment> | нет             | Распределение платежа по компаниям. В случае одной компании, может быть null                                          |
+| Параметр               | Тип                                         | Обязательный    | Описание                                                                                                              |
+|------------------------|---------------------------------------------|-----------------|-----------------------------------------------------------------------------------------------------------------------|
+| authToken              | String                                      | да              | Токен, полученный из auth или другой реализацией получения токена                                                     |
+| failureCallback        | String                                      | да              | URL вебхука при ошибке                                                                                                |
+| successCallback        | String                                      | да              | URL вебхука при успехе                                                                                                |
+| purchaseAmount         | Double                                      | да              | Сумма платежа                                                                                                         |
+| accountId              | String                                      | да              | ID аккаунта пользователя                                                                                              |
+| invoiceId              | String                                      | да              | ID платежа в системе магазина                                                                                         |
+| orderNumber            | String                                      | да              | Номер заказа в системе магазина                                                                                       |
+| onSuccess              | (AirbaPaySdk.CreatePaymentResult) -> Unit   | да              | Лямбда на успех. Возвращает AirbaPaySdk.CreatePaymentResult                                                           |
+| onError                | () -> Unit                                  | да              | Лямбда на ошибку                                                                                                      |
+| renderGooglePay        | Boolean?                                    | нет             | Флаг настройки показа функционала GooglePay в стандартном флоу. NULL - параметры с сервера                            |
+| renderSavedCards       | Boolean?                                    | нет             | Флаг настройки показа функционала сохраненных карт в стандартном флоу. NULL - параметры с сервера                     |
+| renderSecurityBiometry | Boolean?                                    | нет             | Флаг глобальной настройки в сдк для биометрии при оплате сохраненной картой или GooglePay. NULL - параметры с сервера |
+| renderSecurityCvv      | Boolean?                                    | нет             | Флаг глобальной настройки в сдк для показа боттомщита с CVV при оплате сохраненной картой. NULL - параметры с сервера |
+| autoCharge             | Int                                         | нет             | Автоматическое подтверждение при 2х-стадийном режиме 0 - нет, 1 - да                                                  |
+| goods                  | List<AirbaPaySdk.Goods>                     | нет             | Список продуктов для оплаты. Если есть необходимость передачи списка товаров в систему                                |
+| settlementPayments     | List<AirbaPaySdk.SettlementPayment>         | нет             | Распределение платежа по компаниям. В случае одной компании, может быть null                                          |
+
+
+```AirbaPaySdk.CreatePaymentResult```
+
+| Параметр  | Тип     | Описание              |
+|-----------|---------|-----------------------|
+| token     | String? | Обновленный токен     |
+| paymentId | String? | ID созданного платежа |
 
 
 ```
 AirbaPaySdk.createPayment(
                 authToken = token,
                 accountId = "77061111112",
-                onSuccess = { paymentId -> ~ },
+                onSuccess = { result -> ~ },
                 onError = { ~ },
                 failureCallback = "https://site.kz/failure-clb",
                 successCallback = "https://site.kz/success-clb",
@@ -377,7 +385,8 @@ AirbaPaySdk.createPayment(
 Предварительно выполнить ```AirbaPaySdk.authPassword()``` вместе с ```AirbaPaySdk.createPayment()```
 Или выполнить только ```AirbaPaySdk.authJwt()```
 
-Открытие стандартной формы AirbaPay выполняется через ```AirbaPaySdk.standardFlow()```.
+Есть два варианта реализации стандартного флоу:
+1) ```standardFlow()```.
 
 | Параметр                | Тип                  | Обязательный | Описание                                                                      |
 |-------------------------|----------------------|--------------|-------------------------------------------------------------------------------|
@@ -389,6 +398,19 @@ AirbaPaySdk.createPayment(
         context = context,
         isGooglePayNative = true
     )
+```
+2) ```standardFlowWebView()```
+
+| Параметр          | Тип        | Обязательный | Описание                                       |
+|-------------------|------------|--------------|------------------------------------------------|
+| isLoadingComplete | () -> Unit | да           | Лямбда на завершение загрузки данных о платеже |
+| onError           | () -> Unit | да           | Лямбда на ошибку                               |
+
+``` 
+   AirbaPaySdk.standardFlowWebView(
+      isLoadingComplete: { isLoading = false },
+      onError: { ~ }
+   )
 ```
 
 ## 7 API GooglePay

@@ -166,7 +166,7 @@ internal class PaymentsRepository(
     }
 
     fun getPaymentInfo(
-        result: () -> Unit,
+        result: (String?) -> Unit,
         error: (Response<*>?) -> Unit
     ) {
 
@@ -192,7 +192,7 @@ internal class PaymentsRepository(
                     DataHolder.failureBackUrl = it.failureBackUrl ?: DataHolder.failureBackUrl
                     DataHolder.successBackUrl = it.successBackUrl ?: DataHolder.successBackUrl
 
-                    result()
+                    result(it.payFormUrl)
 
                 } ?: error(Unit)
             },

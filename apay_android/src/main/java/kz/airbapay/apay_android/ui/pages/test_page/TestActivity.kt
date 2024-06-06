@@ -204,6 +204,35 @@ class TestActivity : ComponentActivity() {
                         Text("Тест внешнего API сохраненных карт PASSWORD")
                     }
 
+                    Button(
+                        modifier = Modifier
+                            .padding(top = 20.dp)
+                            .fillMaxWidth()
+                            .padding(horizontal = 50.dp),
+                        onClick = {
+                            isRenderSecurityCvv = renderSecurityCvv.value
+                            isRenderSecurityBiometry = renderSecurityBiometry.value
+
+                            testInitSdk(this@TestActivity)
+                            onStandardFlowPassword(
+                                autoCharge = if (autoCharge.value) 1 else 0,
+                                isLoading = isLoading,
+                                onSuccess = {
+                                    AirbaPaySdk.standardFlowWebView(
+                                        context = this@TestActivity,
+                                        onError = { isLoading.value = false }
+                                    )
+                                },
+                                renderSecurityCvv = renderSecurityCvv.value,
+                                renderSecurityBiometry = renderSecurityBiometry.value,
+                                renderSavedCards = renderSavedCards.value,
+                                renderGooglePay = renderGooglePay.value
+                            )
+                        }
+                    ) {
+                        Text("Стандартный флоу через вебвью")
+                    }
+
                     Text(
                         text = "Все нижние варианты требуют предварительно сгенерировать " +
                                 "или вставить JWT в поле ввода. " +
@@ -437,8 +466,8 @@ internal fun Context.onStandardFlowPassword(
             AirbaPaySdk.createPayment(
                 authToken = token,
                 accountId = "77061111112",
-                onSuccess = { paymentId, newToken ->
-                    onSuccess(newToken)
+                onSuccess = { result ->
+                    onSuccess(result.token ?: "")
                 },
                 onError = {
                     isLoading.value = false
