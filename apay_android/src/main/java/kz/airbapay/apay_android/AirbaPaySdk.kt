@@ -7,6 +7,7 @@ import android.os.Build
 import android.util.DisplayMetrics
 import android.util.Log
 import android.view.WindowManager
+import android.webkit.WebView
 import android.widget.Toast
 import androidx.compose.ui.graphics.Color
 import com.google.gson.annotations.SerializedName
@@ -39,6 +40,14 @@ class AirbaPaySdk {
         var token: String? = null,
         var paymentId: String? = null
     )
+
+    class ShouldOverrideUrlLoading(
+        val isCallbackSuccess: Boolean,
+        val isCallbackBackToApp: Boolean,
+        val url: String?,
+        val webView: WebView?
+    )
+
 
     class Goods(
         @SerializedName("brand")
@@ -228,9 +237,11 @@ class AirbaPaySdk {
 
         fun standardFlowWebView(
             context: Context,
+            shouldOverrideUrlLoading: (AirbaPaySdk.ShouldOverrideUrlLoading) -> Boolean,
             onError: () -> Unit
         ) {
             if (DataHolder.token != null) {
+                DataHolder.shouldOverrideUrlLoading = shouldOverrideUrlLoading
                 Repository.paymentsRepository?.getPaymentInfo(
                     result = { payformUrl ->
                         val intent = Intent(context, ExternalStandardFlowWebViewActivity::class.java)

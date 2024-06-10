@@ -17,6 +17,7 @@ import android.webkit.WebResourceResponse
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.compose.runtime.MutableState
+import kz.airbapay.apay_android.AirbaPaySdk
 import kz.airbapay.apay_android.data.utils.DataHolder
 import kz.airbapay.apay_android.data.utils.openErrorPageWithCondition
 import kz.airbapay.apay_android.data.utils.openSuccess
@@ -76,36 +77,19 @@ internal class ExternalStandardFlowWebViewClient(
         }
     }
 
-    override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
+    override fun shouldOverrideUrlLoading(webView: WebView?, request: WebResourceRequest?): Boolean {
         val url = request?.url?.toString() ?: ""
         Logger.log(
             message = "shouldOverrideUrlLoading",
             url = url
         )
-        when {
-            url.contains("status=auth")
-                    || url.contains("success") -> {
-                Logger.log(
-                    message = "Status success",
-                    url = url
-                )
-                openSuccess(activity)
-                return true
-            }
-            url.contains(DataHolder.failureBackUrl) -> {
-                DataHolder.actionOnCloseProcessing?.invoke(activity, false)
-                return true
-            }
-            url.contains("status=error")
-                    || url.contains("failure") -> {
-                onFailure(url)
-                return true
-            }
-
-            else -> view?.loadUrl(url)
-        }
-
-        return false
+        val obj = AirbaPaySdk.ShouldOverrideUrlLoading(
+            isCallbackSuccess = url.contains("status=auth") || url.contains("success"),
+            isCallbackBackToApp = url.contains(DataHolder.failureBackUrl),
+            url = url,
+            webView = webView
+        )
+        return DataHolder.shouldOverrideUrlLoading?.invoke(obj) ?: false
     }
 
     private fun onFailure(url: String) {

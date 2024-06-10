@@ -401,17 +401,44 @@ AirbaPaySdk.createPayment(
 ```
 2) ```standardFlowWebView()```
 
-| Параметр          | Тип        | Обязательный | Описание                                       |
-|-------------------|------------|--------------|------------------------------------------------|
-| isLoadingComplete | () -> Unit | да           | Лямбда на завершение загрузки данных о платеже |
-| onError           | () -> Unit | да           | Лямбда на ошибку                               |
+| Параметр                  | Тип                                                    | Обязательный | Описание                                                   |
+|---------------------------|--------------------------------------------------------|--------------|------------------------------------------------------------|
+| isLoadingComplete         | () -> Unit                                             | да           | Лямбда на завершение загрузки данных о платеже             |
+| onError                   | () -> Unit                                             | да           | Лямбда на ошибку                                           |
+| shouldOverrideUrlLoading  | (obj: AirbaPaySdk.ShouldOverrideUrlLoading) -> Boolean | да           | Лямбда, в которой описаны действия на коллбэки с вебвьюшки |
 
 ``` 
    AirbaPaySdk.standardFlowWebView(
       isLoadingComplete: { isLoading = false },
-      onError: { ~ }
+      onError: { ~ },
+      shouldOverrideUrlLoading = { obj ->
+        when {
+            obj.isCallbackSuccess -> {
+                // открыть страницу успеха
+                return@standardFlowWebView true
+            }
+            obj.isCallbackBackToApp -> {
+                // клик на кнопку "Вернуться в магазин" или на стрелку "назад"
+                return@standardFlowWebView true
+            }
+
+            else -> obj.webView?.loadUrl(obj.url ?: "")
+        }
+
+        return@standardFlowWebView false
+      }
    )
 ```
+
+```AirbaPaySdk.ShouldOverrideUrlLoading```
+
+| Параметр            | Тип      | Обязательный | Описание                                                                                                                                    |
+|---------------------|----------|--------------|---------------------------------------------------------------------------------------------------------------------------------------------|
+| isCallbackSuccess   | Boolean  | да           | Флаг, что можно вызвать переход на страницу успеха                                                                                          |
+| isCallbackBackToApp | Boolean  | да           | Флаг, что можно вызвать переход в приложение. true - если была нажата стрелака "назад" или кнопка "Вернуться в магазин" на страницах ошибки |
+| url                 | String?  | да           | Проброс урла из коллбэка вебвьюшки                                                                                                          |
+| webView             | WebView? | да           | Проброс webview из коллбэка вебвьюшки                                                                                                       |
+
 
 ## 7 API GooglePay
 
