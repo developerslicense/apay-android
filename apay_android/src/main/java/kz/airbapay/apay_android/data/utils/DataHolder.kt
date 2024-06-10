@@ -5,7 +5,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kz.airbapay.apay_android.AirbaPaySdk
 
 internal object DataHolder {
-  const val sdkVersion: String = "2.1.0"
+  const val sdkVersion: String = "2.1.1"
   var baseUrl = ""
 
   var connectTimeout = 60
@@ -35,6 +35,7 @@ internal object DataHolder {
   val purchaseNumber = MutableStateFlow("")
 
   var actionOnCloseProcessing: ((activity: Activity, paymentSubmittingResult: Boolean) -> Unit)? = null
+  var shouldOverrideUrlLoading: ((obj: AirbaPaySdk.ShouldOverrideUrlLoading) -> Boolean)? = null
 
   var openCustomPageSuccess: ((activity: Activity) -> Unit)? = null
   var openCustomPageFinalError: ((activity: Activity) -> Unit)? = null

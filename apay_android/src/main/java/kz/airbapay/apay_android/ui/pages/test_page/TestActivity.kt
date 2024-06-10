@@ -34,6 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import kz.airbapay.apay_android.AirbaPaySdk
 import kz.airbapay.apay_android.data.utils.DataHolder
+import kz.airbapay.apay_android.data.utils.openSuccess
 import kz.airbapay.apay_android.network.repository.Repository
 import kz.airbapay.apay_android.ui.pages.home.presentation.SwitchedView
 import kz.airbapay.apay_android.ui.resources.ColorsSdk
@@ -220,7 +221,23 @@ class TestActivity : ComponentActivity() {
                                 onSuccess = {
                                     AirbaPaySdk.standardFlowWebView(
                                         context = this@TestActivity,
-                                        onError = { isLoading.value = false }
+                                        onError = { isLoading.value = false },
+                                        shouldOverrideUrlLoading = { obj ->
+                                            when {
+                                                obj.isCallbackSuccess -> {
+                                                    openSuccess(this@TestActivity)
+                                                    return@standardFlowWebView true
+                                                }
+                                                obj.isCallbackBackToApp -> {
+                                                    DataHolder.actionOnCloseProcessing?.invoke(this@TestActivity, false)
+                                                    return@standardFlowWebView true
+                                                }
+
+                                                else -> obj.webView?.loadUrl(obj.url ?: "")
+                                            }
+
+                                            return@standardFlowWebView false
+                                        }
                                     )
                                 },
                                 renderSecurityCvv = renderSecurityCvv.value,
