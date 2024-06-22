@@ -508,9 +508,9 @@ internal fun Context.onStandardFlowPassword(
             isLoading.value = false
             Toast.makeText(this, "Что-то пошло не так", Toast.LENGTH_SHORT).show()
         },
-        shopId = "test-baykanat", //"airbapay-mfo", //
-        password = "baykanat123!", //"MtTh37TLV7", //
-        terminalId = "65c5df69e8037f1b451a0594",//"659e79e279a508566e35d299", //
+        shopId = "",// todo need add creds
+        password = "",
+        terminalId = "",
         paymentId = null
     )
 }

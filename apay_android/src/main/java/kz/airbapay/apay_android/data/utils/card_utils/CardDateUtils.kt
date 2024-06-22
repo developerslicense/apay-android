@@ -66,7 +66,7 @@ internal fun isDateValid(
       true
 
     } else fourDigitsYear == nowYear
-      && month > nowMonth
+      && month >= nowMonth
 
   } catch (e: Exception) {
 //    e.printStackTrace()
