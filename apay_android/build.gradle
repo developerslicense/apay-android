@@ -290,7 +290,7 @@ afterEvaluate {
                 url = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
                 // this is deploys to the stating repo in nexus
                 credentials {
-                    username = "developers.license@technodom.kz"
+                    username = properties.osshrUser
                     password = properties.osshrPass
                 }
             }
